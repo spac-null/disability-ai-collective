@@ -1,7 +1,7 @@
 # Perspective Research — INDEX
 
 *Read this first. It should orient a fresh session in under two minutes.*
-*Last updated: 2026-09-08 — **PR003 opened; PR002 first owner review complete.***
+*Last updated: 2026-09-08 — **PR003 first owner review complete.***
 
 ---
 
@@ -24,21 +24,21 @@ this directory may be quoted in an article.
 **PR003 — Assistive Technology, Everyday Agency & Independence**
 → `assistive-technology-everyday-agency-independence.md`
 
-**CLUSTER STATUS: FIRST PASS + COMPLETION PASS DONE — OWNER REVIEW PENDING.**
-**6 CANDIDATE · 1 REJECTED · 2 MERGED · 0 NEEDS_RESEARCH · 0 APPROVED_DURABLE.** Nothing
-promoted. **No new axis** — concentrates beneath Axes 5 and 10, reaching 11, 12 and 14.
-An **OWNER-REVIEW PACK** with per-entry dispositions sits in the cluster file.
+**CLUSTER STATUS: FIRST OWNER REVIEW COMPLETE (2026-09-08).**
+**3 APPROVED_DURABLE · 3 CANDIDATE · 1 merged as an Axis 5 sharpening · 1 merged into another
+entry · 1 REJECTED · 1 lead HELD.** Nothing deleted. Not permanently closed.
+**ZERO new axes** — concentrates beneath Axes 5 and 10, reaching 11, 12 and 14.
 
 | ID | Short name | Status | Axes | Minds |
 |---|---|---|---|---|
-| PR003-01 | Independence is control over support | CANDIDATE — *recommended as an **Axis 5 sharpening**, not an instrument* | 5, 10, 6 | MAYA / SHARED |
+| PR003-01 | Independence is control over support | **MERGED — AXIS 5 SHARPENING** *(who · how · when · where · in what way)* | 5 | — |
 | PR003-02 | Support can disappear into independence | **REJECTED — already Axis 5** | — | — |
-| PR003-03 | Autonomy has a maintenance layer | CANDIDATE ★ *(absorbs starting H)* | 5, 14, 9 | MAYA |
-| PR003-04 | **A tool is incorporated by what it substitutes for, not by familiarity** *(renamed)* | CANDIDATE *(was NEEDS_RESEARCH)* | 1, 5 | SIIRI / SHARED |
-| PR003-05 | Support works differently when the user authors it | CANDIDATE | 10, 5, 14 | MAYA / ZENO |
-| PR003-06 | **The route to a setting changes whether the support is used** *(renamed)* | CANDIDATE ★ *narrowed; first pass overstated it* | 5, 12, 10 | ZENO / PINA |
-| PR003-07 | A tool can move dependence rather than remove it | CANDIDATE — *conditional on a two-sided gate* | 5, 14, 10 | MAYA / ZENO |
-| PR003-08 | **Who defines the option set** *(renamed)* | CANDIDATE ★ | 10, 11, 5 | ZENO / MAYA |
+| PR003-03 | Autonomy has a maintenance layer | **APPROVED_DURABLE** *(absorbs starting H)* | 5, 14, 9 | MAYA |
+| PR003-04 | A tool is incorporated by what it substitutes for, not by familiarity | CANDIDATE — held *(claim not yet mature)* | 1, 5 | SIIRI / SHARED |
+| PR003-05 | Support works differently when the user authors it | CANDIDATE — held *(1993 evidence dependency)* | 10, 5, 14 | MAYA / ZENO |
+| PR003-06 | **The route to a setting CAN change whether support is used** | **APPROVED_DURABLE** *(narrowed twice; first pass overstated it)* | 5, 12, 10 | ZENO / PINA |
+| PR003-07 | A tool can move dependence rather than remove it | CANDIDATE — held *(strict two-sided gate)* | 5, 14, 10 | MAYA / ZENO |
+| PR003-08 | **Who defines the option set** | **APPROVED_DURABLE** | 10, 11, 5 | ZENO / MAYA |
 | PR003-09 | What you authored, you can keep working | **MERGED → PR003-07** | — | — |
 
 **Three hypotheses died, two of them to evidence.** PR003-02 was killed by the canon check
@@ -220,8 +220,41 @@ was changed by this reframe.
 
 ---
 
-**TOTAL APPROVED_DURABLE ACROSS ALL CLUSTERS: 10.** Two clusters reviewed, **zero new
-axes**, no entry ever rejected, retired or deleted.
+**TOTAL APPROVED_DURABLE ACROSS ALL CLUSTERS: 13.** Three clusters reviewed, **zero new
+axes**, nothing ever deleted. One entry rejected (PR003-02), two merged (PR003-09 into
+PR003-07; PR003-01 into an Axis 5 sharpening), one lead held.
+
+---
+
+### PR003 FIRST OWNER REVIEW — 2026-09-08. APPROVED_DURABLE count: 3.
+
+**Promoted:** PR003-03 (autonomy has a maintenance layer — *the insight is not that devices
+break*) · PR003-06 (the route to a setting **can** change whether support is used) · PR003-08
+(who defines the option set).
+
+**Merged as an Axis 5 sharpening:** PR003-01. The slogan is an orientation, not an open
+question, so it is not carried as an instrument. What is durable is the operational test —
+**who · how · when · where · in what way** — with the source-supported absence conditions.
+**The doctrine file is unchanged and no axis was created.**
+
+**Held at candidate, three different reasons:** PR003-04 (transferable claim not yet mature;
+Papadimitriou still NOT ACCESSED) · PR003-05 (evidence leans too heavily on a 1993 study) ·
+PR003-07 (strict two-sided gate — without both halves it is merely Axis 5).
+
+**Rejected:** PR003-02, already owned by Axis 5 / PR001-05. **Merged:** PR003-09 into
+PR003-07 after its causal claim failed. **Held:** the Moser lead, likely resolving into
+PR001-05. **No new entry** for "equal measure / unequal outcome" — logged, still without an ID.
+
+**The completion pass materially changed what was reviewed.** PR003-06 lost an unsupported
+professional-versus-user interpretation; PR003-09 was merged when its causal proposition
+failed; PR003-04 was reformulated after disconfirming evidence; PR003-01 was recognised as a
+sharpening rather than an instrument. No new axis was required.
+
+**Perspective gains, by mechanism and never by device:** PINA — PR003-06 (the configuration
+route and what reaches daily use). MAYA — PR003-03 (the maintenance organisation beneath
+ordinary agency). ZENO — PR003-06 (technical correctness against lived uptake) and PR003-08
+(who authors the allowable option set). No SIIRI gain from the durable three; none was
+invented to balance the four minds.
 
 ---
 

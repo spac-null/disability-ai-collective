@@ -1,9 +1,16 @@
 # Perspective Research 003
 ## Assistive Technology, Everyday Agency & Independence
 
-**STATUS: WORKING RESEARCH — NOT PRODUCTION DOCTRINE.**
-Nothing here is in force. No entry may be quoted, cited, or used to establish anything about
-any subject. **Nothing is promoted; owner review comes afterward.**
+**CLUSTER STATUS: FIRST OWNER REVIEW COMPLETE — 2026-09-08.**
+**3 APPROVED_DURABLE · 3 CANDIDATE · 1 merged as an Axis 5 sharpening · 1 merged into another
+entry · 1 REJECTED · 1 lead HELD.** Nothing deleted. **Not permanently closed.**
+
+**APPROVED_DURABLE GRANTS ZERO ARTICLE FACTUAL AUTHORITY.** No entry here, of any status, may
+be quoted, cited, or used to establish anything about any subject. Approval means an
+instrument is trusted for asking, never for asserting.
+
+**PR003 CREATED ZERO NEW DOCTRINE AXES.** Axes are stable; library knowledge is becoming more
+precise beneath them.
 
 **CENTRAL QUESTION.** Not "how assistive technology helps disabled people", and not a
 catalogue of accessibility products. Rather: **what forms of question-asking intelligence can
@@ -62,8 +69,38 @@ answers a sharper question than the phenomenological account would have.
 
 ### PR003-01 — INDEPENDENCE IS CONTROL OVER SUPPORT
 
-**STATUS:** CANDIDATE — **recommended to owner review as an AXIS 5 SHARPENING AND
-FOUNDATIONAL ORIENTATION, not as a standalone instrument.** See RECOMMENDATION below.
+**STATUS:** **MERGED — AXIS 5 SHARPENING (owner review 2026-09-08).** Not a separate durable
+instrument. Retained, not deleted.
+
+*Owner reason: the slogan is an orientation rather than an open question, so it is not carried
+as an instrument. **What is durable is the operational sharpening beneath Axis 5**, recorded
+immediately below in the same manner as other approved extensions.*
+
+---
+
+#### THE DURABLE SHARPENING, beneath Axis 5 (independence & assistance)
+
+**When judging control over support, inspect who can determine:**
+
+> **who · how · when · where · in what way**
+
+*(S1 ¶16(d), on personal assistance: the person "can either contract the service from a
+variety of providers or act as an employer… design the service and decide by whom, how, when,
+where and in what way the service is delivered".)*
+
+**And the concrete absence conditions, where a source supports them** — from S1 ¶16(c), which
+lists them as defining elements of institutionalisation: obligatory sharing of assistants; **no
+or limited influence over whom one has to accept assistance from**; lack of control over
+day-to-day decisions; rigidity of routine irrespective of personal will; paternalistic
+provision; supervision of living arrangements. S1 ¶17 adds the contractual form: mandatory
+"package solutions" linking the availability of one service to another.
+
+**Two constraints on using it.** It **sharpens Axis 5; it is not a new axis** and the doctrine
+file is unchanged. And **S1 is a normative human-rights instrument, not an empirical finding** —
+it establishes what independence ought to mean in law, not what produces agency in fact. Do not
+inflate rights language into universal empirical claim.
+
+---
 
 **SOURCE BASIS.** **S1 (read in full), the definitive statement, ¶16(a):** independent living
 means being "provided with all necessary means to enable them to exercise choice and control
@@ -176,7 +213,13 @@ check killed it, and the killing cost one paragraph instead of one instrument.
 
 ### PR003-03 — AUTONOMY HAS A MAINTENANCE LAYER
 
-**STATUS:** CANDIDATE — *absorbs starting hypothesis H; see MERGE note.*
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-08.
+*Owner reason: successful action may depend on an ongoing maintenance organisation that
+disappears from view during normal operation. Preserved on approval, and stated because it is
+the whole distinction: **the insight is NOT that devices break.** The FALSE MOVE stands —
+maintenance dependence does not cancel autonomy — and so does the DISCONFIRMING SHAPE. Not to
+be broadened beyond the evidence.*
+*(Absorbs starting hypothesis H as a detection method; see MERGE note.)*
 
 **SOURCE BASIS.** **S3 (summary-level, author-reviewed)**, N=591 wheelchair users with spinal
 cord injury using a chair ≥40 hours a week, surveyed Oct 2012–May 2015: most reported needing
@@ -248,7 +291,13 @@ operation normally hides.
 body model". The rename is not cosmetic — **the evidence contradicted the original
 mechanism**, which claimed incorporation follows from skilled repeated use.*
 
-**STATUS:** CANDIDATE *(NEEDS_RESEARCH → CANDIDATE, on S10)*
+**STATUS:** CANDIDATE — **held at candidate, owner review 2026-09-08. Not promoted.**
+*Owner reason: the Pazzaglia evidence usefully changed the first-pass mechanism, but the
+transferable claim is not yet mature enough for durable status. **Preserved deliberately: the
+original hypothesis was weakened and changed by disconfirming evidence** — that history is
+part of the entry, not a blemish on it. Papadimitriou remains NOT ACCESSED and that provenance
+is not to be softened.*
+*(NEEDS_RESEARCH → CANDIDATE in the completion pass, on S10.)*
 
 **SOURCE BASIS.** **S10 (read in full)** — 55 wheelchair users with spinal cord injury
 (lesions C3–L1), using a chair around 13 hours a day, on average 92 months post-injury;
@@ -327,7 +376,11 @@ entry's evidence.
 
 ### PR003-05 — SUPPORT WORKS DIFFERENTLY WHEN THE USER AUTHORS IT
 
-**STATUS:** CANDIDATE
+**STATUS:** CANDIDATE — **held at candidate, owner review 2026-09-08. Not promoted.**
+*Owner reason: the mechanism remains promising and genuinely distinct from ongoing control,
+but the live evidence base leans too heavily on Phillips & Zhao 1993 to become durable
+doctrine. The distinction to keep: **selection and design authorship is not the same mechanism
+as ongoing control** (PR003-01).*
 
 **SOURCE BASIS.** **S6 (abstract-level, 1993 — age flagged):** of 227 adults surveyed,
 **29.3%** of devices were completely abandoned; four factors were associated with abandonment
@@ -386,13 +439,23 @@ and the mechanism, not the magnitude.
 
 ---
 
-### PR003-06 — THE ROUTE TO A SETTING CHANGES WHETHER THE SUPPORT IS USED
+### PR003-06 — THE ROUTE TO A SETTING CAN CHANGE WHETHER SUPPORT IS USED
 
-*Renamed and narrowed 2026-09-08 in the completion pass. Old name: "Calibration is a site of
-agency". **The first pass overstated this entry** — see the correction in SOURCE BASIS.*
+*Renamed twice on 2026-09-08. Original: "Calibration is a site of agency" — the first pass
+overstated it, see the correction in SOURCE BASIS. Completion pass: "The route to a setting
+changes whether the support is used". **Owner review: "…CAN change…"** — the primary study is
+small and bounded and does not license universal causal wording.*
 
-**STATUS:** CANDIDATE — strongest evidence in the cluster, **and materially narrower than the
-first pass claimed.**
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-08.
+*Owner reason: different routes to a technically equivalent setting can matter to whether
+support becomes part of daily use. Approved with the corrected interpretation intact and
+binding: **both trial arms were self-administered; there was NO clinician-versus-user arm;
+this is not to be described as professional authority versus user authority.** Technical
+outcomes were equivalent across the tested routes and the differences appeared in actual use
+and satisfaction-related subscales. N=28, no washout, pseudorandomised, **do not generalise
+beyond the study**. It is **not** "self-fitting is better", **not** "subjective measures
+matter more", and **not** "users should always control calibration". DISCONFIRMING SHAPE
+preserved.*
 
 **SOURCE BASIS.** **S5 (read in full)** — a crossover clinical trial, N=28, mean age 60.2,
 adults with self-perceived mild-to-moderate hearing difficulty, comparing two ways of fitting
@@ -470,7 +533,11 @@ general finding about assistive technology, and not a finding about who should f
 
 ### PR003-07 — A TOOL CAN MOVE DEPENDENCE RATHER THAN REMOVE IT
 
-**STATUS:** CANDIDATE
+**STATUS:** CANDIDATE — **held at candidate, owner review 2026-09-08. Not promoted.**
+*Owner reason: held until transfer and evidence are stronger. **The two-sided gate is strict
+and is the condition of use:** name a prior dependency that materially decreased, AND name a
+new one that materially appeared. **Without both halves this is merely Axis 5 and does not
+deserve separate use.** Absorbs the carriers of former PR003-09.*
 
 **SOURCE BASIS.** **S3 (summary-level)** supplies a measured transfer rather than an
 assertion: **a higher proportion of manual wheelchair users completed the repair at home
@@ -548,7 +615,12 @@ review is reasonable.
 arrangement". The rename moves the entry off constraint, which is generic, and onto the
 authorship of the option set, which is the checkable part.*
 
-**STATUS:** CANDIDATE
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-08.
+*Owner reason: distinct from PR001-03 and to stay distinct. PR001-03 asks what action changes
+because of a classification; this asks **who determined the range of choices presented as
+available to the actor**. The mechanism must not collapse into generic constraint, and the
+question must remain answerable from the actual arrangement. **Not a claim that all bounded
+choice is illegitimate.** DISCONFIRMING SHAPE preserved.*
 *Not in the starting set — produced by reading S1.*
 
 **SOURCE BASIS.** **S1 ¶16(c) (read in full)**, in the Committee's own words: "Institutional
@@ -642,8 +714,12 @@ quotation and the S3 comparison together with the confound that defeated the cau
 
 ## THE MOSER / DAG LEAD
 
-**STATUS: HELD** — *re-examined in the completion pass, source now precisely identified, and
-still held.* Not opened, not merged, not rejected.
+**STATUS: HELD** — *owner review 2026-09-08: held, not reopened.* Not opened as an entry, not
+merged, not rejected.
+
+**Owner-recorded likely resolution:** if later primary evidence does not establish a genuinely
+distinct mechanism, **the lead likely resolves into PR001-05 rather than into a new PR003
+entry.** No new entry now, and the lead is not to be reopened as a research task.
 
 Carried from PR001: *can a support technology make a form of agency, social action or
 relation possible that the previous arrangement did not permit?* The instruction was to test
@@ -702,14 +778,19 @@ the default stands: **no new entry unless clearly distinct and adequately eviden
 neither yet.
 
 **NEEDS_RESEARCH, no ID assigned** — assigning an ID would be the first step toward treating it
-as established. Flagged as the strongest candidate to open a future cluster with.
+as established.
+
+**Owner review 2026-09-08: NO NEW ENTRY. Keep it logged, keep it without an ID.** It may become
+useful in a future cluster around measurement and system-defined success. **Do not duplicate
+Axis 12 or PR001 merely because the pattern is attractive.**
 
 ---
 
 ## OWNER-REVIEW PACK
 
-*Compiled at the end of the completion pass, 2026-09-08. **No APPROVED_DURABLE dispositions
-are proposed** — promotion is the owner's decision.*
+*Compiled at the end of the completion pass, 2026-09-08, as recommendations. **The owner
+review has since ruled** — see the DISPOSITION column and the decision history. The
+recommendations are kept as written so the review's agreements and departures stay visible.*
 
 | ID | Current name | Recommended disposition |
 |---|---|---|
@@ -723,6 +804,14 @@ are proposed** — promotion is the owner's decision.*
 | PR003-08 | Who defines the option set | **STRONG_CANDIDATE** |
 | PR003-09 | What you authored, you can keep working | **MERGE** → **PR003-07** *(already done; kept as record)* |
 | Moser lead | — | **HELD**; likely **MERGE → PR001-05** if no primary appears |
+
+**OWNER RULING, 2026-09-08.** The review followed the recommendations, with one change of
+emphasis and one wording change. **APPROVED_DURABLE: PR003-03, PR003-06, PR003-08** — the three
+recommended STRONG_CANDIDATEs. **PR003-01 merged as an Axis 5 sharpening**, as recommended.
+**PR003-04, PR003-05, PR003-07 held at candidate** — 05 explicitly on the 1993 evidence
+dependency this pack named as the top evidence gap, 07 explicitly on the two-sided gate.
+**PR003-06 renamed once more**, from "changes" to **"can change"**, because the primary study is
+small and bounded and does not license universal causal wording. No new axis, no new entry.
 
 **RENAMES IN THIS PASS.**
 
@@ -964,4 +1053,73 @@ WHY:                Nothing in the pass created a conceptual hole. S10 was newly
                     two failed acquisitions are recorded as attempts rather than as
                     softened status. The rejected PR003-02 and the C/H merge history are
                     untouched.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              PR003 — FIRST OWNER REVIEW
+DECISION:           APPROVED_DURABLE: PR003-03, PR003-06, PR003-08.
+                    HELD AT CANDIDATE: PR003-04, PR003-05, PR003-07.
+                    MERGED AS AXIS 5 SHARPENING: PR003-01.
+                    MERGED INTO PR003-07: PR003-09.
+                    REJECTED: PR003-02. HELD: the Moser lead.
+                    NO NEW AXIS. NO NEW ENTRY. Nothing deleted.
+OWNER/REVIEW BASIS: Owner review of the cluster after the completion pass.
+WHY:                Per-entry reasons are on each STATUS line. The three holds are held for
+                    three different reasons and the difference is the useful part: PR003-04
+                    on maturity of the transferable claim, PR003-05 on an evidence base that
+                    leans too heavily on a 1993 study, PR003-07 on the two-sided gate and on
+                    transfer. PR003-01 was not carried as an instrument because the slogan is
+                    an orientation rather than an open question; what is durable is the
+                    operational sharpening beneath Axis 5 - who, how, when, where, in what
+                    way - together with the source-supported absence conditions.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              What the completion pass changed before the review
+DECISION:           Recorded, because the review ruled on a materially different cluster
+                    than the first pass produced.
+OWNER/REVIEW BASIS: Owner review.
+WHY:                Four changes, all made by the completion pass and all carried into the
+                    review: PR003-06 lost an unsupported professional-versus-user
+                    interpretation, since both trial arms were self-administered; PR003-09
+                    was merged after its causal proposition - authorship produces
+                    repairability - failed against a confounded comparison; PR003-04 was
+                    reformulated after disconfirming evidence showed exposure and duration
+                    predicted nothing; and PR003-01 was recognised as an Axis 5 sharpening
+                    rather than a standalone instrument. No new axis was required at any
+                    point. This is the record that the hypothesis and disconfirmation
+                    protocol operated correctly.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              PR003-06 final wording
+DECISION:           Renamed from "The route to a setting changes whether the support is used"
+                    to "THE ROUTE TO A SETTING CAN CHANGE WHETHER SUPPORT IS USED".
+OWNER/REVIEW BASIS: Owner review.
+WHY:                "Can" rather than "changes". The primary study is N=28, pseudorandomised,
+                    with no washout, and does not license universal causal wording. The
+                    approval carries the corrected interpretation as binding: no
+                    clinician-versus-user arm exists in the data, technical outcomes were
+                    equivalent across routes, and the differences were in use and
+                    satisfaction subscales. It is not "self-fitting is better", not
+                    "subjective measures matter more", and not "users should always control
+                    calibration".
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              Perspective gains, recorded by mechanism
+DECISION:           PINA gains PR003-06 (the configuration route and what reaches daily use).
+                    MAYA gains PR003-03 (the maintenance organisation beneath ordinary
+                    agency). ZENO gains PR003-06 (technical correctness against lived uptake)
+                    and PR003-08 (who authors the allowable option set). No SIIRI gain from
+                    the durable three.
+OWNER/REVIEW BASIS: Owner review.
+WHY:                Gains follow the MECHANISM, never the device - hearing aids are not
+                    PINA's and wheelchairs are not MAYA's. SIIRI's candidate gain sits with
+                    PR003-04, which is held, and no gain was invented to balance the four
+                    minds. Shared knowledge remains shared.
 ```
