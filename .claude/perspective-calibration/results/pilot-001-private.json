@@ -1,0 +1,768 @@
+{
+  "built_at": "2026-09-08T11:25:13.082756Z",
+  "subjects": {
+    "P01": {
+      "subject_name": "McDermitt Caldera lithium-clay deposit",
+      "call_order": "B_FIRST",
+      "world_payload_sha256": "fd4feea37cad5fc74e34045b1c7e01e29aa4edfff8d3e7d2d4b4b1a1396339df",
+      "version_map_private": {
+        "X": "A",
+        "Y": "B"
+      },
+      "condition_a_raw": {
+        "ran": true,
+        "assumption": "none",
+        "hypothesis_before_search": true,
+        "carrier_hypothesis": "",
+        "queries": [],
+        "urls": [],
+        "_provider": {
+          "requested_model": "anthropic/claude-opus-4.8",
+          "actual_model": "claude-opus-5",
+          "provider": "claude-cli-subscription",
+          "auth": "claude.ai subscription OAuth",
+          "fallback_used": false,
+          "openrouter_used": false,
+          "usage": {
+            "input_tokens": 2,
+            "cache_creation_input_tokens": 18145,
+            "cache_read_input_tokens": 11462,
+            "output_tokens": 37,
+            "output_tokens_details": {
+              "thinking_tokens": 0
+            },
+            "server_tool_use": {
+              "web_search_requests": 0,
+              "web_fetch_requests": 0
+            },
+            "service_tier": "standard",
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 18145,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "inference_geo": "not_available",
+            "iterations": [
+              {
+                "input_tokens": 2,
+                "output_tokens": 37,
+                "cache_read_input_tokens": 11462,
+                "cache_creation_input_tokens": 18145,
+                "cache_creation": {
+                  "ephemeral_5m_input_tokens": 0,
+                  "ephemeral_1h_input_tokens": 18145
+                },
+                "type": "message"
+              }
+            ],
+            "speed": "standard"
+          },
+          "subscription_cost_equivalent_usd": 0.189482,
+          "duration_ms": 2212,
+          "session_id": "e73e8abe-2b53-4954-bb5e-aaf9ddcb3877",
+          "temperature_requested": null,
+          "temperature_honoured": null
+        }
+      },
+      "condition_b_raw_completion_text": "{\n  \"candidates\": [\n    {\n      \"hypothesis\": \"The headline figure describing this as one of the largest known lithium deposits is a geological quantity that the survey itself, in its own methods and caveats, declares does not establish recoverability or economic viability — and that stated limit is stripped off downstream, so a number that was explicitly defined as 'material in the ground under stated assumptions' begins to be cited as the reason a particular extraction and permitting outcome is necessary. The estimate stops summarising the evidence and starts standing behind it as its justification.\",\n      \"question\": \"What does the survey say in its own words that its number cannot establish, and where in the later record does that same number appear as the reason for a decision it disclaimed the power to support?\",\n      \"why_it_might_matter\": \"It relocates the argument from whether the deposit is big to how a bounded technical quantity acquired institutional authority it was written to refuse. That is a checkable documentary movement, not a position on mining.\",\n      \"predicted_discriminating_evidence\": \"The methods and limitations text of the published estimate: cutoff grade, assumed tonnage-density conversion, the standard disclaimer that a resource is not a reserve and that economic extraction is not demonstrated. Then the same tonnage restated without those qualifiers in agency decision records, financing statements, or national-interest framings.\",\n      \"disconfirming_shape\": \"Downstream documents carry the qualifiers forward and rest their decisions on separate economic or engineering work rather than on the geological figure; or the survey makes no such stated limitation, in which case there is no stripped caveat to trace.\",\n      \"why_distinctively_crip_minds\": \"It works on what an instrument declares it cannot hold and on a name later used as its own explanation, rather than on the merits of the estimate.\",\n      \"instruments_used\": [\"PR001-09\", \"Axis 12\", \"PR001-03\"],\n      \"mind_sharpened\": \"classification/pattern\"\n    },\n    {\n      \"hypothesis\": \"The resource-confidence tier assigned to the deposit — the difference between an inferred, indicated and measured category — is not only a statement of geological certainty but an operator of institutional consequence: the tier determines what may be reported to investors, what may be borrowed against, what triggers a permitting pathway, and what a land agency is obliged to consider. The tier is set by drill spacing, which is set by budget and access, so a fact about how much money was spent circulates as a fact about the ground.\",\n      \"question\": \"What became institutionally possible the moment this material was placed in one confidence category rather than the adjacent one, and who was authorised to set that boundary?\",\n      \"why_it_might_matter\": \"It identifies a boundary with real jurisdictional force whose determinant is drilling density rather than the rock, and asks who holds the pen.\",\n      \"predicted_discriminating_evidence\": \"The reporting-code definitions the estimate is filed under, the stated drill-hole spacing and the qualified person or agency signing the classification, alongside any filing, loan, or agency step that is conditioned on the tier.\",\n      \"disconfirming_shape\": \"The tier carries no institutional consequence here — permitting, financing and agency obligations proceed identically whatever the confidence category — or the classification is purely academic with no filing regime attached.\",\n      \"why_distinctively_crip_minds\": \"It treats a category boundary as an action-changing device with an authorising party, not as a description of a settled state.\",\n      \"instruments_used\": [\"PR001-03\", \"Axis 11\", \"PR001-07\"],\n      \"mind_sharpened\": \"classification/pattern\"\n    },\n    {\n      \"hypothesis\": \"The deposit's mapped edge is an artefact of an assay threshold and an economic cutoff grade rather than of the ash bed. Material below the cutoff is recorded as outside the deposit, which is not the same as absent, and the same act of drawing that line produces the footprint that later governs land, water and surface decisions. The boundary is unappealable because it was never presented as a decision.\",\n      \"question\": \"Where does this deposit stop, what set that line — detection limit, cutoff grade, or claim and access boundary — and how does the stated 'no reading' material differ from material stated as absent?\",\n      \"why_it_might_matter\": \"The perimeter that will be used for surface, water and land argument was fixed inside a laboratory and pricing assumption, and the survey may state exactly that.\",\n      \"predicted_discriminating_evidence\": \"The stated cutoff grade and its price assumption, the analytical detection limits, and any explicit note that areas were not sampled or are unclassified due to access or claim boundaries rather than due to barren rock.\",\n      \"disconfirming_shape\": \"The mapped extent is set by a physical stratigraphic contact that the survey documents independently of grade, and sensitivity to cutoff is shown to leave the boundary essentially unchanged.\",\n      \"why_distinctively_crip_minds\": \"It reads the instrument's own construction of where something ends, distinguishing produced illegibility from stated absence.\",\n      \"instruments_used\": [\"Axis 12\", \"Axis 2\"],\n      \"mind_sharpened\": \"perception/legibility\"\n    }\n  ],\n  \"top_index\": 0,\n  \"nothing_here\": false,\n  \"nothing_here_reason\": \"\"\n}",
+      "condition_b_parsed": {
+        "candidates": [
+          {
+            "hypothesis": "The headline figure describing this as one of the largest known lithium deposits is a geological quantity that the survey itself, in its own methods and caveats, declares does not establish recoverability or economic viability — and that stated limit is stripped off downstream, so a number that was explicitly defined as 'material in the ground under stated assumptions' begins to be cited as the reason a particular extraction and permitting outcome is necessary. The estimate stops summarising the evidence and starts standing behind it as its justification.",
+            "question": "What does the survey say in its own words that its number cannot establish, and where in the later record does that same number appear as the reason for a decision it disclaimed the power to support?",
+            "why_it_might_matter": "It relocates the argument from whether the deposit is big to how a bounded technical quantity acquired institutional authority it was written to refuse. That is a checkable documentary movement, not a position on mining.",
+            "predicted_discriminating_evidence": "The methods and limitations text of the published estimate: cutoff grade, assumed tonnage-density conversion, the standard disclaimer that a resource is not a reserve and that economic extraction is not demonstrated. Then the same tonnage restated without those qualifiers in agency decision records, financing statements, or national-interest framings.",
+            "disconfirming_shape": "Downstream documents carry the qualifiers forward and rest their decisions on separate economic or engineering work rather than on the geological figure; or the survey makes no such stated limitation, in which case there is no stripped caveat to trace.",
+            "why_distinctively_crip_minds": "It works on what an instrument declares it cannot hold and on a name later used as its own explanation, rather than on the merits of the estimate.",
+            "instruments_used": [
+              "PR001-09",
+              "Axis 12",
+              "PR001-03"
+            ],
+            "mind_sharpened": "classification/pattern"
+          },
+          {
+            "hypothesis": "The resource-confidence tier assigned to the deposit — the difference between an inferred, indicated and measured category — is not only a statement of geological certainty but an operator of institutional consequence: the tier determines what may be reported to investors, what may be borrowed against, what triggers a permitting pathway, and what a land agency is obliged to consider. The tier is set by drill spacing, which is set by budget and access, so a fact about how much money was spent circulates as a fact about the ground.",
+            "question": "What became institutionally possible the moment this material was placed in one confidence category rather than the adjacent one, and who was authorised to set that boundary?",
+            "why_it_might_matter": "It identifies a boundary with real jurisdictional force whose determinant is drilling density rather than the rock, and asks who holds the pen.",
+            "predicted_discriminating_evidence": "The reporting-code definitions the estimate is filed under, the stated drill-hole spacing and the qualified person or agency signing the classification, alongside any filing, loan, or agency step that is conditioned on the tier.",
+            "disconfirming_shape": "The tier carries no institutional consequence here — permitting, financing and agency obligations proceed identically whatever the confidence category — or the classification is purely academic with no filing regime attached.",
+            "why_distinctively_crip_minds": "It treats a category boundary as an action-changing device with an authorising party, not as a description of a settled state.",
+            "instruments_used": [
+              "PR001-03",
+              "Axis 11",
+              "PR001-07"
+            ],
+            "mind_sharpened": "classification/pattern"
+          },
+          {
+            "hypothesis": "The deposit's mapped edge is an artefact of an assay threshold and an economic cutoff grade rather than of the ash bed. Material below the cutoff is recorded as outside the deposit, which is not the same as absent, and the same act of drawing that line produces the footprint that later governs land, water and surface decisions. The boundary is unappealable because it was never presented as a decision.",
+            "question": "Where does this deposit stop, what set that line — detection limit, cutoff grade, or claim and access boundary — and how does the stated 'no reading' material differ from material stated as absent?",
+            "why_it_might_matter": "The perimeter that will be used for surface, water and land argument was fixed inside a laboratory and pricing assumption, and the survey may state exactly that.",
+            "predicted_discriminating_evidence": "The stated cutoff grade and its price assumption, the analytical detection limits, and any explicit note that areas were not sampled or are unclassified due to access or claim boundaries rather than due to barren rock.",
+            "disconfirming_shape": "The mapped extent is set by a physical stratigraphic contact that the survey documents independently of grade, and sensitivity to cutoff is shown to leave the boundary essentially unchanged.",
+            "why_distinctively_crip_minds": "It reads the instrument's own construction of where something ends, distinguishing produced illegibility from stated absence.",
+            "instruments_used": [
+              "Axis 12",
+              "Axis 2"
+            ],
+            "mind_sharpened": "perception/legibility"
+          }
+        ],
+        "top_index": 0,
+        "nothing_here": false,
+        "nothing_here_reason": ""
+      },
+      "condition_b_top_index": 0,
+      "condition_b_alternates_hidden": [
+        {
+          "hypothesis": "The resource-confidence tier assigned to the deposit — the difference between an inferred, indicated and measured category — is not only a statement of geological certainty but an operator of institutional consequence: the tier determines what may be reported to investors, what may be borrowed against, what triggers a permitting pathway, and what a land agency is obliged to consider. The tier is set by drill spacing, which is set by budget and access, so a fact about how much money was spent circulates as a fact about the ground.",
+          "question": "What became institutionally possible the moment this material was placed in one confidence category rather than the adjacent one, and who was authorised to set that boundary?",
+          "why_it_might_matter": "It identifies a boundary with real jurisdictional force whose determinant is drilling density rather than the rock, and asks who holds the pen.",
+          "predicted_discriminating_evidence": "The reporting-code definitions the estimate is filed under, the stated drill-hole spacing and the qualified person or agency signing the classification, alongside any filing, loan, or agency step that is conditioned on the tier.",
+          "disconfirming_shape": "The tier carries no institutional consequence here — permitting, financing and agency obligations proceed identically whatever the confidence category — or the classification is purely academic with no filing regime attached.",
+          "why_distinctively_crip_minds": "It treats a category boundary as an action-changing device with an authorising party, not as a description of a settled state.",
+          "instruments_used": [
+            "PR001-03",
+            "Axis 11",
+            "PR001-07"
+          ],
+          "mind_sharpened": "classification/pattern"
+        },
+        {
+          "hypothesis": "The deposit's mapped edge is an artefact of an assay threshold and an economic cutoff grade rather than of the ash bed. Material below the cutoff is recorded as outside the deposit, which is not the same as absent, and the same act of drawing that line produces the footprint that later governs land, water and surface decisions. The boundary is unappealable because it was never presented as a decision.",
+          "question": "Where does this deposit stop, what set that line — detection limit, cutoff grade, or claim and access boundary — and how does the stated 'no reading' material differ from material stated as absent?",
+          "why_it_might_matter": "The perimeter that will be used for surface, water and land argument was fixed inside a laboratory and pricing assumption, and the survey may state exactly that.",
+          "predicted_discriminating_evidence": "The stated cutoff grade and its price assumption, the analytical detection limits, and any explicit note that areas were not sampled or are unclassified due to access or claim boundaries rather than due to barren rock.",
+          "disconfirming_shape": "The mapped extent is set by a physical stratigraphic contact that the survey documents independently of grade, and sensitivity to cutoff is shown to leave the boundary essentially unchanged.",
+          "why_distinctively_crip_minds": "It reads the instrument's own construction of where something ends, distinguishing produced illegibility from stated absence.",
+          "instruments_used": [
+            "Axis 12",
+            "Axis 2"
+          ],
+          "mind_sharpened": "perception/legibility"
+        }
+      ],
+      "condition_b_identity": {
+        "requested_model": "anthropic/claude-opus-4.8",
+        "actual_model": "claude-opus-5",
+        "provider": "claude-cli-subscription",
+        "auth": "claude.ai subscription OAuth",
+        "fallback_used": false,
+        "openrouter_used": false,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 35827,
+          "cache_read_input_tokens": 10239,
+          "output_tokens": 2924,
+          "output_tokens_details": {
+            "thinking_tokens": 1185
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 35827,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 2924,
+              "cache_read_input_tokens": 10239,
+              "cache_creation_input_tokens": 35827,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 35827
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "subscription_cost_equivalent_usd": 0.43767249999999996,
+        "duration_ms": 48556,
+        "session_id": "cabd455a-62ff-434f-a09a-b4a9ec4fad6e",
+        "temperature_requested": null,
+        "temperature_honoured": null
+      },
+      "technical_checks": {
+        "both_calls_completed": true,
+        "correct_model_requested_a": true,
+        "correct_model_requested_b": true,
+        "world_hash_match": true,
+        "a_conforms_to_live_contract": true,
+        "b_conforms_to_contract": true,
+        "b_top_designated_when_candidates_present": true,
+        "b_candidate_count": 3,
+        "nothing_here_renderable": true
+      }
+    },
+    "P02": {
+      "subject_name": "ICO annual global coffee production estimate",
+      "call_order": "B_FIRST",
+      "world_payload_sha256": "6e70f4200cb65d3abc9829003bbc1c03b403b3af4463a29a413e325c1495ab0c",
+      "version_map_private": {
+        "X": "B",
+        "Y": "A"
+      },
+      "condition_a_raw": {
+        "ran": true,
+        "assumption": "none",
+        "hypothesis_before_search": true,
+        "carrier_hypothesis": "",
+        "queries": [],
+        "urls": [],
+        "_provider": {
+          "requested_model": "anthropic/claude-opus-4.8",
+          "actual_model": "claude-opus-5",
+          "provider": "claude-cli-subscription",
+          "auth": "claude.ai subscription OAuth",
+          "fallback_used": false,
+          "openrouter_used": false,
+          "usage": {
+            "input_tokens": 2,
+            "cache_creation_input_tokens": 18086,
+            "cache_read_input_tokens": 11462,
+            "output_tokens": 37,
+            "output_tokens_details": {
+              "thinking_tokens": 0
+            },
+            "server_tool_use": {
+              "web_search_requests": 0,
+              "web_fetch_requests": 0
+            },
+            "service_tier": "standard",
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 18086,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "inference_geo": "not_available",
+            "iterations": [
+              {
+                "input_tokens": 2,
+                "output_tokens": 37,
+                "cache_read_input_tokens": 11462,
+                "cache_creation_input_tokens": 18086,
+                "cache_creation": {
+                  "ephemeral_5m_input_tokens": 0,
+                  "ephemeral_1h_input_tokens": 18086
+                },
+                "type": "message"
+              }
+            ],
+            "speed": "standard"
+          },
+          "subscription_cost_equivalent_usd": 0.18885700000000002,
+          "duration_ms": 2071,
+          "session_id": "58951419-adbd-4c19-84a7-547b4842c5f7",
+          "temperature_requested": null,
+          "temperature_honoured": null
+        }
+      },
+      "condition_b_raw_completion_text": "{\n  \"candidates\": [\n    {\n      \"hypothesis\": \"The global production estimate is assembled from a frame of reporting entities — member governments, exporter registries, trade flows — so the coffee it can see is coffee that has passed through an entity that reports. Volume grown and consumed inside producing households, sold through unregistered local channels, or grown in countries outside the reporting membership is not a small residual the estimate handles imprecisely; it is a category the instrument has no field for, and the organisation's own methodology notes are likely to say so in the language of 'estimated', 'not reported' or 'excluded'.\",\n      \"question\": \"Where does this estimate state, in its own methodology, the categories of production it cannot register — and what does the resulting figure become once that stated gap is dropped downstream by traders, roasters and policy documents that cite the total as a total?\",\n      \"why_it_might_matter\": \"A number's authority usually outlives its caveats. If the compiler names its own blind spot and every downstream user quotes the headline, the invisibility is manufactured by circulation rather than by the compiler, and the growers who are absent by construction are absent from every policy built on the figure.\",\n      \"predicted_discriminating_evidence\": \"The methodology or footnote apparatus of a specific crop-year estimate: whether non-reporting or non-member origins appear as an estimated value, a zero, or nothing at all; whether domestic/on-farm consumption in producing countries has its own line; whether any country-year appears as 'not available' rather than as a number.\",\n      \"disconfirming_shape\": \"The methodology shows the frame is closed and complete — all producing origins are covered by direct survey or satellite/trade reconstruction, with on-farm and informal volume explicitly modelled and reported as its own line — leaving no category absent by construction.\",\n      \"why_distinctively_crip_minds\": \"It reads the instrument's own stated limits rather than the subject's difficulty, and treats illegibility as something the counting frame produces, not something the uncounted growers lack.\",\n      \"instruments_used\": [\"Axis 12\", \"Axis 11\", \"PR001-07\"],\n      \"mind_sharpened\": \"perception/legibility\"\n    },\n    {\n      \"hypothesis\": \"The estimate has two lives: a first figure released while the crop is still being sold, and a revised figure released after. Contracts, hedges and farmgate prices settle against the first; the revision corrects the record but cannot reopen anything it corrected. The revision cycle therefore does not distribute error evenly — it places whoever sold earliest, and with least ability to hold stock, permanently on the wrong side of a number that was later admitted to be wrong.\",\n      \"question\": \"At what point in the selling calendar of a given origin does the first estimate land, at what point does the revision land, and what decision had already closed in between?\",\n      \"why_it_might_matter\": \"Being corrected later is not the same as being informed on time. If the correction is systematically published after the window in which it could have changed a price, then accuracy over the full cycle coexists with a durable one-directional transfer, and no one has to intend it.\",\n      \"predicted_discriminating_evidence\": \"The publication dates of an initial and a revised crop-year estimate for one origin, set against that origin's main harvest and sale window and against the settlement dates of the contracts that reference the period; plus the direction and size of the revision.\",\n      \"disconfirming_shape\": \"Revisions land before or during the main selling window, or the revision is materially small, or contracts and price mechanisms reference the later revised figure retroactively — in which case nothing was forfeited by the timing.\",\n      \"why_distinctively_crip_minds\": \"It treats release timing as an access system rather than an administrative detail, and locates the harm in a forfeited action rather than in delay as such.\",\n      \"instruments_used\": [\"PR002-01\", \"PR002-05\", \"Axis 4\"],\n      \"mind_sharpened\": \"mediation/timing\"\n    },\n    {\n      \"hypothesis\": \"The estimate rests on a classification that sorts coffee by country-assigned group rather than by lot — origins are placed in variety and quality groupings that then anchor indicator prices. Once a country sits in a group, the group becomes the explanation for what its coffee is worth: the assignment describes the crop and is then used as the reason the crop prices where it does. A farm that changes what it grows or how it processes is, at this level, invisible until the country is reassigned — and there may be no stated route by which reassignment is requested, evidenced or appealed.\",\n      \"question\": \"Who is authorised to move an origin between production or price groups, on what evidence, and does any published procedure exist for a producer country to contest its assignment?\",\n      \"why_it_might_matter\": \"If the boundary is applied by the compiler and consuming-member interests, and the data that would justify moving it is held by growers with no route to submit it, then the people with the evidence are structurally not the people with the authority — and quality gains at farm level cannot reach the number that sets the price.\",\n      \"predicted_discriminating_evidence\": \"The published group definitions and the country list attached to each, with the dates of any changes; the governance minutes or rules specifying who approves a change; the presence or absence of a documented request or appeal mechanism; and whether recent reports use group membership causally ('because it is a Robusta origin') rather than descriptively.\",\n      \"disconfirming_shape\": \"There is a stated, used reassignment procedure with documented cases of origins moving on submitted evidence, and reports consistently use the grouping as shorthand for measured attributes rather than as their cause.\",\n      \"why_distinctively_crip_minds\": \"It follows a specific boundary doing specific work to specific parties — who holds the data versus who holds the power to apply the category — rather than objecting to categorisation in the abstract.\",\n      \"instruments_used\": [\"PR001-09\", \"PR001-03\", \"Axis 11\"],\n      \"mind_sharpened\": \"classification/pattern\"\n    }\n  ],\n  \"top_index\": 2,\n  \"nothing_here\": false,\n  \"nothing_here_reason\": \"\"\n}",
+      "condition_b_parsed": {
+        "candidates": [
+          {
+            "hypothesis": "The global production estimate is assembled from a frame of reporting entities — member governments, exporter registries, trade flows — so the coffee it can see is coffee that has passed through an entity that reports. Volume grown and consumed inside producing households, sold through unregistered local channels, or grown in countries outside the reporting membership is not a small residual the estimate handles imprecisely; it is a category the instrument has no field for, and the organisation's own methodology notes are likely to say so in the language of 'estimated', 'not reported' or 'excluded'.",
+            "question": "Where does this estimate state, in its own methodology, the categories of production it cannot register — and what does the resulting figure become once that stated gap is dropped downstream by traders, roasters and policy documents that cite the total as a total?",
+            "why_it_might_matter": "A number's authority usually outlives its caveats. If the compiler names its own blind spot and every downstream user quotes the headline, the invisibility is manufactured by circulation rather than by the compiler, and the growers who are absent by construction are absent from every policy built on the figure.",
+            "predicted_discriminating_evidence": "The methodology or footnote apparatus of a specific crop-year estimate: whether non-reporting or non-member origins appear as an estimated value, a zero, or nothing at all; whether domestic/on-farm consumption in producing countries has its own line; whether any country-year appears as 'not available' rather than as a number.",
+            "disconfirming_shape": "The methodology shows the frame is closed and complete — all producing origins are covered by direct survey or satellite/trade reconstruction, with on-farm and informal volume explicitly modelled and reported as its own line — leaving no category absent by construction.",
+            "why_distinctively_crip_minds": "It reads the instrument's own stated limits rather than the subject's difficulty, and treats illegibility as something the counting frame produces, not something the uncounted growers lack.",
+            "instruments_used": [
+              "Axis 12",
+              "Axis 11",
+              "PR001-07"
+            ],
+            "mind_sharpened": "perception/legibility"
+          },
+          {
+            "hypothesis": "The estimate has two lives: a first figure released while the crop is still being sold, and a revised figure released after. Contracts, hedges and farmgate prices settle against the first; the revision corrects the record but cannot reopen anything it corrected. The revision cycle therefore does not distribute error evenly — it places whoever sold earliest, and with least ability to hold stock, permanently on the wrong side of a number that was later admitted to be wrong.",
+            "question": "At what point in the selling calendar of a given origin does the first estimate land, at what point does the revision land, and what decision had already closed in between?",
+            "why_it_might_matter": "Being corrected later is not the same as being informed on time. If the correction is systematically published after the window in which it could have changed a price, then accuracy over the full cycle coexists with a durable one-directional transfer, and no one has to intend it.",
+            "predicted_discriminating_evidence": "The publication dates of an initial and a revised crop-year estimate for one origin, set against that origin's main harvest and sale window and against the settlement dates of the contracts that reference the period; plus the direction and size of the revision.",
+            "disconfirming_shape": "Revisions land before or during the main selling window, or the revision is materially small, or contracts and price mechanisms reference the later revised figure retroactively — in which case nothing was forfeited by the timing.",
+            "why_distinctively_crip_minds": "It treats release timing as an access system rather than an administrative detail, and locates the harm in a forfeited action rather than in delay as such.",
+            "instruments_used": [
+              "PR002-01",
+              "PR002-05",
+              "Axis 4"
+            ],
+            "mind_sharpened": "mediation/timing"
+          },
+          {
+            "hypothesis": "The estimate rests on a classification that sorts coffee by country-assigned group rather than by lot — origins are placed in variety and quality groupings that then anchor indicator prices. Once a country sits in a group, the group becomes the explanation for what its coffee is worth: the assignment describes the crop and is then used as the reason the crop prices where it does. A farm that changes what it grows or how it processes is, at this level, invisible until the country is reassigned — and there may be no stated route by which reassignment is requested, evidenced or appealed.",
+            "question": "Who is authorised to move an origin between production or price groups, on what evidence, and does any published procedure exist for a producer country to contest its assignment?",
+            "why_it_might_matter": "If the boundary is applied by the compiler and consuming-member interests, and the data that would justify moving it is held by growers with no route to submit it, then the people with the evidence are structurally not the people with the authority — and quality gains at farm level cannot reach the number that sets the price.",
+            "predicted_discriminating_evidence": "The published group definitions and the country list attached to each, with the dates of any changes; the governance minutes or rules specifying who approves a change; the presence or absence of a documented request or appeal mechanism; and whether recent reports use group membership causally ('because it is a Robusta origin') rather than descriptively.",
+            "disconfirming_shape": "There is a stated, used reassignment procedure with documented cases of origins moving on submitted evidence, and reports consistently use the grouping as shorthand for measured attributes rather than as their cause.",
+            "why_distinctively_crip_minds": "It follows a specific boundary doing specific work to specific parties — who holds the data versus who holds the power to apply the category — rather than objecting to categorisation in the abstract.",
+            "instruments_used": [
+              "PR001-09",
+              "PR001-03",
+              "Axis 11"
+            ],
+            "mind_sharpened": "classification/pattern"
+          }
+        ],
+        "top_index": 2,
+        "nothing_here": false,
+        "nothing_here_reason": ""
+      },
+      "condition_b_top_index": 2,
+      "condition_b_alternates_hidden": [
+        {
+          "hypothesis": "The global production estimate is assembled from a frame of reporting entities — member governments, exporter registries, trade flows — so the coffee it can see is coffee that has passed through an entity that reports. Volume grown and consumed inside producing households, sold through unregistered local channels, or grown in countries outside the reporting membership is not a small residual the estimate handles imprecisely; it is a category the instrument has no field for, and the organisation's own methodology notes are likely to say so in the language of 'estimated', 'not reported' or 'excluded'.",
+          "question": "Where does this estimate state, in its own methodology, the categories of production it cannot register — and what does the resulting figure become once that stated gap is dropped downstream by traders, roasters and policy documents that cite the total as a total?",
+          "why_it_might_matter": "A number's authority usually outlives its caveats. If the compiler names its own blind spot and every downstream user quotes the headline, the invisibility is manufactured by circulation rather than by the compiler, and the growers who are absent by construction are absent from every policy built on the figure.",
+          "predicted_discriminating_evidence": "The methodology or footnote apparatus of a specific crop-year estimate: whether non-reporting or non-member origins appear as an estimated value, a zero, or nothing at all; whether domestic/on-farm consumption in producing countries has its own line; whether any country-year appears as 'not available' rather than as a number.",
+          "disconfirming_shape": "The methodology shows the frame is closed and complete — all producing origins are covered by direct survey or satellite/trade reconstruction, with on-farm and informal volume explicitly modelled and reported as its own line — leaving no category absent by construction.",
+          "why_distinctively_crip_minds": "It reads the instrument's own stated limits rather than the subject's difficulty, and treats illegibility as something the counting frame produces, not something the uncounted growers lack.",
+          "instruments_used": [
+            "Axis 12",
+            "Axis 11",
+            "PR001-07"
+          ],
+          "mind_sharpened": "perception/legibility"
+        },
+        {
+          "hypothesis": "The estimate has two lives: a first figure released while the crop is still being sold, and a revised figure released after. Contracts, hedges and farmgate prices settle against the first; the revision corrects the record but cannot reopen anything it corrected. The revision cycle therefore does not distribute error evenly — it places whoever sold earliest, and with least ability to hold stock, permanently on the wrong side of a number that was later admitted to be wrong.",
+          "question": "At what point in the selling calendar of a given origin does the first estimate land, at what point does the revision land, and what decision had already closed in between?",
+          "why_it_might_matter": "Being corrected later is not the same as being informed on time. If the correction is systematically published after the window in which it could have changed a price, then accuracy over the full cycle coexists with a durable one-directional transfer, and no one has to intend it.",
+          "predicted_discriminating_evidence": "The publication dates of an initial and a revised crop-year estimate for one origin, set against that origin's main harvest and sale window and against the settlement dates of the contracts that reference the period; plus the direction and size of the revision.",
+          "disconfirming_shape": "Revisions land before or during the main selling window, or the revision is materially small, or contracts and price mechanisms reference the later revised figure retroactively — in which case nothing was forfeited by the timing.",
+          "why_distinctively_crip_minds": "It treats release timing as an access system rather than an administrative detail, and locates the harm in a forfeited action rather than in delay as such.",
+          "instruments_used": [
+            "PR002-01",
+            "PR002-05",
+            "Axis 4"
+          ],
+          "mind_sharpened": "mediation/timing"
+        }
+      ],
+      "condition_b_identity": {
+        "requested_model": "anthropic/claude-opus-4.8",
+        "actual_model": "claude-opus-5",
+        "provider": "claude-cli-subscription",
+        "auth": "claude.ai subscription OAuth",
+        "fallback_used": false,
+        "openrouter_used": false,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 17790,
+          "cache_read_input_tokens": 28217,
+          "output_tokens": 3372,
+          "output_tokens_details": {
+            "thinking_tokens": 1389
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 17790,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 3372,
+              "cache_read_input_tokens": 28217,
+              "cache_creation_input_tokens": 17790,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 17790
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "subscription_cost_equivalent_usd": 0.2774565,
+        "duration_ms": 56058,
+        "session_id": "544ff25c-afb1-465a-ad32-05d2109367a3",
+        "temperature_requested": null,
+        "temperature_honoured": null
+      },
+      "technical_checks": {
+        "both_calls_completed": true,
+        "correct_model_requested_a": true,
+        "correct_model_requested_b": true,
+        "world_hash_match": true,
+        "a_conforms_to_live_contract": true,
+        "b_conforms_to_contract": true,
+        "b_top_designated_when_candidates_present": true,
+        "b_candidate_count": 3,
+        "nothing_here_renderable": true
+      }
+    },
+    "P03": {
+      "subject_name": "FAA insulin-treated diabetes special-issuance protocol",
+      "call_order": "A_FIRST",
+      "world_payload_sha256": "ec3bfd88285b2de5cae865403f3d017a567ac269bef22c9cb5a67a9b86e7f651",
+      "version_map_private": {
+        "X": "A",
+        "Y": "B"
+      },
+      "condition_a_raw": {
+        "ran": false,
+        "error": "ProviderError: reply is not valid JSON (Extra data: line 3 column 1 (char 557)): '{\"assumption\": \"That an airman\\'s fitness is a fixed property of an intact, self-regulating b",
+        "carrier_hypothesis": "",
+        "queries": [],
+        "urls": []
+      },
+      "condition_b_raw_completion_text": "{\n  \"candidates\": [\n    {\n      \"hypothesis\": \"The 2019 protocol replaced a categorical bar with an individualized pathway whose price of entry is continuous device-generated data — so eligibility now rests on a device, its supply, calibration, sensor replacement, data upload and the vendor's continued support, not only on the applicant's physiology. The protocol likely writes in requirements (minimum days of readings, in-flight checking intervals, reporting cadence) that make certification contingent on a maintenance and supply chain that the applicant does not control and that the rule does not name as a dependency.\",\n      \"question\": \"In the published protocol, what exactly must keep working — sensors, uploads, data retention, vendor availability — for an applicant to remain certified, and what does the protocol say happens when that layer fails rather than when the applicant's control fails?\",\n      \"why_it_might_matter\": \"It shifts the finding from 'the ban was lifted' to 'the gate moved from a diagnosis to an equipment and record-keeping apparatus,' which distributes eligibility by who can afford, obtain, and sustain a monitoring arrangement, including insurance coverage for sensors and access to prescribing clinicians.\",\n      \"predicted_discriminating_evidence\": \"The Federal Register notice and the FAA's protocol worksheets: stated minimum periods of monitoring data, required data submission format, whether a gap or sensor failure counts as a deficiency, whether specific device makes are named or implicitly required, and whether any provision addresses device malfunction in flight versus glycemic events.\",\n      \"disconfirming_shape\": \"The protocol accepts alternative evidence of glycemic control (fingerstick logs, lab values alone), tolerates data gaps explicitly, is device-agnostic with no minimum data volume, and treats device failure as a non-event for certification status. Then the requirement is evidentiary, not infrastructural.\",\n      \"why_distinctively_crip_minds\": \"It reads a regulatory liberalisation as the relocation of a dependency rather than its removal, and asks what invisible upkeep now sits inside the word 'qualified'.\",\n      \"instruments_used\": [\"PR003-03\", \"PR001-05\", \"Axis 5\", \"Axis 14\"],\n      \"mind_sharpened\": \"dependence/infrastructure\"\n    },\n    {\n      \"hypothesis\": \"The pre-2019 rule and the post-2019 rule differ in what they can register, not merely in permissiveness. The categorical exclusion could hold only a diagnosis and a treatment modality — 'insulin-treated' — and by construction could not see glucose control, flight record, or hypoglycemia history; the new protocol makes those legible, and in doing so freezes applicants into a continuously surveilled record whose readings become permanently reviewable. The same act that made pilots eligible made them readable in a way non-diabetic pilots are not.\",\n      \"question\": \"What did the old class-3-only rule have a field for, what does the 2019 protocol newly turn into a number, and what does the protocol state it still cannot assess or does not require of comparably risky applicants?\",\n      \"why_it_might_matter\": \"It locates the change in the instrument rather than in FAA generosity, and predicts a specific asymmetry: an applicant whose every reading is inspectable versus one assessed at intervals against a threshold — a difference in ongoing exposure that no fairness framing of the rule change captures.\",\n      \"predicted_discriminating_evidence\": \"The Federal Register text's own account of why the categorical rule was retained for decades and what evidence it said was previously unavailable; the protocol's stated review intervals, data-retention and reporting duties compared with those for other special-issuance conditions; any stated limitation on what the reviewers can determine from the data.\",\n      \"disconfirming_shape\": \"The protocol's reporting and review burdens are equivalent to other special issuances, the FAA states no prior evidentiary gap, or the categorical rule was itself already based on individual glycemic data. Any of these removes the asymmetry.\",\n      \"why_distinctively_crip_minds\": \"It treats becoming visible to the certifying system as simultaneously the source of access and the source of a permanent record, rather than as an unmixed gain.\",\n      \"instruments_used\": [\"PR001-07\", \"Axis 12\", \"Axis 11\"],\n      \"mind_sharpened\": \"perception/legibility\"\n    },\n    {\n      \"hypothesis\": \"The interval between the categorical bar and the 2019 protocol is itself the mechanism: careers were foreclosed at the age at which commercial training begins, and the new pathway arrives to people whose training hours, medical history, hiring window and seniority accrual have all changed while the agency deliberated. The decision, when it came, was written as though it were opening a door for a static population.\",\n      \"question\": \"For whom did the 2019 protocol arrive after the point at which it could still change a career, and does any FAA or advocacy record acknowledge the intervening period as a cost rather than as a prior state of the science?\",\n      \"why_it_might_matter\": \"It reframes 'first certificate issued April 2020' from a milestone into a marker of how long a categorical rule ran and what it compounded — training already not undertaken, seniority never begun.\",\n      \"predicted_discriminating_evidence\": \"The documented history of petitions, exemption requests and congressional or advocacy pressure between 1996 and 2019, with dates; any FAA statement of why the change came when it did; the age and prior-training profile of early certificate holders.\",\n      \"disconfirming_shape\": \"The record shows the protocol followed promptly on the availability of continuous monitoring evidence with no earlier petitions denied, or early certificate holders were new entrants unaffected by the prior bar — either makes the delay a scientific lag rather than an accumulated cost.\",\n      \"why_distinctively_crip_minds\": \"It reads duration rather than incident, and refuses both the celebratory and the heroic framing of the first certificate.\",\n      \"instruments_used\": [\"Axis 9\", \"PR002-05\", \"PR002-01\"],\n      \"mind_sharpened\": \"mediation/timing\"\n    }\n  ],\n  \"top_index\": 1,\n  \"nothing_here\": false,\n  \"nothing_here_reason\": \"\"\n}",
+      "condition_b_parsed": {
+        "candidates": [
+          {
+            "hypothesis": "The 2019 protocol replaced a categorical bar with an individualized pathway whose price of entry is continuous device-generated data — so eligibility now rests on a device, its supply, calibration, sensor replacement, data upload and the vendor's continued support, not only on the applicant's physiology. The protocol likely writes in requirements (minimum days of readings, in-flight checking intervals, reporting cadence) that make certification contingent on a maintenance and supply chain that the applicant does not control and that the rule does not name as a dependency.",
+            "question": "In the published protocol, what exactly must keep working — sensors, uploads, data retention, vendor availability — for an applicant to remain certified, and what does the protocol say happens when that layer fails rather than when the applicant's control fails?",
+            "why_it_might_matter": "It shifts the finding from 'the ban was lifted' to 'the gate moved from a diagnosis to an equipment and record-keeping apparatus,' which distributes eligibility by who can afford, obtain, and sustain a monitoring arrangement, including insurance coverage for sensors and access to prescribing clinicians.",
+            "predicted_discriminating_evidence": "The Federal Register notice and the FAA's protocol worksheets: stated minimum periods of monitoring data, required data submission format, whether a gap or sensor failure counts as a deficiency, whether specific device makes are named or implicitly required, and whether any provision addresses device malfunction in flight versus glycemic events.",
+            "disconfirming_shape": "The protocol accepts alternative evidence of glycemic control (fingerstick logs, lab values alone), tolerates data gaps explicitly, is device-agnostic with no minimum data volume, and treats device failure as a non-event for certification status. Then the requirement is evidentiary, not infrastructural.",
+            "why_distinctively_crip_minds": "It reads a regulatory liberalisation as the relocation of a dependency rather than its removal, and asks what invisible upkeep now sits inside the word 'qualified'.",
+            "instruments_used": [
+              "PR003-03",
+              "PR001-05",
+              "Axis 5",
+              "Axis 14"
+            ],
+            "mind_sharpened": "dependence/infrastructure"
+          },
+          {
+            "hypothesis": "The pre-2019 rule and the post-2019 rule differ in what they can register, not merely in permissiveness. The categorical exclusion could hold only a diagnosis and a treatment modality — 'insulin-treated' — and by construction could not see glucose control, flight record, or hypoglycemia history; the new protocol makes those legible, and in doing so freezes applicants into a continuously surveilled record whose readings become permanently reviewable. The same act that made pilots eligible made them readable in a way non-diabetic pilots are not.",
+            "question": "What did the old class-3-only rule have a field for, what does the 2019 protocol newly turn into a number, and what does the protocol state it still cannot assess or does not require of comparably risky applicants?",
+            "why_it_might_matter": "It locates the change in the instrument rather than in FAA generosity, and predicts a specific asymmetry: an applicant whose every reading is inspectable versus one assessed at intervals against a threshold — a difference in ongoing exposure that no fairness framing of the rule change captures.",
+            "predicted_discriminating_evidence": "The Federal Register text's own account of why the categorical rule was retained for decades and what evidence it said was previously unavailable; the protocol's stated review intervals, data-retention and reporting duties compared with those for other special-issuance conditions; any stated limitation on what the reviewers can determine from the data.",
+            "disconfirming_shape": "The protocol's reporting and review burdens are equivalent to other special issuances, the FAA states no prior evidentiary gap, or the categorical rule was itself already based on individual glycemic data. Any of these removes the asymmetry.",
+            "why_distinctively_crip_minds": "It treats becoming visible to the certifying system as simultaneously the source of access and the source of a permanent record, rather than as an unmixed gain.",
+            "instruments_used": [
+              "PR001-07",
+              "Axis 12",
+              "Axis 11"
+            ],
+            "mind_sharpened": "perception/legibility"
+          },
+          {
+            "hypothesis": "The interval between the categorical bar and the 2019 protocol is itself the mechanism: careers were foreclosed at the age at which commercial training begins, and the new pathway arrives to people whose training hours, medical history, hiring window and seniority accrual have all changed while the agency deliberated. The decision, when it came, was written as though it were opening a door for a static population.",
+            "question": "For whom did the 2019 protocol arrive after the point at which it could still change a career, and does any FAA or advocacy record acknowledge the intervening period as a cost rather than as a prior state of the science?",
+            "why_it_might_matter": "It reframes 'first certificate issued April 2020' from a milestone into a marker of how long a categorical rule ran and what it compounded — training already not undertaken, seniority never begun.",
+            "predicted_discriminating_evidence": "The documented history of petitions, exemption requests and congressional or advocacy pressure between 1996 and 2019, with dates; any FAA statement of why the change came when it did; the age and prior-training profile of early certificate holders.",
+            "disconfirming_shape": "The record shows the protocol followed promptly on the availability of continuous monitoring evidence with no earlier petitions denied, or early certificate holders were new entrants unaffected by the prior bar — either makes the delay a scientific lag rather than an accumulated cost.",
+            "why_distinctively_crip_minds": "It reads duration rather than incident, and refuses both the celebratory and the heroic framing of the first certificate.",
+            "instruments_used": [
+              "Axis 9",
+              "PR002-05",
+              "PR002-01"
+            ],
+            "mind_sharpened": "mediation/timing"
+          }
+        ],
+        "top_index": 1,
+        "nothing_here": false,
+        "nothing_here_reason": ""
+      },
+      "condition_b_top_index": 1,
+      "condition_b_alternates_hidden": [
+        {
+          "hypothesis": "The 2019 protocol replaced a categorical bar with an individualized pathway whose price of entry is continuous device-generated data — so eligibility now rests on a device, its supply, calibration, sensor replacement, data upload and the vendor's continued support, not only on the applicant's physiology. The protocol likely writes in requirements (minimum days of readings, in-flight checking intervals, reporting cadence) that make certification contingent on a maintenance and supply chain that the applicant does not control and that the rule does not name as a dependency.",
+          "question": "In the published protocol, what exactly must keep working — sensors, uploads, data retention, vendor availability — for an applicant to remain certified, and what does the protocol say happens when that layer fails rather than when the applicant's control fails?",
+          "why_it_might_matter": "It shifts the finding from 'the ban was lifted' to 'the gate moved from a diagnosis to an equipment and record-keeping apparatus,' which distributes eligibility by who can afford, obtain, and sustain a monitoring arrangement, including insurance coverage for sensors and access to prescribing clinicians.",
+          "predicted_discriminating_evidence": "The Federal Register notice and the FAA's protocol worksheets: stated minimum periods of monitoring data, required data submission format, whether a gap or sensor failure counts as a deficiency, whether specific device makes are named or implicitly required, and whether any provision addresses device malfunction in flight versus glycemic events.",
+          "disconfirming_shape": "The protocol accepts alternative evidence of glycemic control (fingerstick logs, lab values alone), tolerates data gaps explicitly, is device-agnostic with no minimum data volume, and treats device failure as a non-event for certification status. Then the requirement is evidentiary, not infrastructural.",
+          "why_distinctively_crip_minds": "It reads a regulatory liberalisation as the relocation of a dependency rather than its removal, and asks what invisible upkeep now sits inside the word 'qualified'.",
+          "instruments_used": [
+            "PR003-03",
+            "PR001-05",
+            "Axis 5",
+            "Axis 14"
+          ],
+          "mind_sharpened": "dependence/infrastructure"
+        },
+        {
+          "hypothesis": "The interval between the categorical bar and the 2019 protocol is itself the mechanism: careers were foreclosed at the age at which commercial training begins, and the new pathway arrives to people whose training hours, medical history, hiring window and seniority accrual have all changed while the agency deliberated. The decision, when it came, was written as though it were opening a door for a static population.",
+          "question": "For whom did the 2019 protocol arrive after the point at which it could still change a career, and does any FAA or advocacy record acknowledge the intervening period as a cost rather than as a prior state of the science?",
+          "why_it_might_matter": "It reframes 'first certificate issued April 2020' from a milestone into a marker of how long a categorical rule ran and what it compounded — training already not undertaken, seniority never begun.",
+          "predicted_discriminating_evidence": "The documented history of petitions, exemption requests and congressional or advocacy pressure between 1996 and 2019, with dates; any FAA statement of why the change came when it did; the age and prior-training profile of early certificate holders.",
+          "disconfirming_shape": "The record shows the protocol followed promptly on the availability of continuous monitoring evidence with no earlier petitions denied, or early certificate holders were new entrants unaffected by the prior bar — either makes the delay a scientific lag rather than an accumulated cost.",
+          "why_distinctively_crip_minds": "It reads duration rather than incident, and refuses both the celebratory and the heroic framing of the first certificate.",
+          "instruments_used": [
+            "Axis 9",
+            "PR002-05",
+            "PR002-01"
+          ],
+          "mind_sharpened": "mediation/timing"
+        }
+      ],
+      "condition_b_identity": {
+        "requested_model": "anthropic/claude-opus-4.8",
+        "actual_model": "claude-opus-5",
+        "provider": "claude-cli-subscription",
+        "auth": "claude.ai subscription OAuth",
+        "fallback_used": false,
+        "openrouter_used": false,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 17877,
+          "cache_read_input_tokens": 28217,
+          "output_tokens": 2061,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 17877,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 2061,
+              "cache_read_input_tokens": 28217,
+              "cache_creation_input_tokens": 17877,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 17877
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "subscription_cost_equivalent_usd": 0.2456245,
+        "duration_ms": 33334,
+        "session_id": "0773c2e3-2980-42a0-865a-301923ce42b8",
+        "temperature_requested": null,
+        "temperature_honoured": null
+      },
+      "technical_checks": {
+        "both_calls_completed": true,
+        "correct_model_requested_a": "N/A (ran=False, no _provider on error path)",
+        "correct_model_requested_b": true,
+        "world_hash_match": true,
+        "a_conforms_to_live_contract": true,
+        "b_conforms_to_contract": true,
+        "b_top_designated_when_candidates_present": true,
+        "b_candidate_count": 3,
+        "nothing_here_renderable": true
+      }
+    },
+    "P04": {
+      "subject_name": "Hybrid III 50th-percentile-male crash test dummy",
+      "call_order": "B_FIRST",
+      "world_payload_sha256": "c643120c3f248ff8d36acbc987d632bca3f3a3f5699ec4ff83dfbf102af44f87",
+      "version_map_private": {
+        "X": "B",
+        "Y": "A"
+      },
+      "condition_a_raw": {
+        "ran": true,
+        "assumption": "The regulation takes the person to be protected as a single standard body — one seated posture, one spine curvature, one set of joint stiffnesses and injury thresholds calibrated to a 172 lb 5'9\" adult male sitting unaided in an unmodified factory seat — so that anyone whose body, posture, seating support or vehicle controls differ is not a person the crash performance was ever measured for.",
+        "hypothesis_before_search": true,
+        "carrier_hypothesis": "The Part 572 Subpart E dummy build/positioning specification (fixed spine curvature, 1-g limb joint settings, prescribed seated posture) together with NHTSA's 49 CFR Part 595 'make inoperative' exemption, which lets modifiers disable or relocate airbags and controls for drivers with disabilities without any corresponding crash-test device or requirement, should show the standard body operating as the only tested configuration and difference handled as an exemption from safety rather than a tested case.",
+        "queries": [
+          "49 CFR Part 572 Subpart E Hybrid III 50th percentile male dummy positioning and spine specification",
+          "NHTSA Part 595 make inoperative exemption airbag modification disabled drivers Hybrid III test device"
+        ],
+        "urls": [
+          "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-V/part-572/subpart-E",
+          "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-V/part-595/subpart-C",
+          "https://www.nhtsa.gov/sites/nhtsa.gov/files/documents/hybrid_iii_50th_male_dummy_biofidelity_evaluation.pdf"
+        ],
+        "_provider": {
+          "requested_model": "anthropic/claude-opus-4.8",
+          "actual_model": "claude-opus-5",
+          "provider": "claude-cli-subscription",
+          "auth": "claude.ai subscription OAuth",
+          "fallback_used": false,
+          "openrouter_used": false,
+          "usage": {
+            "input_tokens": 2,
+            "cache_creation_input_tokens": 18248,
+            "cache_read_input_tokens": 11462,
+            "output_tokens": 1078,
+            "output_tokens_details": {
+              "thinking_tokens": 526
+            },
+            "server_tool_use": {
+              "web_search_requests": 0,
+              "web_fetch_requests": 0
+            },
+            "service_tier": "standard",
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 18248,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "inference_geo": "not_available",
+            "iterations": [
+              {
+                "input_tokens": 2,
+                "output_tokens": 1078,
+                "cache_read_input_tokens": 11462,
+                "cache_creation_input_tokens": 18248,
+                "cache_creation": {
+                  "ephemeral_5m_input_tokens": 0,
+                  "ephemeral_1h_input_tokens": 18248
+                },
+                "type": "message"
+              }
+            ],
+            "speed": "standard"
+          },
+          "subscription_cost_equivalent_usd": 0.216638,
+          "duration_ms": 17137,
+          "session_id": "156277a2-46b0-44d0-8205-c163220c4334",
+          "temperature_requested": null,
+          "temperature_honoured": null
+        }
+      },
+      "condition_b_raw_completion_text": "{\"candidates\":[{\"hypothesis\":\"The regulation does not merely under-represent other bodies; it encodes one body as the unit of compliance, and the encoding is recorded in the part of the rule nobody reads as a body claim — the dimensional and instrumentation tables of the test-device specification itself (segment masses, seated height, neck and thorax response corridors, calibration certification procedures). If so, the '5th-percentile female' device is best read not as a second body but as a scaled derivative whose corridors were generated from the same cadaver-derived response data, meaning the regulatory system has one body specified twice at different sizes rather than two bodies specified once each.\",\"question\":\"Where in the federal test-device specification is the assumed body actually written down, and were the smaller device's response corridors independently derived or scaled from the same source data as the mid-sized male?\",\"why_it_might_matter\":\"If the smaller device is a scaling of the same underlying response data, then adding it to a test configuration expands the size range covered without expanding the body range covered — a distinction that a count of 'how many dummy sizes are required' cannot register, and that changes what a passing score means.\",\"predicted_discriminating_evidence\":\"49 CFR Part 572 Subpart E versus the subpart specifying the smaller device: the dimensional tables, the stated basis of the impact-response corridors, and the calibration test procedures. Also the agency's own technical reports on biofidelity, which typically state the cadaver or volunteer datasets each corridor was derived from.\",\"disconfirming_shape\":\"The smaller device's specification cites its own independent biomechanical source data — separate cadaver series, separate corridor derivation — rather than scaled male data. That would show two bodies genuinely specified, and the hypothesis fails.\",\"why_distinctively_crip_minds\":\"It refuses the obvious observation that testing over-represents one size, and instead asks where the assumption was committed in writing, and whether apparent expansion of coverage is expansion of the same assumption. It reads the specification as a recorded design decision rather than as neutral engineering.\",\"instruments_used\":[\"Axis 1\",\"SHARPENING — Axis 1 (from PR004-07)\",\"Axis 12\"],\"mind_sharpened\":\"perception/legibility\"},{\"hypothesis\":\"The dummy is an instrument that converts a crash into a small set of numbers (head injury criterion, chest deflection, femur load) and everything a body can suffer that has no channel on this device is absent from the safety record by construction, not by oversight. The load-bearing move is that the agency's own documents state these limits — biofidelity evaluations and rulemaking notices typically say plainly which body regions the device does not measure and which injury mechanisms it cannot register. A vehicle can therefore be fully compliant with respect to injuries the instrument has a sensor for, and silent on the rest, while the compliance statement reads as a statement about occupant safety generally.\",\"question\":\"What does the federal test device state, in its own documentation, that it cannot measure — and does the compliance language treat that stated absence as a no-reading or as a zero?\",\"why_it_might_matter\":\"The difference between 'not measured' and 'no injury' is the whole difference between an instrument's scope and a safety claim, and it is a difference the public reporting of star ratings and pass/fail cannot carry.\",\"predicted_discriminating_evidence\":\"NHTSA biofidelity and injury-criteria technical reports, and Federal Register preamble text for the 1986 incorporation and later amendments, where the agency states instrumentation limits and regions without injury criteria; the injury-criteria table in the standard, whose listed measures define the denominator of 'safe'.\",\"disconfirming_shape\":\"The agency documents state the instrument's limits and the compliance framework explicitly scopes its claim to those measured regions, with no representation of general occupant protection. Then the instrument's boundaries are honestly carried through and the mechanism does not operate.\",\"why_distinctively_crip_minds\":\"It works from a stated negative in the source rather than from an inferred silence, and it targets what an instrument is constitutionally unable to hold rather than what it happens to score poorly on.\",\"instruments_used\":[\"Axis 12\",\"Axis 11\"],\"mind_sharpened\":\"perception/legibility\"},{\"hypothesis\":\"The mid-sized male device is not only a body assumption but a maintenance-and-supply arrangement, and that arrangement may be part of why it persists as the default. Certified dummies require periodic calibration to specified corridors, a limited supplier base, trained technicians, and a fleet of physical units held by test labs; a device with decades of installed base, established calibration procedures and correlation history is cheap to keep using and expensive to displace. If so, the persistence of the single default is partly an infrastructural fact about labs rather than only a judgement about representativeness — and any proposal to require additional devices is a proposal about lab capacity and calibration throughput.\",\"question\":\"What has to keep working — units, calibration labs, technicians, spare parts, correlation history — for the default device to remain the practical default, and does the record of rulemaking on additional devices turn on those constraints?\",\"why_it_might_matter\":\"If the barrier to requiring more devices is calibration and fleet infrastructure rather than science or intent, then debates framed as being about representation are being conducted about the wrong variable, and the effective remedy is elsewhere.\",\"predicted_discriminating_evidence\":\"Rulemaking comment dockets from vehicle manufacturers and test laboratories on proposals to add test devices; agency regulatory-impact analyses costing additional dummies, calibration and test runs; Part 572 calibration procedures and their required intervals; the number of qualified suppliers of certified units.\",\"disconfirming_shape\":\"The dockets and impact analyses show device cost and calibration capacity as trivial relative to total test cost, with the decision resting on stated biofidelity or data-adequacy grounds instead. Then the infrastructural reading is not doing the work.\",\"why_distinctively_crip_minds\":\"It treats the apparently self-evident default as something produced and sustained by invisible support work, and asks which dependency became binding — rather than reading persistence as inertia or bias.\",\"instruments_used\":[\"PR003-03\",\"Axis 5\",\"PR004-05\"],\"mind_sharpened\":\"dependence/infrastructure\"}],\"top_index\":1,\"nothing_here\":false,\"nothing_here_reason\":\"\"}",
+      "condition_b_parsed": {
+        "candidates": [
+          {
+            "hypothesis": "The regulation does not merely under-represent other bodies; it encodes one body as the unit of compliance, and the encoding is recorded in the part of the rule nobody reads as a body claim — the dimensional and instrumentation tables of the test-device specification itself (segment masses, seated height, neck and thorax response corridors, calibration certification procedures). If so, the '5th-percentile female' device is best read not as a second body but as a scaled derivative whose corridors were generated from the same cadaver-derived response data, meaning the regulatory system has one body specified twice at different sizes rather than two bodies specified once each.",
+            "question": "Where in the federal test-device specification is the assumed body actually written down, and were the smaller device's response corridors independently derived or scaled from the same source data as the mid-sized male?",
+            "why_it_might_matter": "If the smaller device is a scaling of the same underlying response data, then adding it to a test configuration expands the size range covered without expanding the body range covered — a distinction that a count of 'how many dummy sizes are required' cannot register, and that changes what a passing score means.",
+            "predicted_discriminating_evidence": "49 CFR Part 572 Subpart E versus the subpart specifying the smaller device: the dimensional tables, the stated basis of the impact-response corridors, and the calibration test procedures. Also the agency's own technical reports on biofidelity, which typically state the cadaver or volunteer datasets each corridor was derived from.",
+            "disconfirming_shape": "The smaller device's specification cites its own independent biomechanical source data — separate cadaver series, separate corridor derivation — rather than scaled male data. That would show two bodies genuinely specified, and the hypothesis fails.",
+            "why_distinctively_crip_minds": "It refuses the obvious observation that testing over-represents one size, and instead asks where the assumption was committed in writing, and whether apparent expansion of coverage is expansion of the same assumption. It reads the specification as a recorded design decision rather than as neutral engineering.",
+            "instruments_used": [
+              "Axis 1",
+              "SHARPENING — Axis 1 (from PR004-07)",
+              "Axis 12"
+            ],
+            "mind_sharpened": "perception/legibility"
+          },
+          {
+            "hypothesis": "The dummy is an instrument that converts a crash into a small set of numbers (head injury criterion, chest deflection, femur load) and everything a body can suffer that has no channel on this device is absent from the safety record by construction, not by oversight. The load-bearing move is that the agency's own documents state these limits — biofidelity evaluations and rulemaking notices typically say plainly which body regions the device does not measure and which injury mechanisms it cannot register. A vehicle can therefore be fully compliant with respect to injuries the instrument has a sensor for, and silent on the rest, while the compliance statement reads as a statement about occupant safety generally.",
+            "question": "What does the federal test device state, in its own documentation, that it cannot measure — and does the compliance language treat that stated absence as a no-reading or as a zero?",
+            "why_it_might_matter": "The difference between 'not measured' and 'no injury' is the whole difference between an instrument's scope and a safety claim, and it is a difference the public reporting of star ratings and pass/fail cannot carry.",
+            "predicted_discriminating_evidence": "NHTSA biofidelity and injury-criteria technical reports, and Federal Register preamble text for the 1986 incorporation and later amendments, where the agency states instrumentation limits and regions without injury criteria; the injury-criteria table in the standard, whose listed measures define the denominator of 'safe'.",
+            "disconfirming_shape": "The agency documents state the instrument's limits and the compliance framework explicitly scopes its claim to those measured regions, with no representation of general occupant protection. Then the instrument's boundaries are honestly carried through and the mechanism does not operate.",
+            "why_distinctively_crip_minds": "It works from a stated negative in the source rather than from an inferred silence, and it targets what an instrument is constitutionally unable to hold rather than what it happens to score poorly on.",
+            "instruments_used": [
+              "Axis 12",
+              "Axis 11"
+            ],
+            "mind_sharpened": "perception/legibility"
+          },
+          {
+            "hypothesis": "The mid-sized male device is not only a body assumption but a maintenance-and-supply arrangement, and that arrangement may be part of why it persists as the default. Certified dummies require periodic calibration to specified corridors, a limited supplier base, trained technicians, and a fleet of physical units held by test labs; a device with decades of installed base, established calibration procedures and correlation history is cheap to keep using and expensive to displace. If so, the persistence of the single default is partly an infrastructural fact about labs rather than only a judgement about representativeness — and any proposal to require additional devices is a proposal about lab capacity and calibration throughput.",
+            "question": "What has to keep working — units, calibration labs, technicians, spare parts, correlation history — for the default device to remain the practical default, and does the record of rulemaking on additional devices turn on those constraints?",
+            "why_it_might_matter": "If the barrier to requiring more devices is calibration and fleet infrastructure rather than science or intent, then debates framed as being about representation are being conducted about the wrong variable, and the effective remedy is elsewhere.",
+            "predicted_discriminating_evidence": "Rulemaking comment dockets from vehicle manufacturers and test laboratories on proposals to add test devices; agency regulatory-impact analyses costing additional dummies, calibration and test runs; Part 572 calibration procedures and their required intervals; the number of qualified suppliers of certified units.",
+            "disconfirming_shape": "The dockets and impact analyses show device cost and calibration capacity as trivial relative to total test cost, with the decision resting on stated biofidelity or data-adequacy grounds instead. Then the infrastructural reading is not doing the work.",
+            "why_distinctively_crip_minds": "It treats the apparently self-evident default as something produced and sustained by invisible support work, and asks which dependency became binding — rather than reading persistence as inertia or bias.",
+            "instruments_used": [
+              "PR003-03",
+              "Axis 5",
+              "PR004-05"
+            ],
+            "mind_sharpened": "dependence/infrastructure"
+          }
+        ],
+        "top_index": 1,
+        "nothing_here": false,
+        "nothing_here_reason": ""
+      },
+      "condition_b_top_index": 1,
+      "condition_b_alternates_hidden": [
+        {
+          "hypothesis": "The regulation does not merely under-represent other bodies; it encodes one body as the unit of compliance, and the encoding is recorded in the part of the rule nobody reads as a body claim — the dimensional and instrumentation tables of the test-device specification itself (segment masses, seated height, neck and thorax response corridors, calibration certification procedures). If so, the '5th-percentile female' device is best read not as a second body but as a scaled derivative whose corridors were generated from the same cadaver-derived response data, meaning the regulatory system has one body specified twice at different sizes rather than two bodies specified once each.",
+          "question": "Where in the federal test-device specification is the assumed body actually written down, and were the smaller device's response corridors independently derived or scaled from the same source data as the mid-sized male?",
+          "why_it_might_matter": "If the smaller device is a scaling of the same underlying response data, then adding it to a test configuration expands the size range covered without expanding the body range covered — a distinction that a count of 'how many dummy sizes are required' cannot register, and that changes what a passing score means.",
+          "predicted_discriminating_evidence": "49 CFR Part 572 Subpart E versus the subpart specifying the smaller device: the dimensional tables, the stated basis of the impact-response corridors, and the calibration test procedures. Also the agency's own technical reports on biofidelity, which typically state the cadaver or volunteer datasets each corridor was derived from.",
+          "disconfirming_shape": "The smaller device's specification cites its own independent biomechanical source data — separate cadaver series, separate corridor derivation — rather than scaled male data. That would show two bodies genuinely specified, and the hypothesis fails.",
+          "why_distinctively_crip_minds": "It refuses the obvious observation that testing over-represents one size, and instead asks where the assumption was committed in writing, and whether apparent expansion of coverage is expansion of the same assumption. It reads the specification as a recorded design decision rather than as neutral engineering.",
+          "instruments_used": [
+            "Axis 1",
+            "SHARPENING — Axis 1 (from PR004-07)",
+            "Axis 12"
+          ],
+          "mind_sharpened": "perception/legibility"
+        },
+        {
+          "hypothesis": "The mid-sized male device is not only a body assumption but a maintenance-and-supply arrangement, and that arrangement may be part of why it persists as the default. Certified dummies require periodic calibration to specified corridors, a limited supplier base, trained technicians, and a fleet of physical units held by test labs; a device with decades of installed base, established calibration procedures and correlation history is cheap to keep using and expensive to displace. If so, the persistence of the single default is partly an infrastructural fact about labs rather than only a judgement about representativeness — and any proposal to require additional devices is a proposal about lab capacity and calibration throughput.",
+          "question": "What has to keep working — units, calibration labs, technicians, spare parts, correlation history — for the default device to remain the practical default, and does the record of rulemaking on additional devices turn on those constraints?",
+          "why_it_might_matter": "If the barrier to requiring more devices is calibration and fleet infrastructure rather than science or intent, then debates framed as being about representation are being conducted about the wrong variable, and the effective remedy is elsewhere.",
+          "predicted_discriminating_evidence": "Rulemaking comment dockets from vehicle manufacturers and test laboratories on proposals to add test devices; agency regulatory-impact analyses costing additional dummies, calibration and test runs; Part 572 calibration procedures and their required intervals; the number of qualified suppliers of certified units.",
+          "disconfirming_shape": "The dockets and impact analyses show device cost and calibration capacity as trivial relative to total test cost, with the decision resting on stated biofidelity or data-adequacy grounds instead. Then the infrastructural reading is not doing the work.",
+          "why_distinctively_crip_minds": "It treats the apparently self-evident default as something produced and sustained by invisible support work, and asks which dependency became binding — rather than reading persistence as inertia or bias.",
+          "instruments_used": [
+            "PR003-03",
+            "Axis 5",
+            "PR004-05"
+          ],
+          "mind_sharpened": "dependence/infrastructure"
+        }
+      ],
+      "condition_b_identity": {
+        "requested_model": "anthropic/claude-opus-4.8",
+        "actual_model": "claude-opus-5",
+        "provider": "claude-cli-subscription",
+        "auth": "claude.ai subscription OAuth",
+        "fallback_used": false,
+        "openrouter_used": false,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 17952,
+          "cache_read_input_tokens": 28217,
+          "output_tokens": 2110,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 17952,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 2110,
+              "cache_read_input_tokens": 28217,
+              "cache_creation_input_tokens": 17952,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 17952
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "subscription_cost_equivalent_usd": 0.2476725,
+        "duration_ms": 36256,
+        "session_id": "55ddeca5-ef3e-489e-929b-1b201d780341",
+        "temperature_requested": null,
+        "temperature_honoured": null
+      },
+      "technical_checks": {
+        "both_calls_completed": true,
+        "correct_model_requested_a": true,
+        "correct_model_requested_b": true,
+        "world_hash_match": true,
+        "a_conforms_to_live_contract": true,
+        "b_conforms_to_contract": true,
+        "b_top_designated_when_candidates_present": true,
+        "b_candidate_count": 3,
+        "nothing_here_renderable": true
+      }
+    }
+  }
+}
