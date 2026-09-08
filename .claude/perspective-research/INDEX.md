@@ -1,7 +1,7 @@
 # Perspective Research — INDEX
 
 *Read this first. It should orient a fresh session in under two minutes.*
-*Last updated: 2026-09-08 — **PR003 first owner review complete.***
+*Last updated: 2026-09-08 — **PR004 opened; PR003 first owner review complete.***
 
 ---
 
@@ -20,6 +20,44 @@ this directory may be quoted in an article.
 ---
 
 ## ACTIVE RESEARCH CLUSTER
+
+**PR004 — Art, Disability, Aesthetic Knowledge & Institutions**
+→ `art-disability-aesthetic-knowledge-institutions.md`
+
+**CLUSTER STATUS: WORKING RESEARCH — OWNER REVIEW PENDING.**
+**6 CANDIDATE · 1 merged as an Axis 1 sharpening · 1 REJECTED · 1 NEEDS_RESEARCH · 0
+APPROVED_DURABLE.** Nothing promoted. **No new axis** — fourth consecutive cluster.
+
+| ID | Short name | Status | Axes | Minds |
+|---|---|---|---|---|
+| PR004-01 | Which channel is treated as the original | CANDIDATE | 2, 3, 12 | SIIRI / PINA |
+| PR004-02 | The mediator assigns a register to the mediated | CANDIDATE ★ strongest new | 3, 13 | PINA |
+| PR004-03 | Does the explanation break without it? | CANDIDATE | 10, 11 | SHARED |
+| PR004-04 | Did the practice migrate, or stay with the project? | CANDIDATE | 14, 10 | MAYA |
+| PR004-05 | Which one bends: the project or the frame? | CANDIDATE ✦ *new* | 14, 10, 5 | MAYA / ZENO |
+| PR004-06 | Access can become form | CANDIDATE — **weak, merge candidate → PR003-08** | 14, 10 | — |
+| PR004-07 | Institutional objects encode a body model | **MERGED — AXIS 1 SHARPENING** | 1 | — |
+| PR004-08 | Rest or pace as part of the medium | **REJECTED — duplicate of PR002** | — | — |
+| PR004-09 | The tool as movement vocabulary | **NEEDS_RESEARCH** *(not researched)* | 1, 5 | — |
+
+**Art did not grant novelty.** PR004-08 is the library's **second REJECTED entry** and the first
+rejected for being an existing instrument in another vocabulary — PR002-07 owns rest, PR002-02
+owns pace, PR002-01 owns expiry. Kept, not deleted; carriers donated to PR002.
+
+**Two boundary results worth reading before the entries.** **AUTONOMOUS / Brutus** = *important
+exhibition, weak perspective instrument* — its usable mechanisms were already extracted in PR001,
+and its thesis is already recorded there as ST002, NOT ADOPTED. **Van Abbemuseum** = a real and
+documented sequence from access programming to collection display, resting on the museum's own
+account, with **no evidence of change to staffing, governance or acquisition** and no disabled
+collaborator quoted on who decided.
+
+**Not accessed, and named so they are not filled in from memory:** Siebers, Cachia, Kuppers, Park
+McArthur's MoMA material, *I wanna be with you everywhere*, Serpentine/Clements, HKW. Fourteen
+famous institutions were checked and produced nothing distinctive.
+
+---
+
+## FIRST-REVIEW-COMPLETE — PR003
 
 **PR003 — Assistive Technology, Everyday Agency & Independence**
 → `assistive-technology-everyday-agency-independence.md`
@@ -66,7 +104,7 @@ entry.** Do not fill any of it in from memory.
 
 ---
 
-## PREVIOUS CLUSTER
+## FIRST-REVIEW-COMPLETE — PR002
 
 **PR002 — Time, Simultaneity, Waiting & Pace** → `time-simultaneity-waiting-pace.md`
 
@@ -100,7 +138,7 @@ sharpened by PR002-04 (lateness as allocation) and PR002-05 (the wait changes th
 
 ---
 
-## FIRST-REVIEW-COMPLETE CLUSTER
+## FIRST-REVIEW-COMPLETE — PR001
 
 **PR001 — Measurement / Classification / Legibility / Normality**
 → `measurement-classification-legibility.md`
