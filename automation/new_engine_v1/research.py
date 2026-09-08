@@ -46,6 +46,10 @@ import figure_harvest as FIG                                          # noqa: E4
 from . import documents as DOC
 from .contracts import sha256_text
 from .provider import ProviderError, parse_json_object
+from .perspective_explorer import (perspective_explorer, perspective_explorer_enabled,
+                                   PERSPECTIVE_EXPLORER_MAX_QUERIES,
+                                   PERSPECTIVE_EXPLORER_MAX_URLS,
+                                   PERSPECTIVE_EXPLORER_MAX_SOURCES)
 
 # ── BOUNDS (an article pipeline, not a crawler) ────────────────────────────────
 MAX_QUERIES = 4               # search calls per run
@@ -1022,13 +1026,54 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict
             probe["kept"].append(rec["source_id"])
             kept += 1
 
+    # PERSPECTIVE EXPLORER: a second, different kind of pass, run ONLY when the Lens
+    # Probe actually ran and found nothing to look for. Never a substitute for it, never
+    # a retry of it, never invoked more than once. See perspective_explorer.py for what
+    # it is and why -- it returns a question in the same bounded shape as the Lens Probe
+    # (never a fact), and anything it names is fetched and verified exactly like any
+    # other source before assessment, with no special authority.
+    explorer = {"ran": False, "enabled": perspective_explorer_enabled(), "kept": []}
+    if probe.get("ran") and explorer["enabled"] and not (probe.get("carrier_hypothesis") or "").strip():
+        explorer.update(perspective_explorer(provider, scoped.get("subject", ""),
+                                             anchor["text"], fetched))
+        explorer_urls = list(explorer.get("urls") or [])
+        for q in (explorer.get("queries") or []):
+            if len(explorer_urls) >= PERSPECTIVE_EXPLORER_MAX_URLS + PERSPECTIVE_EXPLORER_MAX_QUERIES:
+                break
+            if _norm(q) in searched:                    # already asked, by scope or probe
+                continue
+            searched.add(_norm(q))
+            try:
+                explorer_urls += [u for u in search_urls(q, api_key=api_key)[:4]
+                                  if canonical_url(u) not in seen]
+            except ResearchError as e:
+                failures.append({"query": q, "error": str(e)[:200], "perspective_explorer": True})
+        kept = 0
+        for url in explorer_urls:
+            if kept >= PERSPECTIVE_EXPLORER_MAX_SOURCES:
+                break
+            if canonical_url(url) in seen:
+                continue
+            seen.add(canonical_url(url))
+            rec = fetch_source(url, fallback_budget=fallback_budget, terms=doc_terms)
+            if rec["status"] != "ok":
+                failures.append({"url": url, "status": rec["status"], "perspective_explorer": True})
+                continue
+            rec.update(source_id="S%d" % (len(fetched) + 1), accessed_at=now_iso,
+                       publisher=registrable(url), perspective_explorer=True)
+            fetched.append(rec)
+            explorer["kept"].append(rec["source_id"])
+            kept += 1
+
     assessment = assess(provider, scoped.get("subject", ""), anchor["text"], fetched)
     pack = build_pack(anchor=anchor, scoped=scoped, fetched=fetched,
                       assessment=assessment,
                       searched={"queries": queries, "candidates": candidates,
                                 "failures": failures})
     pack["lens_probe"] = {k: v for k, v in probe.items() if k != "_provider"}
+    pack["perspective_explorer"] = {k: v for k, v in explorer.items() if k != "_provider"}
     pack["_provider"] = {"scope": scoped.get("_provider", {}),
                          "assess": assessment.get("_provider", {}),
-                         "lens_probe": probe.get("_provider", {})}
+                         "lens_probe": probe.get("_provider", {}),
+                         "perspective_explorer": explorer.get("_provider", {})}
     return pack
