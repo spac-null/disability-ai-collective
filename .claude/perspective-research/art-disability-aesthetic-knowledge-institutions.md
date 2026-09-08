@@ -1,9 +1,16 @@
 # Perspective Research 004
 ## Art, Disability, Aesthetic Knowledge & Institutions
 
-**STATUS: WORKING RESEARCH — NOT PRODUCTION DOCTRINE.**
-Nothing here is in force. No entry may be quoted, cited, or used to establish anything about
-any subject. **Nothing is promoted; owner review comes afterward.**
+**CLUSTER STATUS: FIRST OWNER REVIEW COMPLETE — 2026-09-08.**
+**3 APPROVED_DURABLE · 3 CANDIDATE · 2 REJECTED · 1 merged as an Axis 1 sharpening.** Nothing
+deleted. **Not permanently closed.**
+
+**APPROVED_DURABLE GRANTS ZERO ARTICLE FACTUAL AUTHORITY.** No entry here, of any status, may be
+quoted, cited, or used to establish anything about any subject. Approval means an instrument is
+trusted for asking, never for asserting.
+
+**PR004 CREATED ZERO NEW DOCTRINE AXES** — the fourth consecutive cluster to do so. Axes are
+stable; library knowledge is becoming more precise beneath them.
 
 **CENTRAL QUESTION.** Not which artists are disabled, not which museums have access
 programmes. Rather: **what forms of question-asking intelligence have disability-rooted
@@ -42,6 +49,7 @@ headers. README unmodified.
 | S9 | Ine Gevers, *AUTONOMOUS* curatorial text, Brutus Rotterdam, 2026 | Curatorial primary | **READ IN FULL** — carried from PR001, where it is source S3 |
 | S10 | Hamraie & Fritsch, *Crip Technoscience Manifesto*, Catalyst 5(1), 2019 | Theory primary | **READ IN FULL** — carried from PR003; **not re-derived here** |
 | **S11** | **Amanda Cachia, "'Disabling' the museum: Curator as infrastructural activist", *Journal of Visual Art Practice* 12(3), 2013** | Curator primary | **READ IN FULL** (author's own PDF). *Added in the completion pass* |
+| **S13** | **Amanda Cachia, "Reflections on Access: Disability in Curatorial Practice", *Canadian Journal of Disability Studies* 8.1, February 2019** | Curator primary | **FULL-TEXT · PUBLISHED VERSION · DIAMOND OA (CC-BY-NC-ND).** *Added at owner review. Recovered legally from the public journal after ordinary retrieval failed on an expired TLS certificate.* **Retrieval changed access, not authority: this remains a curator's account of her own exhibitions.** |
 | **S12** | **Kinetic Light, company page for *DESCENT*** (Alice Sheppard & Laurel Lawson; ramp designed by Sara Hendren, Yevgeniya Zastavker and Olin College students; fabricated by Rooster Productions) | Artist/company primary | **READ.** *Added in the completion pass; it settles PR004-09* |
 
 **Not accessed, and named so they are not filled in from memory:** Tobin Siebers, *Disability
@@ -82,7 +90,15 @@ within this pass's bounds, and none was manufactured to fill the map.
 
 ### PR004-01 — WHICH CHANNEL IS TREATED AS THE ORIGINAL
 
-**STATUS:** CANDIDATE
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-08.
+*Owner reason: the insight is **not** that some senses are culturally privileged. The mechanism
+requires a **concrete hierarchy between channels or versions**, with observable consequences.
+Preserved on approval: the documentary carriers below; Christine Sun Kim as an important source
+carrier **without generalising from Deaf art**; Cachia's inversion as supporting material where
+already recorded; and the distinction from Axis 3 — Axis 3 can fire wherever mediation occurs,
+this requires an **original/derivative hierarchy**. FALSE MOVE and DISCONFIRMING SHAPE kept.*
+*(Cachia's inversion is retained below as **supporting material**. PR004-06 is **not** merged
+here — see that entry, returned to CANDIDATE at owner review on later full-text evidence.)*
 
 **SOURCE BASIS.** **S2 (read in full).** The Whitney's own account of Kim's practice: she
 uses "musical notation, infographics, and language — both in her native American Sign Language
@@ -103,7 +119,9 @@ practical conundrum, often added as an afterthought once an exhibition has been 
 into "a dynamic, critical and creative tool in art-making and curating".
 
 That inversion — **the provision reversing which audience is the default** — is this entry's
-sharpest form, and it is why the former PR004-06 is merged here (see that entry's record).
+sharpest form, and it is retained here as supporting material. **It is no longer the reason
+PR004-06 was merged:** that merge was reversed at owner review, 2026-09-08, when the later
+full-text Cachia 2019 (S13) supplied a demonstrated case. See PR004-06.
 
 **MECHANISM.** A work, institution or system can treat **one channel as the original and the
 others as translations of it**, without ever saying so. The hierarchy is not usually stated; it
@@ -160,7 +178,14 @@ to her as a claim she makes; it is our reading of what the described works do.
 
 ### PR004-02 — THE MEDIATOR ASSIGNS A REGISTER TO THE MEDIATED
 
-**STATUS:** CANDIDATE — **strongest new mechanism in the cluster.**
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-08.
+*Owner reason: it asks **which apparent quality of the source person was actually introduced by
+the mediation** — not "what changed in transit", which is Axis 3, and emphatically not "all
+translation is authorship". Preserved on approval: the narrowed definition of register
+(vocabulary, formality, fluency, rhythm, tone, conventional style — **not abstract theory
+language**); the three-part gate, without all three of which the instrument does not fire; and
+the two strong non-art transfers, which are **calibration examples and never future article
+facts**. FALSE MOVE and DISCONFIRMING SHAPE kept.*
 *Reformulated from starting hypothesis F, which was "translation can produce meaning".*
 
 **SOURCE BASIS.** **S2 (read in full).** Two passages carry it. Drawings in the Lobby Gallery
@@ -231,7 +256,27 @@ should be tested against the artist's primary material before promotion.
 
 ### PR004-03 — DOES THE EXPLANATION BREAK WITHOUT IT?
 
-**STATUS:** CANDIDATE
+**STATUS:** **REJECTED — the transferable operation is generic.** Not deleted; kept with its
+reason, and the research kept with it. *Owner review 2026-09-08.*
+
+**OWNER REASON.** The completion pass established that the transferable operation here is
+**ordinary counterfactual historiographic method**, practised long before and independently of
+disability. *For Dear Life* supplied a strong disability and art-historical **instance** of that
+method; it did **not** establish a distinct disability-rooted question-generating instrument.
+**An important exhibition is not enough reason to preserve a generic method in the Perspective
+Library.**
+
+**WHAT IS KEPT.** *For Dear Life* remains in the institutional map and in the source register as
+**research lineage and carrier context** — MCASD, 2024–25, curators Jill Dawsey and Isabel Casso,
+~80 artists, with Ludwig's review as the secondary reading. The historical research below is
+retained in full and is **not** deleted. What is retired is the claim that this constitutes an
+instrument.
+
+**Third REJECTED entry in the library, and the first rejected for being a general method rather
+than a duplicate of an existing instrument.** The two failure modes are different and both are
+now on the record.
+
+*The original entry's fields follow, retained unchanged as the research record.*
 *From starting hypothesis G.*
 
 **SOURCE BASIS.** **S4 (secondary, read)** on **S5**. Ludwig's assessment is that the show
@@ -293,7 +338,13 @@ not; and its generality is now a recorded concern rather than a strength.
 
 ### PR004-04 — DID THE PRACTICE MIGRATE, OR STAY WITH THE PROJECT?
 
-**STATUS:** CANDIDATE
+**STATUS:** CANDIDATE — **held at candidate, owner review 2026-09-08. Not promoted.**
+*Owner reason: the mechanism remains potentially useful — an access practice may stay
+project-specific or migrate into a broader institutional arrangement — but the evidence is **too
+dependent on institutions describing themselves**. Van Abbemuseum licenses only the bounded
+sequence: access programming changed, and collection display changed. It does **not** license
+that the institution as a whole changed. **A ≠ B ≠ C**, and C is not to be inferred from A or B.
+The absence of verified disabled staff or collaborator decision-making evidence stays visible.*
 *From starting hypothesis H.*
 
 **SOURCE BASIS.** **S6 (secondary, reporting the museum's own account).** A documented
@@ -367,7 +418,15 @@ third, and that is the honest extent of it.
 *Renamed in the completion pass. Old name: "Which one bends: the project or the frame?" — 
 memorable but too compressed to state a proposition. The new name is the question itself.*
 
-**STATUS:** CANDIDATE ✦ *not in the starting set; produced by reading S1.*
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-08. **Final name as titled.**
+*Owner reason: it asks, when an activity and its hosting frame conflict, **which one is expected
+to adapt** — a different question from PR003-08's *who defined the option set*. The mechanism is
+**not** "institutions should be flexible", which is a value statement. Preserved on approval: the
+concrete predicted evidence (exception requests, rejected submissions, template revisions,
+standard formats, approval chains, project alterations, adaptations repeatedly borne by
+participants, frame alterations) and the two-way distinction — PR003-08 without this is a locked
+thermostat range; this without PR003-08 is a touring exhibition altered to a venue's standard
+wall specification. FALSE MOVE and DISCONFIRMING SHAPE kept.*
 
 **SOURCE BASIS.** **S1 (read in full).** Lazard, on the structural difference between large and
 small arts organisations: "**Programs and exhibitions tend to bend to the frameworks presented
@@ -437,33 +496,82 @@ evidenced with cases. The generalisation beyond arts organisations is entirely o
 
 ---
 
-### PR004-06 — ACCESS CAN BECOME FORM
+### PR004-06 — DID ACCESS CHANGE WHO COULD ENCOUNTER IT, OR WHAT THE WORK BECAME?
 
-**STATUS:** **MERGED into PR004-01 (completion pass, 2026-09-08).** Retained, not deleted.
+*Renamed at owner review, 2026-09-08. Old name: "Access can become form" — too broad, and it
+asserted the conclusion. The new name is the distinction the entry exists to hold open.*
 
-**WHY MERGED, after a targeted attempt to save it.** S11 (Cachia, read in full) was obtained
-specifically to test whether access can change artistic form rather than only who can encounter
-a work. It does **not** establish that. Cachia writes **programmatically**: she "challenges the
-museum to think about how access can move beyond a mere practical conundrum… to use as a
-dynamic, critical and creative tool", and poses her strongest formulations as **open questions**
-— can a caption sequence also be a work of art, is ASL a performance — while stating that she
-hopes "to begin this process of building a new vocabulary and methodology". A 2013 agenda is
-evidence of an agenda.
+**STATUS:** CANDIDATE — **owner review 2026-09-08. Merge reversed; not promoted.**
 
-Meanwhile the first pass's own disconfirming shape held against its best carrier: **remove
-Shannon's benches and the exhibition is unchanged** — which is close to their own point. Their
-sharpest content is that museum seating is a *curatorial choice*, and that is **PR003-08** on
-gallery furniture.
+*Owner reason: the completion pass merged this into PR004-01 on the finding that **no
+demonstrated case existed** in which an access intervention changed the work rather than only
+who could encounter it. **That finding is now false.** The later full-text Cachia 2019 (S13)
+contains a realised case. The merge is reversed and the entry returns as a candidate. It is
+**not** promoted, because the best evidence is one curator's account of her own exhibitions.*
 
-**What survived, and where it went.** One thing in S11 is genuinely distinct and not owned:
-Cachia's inversion — access provision that "renders a work of art or a film completely
-inaccessible for a 'normal' audience", turning "the tables on access". That is not about form;
-it is about **which audience a work is for by default**, which is PR004-01's mechanism seen from
-the audience side. It has been moved there and is now that entry's sharpest evidence. The
-Shannon material stays with PR004-07's Axis 1 carriers.
+**SOURCE BASIS.** **S13 (FULL-TEXT, published version, diamond OA) — the demonstrated case.**
+Raphaëlle de Groot's *Study 5, A New Place* had, in Cachia's account, "only been exhibited and
+experienced virtually". For *Sweet Gongs Vibrating* (San Diego Art Institute, 2016) Cachia asked
+de Groot to display the original found materials used to construct her head-mask "alongside the
+video as an interactive, touch-based component of the work"; **the artist agreed.** The materials
+were placed as a bundle on a pedestal in front of the projection, so that — Cachia's words — "the
+projected video literally broke through the flat two-dimensional visual representation on the
+wall so that the viewer could not only see the physical detritus of what the artist was
+experimenting with on her face and head, but could actually touch it." Sighted visitors could see
+de Groot's touching mirrored in the video; hearing visitors could hear the crinkle of the paper
+echo the video's own haptics. Cachia's own summary: "when the artist/curator relationship
+centralizes access in the exhibition, **the artwork evolves.**"
 
-**Not preserved as an entry**, because "access aesthetics" sounding central to the field is not
-a reason to keep an instrument the evidence does not support.
+**S11 (Cachia 2013) remains in the record as earlier programmatic lineage** — the same curator
+posing access-as-artwork as open questions six years before reporting realised cases. **The two
+source types are not flattened:** 2013 is an agenda, 2019 is a reported instance.
+
+**MECHANISM.** A negotiated access intervention may alter the material composition, installation
+structure, spatial relation, performance structure, interpretation or spectatorship of a work —
+rather than merely providing another route into an otherwise unchanged one.
+
+**QUESTION.** Did the access intervention only change **who could encounter** the work, or did it
+materially change **what was installed, performed, interpreted or experienced**?
+
+**CARRIERS.** *Before/after evidence wherever possible.* An added material component. An altered
+installation. A modified performance structure. A tactile element that became part of the work.
+Captions, signing or description incorporated into composition rather than appended. Spatial
+rearrangement. Changed timing. An artist-approved modification. Documentation of the previous and
+the revised presentation. Curatorial or artist correspondence and statements.
+
+**FALSE MOVE.** **"All access is artistic form."** No. Most accessibility provision remains
+provision, and should. The mechanism fires only where the intervention changed the work or the
+encounter in a **materially demonstrable** way — which normally means a documented earlier
+presentation to compare against.
+
+**DISCONFIRMING SHAPE.** The access provision can be removed while the artwork's material form,
+installation, composition, interpretation and performance structure remain unchanged. Then it is
+access provision, not this mechanism. *(This is the shape that fired in the completion pass
+against Finnegan Shannon's benches, and it still holds against them — which is why the benches
+are not this entry's evidence.)*
+
+**EXISTING AXIS.** Axis 14 (access as a process, not a state); reaches Axis 10.
+
+**MINDS SHARPENED.** None distinctively. Recorded rather than assigned.
+
+**WHAT THIS ADDS.** Axis 14 says access is a performed process rather than a certified state.
+This adds a **narrower possible consequence of that process: it may alter the object or event
+itself.** Not a claim that this happens generally — a question about whether it happened here.
+
+**Kept distinct from PR004-01.** PR004-01 asks which channel or version is treated as the
+authoritative original, and requires an **original/derivative hierarchy** to fire. This asks
+whether an access intervention changed what the work became, and **requires no such hierarchy** —
+the de Groot case has no original-versus-translation structure at all, only a before and an after.
+
+**TRANSFER TEST.** (1) **Software:** a keyboard-navigation requirement that forces a reworked
+information architecture, so the product's structure — not only its reachability — is different
+afterwards. (2) **Broadcast and live events:** a described or signed performance restaged so the
+description is scripted into the blocking, changing what every audience member sees.
+
+**BOUNDARY.** **The evidence is one curator's account of her own two exhibitions**, with one
+particularly clear artist relationship, and **no independent verification** — the same provenance
+class that holds PR004-04 at candidate. Retrieval by Firecrawl changed access, not authority.
+N=1 worked case. **This is why the entry is a candidate and not durable.**
 
 ---
 
@@ -527,7 +635,17 @@ instrument in another vocabulary. Recorded as a positive result: **art did not g
 
 ### PR004-09 — THE TOOL AS MOVEMENT VOCABULARY
 
-**STATUS:** CANDIDATE *(NEEDS_RESEARCH → CANDIDATE in the completion pass, on S12)*
+**STATUS:** CANDIDATE — **held at candidate, owner review 2026-09-08. Not promoted.**
+*Owner reason: the Kinetic Light / DESCENT carrier is strong enough to establish that this is
+**not empty**, and the key distinction is preserved — PR001-05 concerns technology participating
+in making **capability**; this concerns a body/tool/surface relation generating a **repertoire**
+of action that was not previously part of the activity. The counterexample stands: a hearing
+technology arrangement can change whether conversation is possible without creating a new
+repertoire of conversation. Held rather than promoted because the artistic evidence is
+concentrated in **one primary carrier**, the mechanism still sits close to PR001-05, PR003-04 and
+the held Moser distinction, and broader transfer has not yet earned durable status. **Moser is
+not reopened.***
+*(NEEDS_RESEARCH → CANDIDATE in the completion pass, on S12.)*
 *From starting hypothesis C. The first pass gathered no evidence and said so; the narrow gap
 fill found it.*
 
@@ -922,4 +1040,68 @@ WHY:                Each seam was tested with a case in both directions and the 
                     that attribute traceable to the mediator - which committee minutes
                     correctly fail. "Register" is now defined as observable surface features
                     rather than left as theory fog.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              PR004 — FIRST OWNER REVIEW
+DECISION:           APPROVED_DURABLE: PR004-01, PR004-02, PR004-05.
+                    CANDIDATE: PR004-04, PR004-06, PR004-09.
+                    REJECTED: PR004-03, PR004-08.
+                    MERGED AS AXIS 1 SHARPENING: PR004-07.
+                    NO NEW AXIS. NO NEW ENTRY. Nothing deleted.
+OWNER/REVIEW BASIS: Owner review of the cluster after the completion pass, completed across an
+                    interruption during which a new primary source was recovered.
+WHY:                Per-entry reasons are on each STATUS line. PR004-03 was rejected because
+                    its transferable operation is ordinary historiographic method - For Dear
+                    Life supplied a strong instance, not an instrument, and an important
+                    exhibition is not a reason to keep a generic method in the library.
+                    PR004-08 remained rejected as PR002 in gallery language. PR004-07 stays a
+                    carrier list beneath Axis 1 rather than an instrument. PR004-09 remained
+                    candidate after DESCENT supplied the carrier the first pass had missed.
+                    Van Abbe's institutional claims remain bounded: A and B at the level of
+                    the museum's own account, C not proven.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              PR004-06 — merge reversed at owner review
+DECISION:           MERGED into PR004-01 -> CANDIDATE. Renamed to "DID ACCESS CHANGE WHO COULD
+                    ENCOUNTER IT, OR WHAT THE WORK BECAME?". Not promoted.
+OWNER/REVIEW BASIS: Owner review, on new evidence obtained after the review had begun.
+WHY:                The completion pass merged this entry on the finding that NO DEMONSTRATED
+                    CASE existed in which an access intervention changed the work rather than
+                    only who could encounter it. That finding was false. Cachia 2019 (S13) -
+                    full text, published version, diamond OA - reports a realised case: de
+                    Groot's Study 5, A New Place, previously exhibited only virtually,
+                    acquired an artist-approved tactile component on a pedestal in front of
+                    the projection, changing the installation's material form and what every
+                    category of visitor encountered.
+                    THE ENTRY IS NOT PROMOTED. The evidence is one curator's account of her
+                    own exhibitions, N=1 worked case, without independent verification - the
+                    same provenance class that holds PR004-04 at candidate. The 2013 Cachia
+                    source stays in the record as earlier PROGRAMMATIC lineage and is not
+                    flattened together with the 2019 reported instance.
+                    PROVENANCE NOTE: the source was recovered by a retrieval tool after
+                    ordinary retrieval failed on an expired TLS certificate. RETRIEVAL
+                    CHANGED ACCESS, NOT AUTHORITY.
+                    This is recorded because it is the first time owner review was revised by
+                    better source access rather than by better argument. The review is
+                    revisable when the factual basis changes.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              Broad foundational Perspective Research phase
+DECISION:           COMPLETE. Next phase: CALIBRATION. PR005 not opened; no calibration
+                    infrastructure created.
+OWNER/REVIEW BASIS: Owner decision at the PR004 review.
+WHY:                Four reviewed clusters, fourteen axes stable across all four, no cluster
+                    requiring a fifteenth. Later passes increasingly produced merges,
+                    rejections, narrowing and reformulation rather than conceptual expansion,
+                    and mechanisms now transfer beyond their originating domains. The binding
+                    uncertainty is no longer conceptual coverage. It is whether the
+                    Perspective Library actually generates better questions than the current
+                    live Lens Probe. THE LIBRARY IS NOT PROVEN, and is not claimed to be,
+                    until comparative calibration.
 ```

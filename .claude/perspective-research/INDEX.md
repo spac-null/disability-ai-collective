@@ -1,7 +1,8 @@
 # Perspective Research — INDEX
 
 *Read this first. It should orient a fresh session in under two minutes.*
-*Last updated: 2026-09-08 — **PR004 opened; PR003 first owner review complete.***
+*Last updated: 2026-09-08 — **PR004 first owner review complete; foundational phase complete,
+moving to calibration.***
 
 ---
 
@@ -24,22 +25,21 @@ this directory may be quoted in an article.
 **PR004 — Art, Disability, Aesthetic Knowledge & Institutions**
 → `art-disability-aesthetic-knowledge-institutions.md`
 
-**CLUSTER STATUS: FIRST PASS + COMPLETION PASS DONE — OWNER REVIEW PENDING.**
-**6 CANDIDATE · 2 MERGED · 1 REJECTED · 0 NEEDS_RESEARCH · 0 APPROVED_DURABLE.** Nothing
-promoted. **No new axis** — fourth consecutive cluster. An **OWNER-REVIEW PACK** with per-entry
-dispositions sits in the cluster file.
+**CLUSTER STATUS: FIRST OWNER REVIEW COMPLETE (2026-09-08).**
+**3 APPROVED_DURABLE · 3 CANDIDATE · 2 REJECTED · 1 merged as an Axis 1 sharpening.** Nothing
+deleted. Not permanently closed. **No new axis** — fourth consecutive cluster.
 
 | ID | Short name | Status | Axes | Minds |
 |---|---|---|---|---|
-| PR004-01 | Which channel is treated as the original | CANDIDATE ★ *(absorbs PR004-06)* | 2, 3, 12 | SIIRI / PINA |
-| PR004-02 | The mediator assigns a register to the mediated | CANDIDATE ★ strongest new | 3, 13 | PINA |
-| PR004-03 | Does the explanation break without it? | CANDIDATE — *weakest survivor; may be general historiographic method* | 10, 11 | SHARED |
-| PR004-04 | Did the practice migrate, or stay with the project? | CANDIDATE | 14, 10 | MAYA |
-| PR004-05 | **When it doesn't fit, which one changes?** *(renamed)* | CANDIDATE ★ | 14, 10, 5 | MAYA / ZENO |
-| PR004-06 | Access can become form | **MERGED → PR004-01** | — | — |
+| PR004-01 | Which channel is treated as the original | **APPROVED_DURABLE** | 2, 3, 12 | SIIRI / PINA |
+| PR004-02 | The mediator assigns a register to the mediated | **APPROVED_DURABLE** | 3, 13 | PINA |
+| PR004-03 | Does the explanation break without it? | **REJECTED — generic historiographic method** | — | — |
+| PR004-04 | Did the practice migrate, or stay with the project? | CANDIDATE — held *(A ≠ B ≠ C; C not proven)* | 14, 10 | MAYA |
+| PR004-05 | **When it doesn't fit, which one changes?** | **APPROVED_DURABLE** | 14, 10, 5 | MAYA / ZENO |
+| PR004-06 | **Did access change who could encounter it, or what the work became?** *(renamed; merge reversed)* | CANDIDATE | 14, 10 | — |
 | PR004-07 | Institutional objects encode a body model | **MERGED — AXIS 1 SHARPENING** | 1 | — |
 | PR004-08 | Rest or pace as part of the medium | **REJECTED — duplicate of PR002** | — | — |
-| PR004-09 | The tool as movement vocabulary | CANDIDATE *(was NEEDS_RESEARCH; settled by Kinetic Light)* | 1, 5, 7 | MAYA |
+| PR004-09 | The tool as movement vocabulary | CANDIDATE — held *(capability vs repertoire)* | 1, 5, 7 | MAYA |
 
 **Art did not grant novelty.** PR004-08 is the library's **second REJECTED entry** and the first
 rejected for being an existing instrument in another vocabulary — PR002-07 owns rest, PR002-02
@@ -271,9 +271,46 @@ was changed by this reframe.
 
 ---
 
-**TOTAL APPROVED_DURABLE ACROSS ALL CLUSTERS: 13.** Three clusters reviewed, **zero new
-axes**, nothing ever deleted. One entry rejected (PR003-02), two merged (PR003-09 into
-PR003-07; PR003-01 into an Axis 5 sharpening), one lead held.
+**TOTAL APPROVED_DURABLE ACROSS ALL CLUSTERS: 16** *(verified: PR001 5 · PR002 5 · PR003 3 ·
+PR004 3)*. **Four clusters reviewed, zero new axes, nothing ever deleted.** Three entries
+rejected (PR003-02, PR004-03, PR004-08), three merged (PR003-09 → PR003-07; PR003-01 → an Axis 5
+sharpening; PR004-07 → an Axis 1 sharpening), one lead held.
+
+> **FOUNDATIONAL PHASE COMPLETE. THE LIBRARY MOVES FROM BUILDING TO CALIBRATION.**
+> PR005 is **not** opened. The binding uncertainty is no longer conceptual coverage — it is
+> **whether the Perspective Library actually generates better questions than the current live
+> Lens Probe.** The library is **not proven** until that comparison is made.
+
+---
+
+### PR004 FIRST OWNER REVIEW — 2026-09-08. APPROVED_DURABLE count: 3.
+
+**Promoted:** PR004-01 (which channel is treated as the original) · PR004-02 (the mediator
+assigns a register to the mediated) · PR004-05 (when it doesn't fit, which one changes?).
+
+**Held at candidate:** PR004-04 (Van Abbe supports A and B at self-description level; **C is not
+inferred**) · PR004-06 (**merge reversed** — see below) · PR004-09 (capability versus repertoire;
+one primary carrier).
+
+**Rejected:** PR004-03, because its transferable operation is **ordinary historiographic
+method** — *For Dear Life* supplied a strong instance, not an instrument, and it is retained as
+lineage. PR004-08, PR002 in gallery language.
+
+**Merged:** PR004-07 → an **Axis 1 sharpening**, with its operational question kept: *what action
+does this apparently neutral object require from the body?*
+
+**PR004-06 is the one decision that changed after review began.** The completion pass merged it
+on the finding that no demonstrated case existed. The later full-text **Cachia 2019** (diamond
+OA, recovered legally after ordinary retrieval failed on an expired certificate) reports a
+realised case — de Groot's *Study 5, A New Place* acquiring an artist-approved tactile component
+that changed the installation's material form. The merge is reversed; the entry returns as a
+**candidate**, not durable, because the evidence is one curator's account of her own exhibitions.
+**Retrieval changed access, not authority.** Recorded because it shows owner review is revisable
+when the factual basis changes, not only when the argument does.
+
+**Field judgement retained:** *mature practices, immature consolidation* — strong practices exist
+across artists and institutions while transferable consolidation remains fragmented. **Not
+production doctrine and not public copy.**
 
 ---
 
