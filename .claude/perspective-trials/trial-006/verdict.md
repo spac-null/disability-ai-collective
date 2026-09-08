@@ -129,4 +129,71 @@ incident engineering fix), is now a strong enough pattern to name as a
 standing observation rather than a coincidence — but naming it is not the
 same as proposing a rule change, and none is proposed here.
 
-IMPORTANT: No pending change to implement.
+IMPORTANT: No pending change to implement (as of the original close).
+
+==================================================
+REOPENED — OWNER CORRECTION TO v1.2
+
+OWNER DECISION: RETAIN the original findings above unedited, and CONTINUE.
+v1.2's GENERIC_DOMAIN_KNOWLEDGE classification describes where the
+mechanism's explanation came from, not whether the article is worth
+publishing — treating it as an automatic kill gate was this project's own
+overcorrection (see `PERSPECTIVE_TRIAL_CONTRACT.md` for the full
+correction). The actual bar is the live WORTH gate, run honestly against a
+frozen ledger built from primary sources.
+
+LEDGER: CREATED (`ledger.md`) — 14 facts, all with verbatim support spans
+from two primary sources (USGS PAGER background page; Wald et al. 2012,
+read in full from the primary conference-paper PDF). One correction made
+against the looser causal framing in the original `evidence.md`: the
+"organizations may mobilize" risk (F09) is the PAGER team's general
+stated lesson, not a documented specific consequence of the Van case
+(F08) — the two are adjacent real facts, not one asserted causal chain.
+
+WORTH: **PASS.** Verdict STRONG_INTERPRETIVE_LENS, reasoned in full in
+`worth.md` against the actual WORTH_SYSTEM prompt text, checked
+explicitly against its own named failure modes (WEAK_ANALOGY, the
+WildSumaco neighbouring-entity error, GREAT_GENERAL_STORY_WRONG_
+PUBLICATION, the accessibility-fact substitution) before being accepted,
+not defaulted into because the owner wanted a pass. lens_particulars:
+F05–F08 (PAGER's own 20-minute embargo for its rarest alerts, reasoned
+explicitly, and the real, named, dated Van case it exists in tension
+with). can_carry_article: YES.
+
+ARCHITECTURE: CREATED (`architecture.md`) — beat structure and explicit
+cut-terms list (no Perspective Library, no PINA/MAYA/SIIRI/ZENO, no
+Christine Sun Kim, no collision/calibration/axes/epistemic-mode language;
+none of the evidence required any of them).
+
+ARTICLE DRAFT: YES. `article-draft.md`. ~975 words. Working title: "The
+Number That Went Out Before It Was True." Opens cold on the Van, Turkey
+earthquake and the 27-minute red alert; establishes PAGER's explicit
+speed-over-certainty design philosophy in its own words; shows its
+uncertainty-preserving alert format; returns to Van's revision and the
+more accurate in-country estimate; reveals the system's one real,
+bounded exception (the 20-minute embargo) in its own reasoning; closes on
+the risk the system's own team names in general terms, explicitly marked
+in the prose as a general stated risk and not a specific claim about what
+happened in Van. No disability language, no mention of the internal
+editorial path, no provenance language in the narrative voice — sourcing
+lives in an endnote only.
+
+CORE STORY IN ONE SENTENCE: A disaster-alert system built to publish a
+number it knows might be wrong, because waiting to be right costs lives
+too — and the one real case where that choice produced a wrong number,
+and the narrow, bounded fix the system's own engineers added afterward,
+without extending it everywhere.
+
+WHAT MAKES IT CRIP MINDS (plain editorial explanation): the piece asks
+what a system that turns a life into a number is willing to leave out of
+that number, and what it does instead of pretending to a certainty it
+doesn't have — a system honest about its own limits, tested against a
+real case where that honesty still weren't enough to stop the wrong
+number from doing something before it could be corrected. That is the
+WORTH gate's own named "central mode" (what a system has a field for,
+what it turns into a number, what it drops) applied to a real subject —
+arrived at through an internal editorial path that is not claimed
+anywhere in the piece itself, per instruction.
+
+DID ARTICLE REQUIRE MENTIONING DISABILITY: NO.
+DID ARTICLE REQUIRE MENTIONING CHRISTINE SUN KIM: NO.

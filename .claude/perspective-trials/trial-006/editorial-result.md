@@ -72,3 +72,21 @@ rooted question. Whether that pattern says something about how mature,
 safety-critical institutional fields self-correct in general — rather
 than about a weakness in this process — is an observation worth having on
 record, not a change to propose.
+
+==================================================
+REOPENED (owner correction)
+
+The owner corrected v1.2's role after reading this result: GENERIC_
+DOMAIN_KNOWLEDGE describes the mechanism's origin, not the article's
+worth — it does not mean WRONG PUBLICATION, and this file's earlier
+treatment of it as an automatic disqualification was an overcorrection.
+The actual, unchanged bar is the live WORTH gate. Reopened and re-run
+against `ledger.md` (built from primary sources, with one causal
+correction against the looser earlier draft above — see `ledger.md`'s
+note): **WORTH: PASS, verdict STRONG_INTERPRETIVE_LENS** (`worth.md`).
+Continued through architecture and prose to a complete draft
+(`article-draft.md`). See `verdict.md` for the full, corrected record.
+
+The "SURVIVING READING: NEITHER" and "FINAL STAGE REACHED: Step 5"
+lines above are superseded by this reopening — left in place rather than
+deleted, per the project's own no-rewrite practice.

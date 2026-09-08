@@ -83,4 +83,30 @@ Do not reopen research merely to improve a classification — classify on the
 evidence already gathered, or record UNSUPPORTED / BASELINE_EQUIVALENT
 honestly.
 
-Scope: trial-layer only, same boundary as v1.1. No other change.
+Scope: trial-layer only, same boundary as v1.1.
+
+OWNER CORRECTION TO v1.2 (after Trial 006, reopened): the PERSPECTIVE
+CONTRIBUTION CHECK remains useful as DESCRIPTION. It is not, and was never
+meant to be, an automatic editorial kill gate. GENERIC_DOMAIN_KNOWLEDGE
+does not mean WRONG PUBLICATION — it means only that the target field
+already possesses this mechanism, which is normal and expected: Crip Minds
+does not need to discover facts or mechanisms domain experts themselves
+do not know. A disability-rooted source may contribute by generating the
+question, connecting fields that normally remain separate, directing
+research toward an overlooked carrier, producing a new synthesis, or
+making an ordinary mechanism newly legible to readers — none of which
+requires the mechanism itself to be unknown to the target field. Trials
+002, 005 and 006 were each real, publishable-quality findings (backed by
+decisive primary evidence) that this file's earlier drafts treated as
+automatic disqualifications on the strength of GENERIC_DOMAIN_KNOWLEDGE
+alone; that was an overcorrection this file itself introduced, now
+retracted. The actual, unchanged bar remains the live WORTH gate
+(`automation/new_engine_v1/composition.py`, WORTH_SYSTEM) — a real
+STRONG_INTERPRETIVE_LENS finding, honestly checked against the frozen
+ledger, decides publishability, not this trial-layer descriptive field.
+The article itself must never falsely claim the disability perspective
+invented or discovered target-domain knowledge the field already had.
+
+No other change. Still does not modify the 16 durable instruments, the 14
+axes, PR001–PR004 statuses, CURRENT_ENGINE, the live Lens Probe, Worth,
+Safety, or Grounding.
