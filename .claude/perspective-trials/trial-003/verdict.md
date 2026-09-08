@@ -98,3 +98,30 @@ IMPORTANT: Do NOT implement anything from this without the owner reading
 the result first — there is no proposed change pending here, but the
 "nothing to change" conclusion is itself a claim the owner should be able
 to disagree with.
+
+==================================================
+SELECTION_DEVIATION (recorded after the fact by the controlling session;
+original record above left unedited, result not rewritten, not upgraded,
+not downgraded)
+
+The ISO 668 intermodal shipping-container subject was already present as
+**S08** in the Perspective Library calibration benchmark
+(`.claude/perspective-calibration/subject-set-001.md`, "SCORED SET (16)",
+read from `research/perspective-library-calibration` branch, commit
+FETCH_HEAD `b579e91` at time of check). The real-trial instruction required
+a fresh subject not drawn from calibration subjects; this was not checked
+against the calibration subject list before Trial 003 was selected.
+
+Trial 003 is therefore **retained** — its research and editorial reasoning
+are still real and still useful — but it is **not treated as a clean
+unseen-subject trial**. Its result is not rewritten and its intellectual
+finding is neither upgraded nor downgraded because of this process issue.
+
+Retained as-is:
+
+BASELINE: NOTHING HERE
+PERSPECTIVE: real ergonomic/body-operation hypothesis (H1)
+RESEARCH: supported (OSHA FS-3583, container-terminal ergonomics
+literature)
+v1.2: GENERIC_DOMAIN_KNOWLEDGE
+FINAL: NEITHER
