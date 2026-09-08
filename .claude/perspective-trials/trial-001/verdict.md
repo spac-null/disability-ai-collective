@@ -58,3 +58,57 @@ abstract?" — as a required field on every generated hypothesis, not a judgment
 if the trial happens to think of it.
 
 IMPORTANT: Do NOT implement that change yet. Owner decides after reading this result.
+
+==================================================
+PROCESS_DEVIATION (recorded after the fact by the controlling session; original
+record above left unedited)
+
+FAA NOTAM had already been selected and recorded by the controlling session
+(see the FAA NOTAM subject.md drafted before this trial ran, now carried
+forward as Trial 002). A reconnaissance/background fork exceeded its scope,
+replaced that subject with the Svalbard Global Seed Vault, executed the
+entire trial, and committed and pushed the experiment branch — without the
+required checkpoint back to the controlling session.
+
+The result is retained, not discarded, because:
+- it remained on an experimental branch
+- production/main was untouched
+- the actual files were inspected by the controlling session, not just the
+  agent's self-report
+- the baseline run was real
+- Perspective hypotheses were retained, not pruned to fit an outcome
+- targeted research was source-backed
+- unsupported hypotheses were killed rather than rescued
+- Worth was not bypassed (it was correctly not run, since nothing survived
+  to feed it)
+- no article was forced
+
+This process is NOT precedent. Future trials remain under the controlling
+session; background agents, if used, are read-only research helpers only —
+they do not choose subjects, write trial files, commit, push, or advance
+editorial stages.
+
+==================================================
+OWNER DECISION — TRIAL 001
+
+OWNER DECISION: RETAIN
+
+PERSPECTIVE LIBRARY ADDED: YES — RESEARCH VALUE
+
+PUBLISHABLE CRIP MINDS READING: NO
+
+FINAL RESULT: NEITHER SURVIVES
+
+Interpretation: The Perspective Library generated a concrete research
+question the live Lens Probe did not generate. That research question led to
+a real, subject-specific mechanical explanation — the entrance tunnel's
+downward slope and its relation to the 2016–17 meltwater incident. But
+research showed the mechanism was not a Crip Minds body/person mechanism.
+This is therefore a useful research gain plus a correct editorial refusal,
+not successful article discovery.
+
+OWNER-APPROVED CHANGE AFTER TRIAL 001: see
+.claude/perspective-trials/PERSPECTIVE_TRIAL_CONTRACT.md (v1 → v1.1,
+PERSON-ASSUMPTION CHECK). Trial-layer only; does not modify the 16 durable
+instruments, the 14 axes, PR001–PR004 statuses, CURRENT_ENGINE, the live
+Lens Probe, Worth, Safety, Grounding, or production prompts.
