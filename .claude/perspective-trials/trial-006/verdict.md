@@ -197,3 +197,18 @@ anywhere in the piece itself, per instruction.
 
 DID ARTICLE REQUIRE MENTIONING DISABILITY: NO.
 DID ARTICLE REQUIRE MENTIONING CHRISTINE SUN KIM: NO.
+
+==================================================
+CONTINUITY + PROSE FINISH (final owner-facing draft)
+
+Applied per `CONTINUITY_SYSTEM` and `PROSE_FINISH_SYSTEM`
+(`automation/new_engine_v1/composition.py`) directly to `article-draft.md`
+— see `continuity-and-prose-finish.md` for the itemized surface-only
+changes. Frozen Ledger (`ledger.md`) untouched; no new research; no fact,
+qualifier, or attribution added or dropped.
+
+FINAL ARTICLE: `article-final.md` — 938 words. Same title, same thesis,
+same evidence, same disclaimer that the "organizations may mobilize" risk
+is general and not a specific claim about Van.
+
+TRIAL 006 STATUS: COMPLETE. Stopping here per instruction — no Trial 007.
