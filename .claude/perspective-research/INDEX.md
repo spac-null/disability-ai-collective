@@ -1,7 +1,8 @@
 # Perspective Research — INDEX
 
 *Read this first. It should orient a fresh session in under two minutes.*
-*Last updated: 2026-09-08 — **PR002 first owner review complete.***
+*Last updated: 2026-09-08 — **PR002 first owner review complete; PR003 reframed before
+research.***
 
 ---
 
@@ -142,13 +143,36 @@ gaze migrates inward" — check before promoting. ★ **PR001-07** has the close
 in the cluster. ✓ **PR001-05** named its own research gap and Moser closed it.
 
 **DEFERRED, not lost:** Moser's Dag case suggests that a support technology may make a
-*social position* available that an institution had suppressed — not opened as an entry here
-(different subject, N=1, and it would blur PR001-05), deferred to a prospective **PR003**.
-Hypothesis and reason are preserved in the cluster's decision history.
+*social position* available that a previous arrangement did not permit — not opened as an
+entry here (different subject, N=1, and it would blur PR001-05), deferred to **PR003**.
+Hypothesis and reason are preserved in the cluster's decision history. *Reframed 2026-09-08:
+the institutional setting in Moser is **source context**, not the domain PR003 reproduces —
+see NEXT CLUSTER.*
 
 ---
 
 ## OWNER DECISIONS
+
+### PR003 REFRAMED BEFORE RESEARCH — 2026-09-08
+
+**Renamed** from *CARE / ASSISTIVE TECHNOLOGY / AGENCY* to **ASSISTIVE TECHNOLOGY / EVERYDAY
+AGENCY / INDEPENDENCE**.
+
+**Why.** "Care" was not the intended centre of gravity, and naming it first would have made
+institutional care the default domain by drift. The owner's interest is in disabled people
+living **ordinary, self-directed daily lives** and the technology, infrastructure and control
+arrangements inside them. Institutional care is **not banned** and care **remains shared
+house knowledge** under Axis 6 — it is simply not the default.
+
+**Also recorded, unpromoted:** independence may mean **control over support, not absence of
+support**, with a candidate mechanism (*support can disappear into independence*) held as an
+orientation for the cluster to test rather than as knowledge. And the Moser lead is kept with
+its framing corrected — the institutional setting is source context, not the domain.
+
+**No research was done.** No axis, doctrine, genesis, production file or prior owner decision
+was changed by this reframe.
+
+---
 
 **TOTAL APPROVED_DURABLE ACROSS ALL CLUSTERS: 10.** Two clusters reviewed, **zero new
 axes**, no entry ever rejected, retired or deleted.
@@ -234,18 +258,74 @@ settled rather than deleted.*
 
 ## NEXT CLUSTER
 
-**PR003 — CARE / ASSISTIVE TECHNOLOGY / AGENCY — ACTIVE NEXT.** *Not started; not researched
-in this task.*
+**PR003 — ASSISTIVE TECHNOLOGY / EVERYDAY AGENCY / INDEPENDENCE — ACTIVE NEXT.**
+*Not started; not researched. Reframed by owner direction 2026-09-08 — see OWNER DECISIONS.*
 
-Conceptual territory: assistance versus agency · care and interdependence · assistive
-technology · institutional suppression or production of social roles · when support changes
-what action or personhood is possible · hidden labour behind independence.
+### The conceptual centre
 
-**Starting lead, already deferred to it:** Moser's Dag case — a support technology may make a
-*social position* available that an institution had suppressed (PR001 decision history,
-2026-09-07). Would extend Axes 5, 6 and 10. Source 1 part 4, *Practices of Democracy*, and
-its self-advocacy material are the obvious first place to look. New entries here use the
-ten-field instrumentation including DISCONFIRMING SHAPE (README).
+The interesting question is **not** primarily *"who cares for this person?"*
+It is more often: **"what enables this person to act on their own terms?"**
+
+The subject matter Crip Minds is actually interested in here is **disabled people living
+ordinary, self-directed daily lives** — Deaf people using hearing and communication
+technology, wheelchair users, blind people using navigation or interface technology,
+neurodivergent people using tools and adaptations.
+
+Support is relevant where it reveals **agency · control · independence · interdependence ·
+infrastructure · maintenance · repair · mediation · bodily extension · interface · hidden
+assistance · ownership of support · everyday participation.**
+
+### What this cluster does not default to
+
+**Institutional care is not the centre of gravity.** Nursing homes, residential care,
+elderly-care systems, high-dependency institutional settings and care-centre administration
+are **not banned** — a subject may lead there and be worth doing. They are simply **not the
+default research domain**, and PR003 should not drift toward them.
+
+**CARE remains shared house knowledge** — Axis 6 is untouched and available to every cluster
+and every mind. It is just not a required PR003 domain.
+
+### The independence distinction
+
+**Do not equate independence with needing no assistance.**
+
+> **INDEPENDENCE MAY MEAN CONTROL OVER SUPPORT, NOT ABSENCE OF SUPPORT.**
+
+Recorded as a **research orientation and hypothesis, not APPROVED_DURABLE knowledge.**
+
+A possible future mechanism to test, **not promoted**: *support can disappear into
+independence* — and its question: **what support has become so reliable or so embedded that
+the resulting action is now mistaken for an individual capacity?** That is close to Axis 5's
+existing territory and to PR001-05, and whether it is genuinely distinct is part of what the
+cluster has to find out.
+
+### Starting territory
+
+assistive technology · everyday agency · personal mobility · communication technology ·
+hearing technology · nonvisual interfaces · AAC · adapted transport · prosthetics and
+orthotics · smart-home and AI support · repair, maintenance and charging · settings and
+calibration · interoperability · user control · proprietary dependence · support becoming
+invisible inside "independence" · where the boundaries between body, tool and infrastructure
+are drawn.
+
+### Starting lead — Moser, reframed
+
+Moser's Dag case is kept, with its framing corrected. The transferable question is **not** an
+institutional-care story:
+
+> **Can a support technology make a form of agency, social action, or relation possible that
+> the previous arrangement did not permit?**
+
+The institutional setting in Moser is **source context**, not the domain PR003 must
+reproduce. (PR001 decision history, 2026-09-07; reframed 2026-09-08.)
+
+### Rules carried in
+
+Likely to extend Axes 5, 6 and 10. New entries use the ten-field instrumentation including
+**DISCONFIRMING SHAPE** (README). **No persona territory:** hearing aids do not belong to
+PINA, wheelchairs to MAYA, screen readers to SIIRI, or adaptive software to ZENO. All minds
+may use all shared knowledge, and the eventual intellectual reading determines relevance —
+not the device category.
 
 **PR002 — first owner review complete 2026-09-08.** See the cluster section above.
 

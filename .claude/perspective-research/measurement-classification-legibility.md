@@ -889,6 +889,24 @@ WHY:                Three reasons, any one sufficient. (1) It is a different sub
 ```
 
 ```
+DATE:               2026-09-08
+ENTRY:              Moser's Dag lead — destination renamed and reframed
+DECISION:           The 2026-09-07 block above stands as written and is NOT rewritten. Its
+                    destination cluster has since been renamed and its framing corrected.
+OWNER/REVIEW BASIS: Owner direction, 2026-09-08, before PR003 research began.
+WHY:                PR003 is now ASSISTIVE TECHNOLOGY / EVERYDAY AGENCY / INDEPENDENCE, not
+                    CARE / ASSISTIVE TECHNOLOGY / AGENCY. Care was not the intended centre of
+                    gravity, and naming it first would have made institutional care the
+                    default domain by drift. The lead itself is unchanged and is NOT to be
+                    framed as an institutional-care story: the institutional setting in Moser
+                    is SOURCE CONTEXT, not the domain PR003 reproduces. The transferable
+                    question is whether a support technology can make a form of agency,
+                    social action or relation possible that the previous arrangement did not
+                    permit. Care remains shared house knowledge under Axis 6. See INDEX,
+                    OWNER DECISIONS.
+```
+
+```
 DATE:               2026-09-07
 ENTRY:              ME002 — Perspective as hypothesis generation
 DECISION:           Added as META-EDITORIAL / ARCHITECTURE CANDIDATE. Not added to doctrine.
