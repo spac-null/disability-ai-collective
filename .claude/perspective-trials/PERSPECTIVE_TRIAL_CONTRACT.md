@@ -33,4 +33,54 @@ Scope: trial-layer hypothesis-selection checkpoint only. Does not modify the
 16 durable instruments, the 14 axes, PR001–PR004 statuses, CURRENT_ENGINE,
 the live Lens Probe, Worth, Safety, Grounding, or production prompts.
 
-No other change.
+v1.2 (owner-approved after Trial 002: FAA NOTAM)
+Trial 002 passed the v1.1 check cleanly (the surviving hypothesis was
+unambiguously about a person's cognition, perception and timing) and was
+backed by unusually strong, decisive, primary evidence (NTSB/AIR-18/01) —
+and still correctly failed to be a Crip Minds reading, because ordinary
+human-factors analysis already supplied the same explanation the
+Perspective Library reached, independently of any disability-rooted
+question. v1.1 does not catch this shape of non-result; nothing did until
+Section 7 was applied by hand at surviving-reading selection.
+
+Added PERSPECTIVE CONTRIBUTION CHECK: after targeted research and before
+surviving-reading selection, for each hypothesis that survived research,
+ask: what did the disability-rooted perspective let us see, ask, or
+explain that ordinary subject-domain analysis would not already give us?
+Classify each as one of:
+
+- DISTINCT_EXPLANATION — the perspective changes the causal or conceptual
+  understanding of the subject.
+- DISTINCT_EVIDENCE_PROBE — the perspective sends research toward concrete
+  evidence that ordinary baseline/domain analysis plausibly would not have
+  sought.
+- BASELINE_EQUIVALENT — the live Lens Probe reaches essentially the same
+  useful reading/evidence direction.
+- GENERIC_DOMAIN_KNOWLEDGE — the surviving mechanism is already well
+  explained by ordinary expertise in the subject's own field (human
+  factors, economics, architecture, management, communications, standard
+  historiography, etc.).
+- FORCED — the perspective survives only by analogy, adjacent disability
+  fact, proxy, or rhetorical relabeling.
+- UNSUPPORTED — research does not establish the proposed mechanism at all.
+
+Boundary, stated explicitly because it is easy to get backwards: this check
+does NOT ask "does this affect disabled people more than others," does NOT
+require a disability-versus-nondisability differential, and does NOT
+require explicit disability content in the subject. Crip Minds does not
+require a subject to demonstrate a disability differential — disability-
+rooted knowledge may reveal something about the ordinary world that
+ultimately applies broadly or universally. A mechanism may apply to
+everybody and still be a strong Crip Minds reading if disability-rooted
+knowledge supplied a genuinely distinctive way of seeing or explaining it
+(DISTINCT_EXPLANATION or DISTINCT_EVIDENCE_PROBE). Conversely, a subject
+may involve disabled people directly and still be wrong for Crip Minds if
+the reading is generic (GENERIC_DOMAIN_KNOWLEDGE) or only reaches what
+baseline already reaches (BASELINE_EQUIVALENT). The test is contribution,
+not differential.
+
+Do not reopen research merely to improve a classification — classify on the
+evidence already gathered, or record UNSUPPORTED / BASELINE_EQUIVALENT
+honestly.
+
+Scope: trial-layer only, same boundary as v1.1. No other change.

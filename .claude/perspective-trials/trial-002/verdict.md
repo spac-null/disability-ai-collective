@@ -83,3 +83,76 @@ actually appeared.
 
 IMPORTANT: Do NOT implement that change yet. Owner decides after reading
 this result.
+
+==================================================
+OWNER REVIEW — TRIAL 002 (recorded after the fact; original record above
+left unedited)
+
+OWNER DECISION: RETAIN, AS-IS. GREAT GENERAL STORY WRONG PUBLICATION is a
+valid result. Nothing about the outcome is rewritten.
+
+**Proposed change REJECTED, and the formulation itself rejected:** "does
+the evidence show the assumption operating differently across bodies/minds"
+is not the test. Crip Minds does not require a subject to demonstrate a
+disability-versus-nondisability differential. Disability-rooted knowledge
+may reveal something about the ordinary world that ultimately applies
+broadly or universally — the publication's contribution is not "disabled
+people are affected differently," it is whether disability-rooted knowledge
+contributed something to how we understand the subject. Requiring a
+differential would wrongly exclude a mechanism that applies to everybody
+but was only visible because of a disability-rooted question — and would
+wrongly admit a mechanism that names a differential but explains nothing an
+ordinary domain expert wouldn't already say.
+
+**WHY NEITHER SURVIVES, STATED MORE PRECISELY** (this replaces, as the
+operative reason, the "because the mechanism applied generally" framing in
+SURVIVING READING above — that framing is left in place in its original
+location rather than deleted, per the no-rewrite rule, but it is not the
+reason the owner endorses):
+
+NOT because the human-factors mechanism applied generally.
+
+YES because ordinary human-factors analysis already supplied the mechanism
+in full, and the Perspective Library's independent sweep did not materially
+change the explanation or the evidence direction beyond what baseline and
+ordinary subject-domain analysis (aviation human factors) already provided.
+The NTSB reached "presentation, not just delivery, is the causal
+mechanism" using its own field's ordinary methods — serial position effect,
+attention-under-workload, information-design best practice — with no
+disability-rooted question anywhere in the chain. Perspective converged on
+the same reading baseline already had in view. That convergence, not the
+absence of a differential, is what disqualifies it.
+
+Trial 002 therefore demonstrates two things, precisely:
+
+**PERSON-CENTERED DOES NOT AUTOMATICALLY MEAN CRIP MINDS.**
+**STRONG EVIDENCE DOES NOT AUTOMATICALLY MEAN CRIP MINDS.**
+
+**v1.2 PERSPECTIVE CONTRIBUTION CHECK applied to Trial 002** (see
+`.claude/perspective-trials/PERSPECTIVE_TRIAL_CONTRACT.md` for the full
+checkpoint definition; classifications below use existing evidence.md
+findings only — no research was reopened to improve either classification):
+
+- **H1 — BASELINE_EQUIVALENT + GENERIC_DOMAIN_KNOWLEDGE.** The live Lens
+  Probe reached essentially the same useful reading and evidence direction
+  independently (BASELINE_EQUIVALENT). The surviving mechanism — dense,
+  undifferentiated document presentation defeating recall under workload —
+  is already fully and ordinarily explained by aviation human-factors
+  expertise (serial position effect, information-design best practice,
+  cited by the NTSB itself via Colman 2006 and FAA 2008); nothing in the
+  causal account required or came from a disability-rooted question
+  (GENERIC_DOMAIN_KNOWLEDGE).
+- **H2 — UNSUPPORTED.** Per `evidence.md`, the predicted discriminating
+  evidence (a primary FAA/DOT record specifically naming the coded format,
+  as distinct from volume/placement, as a translation problem, with a
+  stated design rationale) was not found. What research turned up instead
+  was thinner, generic trade coverage describing the 2026 modernization as
+  addressing "pilot complaints about complexity" — real, but not a
+  confirmed mechanism to the standard H2 itself set. Recorded as
+  UNSUPPORTED rather than GENERIC_DOMAIN_KNOWLEDGE because the hypothesis's
+  specific causal claim was not established at all, not because an
+  established mechanism turned out to be explainable by ordinary domain
+  expertise (that is H1's shape, not H2's). Not reopened for further
+  research per instruction.
+
+FINAL (unchanged): GREAT GENERAL STORY WRONG PUBLICATION.
