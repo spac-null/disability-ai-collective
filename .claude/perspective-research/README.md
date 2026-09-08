@@ -75,6 +75,51 @@ for *asking*, never for *asserting*. The hard boundary above is unaffected by an
 
 ---
 
+## Entry instrumentation
+
+*Owner decision, 2026-09-08, at the PR002 review (ME003).*
+
+**For new perspective-research entries created from PR003 onward**, the standard
+instrumentation is these ten fields:
+
+```
+MECHANISM
+QUESTION
+CARRIERS
+FALSE MOVE
+DISCONFIRMING SHAPE
+EXISTING AXIS
+MINDS SHARPENED
+WHAT THIS ADDS
+TRANSFER TEST
+BOUNDARY
+```
+
+**DISCONFIRMING SHAPE** — a plausible observation or evidence pattern that would make the
+proposed mechanism **NOT apply to the subject**.
+
+**The rule.** If no plausible disconfirming shape can be stated, the hypothesis is probably
+too ideological, too vague, or too self-confirming to be a Perspective Library instrument.
+
+**The distinction that matters**, because the two fields are easy to conflate:
+
+| | |
+|---|---|
+| **FALSE MOVE** | how the **editor** may misuse the idea |
+| **DISCONFIRMING SHAPE** | what **subject evidence** would show the idea is wrong here |
+
+They answer different questions and neither substitutes for the other. The field is the
+practical form of **ME002** — a good hypothesis can fail, and naming the failure in advance
+is what makes that checkable rather than aspirational. In PR002 it did real work: it is what
+held PR002-08 at NEEDS_RESEARCH and what forced PR002-04 to depend on a demonstrated
+asymmetry rather than on the existence of a wait.
+
+**No retroactive rewriting.** PR001 entries predate this field and are **not** to be
+backfilled as a task of their own. A PR001 entry gains a disconfirming shape only when it is
+substantively revisited on other grounds.
+
+---
+
 ## Decision history
 
 Every promotion, rejection or retirement gets a compact dated note, in the cluster file and
@@ -96,14 +141,19 @@ different claim is worse than no entry.
 
 ## Axes are stable
 
-**AXES ARE STABLE. LIBRARY KNOWLEDGE MAY GROW BENEATH THEM.**
+**AXES ARE STABLE. LIBRARY KNOWLEDGE IS BECOMING MORE PRECISE BENEATH THEM.**
 
-*Owner decision, 2026-09-07, at the first PR001 review.*
+*Owner decision, 2026-09-07 at the first PR001 review; confirmed again 2026-09-08 at the
+PR002 review, where the standing form was updated from "may grow beneath them" to reflect
+what two clusters have actually done.*
 
 The fourteen axes in the perspective doctrine are the conceptual spine. Research clusters add
 sharper instruments **beneath** them; they do not routinely add axes. PR001 produced five
 durable instruments and **zero new axes**, and that was recorded as a successful result, not
 a shortfall.
+
+**Two consecutive clusters have now produced zero new axes and ten durable instruments
+beneath them.** PR001 sharpened Axes 5, 11 and 12; PR002 sharpened Axes 4 and 9.
 
 A future cluster may justify a new axis. **Novelty is not a goal**, and a cluster that
 sharpens the existing spine without expanding it has done its job. A doctrine that grew every

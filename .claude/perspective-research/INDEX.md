@@ -1,7 +1,7 @@
 # Perspective Research — INDEX
 
 *Read this first. It should orient a fresh session in under two minutes.*
-*Last updated: 2026-09-08 — **PR002 opened; PR001 first owner review complete.***
+*Last updated: 2026-09-08 — **PR002 first owner review complete.***
 
 ---
 
@@ -23,22 +23,23 @@ this directory may be quoted in an article.
 
 **PR002 — Time, Simultaneity, Waiting & Pace** → `time-simultaneity-waiting-pace.md`
 
-**CLUSTER STATUS: WORKING RESEARCH — OWNER REVIEW PENDING.**
-**8 CANDIDATE · 1 NEEDS_RESEARCH · 0 APPROVED_DURABLE.** Nothing promoted.
-**No new axis proposed** — everything sits beneath Axes 4 and 9.
+**CLUSTER STATUS: FIRST OWNER REVIEW COMPLETE (2026-09-08).**
+**5 APPROVED_DURABLE · 3 CANDIDATE · 1 NEEDS_RESEARCH · 0 rejected · 0 deleted.**
+Not permanently closed.
+**ZERO new axes** — everything sits beneath Axes 4 and 9, per owner decision.
 
 | ID | Short name | Status | Axes | Minds |
 |---|---|---|---|---|
-| PR002-01 | Access can expire | CANDIDATE | 4, 3 | PINA / MAYA |
-| PR002-02 | Pace is part of the interface | CANDIDATE ★ strongest | 4, 3, 2 | PINA |
-| PR002-03 | Synchrony is a resource | CANDIDATE | 4, 2 | SIIRI / PINA |
-| PR002-04 | Waiting is an allocation | CANDIDATE | 9, 5, 10 | MAYA |
-| PR002-05 | Delay changes the state it waits on | CANDIDATE ★ new question | 9, 12 | MAYA / SIIRI |
-| PR002-06 | More time is not always different time | CANDIDATE | 4, 9, 8 | ZENO / MAYA |
-| PR002-07 | Recovery is part of the task | CANDIDATE | 9, 6, 5 | MAYA |
-| PR002-08 | A deadline can define the person | **NEEDS_RESEARCH** | 8, 11, 4 | ZENO |
-| PR002-09 | The accommodation preserves the schedule | CANDIDATE ✦ *not in the starting set* | 14, 9, 10 | MAYA / ZENO |
-| ME003 | Disconfirming shape | META-EDITORIAL CANDIDATE — **proposed protocol addition, not adopted** | — | — |
+| PR002-01 | Access can expire | **APPROVED_DURABLE** | 4, 3 | PINA / MAYA |
+| PR002-02 | Pace is part of the interface | **APPROVED_DURABLE** ★ strongest | 4, 3, 2 | PINA |
+| PR002-03 | Synchrony is a resource | **APPROVED_DURABLE** | 4, 2 | SIIRI / PINA |
+| PR002-04 | Waiting is an allocation | CANDIDATE — held *(source access)* | 9, 5, 10 | MAYA |
+| PR002-05 | Delay changes the state it waits on | **APPROVED_DURABLE** ★ new question | 9, 12 | MAYA / SIIRI |
+| PR002-06 | More time is not always different time | CANDIDATE — held *(essentialism risk; primaries unread)* | 4, 9, 8 | ZENO / MAYA |
+| PR002-07 | Recovery is part of the task | **APPROVED_DURABLE** | 9, 6, 5 | MAYA |
+| PR002-08 | A deadline can define the person | **NEEDS_RESEARCH** — held | 8, 11, 4 | ZENO |
+| PR002-09 | The accommodation preserves the schedule | CANDIDATE — held, **not rejected** ✦ | 14, 9, 10 | MAYA / ZENO |
+| ME003 | Disconfirming shape | **OWNER-APPROVED META-EDITORIAL PRINCIPLE — ADOPTED into the protocol** (new entries from PR003) | — | — |
 
 **Two source cautions govern this cluster.** Samuels 2017 and Kafer 2013 — the two central
 crip-time texts — were **NOT ACCESSED**; only fragments, with their routes named. And the
@@ -69,7 +70,8 @@ Not permanently closed — candidates may be revisited by future evidence.
 **APPROVED_DURABLE still grants ZERO article factual authority** — trusted for asking, never
 for asserting. The hard boundary is unchanged by any promotion.
 
-**ACTIVE NEXT CLUSTER: PR002 — TIME / SIMULTANEITY / WAITING / PACE** (not started).
+*(This section describes PR001. The active cluster is above; PR003 is next — see NEXT
+CLUSTER.)*
 
 ---
 
@@ -148,7 +150,37 @@ Hypothesis and reason are preserved in the cluster's decision history.
 
 ## OWNER DECISIONS
 
-**PR001 FIRST OWNER REVIEW — 2026-09-07. APPROVED_DURABLE count: 5.**
+**TOTAL APPROVED_DURABLE ACROSS ALL CLUSTERS: 10.** Two clusters reviewed, **zero new
+axes**, no entry ever rejected, retired or deleted.
+
+---
+
+### PR002 FIRST OWNER REVIEW — 2026-09-08. APPROVED_DURABLE count: 5.
+
+**Promoted:** PR002-01 (access can expire) · PR002-02 (pace is part of the interface) ·
+PR002-03 (synchrony is a resource) · PR002-05 (delay changes the state it waits on) ·
+PR002-07 (recovery is part of the task).
+
+**Held, each for a different reason — the distinction matters:** PR002-04 on **source
+access** (abstract-level only, authors unknown; do not promote an elegant theory faster than
+access permits) · PR002-06 on **essentialism risk** plus two unread crip-time primaries
+(*disabled time is not inherently nonlinear*) · PR002-09 on **single-domain evidence**, and
+**explicitly not rejected** — it is one of the most interesting things PR002 produced rather
+than was fed · PR002-08 stays **NEEDS_RESEARCH** because the protocol worked and
+attractiveness is not evidence.
+
+**ME003:** OWNER-APPROVED META-EDITORIAL PRINCIPLE, **adopted into the protocol** for new
+entries from PR003 onward. No sixth research-entry status added. PR001 is **not**
+retroactively backfilled.
+
+**Owner mechanisms:** M3 **sharpened, not invalidated** — check source rate, then
+simultaneity, then action expiry, before locating temporal access loss in the lag. M5
+sharpened by allocation and by state-change during the wait. **Neither rewritten in the
+doctrine**, which this cluster does not modify.
+
+---
+
+### PR001 FIRST OWNER REVIEW — 2026-09-07. APPROVED_DURABLE count: 5.
 
 **Promoted:** PR001-02 (uptake enters the measurement) · PR001-03 (classification changes the
 available action) · PR001-05 (technology participates in making ability — *as an extension of
@@ -174,22 +206,25 @@ Full dated decision history — now ten entries — at the foot of the cluster f
 
 ## OPEN QUESTIONS
 
-1. **Which PR001 candidates deserve durable status?** Seven are CANDIDATE; that is a
-   research result, not a recommendation to adopt seven.
+*Questions 1, 3 and 5 below were settled at the 2026-09-07 PR001 review and are recorded as
+settled rather than deleted.*
+
+1. ~~Which PR001 candidates deserve durable status?~~ **SETTLED 2026-09-07:** five promoted
+   (PR001-02, -03, -05, -07, -09), four held. PR001 now stands at 5 APPROVED_DURABLE and 4
+   CANDIDATE.
 2. **Which require contemporary verification?** Source 1 is from 2009/2010 and source 3 is
    polemical and current. Both need checking against present-day scholarship before their
    mechanisms are treated as settled.
-3. **What is genuinely new versus already covered by Axis 11 or Axis 12?** The honest
-   suspicion, now sharper: PR001-01, -03, -07 and -09 are probably *extensions* of Axes 11
-   and 12 rather than new axes; PR001-05 is probably an extension of Axis 5; PR001-06 may
-   already be inside Axis 13. **The plausible outcome is that PR001 yields zero new axes and
-   several sharpened existing ones**, which would be a good result, not a disappointing one.
-4. **What should be merged rather than become another entry?** Likely merges: PR001-05 into
-   Axis 5; PR001-06 into Axis 13; PR001-01 and PR001-07 as a paired extension of Axis 12
-   (what an instrument *does*, and what registration *costs*).
-5. **Should the doctrine grow at all from this cluster?** The doctrine should not grow every
-   time a source is interesting. It is a live possibility that PR001 correctly produces zero
-   new axes and two or three sharpened existing ones.
+3. ~~What is genuinely new versus already covered by Axis 11 or Axis 12?~~ **SETTLED
+   2026-09-07:** zero new axes. PR001-05 was approved explicitly as an extension of Axis 5
+   and PR001-07 as a sharpening of Axes 11/12.
+4. **What should still be merged rather than stand alone?** Partly settled — PR001-05 and
+   PR001-07 were approved *as* extensions. Still open: whether PR001-06 belongs inside Axis
+   13, and whether PR001-01 and PR001-07 read better as a paired extension of Axis 12 (what
+   an instrument *does*, and what registration *costs*).
+5. ~~Should the doctrine grow at all from this cluster?~~ **SETTLED 2026-09-07:** no. Two
+   clusters have now produced zero new axes; the standing form is *axes are stable, library
+   knowledge is becoming more precise beneath them.*
 6. **ME001 asks a question about us:** is Crip Minds the plural kind of project or the
    vision-forward kind, and are four minds currently producing plurality or one house voice
    with four labels? Source 4 files the same curator's two projects on opposite sides of
@@ -199,12 +234,20 @@ Full dated decision history — now ten entries — at the foot of the cluster f
 
 ## NEXT CLUSTER
 
-**PR002 — opened 2026-09-08.** See the active cluster above.
+**PR003 — CARE / ASSISTIVE TECHNOLOGY / AGENCY — ACTIVE NEXT.** *Not started; not researched
+in this task.*
 
-**PR003 — CARE / ASSISTIVE TECHNOLOGY / AGENCY** — *not started, but it already has one
-deferred hypothesis waiting for it* (Moser's Dag case; see the cluster decision history).
-Would extend Axes 5, 6 and 10. Source 1 part 4, *Practices of Democracy*, and the
-self-advocacy material it contains are the obvious first place to look.
+Conceptual territory: assistance versus agency · care and interdependence · assistive
+technology · institutional suppression or production of social roles · when support changes
+what action or personhood is possible · hidden labour behind independence.
+
+**Starting lead, already deferred to it:** Moser's Dag case — a support technology may make a
+*social position* available that an institution had suppressed (PR001 decision history,
+2026-09-07). Would extend Axes 5, 6 and 10. Source 1 part 4, *Practices of Democracy*, and
+its self-advocacy material are the obvious first place to look. New entries here use the
+ten-field instrumentation including DISCONFIRMING SHAPE (README).
+
+**PR002 — first owner review complete 2026-09-08.** See the cluster section above.
 
 ---
 

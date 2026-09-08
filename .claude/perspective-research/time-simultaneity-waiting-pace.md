@@ -1,19 +1,28 @@
 # Perspective Research 002
 ## Time, Simultaneity, Waiting & Pace
 
-**STATUS: WORKING RESEARCH — NOT PRODUCTION DOCTRINE.**
-Nothing here is in force. No entry may be quoted, cited, or used to establish anything about
-any subject. **Nothing is promoted; owner review comes afterward.** See `README.md` for the
-status model and the hard boundary.
+**CLUSTER STATUS: FIRST OWNER REVIEW COMPLETE — 2026-09-08.**
+Five entries APPROVED_DURABLE, three held at CANDIDATE, one held at NEEDS_RESEARCH, one
+meta-editorial principle adopted. **Nothing rejected, retired or deleted.**
+**Not permanently closed** — the candidates may be revisited by future evidence.
+
+**APPROVED_DURABLE STILL GRANTS ZERO ARTICLE FACTUAL AUTHORITY.** No entry here, of any
+status, may be quoted, cited, or used to establish anything about any subject. Approval means
+an instrument is trusted for asking, never for asserting. See `README.md`.
 
 **RESEARCH QUESTION.** Not "disability and time" as a literature topic. Rather: **what forms
 of question-asking intelligence has disability knowledge produced about time?** The output
 wanted is transferable instrumentation — a mechanism, a question answerable *nothing useful
 here*, and the places evidence for it would live.
 
-**AXES.** PR002 does **not** create a new doctrine axis. Everything here sits beneath Axis 4
-(timing & simultaneity) and Axis 9 (endurance, pace, accumulated cost), with reaches into
-Axes 3, 5, 6 and 11. *Axes are stable; library knowledge may grow beneath them.*
+**AXES — OWNER DECISION 2026-09-08. PR002 CREATES ZERO NEW DOCTRINE AXES**, and this is again
+recorded as a successful research result. Everything here sits beneath **Axis 4** (timing &
+simultaneity) and **Axis 9** (endurance, pace, accumulated cost), with useful connections into
+Axes 2, 3, 5, 6, 10 and 12.
+
+> **AXES ARE STABLE. LIBRARY KNOWLEDGE IS BECOMING MORE PRECISE BENEATH THEM.**
+
+The Perspective Doctrine itself is unmodified by this cluster.
 
 ---
 
@@ -51,7 +60,12 @@ retrieved and read the text at the URL given.
 
 ### PR002-01 — ACCESS CAN EXPIRE
 
-**STATUS:** CANDIDATE
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-08.
+*Owner reason: the mechanism is precise and falsifiable — eventual availability is not
+equivalent to availability while an action can still be changed. It sharpens owner M3 without
+reducing temporal access to "lag". Preserved on approval: the consequence of the delay must be
+demonstrated, not every delay is exclusion, S6 remains abstract-level only, and **this
+approval does not adopt S6's broader theory wholesale**.*
 
 **SOURCE BASIS.** S6 (abstract-level): the paper shifts attention "from waiting as
 experience to waiting as distribution", and states that **access received too late is not
@@ -101,7 +115,13 @@ recorded as the paper's, not as established. S3's version is one Norwegian class
 
 ### PR002-02 — PACE IS PART OF THE INTERFACE
 
-**STATUS:** CANDIDATE — **the strongest entry in this cluster.**
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-08. **The strongest empirical
+instrument in PR002.**
+*Owner reason: the source rate itself materially changes what survives mediation, and the
+evidence corrected the intuitive assumption that lag was necessarily the main variable.
+Preserved on approval, all four: the CASE/SEE seam, the N=12 limitation, no Deaf
+generalisation, and the refusal of "slower is always better". Sharpens Axis 4 and PINA. No new
+axis.*
 
 **SOURCE BASIS.** S1 (read), an experiment with 12 educational CASE transliterators at three
 speaking rates — **88, 109 and 137 words per minute**, all ordinary conversational rates.
@@ -159,7 +179,12 @@ nothing here licenses a claim about deaf people in general: it is a finding abou
 
 ### PR002-03 — SYNCHRONY IS A RESOURCE
 
-**STATUS:** CANDIDATE
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-08.
+*Owner reason: it identifies a distinct mechanism invisible to per-channel accessibility — two
+individually available channels colliding because both demand the same attention at the same
+moment. Preserved on approval: this is about an **arrangement**, not about Deaf experience in
+general, and sequential, replayable or redundant channels can disconfirm it. Sharpens Axes 2
+and 4, and SIIRI/PINA. No new axis.*
 
 **SOURCE BASIS.** S3 (read) — Berge & Thomassen, 14 interpreter-mediated lessons, ~55 hours
 of three-camera video, Norwegian high school. A deaf student "can only have his or her visual
@@ -215,7 +240,11 @@ interpreted lessons with artifacts, not of deafness.
 
 ### PR002-04 — WAITING IS AN ALLOCATION
 
-**STATUS:** CANDIDATE
+**STATUS:** CANDIDATE — **held at candidate, owner review 2026-09-08.**
+*Owner reason: a strong mechanism, but the primary paper is **ABSTRACT-LEVEL ONLY and its
+authors remain UNKNOWN**. Do not promote an elegant theory faster than source access permits.
+The disconfirming requirement is kept as the gate: show actual temporal asymmetry or
+reordering, not merely the existence of waiting.*
 
 **SOURCE BASIS.** S6 (abstract-level). The paper theorises **institutional time inequality**
 — disparities in the duration between claim and resolution as a mechanism of stratification —
@@ -265,7 +294,13 @@ the abstract and have not been checked in the text.
 
 ### PR002-05 — DELAY CHANGES THE STATE IT IS WAITING ON
 
-**STATUS:** CANDIDATE
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-08.
+*Owner reason: it produces a genuinely useful house question — the subject may change while an
+institution continues to decide against a frozen earlier representation. Preserved on
+approval: the mechanism is the mismatch between a moving subject and a static record;
+mortality and deterioration statistics are **not themselves the insight**; and **no claim of
+institutional intent is licensed**. Sharpens Axis 9 and connects to Axis 12 / PR001-07. No new
+axis.*
 
 **SOURCE BASIS.** S9 (abstract-level, government audit): of roughly 9 million disability
 applicants who appealed between FY2008 and FY2019, **109,725 died before receiving a final
@@ -317,7 +352,12 @@ assert one.
 
 ### PR002-06 — MORE TIME IS NOT ALWAYS DIFFERENT TIME
 
-**STATUS:** CANDIDATE
+**STATUS:** CANDIDATE — **held at candidate, owner review 2026-09-08.**
+*Owner reason: the mechanism is promising and S4 supports an episodic, non-smooth temporal
+pattern — but the two central crip-time texts, Samuels and Kafer, were **not accessed in
+full**, and this entry carries a **high essentialism risk** if stated too broadly. The
+constraint stands: disabled time is NOT inherently nonlinear. Research action: obtain and read
+Samuels and Kafer before promotion.*
 
 **SOURCE BASIS.** S4 (read): crip time is "marked by disruptions and irregularities", against
 chrononormativity's expectation of "smooth and linear progress"; a participant describes
@@ -370,7 +410,12 @@ until the primaries are obtained. Research action: get Samuels and Kafer properl
 
 ### PR002-07 — RECOVERY IS PART OF THE TASK
 
-**STATUS:** CANDIDATE
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-08.
+*Owner reason: a task's official duration can omit materially necessary preparation and
+recovery time — a concrete temporal form of the existing unbooked-cost / affective-ledger
+logic. Preserved on approval: not all off-clock preparation is exploitation; the actual
+accounting boundary and the material recovery cost must both be shown; and the source is
+qualitative and establishes no magnitude. Sharpens Axis 9 and MAYA. No new axis.*
 
 **SOURCE BASIS.** S4 (read): disabled workers "must dedicate a significant portion of their
 free time to self-care" in order to remain functional; a social-worker participant, knowing
@@ -416,7 +461,10 @@ participants are self-selected. It evidences the mechanism; it establishes no ma
 
 ### PR002-08 — A DEADLINE CAN DEFINE THE PERSON
 
-**STATUS:** **NEEDS_RESEARCH**
+**STATUS:** **NEEDS_RESEARCH** — **held, owner review 2026-09-08.**
+*Owner note: the research protocol worked correctly here, and this entry is **not** to be
+upgraded because the hypothesis is attractive. What is needed is actual literature showing a
+capacity or classification changing materially as a function of the measurement window.*
 
 **SOURCE BASIS.** Owner discussion, plus indirect support only. S1 shows accuracy is a
 function of the rate at which the task is presented — a competence measured inside a chosen
@@ -462,7 +510,14 @@ and Samuels/Kafer once obtained.
 
 ### PR002-09 — THE ACCOMMODATION PRESERVES THE SCHEDULE
 
-**STATUS:** CANDIDATE
+**STATUS:** CANDIDATE — **held at candidate, owner review 2026-09-08. Explicitly NOT
+rejected.**
+*Owner reason: one of the most interesting hypotheses PR002 **produced** rather than was fed.
+But it rests heavily on one workplace/time context and could too easily harden into a
+pre-decided critique — "accommodations preserve bad systems". Before promotion, find another
+independent domain or source where individual flexibility demonstrably absorbs deviation AND
+the default schedule or rule thereby remains structurally unchanged. Its false move is
+preserved with emphasis: **this is never an argument to withhold accommodation.***
 *Not in the starting hypothesis set. It emerged from S4 and is recorded because the research
 produced it.*
 
@@ -541,7 +596,11 @@ advance that the experience contains an insight, which is precisely what the pro
 
 ## WHAT THIS CLUSTER DOES TO THE OWNER MECHANISMS
 
-**M3 — THE THREE-SECOND LAG.** Sharpened, and partly redirected. The intuitive account puts
+**M3 — THE THREE-SECOND LAG. SHARPENED, NOT INVALIDATED** *(owner decision, 2026-09-08)*.
+The operative instruction the cluster produces: **do not automatically locate temporal access
+loss in lag itself.** Check the **source rate**, the **simultaneity / attention collision**,
+and the **action expiry** before deciding what the mechanism is. M3 is not rewritten in
+doctrine by this cluster. The intuitive account puts
 the loss in the delay. In the one place it has been measured (S1), **lag explains ~3% of the
 variance in accuracy while the speaker's ordinary rate moves it 12 points** — and S3
 concludes that "the interpreter's presence is not enough to ensure visual access". So M3's
@@ -549,7 +608,9 @@ question survives intact, but the instruments beneath it should reach for **rate
 and **simultaneity** (PR002-03) before reaching for delay. M3 is not weakened; the naive
 reading of it is.
 
-**M5 — PERMISSION ARRIVES LAST.** Sharpened in two directions. PR002-04 says the lateness may
+**M5 — PERMISSION ARRIVES LAST. SHARPENED** *(owner decision, 2026-09-08)* by waiting as a
+possible **allocation** and by delay **changing the subject or state being decided about**.
+Not rewritten in doctrine by this cluster. PR002-04 says the lateness may
 be an **allocation** — someone else's speed produced by this delay. PR002-05 says the delay
 **changes the thing being decided about**, so the permission, when it lands, answers a
 question about a person or situation that no longer exists in that form. M5 recorded that
@@ -563,20 +624,35 @@ Neither owner mechanism needs proving and neither has been treated as article ev
 
 ### ME003 — DISCONFIRMING SHAPE
 
-**STATUS:** META-EDITORIAL CANDIDATE — proposed protocol addition, **not adopted**.
+**STATUS:** **OWNER-APPROVED META-EDITORIAL PRINCIPLE** — owner review 2026-09-08.
+**Adopted into the perspective-research protocol**, effective for new entries from PR003
+onward. See `README.md`.
 
-Every entry in this cluster carries a **DISCONFIRMING SHAPE**: the observation that would
-kill the hypothesis. It was added as an experiment, and it earned its place — it is what
-moved PR002-08 to NEEDS_RESEARCH and what exposed PR002-04's dependence on showing an
-asymmetry rather than a wait.
+*Note on vocabulary: this is not a sixth research-entry status. The five statuses are
+unchanged and apply to research entries only.*
+
+**DEFINITION, as adopted.** A DISCONFIRMING SHAPE is *a plausible observation or evidence
+pattern that would make the proposed mechanism NOT apply to the subject.*
+
+**THE RULE.** If no plausible disconfirming shape can be stated, the hypothesis is probably
+too ideological, too vague, or too self-confirming to be a Perspective Library instrument.
+
+**THE DISTINCTION THAT MATTERS.** FALSE MOVE = how the *editor* may misuse the idea.
+DISCONFIRMING SHAPE = what *subject evidence* would show the idea is wrong here. They answer
+different questions and neither substitutes for the other.
+
+Every entry in this cluster carries one. It was added as an experiment and earned its place —
+it is what moved PR002-08 to NEEDS_RESEARCH and what exposed PR002-04's dependence on showing
+an asymmetry rather than a wait.
 
 It is a direct operationalisation of **ME002** (perspective as hypothesis generation): a good
 hypothesis *can fail*, and a field that names the failure makes that checkable rather than
 aspirational. The test in practice: **if no plausible disconfirming observation can be
 written, the question is too ideological or too vague to be an instrument.**
 
-**Not added to the global README protocol.** That is an owner decision, and the request was
-explicit that the protocol not change until reviewed. Recorded here for that review.
+**Adopted into the global README protocol, 2026-09-08**, for new entries from PR003 onward.
+**PR001 is not retroactively rewritten**; a PR001 entry gains a disconfirming shape only when
+it is substantively revisited on other grounds.
 
 ---
 
@@ -656,4 +732,64 @@ WHY:                S6 theorises waiting across immigration adjudication, pretri
                     populations. S4 similarly situates crip time beside gender and class; that
                     framing is not imported. Recorded so the check is visible rather than
                     assumed.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              PR002 — FIRST OWNER REVIEW
+DECISION:           PROMOTED TO APPROVED_DURABLE: PR002-01, PR002-02, PR002-03, PR002-05,
+                    PR002-07.
+                    HELD AT CANDIDATE: PR002-04, PR002-06, PR002-09.
+                    HELD AT NEEDS_RESEARCH: PR002-08.
+                    REJECTED: none. RETIRED: none. DELETED: none.
+OWNER/REVIEW BASIS: Owner review of the cluster.
+WHY:                Per-entry reasons are on each STATUS line. The three holds are held for
+                    three different reasons, and the distinction matters: PR002-04 is held on
+                    SOURCE ACCESS (abstract-level only, authors unknown - do not promote an
+                    elegant theory faster than access permits); PR002-06 on ESSENTIALISM RISK
+                    plus the two unread crip-time primaries; PR002-09 on SINGLE-DOMAIN
+                    EVIDENCE, and it is explicitly NOT rejected - it is one of the most
+                    interesting things PR002 produced rather than was fed. PR002-08 stays
+                    NEEDS_RESEARCH because the protocol worked: attractiveness is not
+                    evidence.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              Axis stability, second confirmation
+DECISION:           PR002 CREATES ZERO NEW DOCTRINE AXES. Recorded as a successful result.
+OWNER/REVIEW BASIS: Owner decision at first review.
+WHY:                Two consecutive clusters have now produced zero new axes and ten durable
+                    instruments beneath them. STANDING FORM, updated: AXES ARE STABLE.
+                    LIBRARY KNOWLEDGE IS BECOMING MORE PRECISE BENEATH THEM. PR002
+                    strengthens Axes 4 and 9 in particular, with connections into 2, 3, 5, 6,
+                    10 and 12. The Perspective Doctrine file is not modified by this cluster.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              ME003 — Disconfirming shape
+DECISION:           OWNER-APPROVED META-EDITORIAL PRINCIPLE. ADOPTED into the README protocol
+                    for new entries from PR003 onward. No sixth research-entry status added.
+OWNER/REVIEW BASIS: Owner review.
+WHY:                It materially improved PR002 - it demoted PR002-08 and forced PR002-04 to
+                    depend on a shown asymmetry. The README now lists the ten standard fields
+                    and carries the definition and the FALSE MOVE / DISCONFIRMING SHAPE
+                    distinction. PR001 IS NOT RETROACTIVELY REWRITTEN: backfill happens only
+                    when a PR001 entry is substantively revisited on other grounds, so the
+                    adoption costs no churn and rewrites no history.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              Owner mechanisms M3 and M5
+DECISION:           M3 SHARPENED, NOT INVALIDATED. M5 SHARPENED. Neither rewritten in
+                    doctrine by this cluster.
+OWNER/REVIEW BASIS: Owner review.
+WHY:                M3's question survives; what the cluster corrects is the reflex to locate
+                    temporal access loss in the lag. The standing check is now source rate,
+                    then simultaneity, then action expiry, before deciding what the mechanism
+                    is. M5 gains two readings of what lateness IS and what it DOES. The
+                    doctrine file stays untouched; these are instruments beneath the
+                    mechanisms, not edits to them.
 ```
