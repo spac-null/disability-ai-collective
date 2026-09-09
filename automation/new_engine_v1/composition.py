@@ -38,6 +38,8 @@ external Fact Check.
 """
 from __future__ import annotations
 
+import ast
+import difflib
 import json
 import re
 import time
@@ -3402,7 +3404,100 @@ SAFETY_REPAIRABLE_PREFIXES = (
     "MACHINE_LANGUAGE", "PACKAGE_MACHINE_LANGUAGE",
     "CUT_LEAKAGE", "PACKAGE_CUT_LEAKAGE",
     "NEW_UNSUPPORTED_FACTS", "PACKAGE_UNSUPPORTED_FACTS",
+    "CONTINUITY_ADDED_MATERIAL",
 )
+
+_DELTA_ADDED_RELATION = re.compile(r"^editing added \d+ (\w+) relation")
+_DELTA_ADDED_SURFACE = re.compile(
+    r"^editing added (numbers|entities|sensory|spatial|scene): (\[.*\])$")
+
+
+def _nearest_sentence(sentence: str, candidates: list) -> tuple[str, float]:
+    """The most similar sentence to `sentence` among `candidates`, by
+    difflib.SequenceMatcher ratio -- a deterministic, dependency-free similarity measure,
+    used only to tell a rewritten sentence apart from a genuinely new one."""
+    best, best_ratio = "", 0.0
+    for c in candidates:
+        r = difflib.SequenceMatcher(None, sentence, c).ratio()
+        if r > best_ratio:
+            best, best_ratio = c, r
+    return best, best_ratio
+
+
+# Below this similarity ratio, a candidate sentence has no real counterpart in the
+# writer's draft and is read as wholly new rather than reworded.
+_REWORDED_SIMILARITY_FLOOR = 0.5
+
+
+def _continuity_added_spans(draft_text: str, final_text: str,
+                            delta_errs: list) -> list | None:
+    """Deterministically locate the exact FINAL-text sentence(s) an unexplained
+    CONTINUITY_ADDED_MATERIAL error refers to, from a sentence-level diff against the
+    writer's own draft -- never a model guessing which prose was added. (Despite the
+    error's name, the surface that actually diverged from the draft may be Continuity's
+    edit or a later Prose Finish polish -- see the comment on `f = a["continuity_final"]`
+    above; this locator does not care which stage did it, only that `final_text` is the
+    one the blocking finding was computed from.)
+
+    validate_semantic_delta() (continuity.py) reports two distinct error shapes, and both
+    are read here as diagnosis, never as fact: an "added surface" error names its own
+    token, which only needs the sentence carrying it. An "added relation" error names
+    only a KIND and a whole-article COUNT, with no span of its own -- and a sentence
+    merely differing byte-for-byte from every draft sentence is not evidence by itself: a
+    single comma moved elsewhere in an otherwise-untouched paragraph makes every sentence
+    in it "different" without adding a single relation. So each candidate sentence is
+    matched against its own nearest draft counterpart (by difflib ratio) and the relation
+    counts are diffed against THAT counterpart, not against zero -- a sentence with no
+    real counterpart is compared against nothing, since there is nothing it could have
+    carried over. Only a sentence whose OWN relation count of the flagged kind grew
+    relative to its nearest counterpart is a candidate. Locating a span this way asserts
+    nothing about whether the sentence is TRUE -- that judgment is still the repair
+    prompt's and the recheck's -- it only says where to look.
+
+    Fails closed exactly like every other locator in this module: an error shape this
+    function does not recognise, or a kind whose added sentence cannot be found, makes
+    the WHOLE attempt ineligible rather than partially attempted.
+    """
+    if not draft_text or not final_text:
+        return None
+    draft_sents = CE.sentences(draft_text)
+    draft_norm = {normalize_span(s) for s in draft_sents}
+    added = [s for s in CE.sentences(final_text)
+            if normalize_span(s) not in draft_norm]
+    out = []
+    for err in delta_errs:
+        m = _DELTA_ADDED_RELATION.match(err)
+        if m:
+            kind = m.group(1)
+            hits = []
+            for s in added:
+                nearest, ratio = _nearest_sentence(s, draft_sents)
+                before = CE.relations(nearest) if ratio >= _REWORDED_SIMILARITY_FLOOR else {}
+                if CE.relations(s).get(kind, 0) > before.get(kind, 0):
+                    hits.append(s)
+            if not hits:
+                return None
+            out.extend((s, "continuity added a %s relation not in the writer's own "
+                          "draft" % kind) for s in hits)
+            continue
+        m2 = _DELTA_ADDED_SURFACE.match(err)
+        if m2:
+            try:
+                toks = ast.literal_eval(m2.group(2))
+            except (ValueError, SyntaxError):
+                return None
+            found_any = False
+            for tok in toks:
+                sent = _sentence_containing(final_text, str(tok))
+                if sent and normalize_span(sent) not in draft_norm:
+                    out.append((sent, "continuity added %s not in the writer's own "
+                                      "draft: %r" % (m2.group(1), tok)))
+                    found_any = True
+            if not found_any:
+                return None
+            continue
+        return None                        # an error shape this locator does not know
+    return out or None
 
 
 def _safety_locate_findings(sa: dict) -> list | None:
@@ -3469,13 +3564,34 @@ def _safety_locate_findings(sa: dict) -> list | None:
             sent = _sentence_containing(pkg_text if on_pkg else text, ent)
             if not add(sent, "unlicensed entity: %r" % ent, on_pkg):
                 return None
+
+    # CONTINUITY_ADDED_MATERIAL is article-only (Continuity never touches the package),
+    # and unlike the categories above it has no per-surface sub-audit to read spans from
+    # -- it is a whole-article delta against the writer's own draft. See
+    # _continuity_added_spans for how a span is recovered from that delta.
+    delta_errs = sa.get("semantic_delta_errors") or []
+    if delta_errs:
+        spans = _continuity_added_spans(sa.get("audited_draft_text") or "", text,
+                                        delta_errs)
+        if not spans:
+            return None
+        for span, why in spans:
+            if not add(span, why):
+                return None
     return findings or None
 
 
-def safety_repair_findings(sa: dict, article_text: str, pkg_text: str = "") -> list | None:
+def safety_repair_findings(sa: dict, article_text: str, pkg_text: str = "",
+                           draft_text: str = "") -> list | None:
     """Public entry: attach the audited surfaces safety_audit did not carry forward on
-    its own result, then locate. See _safety_locate_findings for the eligibility rule."""
-    sa = dict(sa, audited_text=article_text, audited_package_text=pkg_text)
+    its own result, then locate. See _safety_locate_findings for the eligibility rule.
+
+    `draft_text` is the writer's own draft (pre-Continuity) -- needed only to locate a
+    CONTINUITY_ADDED_MATERIAL span (see _continuity_added_spans); every other category
+    locates from `sa` and `article_text` alone, as before.
+    """
+    sa = dict(sa, audited_text=article_text, audited_package_text=pkg_text,
+             audited_draft_text=draft_text)
     return _safety_locate_findings(sa)
 
 
@@ -4526,7 +4642,8 @@ def run_story_architecture_composition(
         # uses). A category this stage does not recognise makes the whole attempt
         # ineligible, and the run falls straight through to the unchanged HOLD below.
         if sa["status"] != PASS:
-            sfindings = safety_repair_findings(sa, final, package_prose(pkg))
+            sfindings = safety_repair_findings(sa, final, package_prose(pkg),
+                                              draft_text=draft)
             if sfindings:
                 srep = safety_repair(P, final, sfindings, ledger, wr["packet"])
                 # Counted here, unconditionally, because the model call happened whether

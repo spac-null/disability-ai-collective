@@ -2178,6 +2178,59 @@ def test_the_factual_repair_can_only_subtract():
                {"id": "B", "classification": "TRUE_UNCERTAIN", "quote": "y"}])) == 2)
 
 
+def test_continuity_added_material_is_locatable_and_gets_one_bounded_repair():
+    """The gap a real production replay exposed (2026-09-09): CONTINUITY_ADDED_MATERIAL
+    used to make an otherwise-repairable Safety HOLD ineligible outright, because the
+    finding names a relation KIND and a whole-article count, never a quoted span --
+    unlike every other repairable category, which already names its own token or frame.
+    _continuity_added_spans recovers the span from a sentence-level diff against the
+    writer's own draft, disambiguated against each candidate's nearest draft counterpart
+    (by difflib ratio) so a sentence merely touched elsewhere by editing -- one comma
+    moved -- is not mistaken for the one relation count that actually grew.
+
+    Despite the category's name, the surface that diverged from the draft here could be
+    Continuity's own edit or a later Prose Finish polish (see the comment on
+    `f = a["continuity_final"]"); this fixture does not need to distinguish which -- it
+    is exercising the LOCATOR, not the fail-safe that decides which surface survives."""
+    draft = DRAFT
+    final = draft.replace(
+        "No entry describes what any visitor heard.",
+        "No entry describes what any visitor heard, and none of the eight ever will.")
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    sa = CP.safety_audit(draft, final, packet, ARCH, LEDGER, {},
+                         {"cut_without_distinctive_terms": ["F07"]})
+    check("the run holds, naming the added relation",
+          any(e.startswith("CONTINUITY_ADDED_MATERIAL") for e in sa["blocking"]),
+          sa["blocking"])
+
+    findings = CP.safety_repair_findings(sa, final, "", draft_text=draft)
+    check("the added span is located deterministically, not guessed",
+          bool(findings) and any("NEGATION" in f["why"] for f in findings), findings)
+    check("the located quote is the rewritten sentence itself, not the whole article",
+          all(f["quote"] in final and f["quote"] != final for f in findings), findings)
+
+    accept = Scripted([{"edits": [{
+        "finding_id": findings[0]["id"], "operation": "DELETE",
+        "original": findings[0]["quote"],
+        "repaired": "No entry describes what any visitor heard.",
+        "fact_ids": ["F05"]}]}])
+    srep = CP.safety_repair(accept, final, findings, LEDGER, packet)
+    check("exactly one repair call, and it is accepted",
+          srep["status"] == CP.PASS and srep.get("model_calls") == 1, srep)
+    sa2 = CP.safety_audit(draft, srep["article_text"], packet, ARCH, LEDGER, {},
+                          {"cut_without_distinctive_terms": ["F07"]}, repair=srep)
+    check("the recheck passes -- the added relation is genuinely gone",
+          sa2["status"] == CP.PASS, sa2["blocking"])
+
+    # A persistent defect the repair does not answer still HOLDs, with no second call.
+    noop = Scripted([{"edits": []}])
+    srep2 = CP.safety_repair(noop, final, findings, LEDGER, packet)
+    check("an edit-less repair reply still counts its one call",
+          srep2.get("model_calls") == 1 and len(noop.calls) == 1, srep2)
+    check("and the persistent blocker still HOLDs -- no rescue, no second attempt",
+          srep2["status"] != CP.PASS, srep2)
+
+
 def test_the_post_repair_audit_uses_the_repairs_own_baselines():
     """A repair was ACCEPTED and then failed the safety stack twice over -- once as
     unapproved surface, once as "editing added numbers ['27'], entities ['Labour']" --
