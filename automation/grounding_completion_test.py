@@ -392,7 +392,16 @@ def _edit(fid, original, repaired):
 
 LOOP_ARTICLE = ("The room was painted in 1990. The chair was carved in 1991. The table "
                 "was built in 1992.")
-LOOP_LEDGER: dict = {}
+# Licenses every WORD in LOOP_ARTICLE's three sentences (room/painted/chair/carved/
+# table/built) but not the years -- the deterministic subtractive path can never touch a
+# bare number (its word regex does not match digits), so these tests' fictional "the
+# grounder is unhappy about the year" findings stay squarely on the MODEL proposal path,
+# unaffected by DELETE_UNSUPPORTED_SURFACE (that path has its own dedicated tests below).
+LOOP_LEDGER: dict = {
+    "L1": {"proposition": "The room was painted.", "support_span": "The room was painted"},
+    "L2": {"proposition": "The chair was carved.", "support_span": "The chair was carved"},
+    "L3": {"proposition": "The table was built.", "support_span": "The table was built"},
+}
 LOOP_PACKET: dict = {}
 LOOP_ARCH = None
 LOOP_PACK = {"subject": "test", "sources": []}
@@ -405,13 +414,16 @@ EDIT2 = _edit("F2", "The chair was carved in 1991.", "The chair was carved.")
 EDIT3 = _edit("F3", "The table was built in 1992.", "The table was built.")
 
 
-def _run_loop(provider, initial, audit_fn=_pass_audit, max_iterations=None):
+def _run_loop(provider, initial, audit_fn=_pass_audit, max_iterations=None,
+             article=None, ledger=None, packet=None):
     kw = {}
     if max_iterations is not None:
         kw["max_iterations"] = max_iterations
     return CP.grounding_completion_loop(
-        provider, LOOP_ARTICLE, None, initial, LOOP_LEDGER, LOOP_PACKET, LOOP_ARCH,
-        LOOP_PACK, "source text", "sha", audit_fn, **kw)
+        provider, article if article is not None else LOOP_ARTICLE, None, initial,
+        ledger if ledger is not None else LOOP_LEDGER,
+        packet if packet is not None else LOOP_PACKET, LOOP_ARCH, LOOP_PACK,
+        "source text", "sha", audit_fn, **kw)
 
 
 def test_three_independent_blockers_all_repair_and_pass():
@@ -633,6 +645,231 @@ def test_no_worth_or_ledger_rerun_inside_the_loop():
               sorted(calls))
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# DELETE_UNSUPPORTED_SURFACE -- deterministic subtractive repair (owner-directed,
+# 2026-09-09)
+# ══════════════════════════════════════════════════════════════════════════════
+# The real retained-Poetry shape: the licensed fact says "one experiment involved 27
+# German-speaking participants"; the article says "a SEPARATE experiment with 27
+# German-speaking participants". The unsupported word is a single adjective, and the
+# very next (unedited) sentence -- "Something similar is at work..." -- is the exact
+# sentence a bigger rewrite orphaned in the real run these tests are named after.
+SUB_ARTICLE = (
+    "Psychology experts have given an account of why a poem should move anyone at all. "
+    "In a separate experiment with 27 German-speaking participants, researchers used "
+    "psychophysiology to show that recited poetry could produce a range of responses "
+    "from chills to goosebumps. Something similar is at work in ongoing doctoral "
+    "research by the author of these exercises.")
+SUB_LEDGER = {
+    "F12": {"proposition": "One experiment involved 27 German-speaking participants.",
+           "support_span": "In one experiment that involved 27 German-speaking "
+                           "participants"},
+    "F13": {"proposition": "In that experiment researchers used psychophysiology, "
+                           "brain imaging and behavioural responses to show that "
+                           "recited poetry could produce a range of responses from "
+                           "chills to goosebumps.",
+           "support_span": "researchers used psychophysiology (the study of how "
+                           "thoughts and emotions link to physical responses in the "
+                           "human body), brain imaging and behavioural responses to "
+                           "show that recited poetry could produce a range of "
+                           "responses from chills to goosebumps"},
+}
+SUB_FINDING = dict(_finding(
+    "F1", "In a separate experiment with 27 German-speaking participants",
+    cls="TRUE_UNCERTAIN"),
+    suggested_patch="In one experiment involving 27 German-speaking participants")
+
+
+def test_unsupported_modifier_is_removed_by_deterministic_subtraction():
+    """1. "a separate experiment" -> deterministic subtraction removes "separate" and
+    nothing else -> the Grounding blocker disappears, spending no repair-model call."""
+    edit = CP.deterministic_subtractive_edit(SUB_ARTICLE, SUB_FINDING, SUB_LEDGER)
+    check("a deterministic edit is constructed", edit is not None, edit)
+    check("what was removed is exactly the one unsupported word",
+          edit["what_was_removed"] == "separate", edit)
+    check("everything else in the sentence survives verbatim",
+          edit["repaired"] ==
+          "In a experiment with 27 German-speaking participants, researchers used "
+          "psychophysiology to show that recited poetry could produce a range of "
+          "responses from chills to goosebumps.", edit["repaired"])
+
+    restore, gcalls = _ground_seq([_ground_reply([])])   # PASS once "separate" is gone
+    try:
+        prov = _LoopProvider([])   # would raise if the model path were ever reached
+        result = _run_loop(prov, _initial([SUB_FINDING]), article=SUB_ARTICLE,
+                           ledger=SUB_LEDGER)
+    finally:
+        restore()
+    check("the run reaches PASS via the deterministic edit alone",
+          result["status"] == CP.PASS, result.get("blocking"))
+    check("the deterministic path is what was accepted, not the model",
+          result["grounding_deterministic_accepted"] == 1
+          and result["grounding_repairs_accepted"] == 1, result)
+    check("the neighboring sentence is untouched in the final article",
+          "Something similar is at work in ongoing doctoral research by the author "
+          "of these exercises." in result["article_text"], result["article_text"])
+
+
+def test_deterministic_subtraction_spends_zero_model_calls_when_it_succeeds():
+    """2. No repair-model call is made at all when the deterministic path resolves the
+    finding -- provider.complete() is never invoked. The mandatory Grounding recheck
+    after ANY candidate (deterministic or not) is still a real Grounder call and still
+    costs its one model_calls -- what this proves is that the REPAIR step itself, the
+    one grounding_repair_proposal() would have spent, is skipped."""
+    restore, gcalls = _ground_seq([_ground_reply([])])
+    try:
+        prov = _LoopProvider([])
+        result = _run_loop(prov, _initial([SUB_FINDING]), article=SUB_ARTICLE,
+                           ledger=SUB_LEDGER)
+    finally:
+        restore()
+    check("the provider was never called for a repair proposal", prov.calls == 0,
+          prov.calls)
+    check("model_calls reflects only the mandatory recheck (1), not a repair call too",
+          result["model_calls"] == 1, result)
+
+
+def test_deletion_cannot_introduce_new_factual_authority():
+    """3. Verified by the SAME mechanical guard as any other Grounding repair, and it
+    structurally cannot add a number, entity or relation -- it only ever removes words
+    already present."""
+    edit = CP.deterministic_subtractive_edit(SUB_ARTICLE, SUB_FINDING, SUB_LEDGER)
+    text, prov, errs = CP.apply_local_grounding_repair(
+        SUB_ARTICLE, [edit], [SUB_FINDING], SUB_LEDGER, {})
+    check("the mechanical guard accepts it -- nothing was added", not errs and prov, errs)
+    check("no number in the repaired sentence beyond what the original already had",
+          not (CP._numbers_of(edit["repaired"]) - CP._numbers_of(edit["original"])),
+          edit)
+    check("no entity in the repaired sentence beyond what the original already had",
+          not (CP.ST._entities(edit["repaired"], skip_sentence_initial=False)
+               - CP.ST._entities(edit["original"], skip_sentence_initial=False)), edit)
+
+
+def test_deletion_that_leaves_an_unsupported_proposition_is_rejected():
+    """4. If removing the word does not actually resolve the finding (the recheck still
+    reports the SAME finding), the deterministic candidate is rejected transactionally,
+    exactly like a model proposal that fails to shrink the blocking set."""
+    restore, gcalls = _ground_seq([_ground_reply([SUB_FINDING])])
+    try:
+        result = _run_loop(_LoopProvider([]), _initial([SUB_FINDING]),
+                           article=SUB_ARTICLE, ledger=SUB_LEDGER, max_iterations=1)
+    finally:
+        restore()
+    check("the candidate is rejected, not accepted",
+          result["grounding_repairs_accepted"] == 0, result)
+    check("the deterministic path is what was tried",
+          result["grounding_deterministic_attempts"] == 1, result)
+    check("the accepted article is unchanged", result["article_text"] == SUB_ARTICLE,
+          result["article_text"])
+
+
+def test_deletion_that_creates_a_safety_problem_is_rejected():
+    """5. Even a pure deletion can be transactionally rejected by Safety -- the guard is
+    real for the deterministic path too, not a formality."""
+    calls = {"n": 0}
+
+    def audit_fn(text, package, **kw):
+        calls["n"] += 1
+        return {"status": CP.HOLD,
+               "blocking": [{"classification": "NEW_UNSUPPORTED_FACTS", "quote": "x"}],
+               "model_calls": 0}
+
+    restore, gcalls = _ground_seq([])   # never reached -- Safety rejects first
+    try:
+        result = _run_loop(_LoopProvider([]), _initial([SUB_FINDING]),
+                           audit_fn=audit_fn, article=SUB_ARTICLE, ledger=SUB_LEDGER,
+                           max_iterations=1)
+    finally:
+        restore()
+    check("no repair was accepted", result["grounding_repairs_accepted"] == 0, result)
+    check("the accepted article is byte-for-byte the input",
+          result["article_text"] == SUB_ARTICLE, result["article_text"])
+    check("Safety was checked once and Grounding was never reached",
+          calls["n"] == 1 and gcalls["n"] == 0, (calls, gcalls))
+
+
+def test_neighboring_sentence_is_byte_for_byte_unchanged():
+    """6. The deletion touches only the ONE sentence the finding names -- the exact
+    property the real bug needed and did not have: the opening sentence and the
+    "Something similar..." sentence both survive untouched."""
+    cand = CP.deterministic_subtraction_candidate(SUB_ARTICLE, [SUB_FINDING],
+                                                  SUB_LEDGER, {})
+    check("a candidate is built", cand is not None, cand)
+    check("the neighbor sentence survives byte-for-byte",
+          "Something similar is at work in ongoing doctoral research by the author "
+          "of these exercises." in cand["article_text"], cand["article_text"])
+    check("the opening sentence survives byte-for-byte too",
+          "Psychology experts have given an account of why a poem should move anyone "
+          "at all." in cand["article_text"], cand["article_text"])
+
+
+def test_fallback_to_model_proposal_when_subtraction_is_not_applicable():
+    """7. A finding the deterministic path cannot resolve (F1's real overclaim here is
+    the YEAR -- a bare number, which the word-content-only operator can never touch)
+    falls straight through to the existing grounding_repair_proposal() model path,
+    unchanged."""
+    restore, gcalls = _ground_seq([_ground_reply([])])
+    try:
+        result = _run_loop(_LoopProvider([EDIT1]), _initial([F1]))
+    finally:
+        restore()
+    check("the run reaches PASS via the model path", result["status"] == CP.PASS,
+          result)
+    check("no deterministic repair was accepted -- the model's proposal was used "
+          "instead", result["grounding_deterministic_accepted"] == 0
+          and result["grounding_repairs_accepted"] == 1, result)
+
+
+def test_strict_progress_semantics_unchanged_for_deterministic_candidates():
+    """8. Strict progress (blocking set STRICTLY smaller, no new Safety blocker) applies
+    identically regardless of a candidate's origin -- proven directly above (tests 4 and
+    5 reject a deterministic candidate on no-progress and on a new Safety blocker, the
+    SAME two gates test_a_repair_that_replaces_one_blocker_with_another_is_rejected and
+    test_a_repair_introducing_a_new_safety_blocker_is_rejected_and_never_mutates_the_
+    article already prove for a model proposal); this asserts the loop's own source
+    routes both origins through the identical check, not a parallel weaker one."""
+    src = (HERE / "new_engine_v1" / "composition.py").read_text()
+    fn_src = src.split("def grounding_completion_loop(")[1].split("\ndef ")[0]
+    check("there is exactly one strict-shrink comparison in the loop, shared by every "
+          "candidate origin", fn_src.count("< before_count") == 1, fn_src.count(
+              "< before_count"))
+    check("there is exactly one Safety-status check in the loop, shared by every "
+          "candidate origin",
+          fn_src.count('candidate_safety["status"] != PASS') == 1, fn_src)
+
+
+def test_emergency_ceiling_unchanged():
+    """9. GROUNDING_COMPLETION_MAX_ITERATIONS is still 5, and the deterministic path's
+    "try once, then fall back to the model" rule (a candidate already in `tried` is
+    skipped) still counts against the SAME iteration ceiling -- it does not buy the
+    deterministic path any extra attempts. Iteration 1 is the deterministic candidate
+    (rejected, no progress); iterations 2-5 are distinct model proposals (each rejected
+    the same way), and the loop still stops at exactly 5."""
+    check("the ceiling constant is unchanged", CP.GROUNDING_COMPLETION_MAX_ITERATIONS
+          == 5)
+    original_sentence = (
+        "In a separate experiment with 27 German-speaking participants, researchers "
+        "used psychophysiology to show that recited poetry could produce a range of "
+        "responses from chills to goosebumps.")
+    model_edits = [{"edits": [{"finding_id": "F1", "operation": "DELETE",
+                               "original": original_sentence,
+                               "repaired": original_sentence.replace(
+                                   "psychophysiology", "psychophysiology" + " " * i),
+                               "fact_ids": []}]} for i in range(1, 5)]
+    restore, gcalls = _ground_seq([_ground_reply([SUB_FINDING])] * 5)
+    try:
+        result = _run_loop(_LoopProvider(model_edits), _initial([SUB_FINDING]),
+                           article=SUB_ARTICLE, ledger=SUB_LEDGER)
+    finally:
+        restore()
+    check("the loop stops at exactly the (unchanged) ceiling",
+          result["grounding_completion_iterations"]
+          == CP.GROUNDING_COMPLETION_MAX_ITERATIONS, result)
+    check("exactly one of the five attempts was the deterministic candidate",
+          result["grounding_deterministic_attempts"] == 1, result)
+    check("still HOLD", result["status"] != CP.PASS, result)
+
+
 def main():
     for fn in (test_a_single_repairable_residue_is_eligible,
                test_more_than_two_survivors_does_not_complete,
@@ -657,7 +894,16 @@ def main():
                test_the_emergency_ceiling_prevents_runaway_execution,
                test_local_neighbor_context_is_supplied_to_the_repair_model,
                test_grounding_repair_proposal_uses_the_claim_local_validator,
-               test_no_worth_or_ledger_rerun_inside_the_loop):
+               test_no_worth_or_ledger_rerun_inside_the_loop,
+               test_unsupported_modifier_is_removed_by_deterministic_subtraction,
+               test_deterministic_subtraction_spends_zero_model_calls_when_it_succeeds,
+               test_deletion_cannot_introduce_new_factual_authority,
+               test_deletion_that_leaves_an_unsupported_proposition_is_rejected,
+               test_deletion_that_creates_a_safety_problem_is_rejected,
+               test_neighboring_sentence_is_byte_for_byte_unchanged,
+               test_fallback_to_model_proposal_when_subtraction_is_not_applicable,
+               test_strict_progress_semantics_unchanged_for_deterministic_candidates,
+               test_emergency_ceiling_unchanged):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)

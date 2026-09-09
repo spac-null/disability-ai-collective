@@ -3626,6 +3626,125 @@ def grounding_completion_prompt(article_text: str, findings: list, ledger: dict,
     return "\n".join(L)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# DELETE_UNSUPPORTED_SURFACE -- deterministic, model-free subtraction (owner-directed,
+# 2026-09-09)
+# ══════════════════════════════════════════════════════════════════════════════
+# WHY. The retained Poetry continuation's persistent blocker was as small as a Grounding
+# repair gets -- one unlicensed modifier, "separate", in "a separate experiment with 27
+# German-speaking participants" (the licensed fact says only "one experiment involved 27
+# German-speaking participants"). The Grounder's own suggested_patch already names the
+# fix. Both of the model's repair proposals still reached for a bigger rewrite -- one
+# truncated the whole sentence and orphaned the next one's "Something similar..."
+# reference, caught correctly (and only) by this same run's transactional Safety check.
+# A trivial overclaim should not depend on a model choosing the small edit over the
+# creative one on any given call.
+#
+# WHAT IT DOES. For each finding, compares the finding's QUOTE against the LOCALLY
+# RELEVANT Ledger evidence -- the SAME _relevant_facts() lexical-overlap lookup
+# repair_prompt() already uses -- and asks only: which of the quote's own content words
+# do not appear anywhere in that evidence? If there are one or two such words (never
+# more -- a bigger gap is not "a trivial modifier", it is exactly the shape this operator
+# refuses to force), they are deleted, verbatim, from the article's own sentence. Nothing
+# is invented, nothing is reworded, nothing is imported from a Ledger fact other than the
+# words already there: this is length-reducing subtraction, not disguised generation.
+#
+# WHY NOT JUST USE suggested_patch VERBATIM. The Grounder's own narrower wording is a
+# genuine rewrite -- "a separate experiment with" became "one experiment involving" here,
+# a preposition and article changed, not merely a word removed. Trusting it whole would
+# be trusting an ungoverned model output exactly the way this operator exists to avoid.
+# Only the WORDS it implies are unsupported are read from it in spirit; what is actually
+# deleted is decided against the Ledger, the one authority this file already treats as
+# fixed.
+#
+# ELIGIBILITY IS NARROW AND FALLS THROUGH CLEANLY. No POS tagger, no synonym table, no
+# per-word allowlist: if the deletion cannot be constructed (the quote cannot be located
+# in a single sentence, the flagged word cannot be found there verbatim, or the residue
+# is empty or unchanged), this returns None and the caller reaches for
+# grounding_repair_proposal() exactly as it always has. And REGARDLESS of how this
+# operator constructs a candidate, it is a candidate like any other: the SAME
+# transactional Safety check and Grounding recheck grounding_completion_loop already
+# runs on every proposal decide whether it is kept. A deletion that leaves the sentence
+# broken, or that fails to resolve the finding, is rejected there -- this operator does
+# not need to get grammar or resolution right on its own, only to never invent.
+DETERMINISTIC_SUBTRACTION_MAX_WORDS = 2
+
+
+def _local_licensed_words(quote: str, ledger: dict) -> set:
+    """Content words from the Ledger facts _relevant_facts() finds relevant to `quote`
+    -- the SAME lexical-overlap evidence lookup repair_prompt()/completion_prompt()
+    already show a repair model, read here as the vocabulary a deletion may treat as
+    already-licensed."""
+    rel = _relevant_facts(quote, ledger)
+    text = " ".join("%s %s" % (f.get("proposition", ""), f.get("support_span", ""))
+                    for _fid, f in rel)
+    return ST._content_words(text, fold=True)
+
+
+def deterministic_subtractive_edit(article_text: str, finding: dict,
+                                   ledger: dict) -> dict | None:
+    """A DELETE_UNSUPPORTED_SURFACE candidate for ONE finding, or None if no minimal,
+    purely-subtractive deletion can be established -- see the module comment above for
+    the full rationale. Never invents, never rewrites: what survives is the article's own
+    words, minus the ones the Ledger does not license."""
+    quote = str(finding.get("quote") or "").strip()
+    if not quote:
+        return None
+    licensed = _local_licensed_words(quote, ledger)
+    # Raw quote words only (fold=False) -- _content_words(fold=True) unions in each
+    # word's own stem, which would make "increases"/"increas" two entries for one real
+    # word and could push a single overclaim over DETERMINISTIC_SUBTRACTION_MAX_WORDS,
+    # or leave nothing left to delete on the second entry once the first's regex has
+    # already consumed it. Each raw word is still checked against the licensed
+    # vocabulary BOTH as itself and by its own stem, so a quote's plural still matches a
+    # licensed singular (or vice versa) without duplicating the word being judged.
+    unsupported = {w for w in ST._content_words(quote, fold=False)
+                  if w not in licensed and ST._stem(w) not in licensed}
+    if not unsupported or len(unsupported) > DETERMINISTIC_SUBTRACTION_MAX_WORDS:
+        return None
+    idx = _sentence_containing_quote(article_text, quote)
+    if idx is None:
+        return None
+    original_sentence = CE.sentences(article_text)[idx]
+    repaired = original_sentence
+    for w in sorted(unsupported):
+        new_repaired, n = re.subn(r"\b%s\w*\b\s*" % re.escape(w), "", repaired,
+                                  count=1, flags=re.IGNORECASE)
+        if n == 0:
+            return None
+        repaired = new_repaired
+    repaired = re.sub(r"\s+([.,;:!?])", r"\1", repaired).strip()
+    repaired = re.sub(r"\s{2,}", " ", repaired)
+    if not repaired or repaired == original_sentence:
+        return None
+    return {"finding_id": finding.get("id"), "operation": "DELETE",
+           "original": original_sentence, "repaired": repaired, "fact_ids": [],
+           "what_was_removed": ", ".join(sorted(unsupported))}
+
+
+def deterministic_subtraction_candidate(article_text: str, findings: list, ledger: dict,
+                                        packet: dict) -> dict | None:
+    """The deterministic candidate for a WHOLE target list -- eligible only if EVERY
+    finding in it gets its own valid deletion-only edit; one finding a simple deletion
+    cannot resolve falls the entire batch through to the model path rather than mixing
+    a deterministic edit for some findings with a model edit for others in the same
+    proposal. Verified by the SAME apply_local_grounding_repair() every other Grounding
+    repair in this file uses -- not a private, weaker check."""
+    edits = []
+    for f in findings:
+        e = deterministic_subtractive_edit(article_text, f, ledger)
+        if e is None:
+            return None
+        edits.append(e)
+    text, prov, errs = apply_local_grounding_repair(article_text, edits, findings,
+                                                     ledger, packet)
+    if not prov or errs:
+        return None
+    return {"status": PASS, "article_text": text, "edits": prov,
+           "findings_answered": sorted({str(e.get("finding_id")) for e in prov}),
+           "rejected_edits": errs, "model_calls": 0, "deterministic": True}
+
+
 def grounding_repair_proposal(provider, article_text: str, findings: list, ledger: dict,
                               packet: dict, rejection: dict | None = None) -> dict:
     """ONE surgical, local repair proposal for the progress-bounded completion loop.
@@ -3693,6 +3812,7 @@ def grounding_completion_loop(
     accepted_text = article_text
     g = initial
     iterations = proposals = accepted = rejected = 0
+    deterministic_attempts = deterministic_accepted = 0
     model_calls = 0
     tried = set()
     rejection = None
@@ -3714,8 +3834,20 @@ def grounding_completion_loop(
             break
 
         iterations += 1
-        prop = grounding_repair_proposal(provider, accepted_text, target, ledger,
-                                         packet, rejection)
+        # PREFERRED ORDER: a deterministic, model-free subtraction first -- see
+        # deterministic_subtraction_candidate's own comment. `sig not in tried` is what
+        # makes this "try once, then fall back": a deterministic candidate that was
+        # already tried and rejected (Safety, or no progress) would just reconstruct
+        # identically here, so it is skipped in favour of the model path rather than
+        # retried forever.
+        det = deterministic_subtraction_candidate(accepted_text, target, ledger, packet)
+        used_deterministic = det is not None and _edit_signature(det["edits"]) not in tried
+        if used_deterministic:
+            prop = det
+            deterministic_attempts += 1
+        else:
+            prop = grounding_repair_proposal(provider, accepted_text, target, ledger,
+                                             packet, rejection)
         proposals += 1
         model_calls += prop.get("model_calls", 0)
 
@@ -3747,6 +3879,7 @@ def grounding_completion_loop(
             rejection = {"reason": "introduced a new Safety blocker",
                         "detail": candidate_safety["blocking"][:4]}
             history.append({"iteration": iterations, "outcome": "safety_rejected",
+                            "deterministic": used_deterministic,
                             "detail": rejection["detail"]})
             continue
 
@@ -3758,12 +3891,15 @@ def grounding_completion_loop(
         before_count = len(g["blocking"])
         if len(candidate_grounding["blocking"]) < before_count:
             accepted += 1
+            if used_deterministic:
+                deterministic_accepted += 1
             accepted_text = candidate_text
             g = candidate_grounding
             final_safety = candidate_safety
             accepted_edits.extend(prop.get("edits") or [])
             rejection = None
             history.append({"iteration": iterations, "outcome": "accepted",
+                            "deterministic": used_deterministic,
                             "blocking_before": before_count,
                             "blocking_after": len(g["blocking"]),
                             "findings_answered": prop.get("findings_answered")})
@@ -3775,6 +3911,7 @@ def grounding_completion_loop(
                 "detail": [str(f.get("quote") or "")[:100]
                           for f in candidate_grounding["blocking"][:4]]}
             history.append({"iteration": iterations, "outcome": "no_progress",
+                            "deterministic": used_deterministic,
                             "reason": rejection["reason"]})
 
     out = dict(g)
@@ -3790,6 +3927,8 @@ def grounding_completion_loop(
     out["grounding_completion_history"] = history
     out["final_safety"] = final_safety
     out["accepted_edits"] = accepted_edits
+    out["grounding_deterministic_attempts"] = deterministic_attempts
+    out["grounding_deterministic_accepted"] = deterministic_accepted
     return out
 
 
