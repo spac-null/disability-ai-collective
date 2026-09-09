@@ -4050,6 +4050,36 @@ def reader_repair_prompt(article_text: str, held: dict, packet: dict) -> str:
     return "\n".join(L)
 
 
+def _beat_local_licensing(packet: dict, paragraph_index: int,
+                          paragraph_count: int) -> tuple:
+    """The numbers/entities a LOCAL edit to paragraph `paragraph_index` may draw on,
+    from the ledger facts already attached to that paragraph's own architecture beat --
+    never the whole packet.
+
+    The Writer was given the architecture's beats in order and one paragraph per beat
+    is the contract it wrote to (writer_packet()/build_packet() render `packet["beats"]`
+    in that same order, each already carrying only the facts its OWN beat licenses --
+    `facts_allowed` on the architecture beat, unchanged). Paragraph index and beat index
+    are therefore the same position in the same sequence -- an EXISTING correspondence
+    this reuses, not a new one this invents.
+
+    FAILS CLOSED, on purpose, whenever that correspondence cannot be trusted: a
+    paragraph count that does not match the beat count means something upstream (a
+    Continuity merge/split, an earlier local edit) has already broken the 1:1 mapping,
+    and guessing which beat a paragraph now belongs to is exactly the packet-wide
+    permission this function exists to replace. Returns EMPTY sets in that case -- a
+    local edit can still delete or narrow using only what its own span already carries,
+    it just cannot pull in anything new.
+    """
+    beats = packet.get("beats") or []
+    if paragraph_count != len(beats) or not (0 <= paragraph_index < len(beats)):
+        return set(), set()
+    facts = beats[paragraph_index].get("facts") or []
+    text = " ".join("%s %s" % (f.get("proposition", ""), f.get("support_span", ""))
+                    for f in facts if isinstance(f, dict))
+    return _numbers_of(text), ST._entities(text, skip_sentence_initial=False)
+
+
 def apply_reader_repair(article_text: str, edits: list, held: dict,
                         packet: dict) -> tuple:
     """Apply LOCAL, mechanically-verified edits. Returns (text, provenance, errs).
@@ -4060,12 +4090,20 @@ def apply_reader_repair(article_text: str, edits: list, held: dict,
     paragraph of the article -- never spanning more, which is what keeps this a local
     edit rather than a rewrite wearing an edit's clothes -- and its `repaired` wording
     may add no relation the edited paragraph did not already carry, and no number or
-    entity the article or the licensed packet did not already carry. An edit that widens
-    the claim, or reaches past its own paragraph, is refused, not applied.
+    entity that paragraph's OWN architecture beat did not already license (see
+    _beat_local_licensing) -- never merely because it appears somewhere ELSE in the
+    packet. An edit that widens the claim, reaches past its own paragraph, or pulls in
+    an entity licensed only for a DIFFERENT paragraph, is refused, not applied.
+
+    A real production replay is why this is claim-local rather than packet-wide: a
+    repair rewriting one paragraph introduced "German" and "German-speaking", both
+    genuinely present elsewhere in the packet (a different beat's own material), and
+    packet-wide permission let them through into a paragraph whose own facts never
+    licensed them. The mandatory Safety recheck caught it there; this stops it earlier,
+    at the edit that was never entitled to it.
     """
-    approved = ST.render(packet)
-    lic_nums = _numbers_of(approved)
-    lic_ents = ST._entities(approved, skip_sentence_initial=False)
+    paras = CE.paragraphs(article_text)
+    n_paras = len(paras)
     out, prov, errs = article_text, [], []
     for i, e in enumerate(edits or [], 1):
         if not isinstance(e, dict):
@@ -4086,9 +4124,13 @@ def apply_reader_repair(article_text: str, edits: list, held: dict,
             errs.append("edit %d: the original is not in the article: %r"
                         % (i, orig[:80]))
             continue
-        host = next((p for p in CE.paragraphs(out)
-                    if normalize_span(orig) in normalize_span(p)), None)
-        if host is None:
+        # Located against the ORIGINAL, unedited paragraph list: an edit's home
+        # paragraph and beat are fixed at the moment the edit is proposed, not
+        # recomputed against a text an earlier edit in this same batch may have
+        # already changed the shape of.
+        host_idx = next((j for j, p in enumerate(paras)
+                        if normalize_span(orig) in normalize_span(p)), None)
+        if host_idx is None:
             errs.append("edit %d spans more than one paragraph -- not a local edit: %r"
                         % (i, orig[:80]))
             continue
@@ -4097,6 +4139,7 @@ def apply_reader_repair(article_text: str, edits: list, held: dict,
                         "(whitespace or punctuation drift) -- refused rather than "
                         "guessed at" % i)
             continue
+        lic_nums, lic_ents = _beat_local_licensing(packet, host_idx, n_paras)
         new_nums = sorted(_numbers_of(rep) - _numbers_of(orig) - lic_nums)
         new_ents = sorted(ST._entities(rep) - ST._entities(orig) - lic_ents)
         before_rel, after_rel = CE.relations(orig), CE.relations(rep)
@@ -4104,7 +4147,8 @@ def apply_reader_repair(article_text: str, edits: list, held: dict,
                   for k in after_rel if after_rel[k] > before_rel.get(k, 0)}
         if new_nums or new_ents or new_rel:
             errs.append("edit %d ADDS rather than edits -- numbers=%s entities=%s "
-                        "relations=%s (a local edit may only subtract or narrow)"
+                        "relations=%s (licensed only by this paragraph's own beat, "
+                        "not the whole packet)"
                         % (i, new_nums, new_ents, new_rel))
             continue
         out = out.replace(orig, rep, 1)

@@ -2693,6 +2693,60 @@ def test_reader_repair_edits_are_local_and_bounded():
           not prov4 and errs4, errs4)
 
 
+def test_reader_repair_permission_is_claim_local_not_packet_wide():
+    """Real production replay (Poetry as climate communication, 2026-09-09): a Reader
+    repair edit introduced 'German' and 'German-speaking' into one paragraph. Both were
+    genuinely present elsewhere in the packet -- a DIFFERENT beat's own material -- and
+    packet-wide permission let them through into a paragraph whose own beat never
+    licensed them. The mandatory Safety recheck caught it there; this closes the gap
+    earlier, at the edit that was never entitled to it. Uses a small hand-built packet
+    (four beats matching DRAFT's four paragraphs 1:1) rather than the shared ARCH/LEDGER
+    fixtures, so the one added entity belongs to exactly one beat and nowhere else."""
+    packet = {"beats": [
+        {"beat_id": "B1",
+         "facts": [{"proposition": "The room was built from Himalayan salt bricks.",
+                   "support_span": "constructed from Himalayan salt bricks"}]},
+        {"beat_id": "B2",
+         "facts": [{"proposition": "Anneke Mertens curated the exhibition.",
+                   "support_span": "Anneke Mertens curated the exhibition"}]},
+        {"beat_id": "B3",
+         "facts": [{"proposition": "No entry describes what any visitor heard.",
+                   "support_span": "No entry describes what any visitor heard"}]},
+        {"beat_id": "B4",
+         "facts": [{"proposition": "The salt arrived in nine tonne pallets.",
+                   "support_span": "nine tonne pallets"}]},
+    ]}
+    held = {"MOMENTUM": {}}
+
+    # Paragraph 4 (B4) licenses only the pallets fact -- Mertens belongs to B2/paragraph
+    # 2. Pulling her into paragraph 4 is exactly the cross-beat leak the real run had.
+    leak = {"dimension": "MOMENTUM", "operation": "REPHRASE",
+           "original": "The pallets and the eleven days are in the record.",
+           "repaired": "Anneke Mertens noted the pallets and the eleven days in the "
+                       "record."}
+    _, prov, errs = CP.apply_reader_repair(DRAFT, [leak], held, packet)
+    check("an entity licensed for a DIFFERENT paragraph's beat is refused here",
+          not prov and any("entities" in e for e in errs), errs)
+
+    # The SAME entity, added to the paragraph whose OWN beat actually names her
+    # (paragraph 2 / B2), is accepted -- claim-local permission is not "never license
+    # anything new", it is "only from this claim's own support".
+    local = {"dimension": "MOMENTUM", "operation": "REPHRASE",
+            "original": "Each entry says what its room was for.",
+            "repaired": "Anneke Mertens says each entry states its room's purpose."}
+    _, prov2, errs2 = CP.apply_reader_repair(DRAFT, [local], held, packet)
+    check("the same entity is accepted where its own beat actually licenses it",
+          bool(prov2) and not errs2, errs2)
+
+    # FAIL CLOSED: when the paragraph count and beat count disagree, the correspondence
+    # cannot be trusted -- not even the entity that WOULD have been licensed if the
+    # counts matched is granted. No fallback to packet-wide permission.
+    mismatched = dict(packet, beats=packet["beats"][:3])
+    _, prov3, errs3 = CP.apply_reader_repair(DRAFT, [local], held, mismatched)
+    check("a paragraph/beat count mismatch fails closed, never packet-wide",
+          not prov3 and any("entities" in e for e in errs3), errs3)
+
+
 def test_a_reader_repair_that_fabricates_is_caught_not_published():
     """The bound the owner called VERY IMPORTANT: a repair may improve execution, it may
     not manufacture a new reason the article deserves to exist. Two layers now enforce
