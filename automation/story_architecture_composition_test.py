@@ -2625,31 +2625,128 @@ def test_a_repairable_safety_hold_gets_exactly_one_repair_and_recheck():
     check("and it reached the reader", out["stages"][CP.READER] == CP.PASS)
 
 
+def test_reader_repair_edits_are_local_and_bounded():
+    """Direct exercise of apply_reader_repair() (STAGE 10b, revised to local edits
+    2026-09-09): several held findings produce several LOCAL edits, each confined to its
+    own paragraph, never one full-article rewrite. A cross-paragraph edit and an edit
+    that adds a relation its own local span did not carry are both refused mechanically,
+    the same discipline apply_grounding_repair() already applies to Safety's and
+    Grounding's own repairs."""
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    held = {"OPENING": {}, "ENDING": {}, "MOMENTUM": {}}
+
+    opening_edit = {"dimension": "OPENING", "operation": "REPHRASE",
+                    "original": "The room was built from Himalayan salt bricks, and "
+                                "the pavilion was dug partway into the ground.",
+                    "repaired": "The room was built from Himalayan salt bricks."}
+    ending_edit = {"dimension": "ENDING", "operation": "COMPRESS",
+                   "original": "The hearing of the room is not.",
+                   "repaired": "It is not heard."}
+    momentum_edit = {"dimension": "MOMENTUM", "operation": "DELETE",
+                     "original": "The pallets and the eleven days are in the record.",
+                     "repaired": ""}
+    text, prov, errs = CP.apply_reader_repair(
+        DRAFT, [opening_edit, ending_edit, momentum_edit], held, packet)
+    check("all three bounded edits are accepted", len(prov) == 3 and not errs,
+          (prov, errs))
+    check("several held findings produced several LOCAL edits, not one full rewrite",
+          {p["dimension"] for p in prov} == {"OPENING", "ENDING", "MOMENTUM"})
+    check("the opening edit landed in the opening, and only there",
+          "The room was built from Himalayan salt bricks." in text
+          and "dug partway into the ground" not in text, text)
+    check("the ending edit landed in the ending, and only there",
+          "It is not heard." in text, text)
+    check("paragraphs no finding named are untouched",
+          "The catalogue records eight rooms. Each entry says what its room was for. "
+          "The salt arrived in nine tonne pallets and was laid by two masons over "
+          "eleven days." in text
+          and "No entry describes what any visitor heard. A reviewer wrote that the "
+              "catalogue keeps the intention of each room and drops the encounter. The "
+              "eight entries hold what each room was for and hold nothing anyone "
+              "heard." in text,
+          text)
+
+    # A cross-paragraph "original" is refused as not local -- the mechanical guard
+    # against a rewrite wearing a local edit's clothes.
+    cross = {"dimension": "OPENING", "operation": "REPHRASE",
+            "original": "all the senses.\n\nThe catalogue records eight rooms.",
+            "repaired": "all the senses. The catalogue records rooms."}
+    _, prov2, errs2 = CP.apply_reader_repair(DRAFT, [cross], held, packet)
+    check("an edit spanning two paragraphs is refused, not applied",
+          not prov2 and errs2, (prov2, errs2))
+
+    # An edit that adds a relation the original span did not carry is refused.
+    causal = {"dimension": "MOMENTUM", "operation": "REPHRASE",
+             "original": "The pallets and the eleven days are in the record.",
+             "repaired": "The pallets and the eleven days are in the record because "
+                         "the masons finished on schedule."}
+    _, prov3, errs3 = CP.apply_reader_repair(DRAFT, [causal], held, packet)
+    check("an edit that adds a new CAUSAL relation is refused",
+          not prov3 and any("CAUSAL" in e for e in errs3), errs3)
+
+    # A dimension not among the held ones is refused outright -- ADDRESS ONLY THE HELD
+    # DIMENSIONS is a mechanical rule, not just a prompt instruction.
+    unheld = {"dimension": "READABILITY", "operation": "DELETE",
+             "original": "The hearing of the room is not.", "repaired": ""}
+    _, prov4, errs4 = CP.apply_reader_repair(DRAFT, [unheld], held, packet)
+    check("an edit citing a dimension that was not held is refused",
+          not prov4 and errs4, errs4)
+
+
 def test_a_reader_repair_that_fabricates_is_caught_not_published():
     """The bound the owner called VERY IMPORTANT: a repair may improve execution, it may
-    not manufacture a new reason the article deserves to exist. If a Reader rewrite
-    invents material to satisfy a held dimension, the SAME safety_audit() this run
-    already used refuses the invention -- a terminal SAFETY_HOLD, not a quiet publish."""
+    not manufacture a new reason the article deserves to exist. Two layers now enforce
+    this: apply_reader_repair() itself refuses a local edit that adds a number, entity or
+    relation the edited paragraph did not already carry (below), and for anything that
+    slips past that -- machine language is not a number, entity or relation -- the SAME
+    safety_audit() this run already used is the mandatory backstop (second case below)."""
     held = {"dimensions": dict(
                 {d: {"verdict": "PASS", "note": "", "passages": []}
                  for d in CP.READER_DIMENSIONS},
                 BREATHING={"verdict": "HOLD", "note": "give the fragrance room",
-                           "passages": ["fragrances, with the aim of engaging all "
-                                       "senses"]}),
+                           "passages": ["fragrances, meant to engage all the senses"]}),
             "overall": "HOLD", "one_line": "the sensory material is compressed"}
-    invented = DRAFT + "\n\nThe fragrance was jasmine, chosen by the curator Anneke Mertens."
-    prov, out = run(full_script(reader=held) + [invented])
-    check("a fabricated rewrite is refused, not published",
+    original = "Inside it there were fragrances, meant to engage all the senses."
+
+    # LAYER ONE: a fabricated proper-noun entity is refused before the rewrite is ever
+    # applied to the article -- mechanically, by apply_reader_repair(), never reaching
+    # Safety at all.
+    entity_edit = {"edits": [{
+        "dimension": "BREATHING", "operation": "REPHRASE", "original": original,
+        "repaired": "Inside it there were fragrances of jasmine, chosen by the curator "
+                    "Anneke Mertens."}]}
+    prov, out = run(full_script(reader=held) + [entity_edit])
+    check("a fabricated entity is refused, not published",
           out["status"] == CP.HOLD, out.get("failure_reason"))
-    check("it holds at safety, on the invented surface",
-          out["failure_stage"] == CP.SAFETY, out.get("failure_stage"))
-    check("the invented name is what is named",
-          "Mertens" in out["failure_reason"] or "jasmine" in out["failure_reason"],
-          out["failure_reason"])
+    check("it holds at the reader, on the original unrescued finding -- the fabricated "
+          "edit never reached the article at all",
+          out["failure_stage"] == CP.READER and "BREATHING" in out["failure_reason"],
+          out.get("failure_reason"))
+    check("the invented name never appears anywhere in the held article",
+          "Mertens" not in out["article_text"] and "jasmine" not in out["article_text"],
+          out["article_text"])
     check("a held run is never publication-ready, fabricated draft or not",
           out["publication_ready"] is False, out["publication_ready"])
-    check("no second reader recheck was spent chasing a rescue",
+    check("the repair call is still counted even though its edit was refused",
           out["model_calls_by_stage"].get(CP.READER) == 2, out["model_calls_by_stage"])
+    check("but it is not recorded as an accepted repair",
+          not out["repairs_by_stage"].get(CP.READER), out["repairs_by_stage"])
+
+    # LAYER TWO: an edit that adds no new number, entity or relation -- so
+    # apply_reader_repair() accepts it -- can still leak machine language, which is the
+    # mandatory safety_audit() recheck's job to catch, exactly as it would for any other
+    # stage's prose.
+    leak_edit = {"edits": [{
+        "dimension": "BREATHING", "operation": "REPHRASE", "original": original,
+        "repaired": "Inside it there were fragrances, as the evidence shows."}]}
+    _, out2 = run(full_script(reader=held) + [leak_edit])
+    check("a machine-language leak the local check cannot see is still refused, not "
+          "published", out2["status"] == CP.HOLD, out2.get("failure_reason"))
+    check("it holds at safety this time -- the edit passed the local check and reached "
+          "the article, and the mandatory backstop caught it there",
+          out2["failure_stage"] == CP.SAFETY, out2.get("failure_stage"))
+    check("no second reader recheck was spent chasing a rescue",
+          out2["model_calls_by_stage"].get(CP.READER) == 2, out2["model_calls_by_stage"])
 
 
 def test_a_core_crip_minds_fit_rejection_stays_terminal_through_repair():
@@ -2672,9 +2769,15 @@ def test_a_core_crip_minds_fit_rejection_stays_terminal_through_repair():
                     "passages": ["a record decides which kinds of perceiving it can "
                                 "carry"]}),
             "overall": "HOLD", "one_line": "the fit is asserted, not earned"}
-    # The rewrite tries and cannot manufacture what was not there; the recheck holds on
-    # the identical dimension.
-    prov, out = run(full_script(reader=held) + [DRAFT, held])
+    # The one local edit tries and cannot manufacture what was not there -- it is a real,
+    # mechanically-accepted edit (a harmless local compression, nowhere near the abstract
+    # paragraph the finding actually names), and the recheck holds on the identical
+    # dimension, exactly as an attempt that could not earn the reading should.
+    repair_reply = {"edits": [{
+        "dimension": "CRIP_MINDS_FIT", "operation": "COMPRESS",
+        "original": "Each entry says what its room was for.",
+        "repaired": "Each entry states its purpose."}]}
+    prov, out = run(full_script(reader=held) + [repair_reply, held])
     check("still HOLD -- Worth's approval is not overridden by a rewrite",
           out["failure_stage"] == CP.READER, out.get("failure_stage"))
     check("CRIP_MINDS_FIT is still the named defect",
@@ -2814,11 +2917,17 @@ def test_the_reader_gate_runs_last_and_returns_passages():
                 OPENING={"verdict": "HOLD", "note": "a framing device stands in front",
                          "passages": ["The room was built from Himalayan salt"]}),
             "overall": "HOLD", "one_line": "the opening keeps the reader waiting"}
-    # STAGE 10b (owner-directed, 2026-09-09): a reader HOLD now gets ONE editorial
-    # repair and ONE recheck before it is terminal. The recheck below is scripted to
-    # HOLD again on the exact same dimension -- this is the "repair genuinely does not
-    # rescue it" case, proving the attempt is bounded rather than proving it is skipped.
-    prov, out = run(full_script(reader=held) + [DRAFT, held])
+    # STAGE 10b (owner-directed, 2026-09-09; revised to local edits 2026-09-09): a
+    # reader HOLD now gets ONE bounded batch of LOCAL edits and ONE recheck before it is
+    # terminal. The recheck below is scripted to HOLD again on the exact same dimension
+    # -- this is the "repair genuinely does not rescue it" case, proving the attempt is
+    # bounded rather than proving it is skipped.
+    repair_reply = {"edits": [{
+        "dimension": "OPENING", "operation": "REPHRASE",
+        "original": "The room was built from Himalayan salt bricks, and the pavilion "
+                    "was dug partway into the ground.",
+        "repaired": "The room was built from Himalayan salt bricks."}]}
+    prov, out = run(full_script(reader=held) + [repair_reply, held])
     check("a reader hold holds the run", out["failure_stage"] == CP.READER)
     check("the held dimension is named", "OPENING" in out["failure_reason"],
           out["failure_reason"])
@@ -2855,11 +2964,31 @@ def test_a_reader_editorial_repair_can_rescue_the_article():
                           "passages": ["The pallets and the eleven days are in the "
                                       "record."]}),
             "overall": "HOLD", "one_line": "the ending repeats itself"}
-    rewritten = DRAFT + "\n\nThe record ends where the pallets and the days end."
-    prov, out = run(full_script(reader=held) + [rewritten, READER_OK])
+    repair_reply = {"edits": [{
+        "dimension": "MOMENTUM", "operation": "DELETE",
+        "original": "The pallets and the eleven days are in the record.",
+        "repaired": ""}]}
+    prov, out = run(full_script(reader=held) + [repair_reply, READER_OK])
     check("the repair rescues the article", out["status"] == CP.PASS,
           out.get("failure_reason"))
-    check("the rewritten prose is what carries", rewritten.strip() in out["article_text"])
+    check("the restating sentence is gone -- deleted locally, not rewritten around",
+          "The pallets and the eleven days are in the record." not in out["article_text"],
+          out["article_text"])
+    check("the rest of that same paragraph survives untouched",
+          "The hearing of the room is not." in out["article_text"], out["article_text"])
+    check("every other paragraph is byte-for-byte unchanged",
+          all(p in out["article_text"] for p in (
+              "The room was built from Himalayan salt bricks, and the pavilion was dug "
+              "partway into the ground. Inside it there were fragrances, meant to "
+              "engage all the senses.",
+              "The catalogue records eight rooms. Each entry says what its room was "
+              "for. The salt arrived in nine tonne pallets and was laid by two masons "
+              "over eleven days.",
+              "No entry describes what any visitor heard. A reviewer wrote that the "
+              "catalogue keeps the intention of each room and drops the encounter. The "
+              "eight entries hold what each room was for and hold nothing anyone "
+              "heard.")),
+          out["article_text"])
     check("exactly one reader repair is recorded",
           out["repairs_by_stage"].get(CP.READER) == 1)
     check("gate + repair + recheck all counted",

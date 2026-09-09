@@ -3937,7 +3937,8 @@ def reader_gate(provider, article_text: str, advisories: list | None = None) -> 
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# STAGE 10b -- ONE READER REPAIR (owner-directed, 2026-09-09)
+# STAGE 10b -- ONE READER REPAIR, LOCAL EDITS ONLY (owner-directed, 2026-09-09;
+# revised to a surgical local-edit contract 2026-09-09 after real production evidence)
 # ══════════════════════════════════════════════════════════════════════════════
 # WHY THIS EXISTS. A real Worth-PASS article held on eight of nine Reader dimensions at
 # once, including CRIP_MINDS_FIT -- and the Reader's own note said the material EARNED
@@ -3950,85 +3951,195 @@ def reader_gate(provider, article_text: str, advisories: list | None = None) -> 
 # owner's own distinction -- is Reader rejecting the reading Worth approved, or only
 # saying the article failed to make it legible -- is not decided by parsing the Reader's
 # prose for which one it meant. It is decided by what happens next: repair is attempted
-# on WHATEVER dimensions are held, article-wide, in ONE bounded rewrite, using only
-# material the architecture and ledger already license -- and then the SAME reader_gate()
+# on WHATEVER dimensions are held, in ONE bounded batch of LOCAL edits, using only
+# material the article or the packet already licenses -- and then the SAME reader_gate()
 # checks the result again, once. If CRIP_MINDS_FIT genuinely could not be earned because
-# the reading was never really there, one rewrite will not manufacture it, and the recheck
-# will say so -- which is the terminal HOLD, exactly as before. If it could, the recheck
-# passes. The distinction is proven by the outcome, not asserted in advance.
+# the reading was never really there, no set of local edits will manufacture it, and the
+# recheck will say so -- which is the terminal HOLD, exactly as before. The distinction is
+# proven by the outcome, not asserted in advance.
 #
-# WHY A WHOLE-ARTICLE REWRITE, WHERE SAFETY'S REPAIR IS SUBTRACTIVE-ONLY. Reader defects
-# are mostly not excisable: BREATHING wants a promised example actually given room,
-# MOMENTUM wants a redundant paragraph cut and the ones around it rejoined, OPENING wants
-# the first sentences reordered around what is already in the piece. None of that is a
-# span deletion. So this stage is built on the SAME contract PROSE_FINISH already uses --
-# free rewrite, ADD NOTHING, checked afterwards by a deterministic guard it cannot see or
-# argue with -- except the guard here is the EXISTING safety_audit(), unmodified, which
-# already refuses any number, entity or sensory word the packet does not license. A
-# rewrite that invents material to satisfy Reader fails that guard exactly as an invented
-# fact from any other stage would, and the result is a terminal SAFETY_HOLD, not a
-# published invention.
+# WHY THIS IS NO LONGER A FREE WHOLE-ARTICLE REWRITE. The first version of this stage
+# built on PROSE_FINISH's own contract -- free rewrite, checked only afterward by
+# safety_audit(). Real production evidence (Gabriele Taylor, and the first live batch this
+# revision replaces) showed the failure mode that contract permits: asked to fix eight
+# dimensions at once, the rewrite reached past what it needed and introduced new NEGATION,
+# CAUSAL, COMPARISON and TEMPORAL relations the writer never licensed -- caught by the
+# mandatory safety recheck every time, so nothing false ever published, but every one of
+# those attempts failed for the same avoidable reason: a whole-article rewrite has no
+# reason to stay narrow. This version replaces the free rewrite with a bounded set of
+# LOCAL EDITS, each an ({original, repaired} pair inside exactly one paragraph, mechanically
+# verified by apply_reader_repair() the same way apply_grounding_repair() already verifies
+# Safety and Grounding's own repairs -- a wider blast radius was never the fix a Reader
+# hold needed, it was just the shape the first version happened to have.
 #
-# ONE CALL, ONE MANDATORY SAFETY RECHECK, ONE READER RECHECK. No second rewrite regardless
-# of outcome, and no rerun of Worth, Ledger or Architecture -- the reading and the facts
-# are not this stage's to revisit.
+# ONE CALL, ONE MANDATORY SAFETY RECHECK, ONE READER RECHECK. No second batch of edits
+# regardless of outcome, and no rerun of Worth, Ledger or Architecture -- the reading and
+# the facts are not this stage's to revisit.
+READER_REPAIR_OPS = ("REPHRASE", "COMPRESS", "DELETE")
+
 READER_REPAIR_SYSTEM = (
     "One or more readers have already approved this article's subject and its central "
     "reading. A hard reader has now read the finished prose and held it on specific "
-    "dimensions, each with the exact passage that failed. Your job is to fix the "
-    "EXECUTION the reader named, using only what is already in the article and in the "
-    "PERMITTED MATERIAL below -- nothing else exists for you to add.\n"
+    "dimensions, each with the exact passage that failed and the paragraph it lives in.\n"
     "\n"
-    "ADD NOTHING NOT ALREADY LICENSED. No fact, number, date, name, place, quotation, "
-    "cause, consequence or comparison beyond what the article already states or the "
-    "permitted material below already grants. If a dimension asks for more concrete "
-    "material (BREATHING, RESEARCH_LOAD, CRIP_MINDS_FIT) it means: use the specific, "
-    "particular material already available and not yet given room -- not invented "
-    "detail, however plausible.\n"
+    "YOU ARE NOT REWRITING THE ARTICLE. YOU ARE PERFORMING LOCAL LINE EDITS ON SPECIFIED "
+    "SPANS ONLY. Each edit touches text inside ONE paragraph and nothing outside it. "
+    "DO NOT TOUCH OTHER PARAGRAPHS, including ones that read badly for reasons no "
+    "dimension named -- a paragraph not implicated by a held dimension is not yours to "
+    "improve.\n"
     "\n"
-    "DO NOT CHANGE THE ARGUMENT OR THE READING. Same subject, same central claim, same "
-    "facts, same conclusion. You are re-delivering what is already true of this piece, "
-    "not reframing it toward a different one. A CRIP_MINDS_FIT hold is answered by "
-    "making the existing material legible -- concrete, specific, earned -- never by "
-    "adding a sentence that asserts the reading in the abstract.\n"
+    "DO NOT ADD FACTS OR RELATIONS. No number, date, name, place, quotation, cause, "
+    "consequence, comparison, generalisation or negation beyond what the edited "
+    "paragraph or the PERMITTED MATERIAL below already carries. If a dimension asks for "
+    "more concrete material (BREATHING, RESEARCH_LOAD, CRIP_MINDS_FIT) it means: bring "
+    "forward the specific, particular material already available and not yet given "
+    "room in THAT paragraph -- not invented detail, however plausible, and never a new "
+    "sentence asserting the reading in the abstract.\n"
     "\n"
-    "ADDRESS ONLY THE HELD DIMENSIONS, using their notes and quoted passages as your "
-    "brief. A dimension not named was already passing; do not touch material only "
-    "relevant to it.\n"
+    "PREFER DELETE, THEN COMPRESS, THEN REPHRASE -- in that order of preference. Deleting "
+    "a redundant sentence or a machine-language phrase is always available and never "
+    "adds anything. Compressing (shortening, simplifying syntax) is the next choice. "
+    "Only rephrase when the words themselves, not just their number, are the problem, "
+    "and even then say the same thing the paragraph already said.\n"
     "\n"
-    "Return ONLY the finished article body. No preamble, no notes, no explanation of what "
-    "you changed, no frontmatter, no headers."
+    "DO NOT CHANGE THE ARGUMENT OR THE READING anywhere in the article. Same subject, "
+    "same central claim, same facts, same conclusion -- you are making a held paragraph "
+    "deliver what the piece already earns, not reframing anything.\n"
+    "\n"
+    "ADDRESS ONLY THE HELD DIMENSIONS. One dimension may need edits in more than one "
+    "paragraph -- submit one edit per paragraph, never one edit spanning two. A "
+    "dimension not named was already passing.\n"
+    "\n"
+    "RETURN ONLY THE EDIT OPERATIONS, not the article. No preamble, no notes, no prose "
+    "outside the JSON."
+)
+
+READER_REPAIR_SCHEMA = (
+    "Reply with ONE JSON object:\n"
+    '{"edits": [\n'
+    '    {"dimension": "OPENING",     the HELD dimension this edit answers\n'
+    '     "operation": "REPHRASE",    REPHRASE | COMPRESS | DELETE\n'
+    '     "original": "the exact text, verbatim, from inside ONE paragraph",\n'
+    '     "repaired": "the replacement text, or \\"\\" for DELETE"}\n'
+    "]}\n"
+    "Every edit's `original` must fall inside a SINGLE paragraph -- never spanning two. "
+    "If a fix needs two paragraphs, submit two edits. One dimension may have several "
+    "edits, each at a different place.\n"
+    "No prose outside the JSON."
 )
 
 
+def _numbered_paragraphs(text: str) -> str:
+    """Paragraph boundaries shown to the model for orientation only -- it must still
+    quote the paragraph's own text VERBATIM in `original`, never a bracket tag."""
+    return "\n\n".join("[paragraph %d]\n%s" % (i, p)
+                       for i, p in enumerate(CE.paragraphs(text), 1))
+
+
 def reader_repair_prompt(article_text: str, held: dict, packet: dict) -> str:
-    L = ["THE ARTICLE", article_text, "", "WHAT THE READER HELD"]
+    L = ["THE ARTICLE, BY PARAGRAPH", _numbered_paragraphs(article_text), "",
+        "WHAT THE READER HELD"]
     for dim, v in held.items():
         L += ["", "DIMENSION %s" % dim, "  note: %s" % str((v or {}).get("note", ""))[:500]]
         for p in (v or {}).get("passages") or []:
             L.append("  passage: %s" % str(p)[:300])
     L += ["", "PERMITTED MATERIAL -- the writer packet this article was licensed from. "
              "Nothing outside the article and this packet may be added:",
-         ST.render(packet)[:6000]]
+         ST.render(packet)[:6000],
+         "", READER_REPAIR_SCHEMA]
     return "\n".join(L)
 
 
+def apply_reader_repair(article_text: str, edits: list, held: dict,
+                        packet: dict) -> tuple:
+    """Apply LOCAL, mechanically-verified edits. Returns (text, provenance, errs).
+
+    The same discipline apply_grounding_repair() already enforces for Safety and
+    Grounding's own repairs, adapted to a Reader finding's shape: every edit must name a
+    HELD dimension, its `original` must be an exact quote found inside a SINGLE
+    paragraph of the article -- never spanning more, which is what keeps this a local
+    edit rather than a rewrite wearing an edit's clothes -- and its `repaired` wording
+    may add no relation the edited paragraph did not already carry, and no number or
+    entity the article or the licensed packet did not already carry. An edit that widens
+    the claim, or reaches past its own paragraph, is refused, not applied.
+    """
+    approved = ST.render(packet)
+    lic_nums = _numbers_of(approved)
+    lic_ents = ST._entities(approved, skip_sentence_initial=False)
+    out, prov, errs = article_text, [], []
+    for i, e in enumerate(edits or [], 1):
+        if not isinstance(e, dict):
+            errs.append("edit %d is not an object" % i)
+            continue
+        dim = str(e.get("dimension") or "")
+        orig = (e.get("original") or "").strip()
+        rep = (e.get("repaired") or "").strip()
+        op = e.get("operation")
+        if dim not in held:
+            errs.append("edit %d cites dimension %r, which was not held" % (i, dim))
+            continue
+        if op not in READER_REPAIR_OPS:
+            errs.append("edit %d has operation %r, not one of %s"
+                        % (i, op, ", ".join(READER_REPAIR_OPS)))
+            continue
+        if not orig or normalize_span(orig) not in normalize_span(out):
+            errs.append("edit %d: the original is not in the article: %r"
+                        % (i, orig[:80]))
+            continue
+        host = next((p for p in CE.paragraphs(out)
+                    if normalize_span(orig) in normalize_span(p)), None)
+        if host is None:
+            errs.append("edit %d spans more than one paragraph -- not a local edit: %r"
+                        % (i, orig[:80]))
+            continue
+        if orig not in out:
+            errs.append("edit %d: quoted text does not match the article exactly "
+                        "(whitespace or punctuation drift) -- refused rather than "
+                        "guessed at" % i)
+            continue
+        new_nums = sorted(_numbers_of(rep) - _numbers_of(orig) - lic_nums)
+        new_ents = sorted(ST._entities(rep) - ST._entities(orig) - lic_ents)
+        before_rel, after_rel = CE.relations(orig), CE.relations(rep)
+        new_rel = {k: after_rel[k] - before_rel.get(k, 0)
+                  for k in after_rel if after_rel[k] > before_rel.get(k, 0)}
+        if new_nums or new_ents or new_rel:
+            errs.append("edit %d ADDS rather than edits -- numbers=%s entities=%s "
+                        "relations=%s (a local edit may only subtract or narrow)"
+                        % (i, new_nums, new_ents, new_rel))
+            continue
+        out = out.replace(orig, rep, 1)
+        prov.append({"dimension": dim, "operation": op, "original": orig,
+                     "repaired": rep})
+    out = re.sub(r"[ \t]{2,}", " ", out)
+    out = re.sub(r"\n{3,}", "\n\n", out)
+    return out.strip(), prov, errs
+
+
 def reader_repair(provider, article_text: str, held: dict, packet: dict) -> dict:
-    """STAGE 10b. Exactly one call, whole-article. Not mechanically span-verified the way
-    Safety's repair is -- verification is delegated to the caller's mandatory re-run of
-    the existing safety_audit() (unchanged) before this result is trusted at all."""
+    """STAGE 10b. Exactly one call, local edits only -- never a full-article rewrite.
+    Mechanically verified by apply_reader_repair(), the same discipline
+    apply_grounding_repair() already applies to Safety and Grounding's own repairs.
+    Verification here does not replace the caller's mandatory re-run of the existing
+    safety_audit() (unchanged); it is the first guard, not the only one."""
     if not held:
         return {"status": SKIPPED, "reason": "no held dimension", "model_calls": 0}
-    comp = provider.complete(system=READER_REPAIR_SYSTEM,
-                             user=reader_repair_prompt(article_text, held, packet),
-                             max_tokens=4_000)
-    text = _clean_article(comp.text or "")
-    if not text.strip():
-        return {"status": HOLD, "reason": "the editorial repair returned no article",
-                "model_calls": 1}
-    return {"status": PASS, "article_text": text,
-            "dimensions_addressed": sorted(held),
-            "provider": _identity(comp), "model_calls": 1, "repairs": 1}
+    obj, ident = _ask(provider, READER_REPAIR_SYSTEM,
+                      reader_repair_prompt(article_text, held, packet),
+                      4_000, READER, READER_HOLD)
+    edits = obj.get("edits")
+    if not isinstance(edits, list) or not edits:
+        return {"status": HOLD, "reason": "the editorial repair returned no edits",
+                "model_calls": 1, "provider": ident}
+    text, prov, errs = apply_reader_repair(article_text, edits, held, packet)
+    if not prov or not text.strip():
+        return {"status": HOLD,
+                "reason": "the editorial repair did not stay within its permissions"
+                         if errs else "the editorial repair deleted the whole article",
+                "failures": errs, "model_calls": 1, "provider": ident}
+    return {"status": PASS, "article_text": text, "edits": prov,
+            "rejected_edits": errs,
+            "dimensions_addressed": sorted({e["dimension"] for e in prov}),
+            "provider": ident, "model_calls": 1, "repairs": 1}
 
 
 # ══════════════════════════════════════════════════════════════════════════════
