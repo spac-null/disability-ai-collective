@@ -3941,6 +3941,16 @@ def test_furniture_repackage_then_clean_grounding_continues_normally():
     check("and it names G1's own accepted edit",
           any(e.get("finding_id") == "G1" for e in (pre or {}).get("accepted_edits")
               or []), pre)
+    # AUDIT RETENTION (2026-09-10): the per-iteration blocking snapshots must survive
+    # record(GROUNDING, ...), the repackage carry-forward AND final persistence -- the
+    # exact chain that lost them before.
+    ph = (pre or {}).get("grounding_completion_history") or []
+    check("the carried history still holds each iteration's own blocking snapshots",
+          bool(ph) and all("blockers_before" in h and "blockers_after" in h
+                           for h in ph if h["outcome"] == "accepted"), ph)
+    check("and each snapshotted finding carries its surface",
+          all(b.get("surface") for h in ph
+              for b in (h.get("blockers_before") or [])), ph)
     check("and it publishes", out["publication_ready"] is True and bool(out["package"]))
 
 
@@ -4992,6 +5002,59 @@ def test_reader_completion_history_is_persisted_in_full():
     check("the proposed edits themselves are kept, not just a count",
           h["edits"][0]["original"] == _RP1 and h["edits"][0]["dimension"]
           == "READABILITY", h["edits"])
+
+
+
+def test_a_rejected_grounding_candidate_is_fully_inspectable_in_the_final_artifact():
+    """3. The audit question the retained Poetry artifact could not answer: for a
+    no_progress rejection, both sides of the comparison must be readable off the
+    PERSISTED run -- by surface -- with no model call. Proven end to end through
+    record(GROUNDING, ...) and out()."""
+    _, clean = run(full_script())
+    dek = (clean["package"] or {})["dek"]
+    art_finding = dict(GROUND_DIRTY["findings"][0])
+    pkg_finding = {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+                   "why": "not in the sources"}
+    fix = {"edits": [{"finding_id": "G1", "operation": "NARROW",
+                      "original": "No entry describes what any visitor heard.",
+                      "repaired": "No catalogue entry in the eight describes what any "
+                                  "visitor heard.",
+                      "fact_ids": ["F05"], "what_was_removed": "the unbounded scope"}]}
+    art_finding["id"] = "G1"
+    # Every recheck returns the identical mixed set: no progress, then the repeat guard.
+    # The grounding repair call happens BEFORE the reader gate, so the repair replies
+    # go in front of READER_OK -- same script shape _run_post_repackage() uses.
+    _, out = run(full_script()[:5] + [fix, fix, READER_OK],
+                 ground={"status": "settled",
+                         "findings": [art_finding, pkg_finding]})
+    check("the run HOLDs at grounding", out["failure_stage"] == CP.GROUNDING,
+          out.get("failure_stage"))
+    hist = out["detail"][CP.GROUNDING]["grounding_completion_history"]
+    first = hist[0]
+    check("the first rejection is a no_progress one", first["outcome"] == "no_progress",
+          first)
+    check("both sides survived into the persisted artifact",
+          first.get("blockers_before") and first.get("blockers_after"), first)
+
+    def split(snapshot):
+        art = [b for b in snapshot if b["surface"] == CP.ARTICLE_SURFACE]
+        pkg = [b for b in snapshot if b["surface"] != CP.ARTICLE_SURFACE]
+        return len(art), len(pkg)
+
+    check("the article/package split is readable on BOTH sides -- the exact question "
+          "that was unanswerable on the retained Poetry artifact",
+          split(first["blockers_before"]) == (1, 1)
+          and split(first["blockers_after"]) == (1, 1),
+          (first["blockers_before"], first["blockers_after"]))
+    check("each snapshotted finding carries id, classification, surface and quote",
+          all({"classification", "surface", "quote"} <= set(b)
+              for b in first["blockers_after"]), first["blockers_after"])
+    check("and nothing larger was persisted with them -- no prompt, no article text",
+          all(set(b) <= {"id", "classification", "surface", "quote"}
+              for b in first["blockers_after"]), first["blockers_after"])
+    check("the repeat guard entry carries its before set too",
+          hist[-1]["outcome"] == "repeated_proposal"
+          and hist[-1].get("blockers_before"), hist[-1])
 
 
 

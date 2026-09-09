@@ -3915,6 +3915,40 @@ def grounding_completion_detail(result: dict | None) -> dict | None:
     return {k: result[k] for k in GROUNDING_COMPLETION_DETAIL_KEYS if k in result}
 
 
+# ── CANDIDATE BLOCKER SNAPSHOTS (audit only, owner-directed, 2026-09-10) ──────────
+# WHY. A rejected candidate's own Grounding findings were discarded, so a no_progress
+# entry said only "grounding blocker count did not shrink (3 -> 5)". On the retained
+# Poetry continuation …-2026-09-09T215810 that made the one question that mattered --
+# did the article-surface blocker actually clear, or did it survive? -- unanswerable
+# without rerunning a non-deterministic model call, and so the surface-local progress
+# question could not be decided either way. The counts were kept and the evidence thrown
+# away.
+#
+# This changes NOTHING about repair, acceptance, progress or the fuse. It records what
+# was already computed. Surfaces come from surface_of(), the SAME classifier the loop's
+# own target selection and the furniture repackage already use -- no new classification
+# anywhere.
+BLOCKER_SNAPSHOT_MAX = 12
+BLOCKER_SNAPSHOT_QUOTE_CHARS = 160
+
+
+def blocker_snapshot(findings, package: dict | None) -> list:
+    """A compact, inspectable record of a Grounding blocking set: id, classification,
+    surface and a trimmed quote per finding. Diagnostic fields only -- never a prompt, a
+    transcript, or a copy of the article or the sources."""
+    out = []
+    for f in (findings or [])[:BLOCKER_SNAPSHOT_MAX]:
+        if not isinstance(f, dict):
+            out.append({"quote": str(f)[:BLOCKER_SNAPSHOT_QUOTE_CHARS]})
+            continue
+        quote = str(f.get("quote") or f.get("claim") or "")
+        out.append({"id": f.get("id"),
+                    "classification": f.get("classification"),
+                    "surface": surface_of(quote, package),
+                    "quote": quote[:BLOCKER_SNAPSHOT_QUOTE_CHARS]})
+    return out
+
+
 def grounding_completion_loop(
         provider, article_text: str, package: dict | None, initial: dict, ledger: dict,
         packet: dict, arch: dict | None, pack: dict, source_text: str, source_sha: str,
@@ -4009,14 +4043,16 @@ def grounding_completion_loop(
             rejected += 1
             rejection = {"reason": prop.get("reason", "the proposal was refused")}
             history.append({"iteration": iterations, "outcome": "no_usable_proposal",
-                            "origin": origin, "reason": rejection["reason"]})
+                            "origin": origin, "reason": rejection["reason"],
+                            "blockers_before": blocker_snapshot(g["blocking"], package)})
             break
 
         sig = _edit_signature(prop.get("edits"))
         if sig in tried:
             rejected += 1
             history.append({"iteration": iterations, "outcome": "repeated_proposal",
-                            "origin": origin})
+                            "origin": origin,
+                            "blockers_before": blocker_snapshot(g["blocking"], package)})
             break
         tried.add(sig)
 
@@ -4033,10 +4069,14 @@ def grounding_completion_loop(
             rejected += 1
             rejection = {"reason": "introduced a new Safety blocker",
                         "detail": candidate_safety["blocking"][:4]}
+            # No blockers_after: Safety rejected this candidate before any Grounding
+            # recheck was run, so there is no candidate blocking set to record. `detail`
+            # is the SAFETY blocking list, which is the diagnostic for this outcome.
             history.append({"iteration": iterations, "outcome": "safety_rejected",
                             "origin": origin,
                             "deterministic": used_deterministic,
-                            "detail": rejection["detail"]})
+                            "detail": rejection["detail"],
+                            "blockers_before": blocker_snapshot(g["blocking"], package)})
             continue
 
         candidate_grounding = ground_candidate(
@@ -4045,6 +4085,8 @@ def grounding_completion_loop(
         model_calls += candidate_grounding.get("model_calls", 0)
 
         before_count = len(g["blocking"])
+        # Taken BEFORE `g` is replaced by an accepted candidate below.
+        before_snapshot = blocker_snapshot(g["blocking"], package)
         if len(candidate_grounding["blocking"]) < before_count:
             accepted += 1
             if used_deterministic:
@@ -4061,6 +4103,8 @@ def grounding_completion_loop(
                             "deterministic": used_deterministic,
                             "blocking_before": before_count,
                             "blocking_after": len(g["blocking"]),
+                            "blockers_before": before_snapshot,
+                            "blockers_after": blocker_snapshot(g["blocking"], package),
                             "findings_answered": prop.get("findings_answered")})
         else:
             rejected += 1
@@ -4069,10 +4113,16 @@ def grounding_completion_loop(
                           % (before_count, len(candidate_grounding["blocking"])),
                 "detail": [str(f.get("quote") or "")[:100]
                           for f in candidate_grounding["blocking"][:4]]}
+            # THE ENTRY THIS WHOLE CHANGE EXISTS FOR. Both sides, by surface, so
+            # "did the article blocker clear while package findings grew?" is answerable
+            # off the artifact alone.
             history.append({"iteration": iterations, "outcome": "no_progress",
                             "origin": origin,
                             "deterministic": used_deterministic,
-                            "reason": rejection["reason"]})
+                            "reason": rejection["reason"],
+                            "blockers_before": before_snapshot,
+                            "blockers_after": blocker_snapshot(
+                                candidate_grounding["blocking"], package)})
 
     out = dict(g)
     out["article_text"] = accepted_text

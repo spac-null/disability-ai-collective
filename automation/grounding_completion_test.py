@@ -1150,6 +1150,171 @@ def test_every_candidate_origin_shares_one_acceptance_block():
 
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# CANDIDATE BLOCKER AUDIT RETENTION (owner-directed, 2026-09-10)
+# ══════════════════════════════════════════════════════════════════════════════
+# Retained Poetry continuation …-2026-09-09T215810 rejected the suggested-patch
+# candidate with "grounding blocker count did not shrink (3 -> 5)" and kept nothing
+# else. Whether the ARTICLE blocker cleared while PACKAGE findings grew -- the one fact
+# that decides whether surface-local progress is justified -- was unanswerable without
+# rerunning a non-deterministic model call. These tests pin the evidence, and pin that
+# NOTHING about acceptance changed.
+AUD_PACKAGE = {"title": "A room made of salt",
+               "dek": "The chair was carved in 1991 according to the catalogue entry.",
+               "homepage_excerpt": "", "meta_description": "", "social_hook": ""}
+# A finding whose quote lives in the package dek, so surface_of() classifies it there --
+# the same classifier the loop's own target selection uses.
+AUD_PKG_FINDING = _finding(
+    "P1", "The chair was carved in 1991 according to the catalogue entry.")
+
+
+def _aud_run(candidate_findings, article_finding=F1, model_edit=EDIT1,
+             package=AUD_PACKAGE, audit_fn=_pass_audit, initial=None):
+    restore, gcalls = _ground_seq([_ground_reply(candidate_findings)])
+    try:
+        return CP.grounding_completion_loop(
+            _LoopProvider([model_edit]),
+            LOOP_ARTICLE, package,
+            initial if initial is not None else _initial([article_finding]),
+            LOOP_LEDGER, LOOP_PACKET, LOOP_ARCH, LOOP_PACK, "source text", "sha",
+            audit_fn, max_iterations=1)
+    finally:
+        restore()
+
+
+def test_no_progress_persists_the_whole_candidate_blocking_set():
+    """1/2. The rejected candidate's OWN blocking set is recorded, each finding carrying
+    its id, classification, surface and quote -- and the before set alongside it, so the
+    article/package split is readable on both sides without a model call."""
+    result = _aud_run([F1, AUD_PKG_FINDING])
+    h = result["grounding_completion_history"][0]
+    check("the outcome is still a plain no_progress rejection",
+          h["outcome"] == "no_progress", h)
+    check("the before set is recorded", h.get("blockers_before") is not None, h)
+    check("the after set is recorded", h.get("blockers_after") is not None, h)
+    check("before is the one article blocker",
+          [(b["id"], b["surface"]) for b in h["blockers_before"]]
+          == [("F1", CP.ARTICLE_SURFACE)], h["blockers_before"])
+    check("after carries BOTH candidate findings",
+          len(h["blockers_after"]) == 2, h["blockers_after"])
+    after = {b["id"]: b for b in h["blockers_after"]}
+    check("the article finding is stamped ARTICLE",
+          after["F1"]["surface"] == CP.ARTICLE_SURFACE, after)
+    check("the package finding is stamped with its package surface, not ARTICLE",
+          after["P1"]["surface"] in CP.PACKAGE_SURFACES, after)
+    check("classification and quote survive for each",
+          after["F1"]["classification"] == "TRUE_UNSUPPORTED"
+          and after["F1"]["quote"].startswith("The room was painted"), after)
+    check("the question the production artifact could not answer is now answerable: "
+          "ARTICLE 1 -> 1, PACKAGE 0 -> 1",
+          (sum(1 for b in h["blockers_before"] if b["surface"] == CP.ARTICLE_SURFACE),
+           sum(1 for b in h["blockers_after"] if b["surface"] == CP.ARTICLE_SURFACE),
+           sum(1 for b in h["blockers_before"] if b["surface"] != CP.ARTICLE_SURFACE),
+           sum(1 for b in h["blockers_after"] if b["surface"] != CP.ARTICLE_SURFACE))
+          == (1, 1, 0, 1), h)
+    check("no prompt, transcript or article text is stored in the entry",
+          all(set(b) <= {"id", "classification", "surface", "quote"}
+              for b in h["blockers_after"]), h["blockers_after"])
+
+
+def test_every_rejection_origin_records_the_snapshot():
+    """4/5/6. Suggested-patch, deterministic and model rejections all record it -- the
+    audit is on the loop's rejection path, not on one candidate source."""
+    # MODEL: F1's overclaim is a bare year, which neither free origin can touch.
+    m = _aud_run([F1])["grounding_completion_history"][0]
+    check("model rejection records both sides",
+          m["origin"] == CP.ORIGIN_MODEL and m.get("blockers_before")
+          and m.get("blockers_after"), m)
+
+    # SUGGESTED_PATCH and DETERMINISTIC, on the fixture that carries both.
+    restore, _ = _ground_seq([_ground_reply([SP_FINDING, AUD_PKG_FINDING])])
+    try:
+        sp = CP.grounding_completion_loop(
+            _LoopProvider([]), SP_ARTICLE, AUD_PACKAGE, _initial([SP_FINDING]),
+            SP_LEDGER, LOOP_PACKET, LOOP_ARCH, LOOP_PACK, "s", "sha", _pass_audit,
+            max_iterations=1)["grounding_completion_history"][0]
+    finally:
+        restore()
+    check("suggested-patch rejection records both sides",
+          sp["origin"] == CP.ORIGIN_SUGGESTED_PATCH and sp.get("blockers_before")
+          and len(sp["blockers_after"]) == 2, sp)
+
+    restore, _ = _ground_seq([_ground_reply([SUB_FINDING_NO_PATCH])])
+    try:
+        dt = CP.grounding_completion_loop(
+            _LoopProvider([]), SUB_ARTICLE, None, _initial([SUB_FINDING_NO_PATCH]),
+            SUB_LEDGER, LOOP_PACKET, LOOP_ARCH, LOOP_PACK, "s", "sha", _pass_audit,
+            max_iterations=1)["grounding_completion_history"][0]
+    finally:
+        restore()
+    check("deterministic rejection records both sides",
+          dt["origin"] == CP.ORIGIN_DETERMINISTIC and dt.get("blockers_before")
+          and dt.get("blockers_after"), dt)
+
+
+def test_safety_rejection_records_the_before_set_and_no_after_set():
+    """A Safety-rejected candidate never reached a Grounding recheck, so there IS no
+    candidate blocking set -- the entry says so by omission rather than inventing one,
+    and still carries the before set and Safety's own blocking detail."""
+    def bad_audit(text, package, **kw):
+        return {"status": CP.HOLD, "model_calls": 0,
+                "blocking": [{"classification": "NEW_UNSUPPORTED_FACTS", "quote": "x"}]}
+
+    restore, gcalls = _ground_seq([])
+    try:
+        result = CP.grounding_completion_loop(
+            _LoopProvider([EDIT1]), LOOP_ARTICLE, AUD_PACKAGE, _initial([F1]),
+            LOOP_LEDGER, LOOP_PACKET, LOOP_ARCH, LOOP_PACK, "s", "sha", bad_audit,
+            max_iterations=1)
+    finally:
+        restore()
+    h = result["grounding_completion_history"][0]
+    check("the outcome is safety_rejected", h["outcome"] == "safety_rejected", h)
+    check("the before set is recorded", h.get("blockers_before"), h)
+    check("no after set is invented -- Grounding never ran",
+          "blockers_after" not in h and gcalls["n"] == 0, (h, gcalls))
+    check("Safety's own blocking detail is still what diagnoses this outcome",
+          h.get("detail"), h)
+
+
+def test_accepted_iterations_record_both_sides_too():
+    """An accepted iteration records the same shape, so a whole completion sequence reads
+    consistently rather than only its failures."""
+    restore, _ = _ground_seq([_ground_reply([])])
+    try:
+        result = CP.grounding_completion_loop(
+            _LoopProvider([EDIT1]), LOOP_ARTICLE, AUD_PACKAGE, _initial([F1]),
+            LOOP_LEDGER, LOOP_PACKET, LOOP_ARCH, LOOP_PACK, "s", "sha", _pass_audit)
+    finally:
+        restore()
+    h = result["grounding_completion_history"][0]
+    check("the repair was accepted", h["outcome"] == "accepted", h)
+    check("both sides are recorded, before taken pre-swap",
+          [b["id"] for b in h["blockers_before"]] == ["F1"]
+          and h["blockers_after"] == [], h)
+    check("the existing counts are untouched",
+          (h["blocking_before"], h["blocking_after"]) == (1, 0), h)
+
+
+def test_acceptance_semantics_are_structurally_unchanged():
+    """7/8/9. The audit added no branch, no comparison and no constant. The acceptance
+    test is the same single expression, Safety is still global, and the fuse is 5."""
+    src = (HERE / "new_engine_v1" / "composition.py").read_text()
+    body = src.split("def grounding_completion_loop")[1].split("\ndef ")[0]
+    check("exactly one strict-shrink comparison, unchanged and still on the whole set",
+          body.count('len(candidate_grounding["blocking"]) < before_count') == 1, "")
+    check("no surface filtering was introduced into the acceptance test",
+          "split_by_surface" not in body.split("before_count = ")[1]
+                                        .split("history.append")[0], "")
+    check("exactly one Safety gate, still global",
+          body.count('candidate_safety["status"] != PASS') == 1, "")
+    check("the fuse is unchanged", CP.GROUNDING_COMPLETION_MAX_ITERATIONS == 5,
+          CP.GROUNDING_COMPLETION_MAX_ITERATIONS)
+    check("the snapshot uses the pipeline's own surface classifier, not a new one",
+          "surface_of(" in src.split("def blocker_snapshot")[1].split("\ndef ")[0], "")
+
+
+
 def main():
     for fn in (test_a_single_repairable_residue_is_eligible,
                test_more_than_two_survivors_does_not_complete,
@@ -1193,7 +1358,12 @@ def main():
                test_a_suggested_patch_that_adds_an_entity_or_number_is_refused_locally,
                test_suggested_patch_eligibility_is_fail_closed,
                test_a_repeated_suggested_patch_cannot_loop,
-               test_every_candidate_origin_shares_one_acceptance_block):
+               test_every_candidate_origin_shares_one_acceptance_block,
+               test_no_progress_persists_the_whole_candidate_blocking_set,
+               test_every_rejection_origin_records_the_snapshot,
+               test_safety_rejection_records_the_before_set_and_no_after_set,
+               test_accepted_iterations_record_both_sides_too,
+               test_acceptance_semantics_are_structurally_unchanged):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)
