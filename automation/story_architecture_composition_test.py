@@ -2178,6 +2178,76 @@ def test_the_factual_repair_can_only_subtract():
                {"id": "B", "classification": "TRUE_UNCERTAIN", "quote": "y"}])) == 2)
 
 
+def test_unsupported_negatives_is_locatable_and_gets_one_bounded_repair():
+    """The one production blocker from the 2026-09-09 real run: 'Innes Clark' held at
+    Safety on a single UNSUPPORTED_NEGATIVES finding ("...none of them are quite like
+    the others" -- no ledger fact licenses that negation) and the repair machinery never
+    even tried, because the category had no locator. Unlike CONTINUITY_ADDED_MATERIAL,
+    this one is the easy case: negative_admission_audit (story.py) already reports the
+    exact offending sentence, not a fragment, so locating it is the same
+    verbatim-in-text check every other category already uses -- no diff, no token
+    search, no new model call."""
+    draft = DRAFT
+    # The negative sentence is already in the WRITER's own draft here (draft_text ==
+    # final_text below), the same shape as the real production case: continuity carried
+    # it forward unchanged, so this is a clean UNSUPPORTED_NEGATIVES-only hold, not
+    # entangled with CONTINUITY_ADDED_MATERIAL (any brand-new negative-shaped sentence
+    # that continuity itself introduced would ALSO register as a relation-count increase
+    # -- negative shapes and relation shapes share vocabulary by construction -- which is
+    # a real, legitimate mixed hold, just not the one this test isolates).
+    final = draft + (" Two brass plaques announce, each in a different font, that none "
+                     "of the entries are quite like the others.")
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    sa = CP.safety_audit(final, final, packet, ARCH, LEDGER, {},
+                         {"cut_without_distinctive_terms": ["F07"]})
+    check("the run holds on the unsupported negative, and nothing else",
+          sa["blocking"] == ["UNSUPPORTED_NEGATIVES: 1 negative-shaped sentence(s) with "
+                             "no negative fact behind them: ['Two brass plaques "
+                             "announce, each in a different font, that none of the "
+                             "entries are quite l']"],
+          sa["blocking"])
+
+    findings = CP.safety_repair_findings(sa, final, "")
+    check("the exact offending sentence is located, not guessed",
+          bool(findings) and any("negation" in f["why"] for f in findings), findings)
+    check("the located quote is the added sentence, verbatim",
+          all(f["quote"] in final for f in findings), findings)
+
+    accept = Scripted([{"edits": [{
+        "finding_id": findings[0]["id"], "operation": "DELETE",
+        "original": findings[0]["quote"], "repaired": "",
+        "fact_ids": []}]}])
+    srep = CP.safety_repair(accept, final, findings, LEDGER, packet)
+    check("exactly one repair call, and it is accepted",
+          srep["status"] == CP.PASS and srep.get("model_calls") == 1, srep)
+    sa2 = CP.safety_audit(final, srep["article_text"], packet, ARCH, LEDGER, {},
+                          {"cut_without_distinctive_terms": ["F07"]}, repair=srep)
+    check("the recheck passes -- the unsupported negation is genuinely gone",
+          sa2["status"] == CP.PASS, sa2["blocking"])
+    check("deletion did not flip the negative into an unsupported positive claim",
+          "quite like" not in srep["article_text"], srep["article_text"])
+
+    # UNLOCATABLE: a defensive case, exercised directly -- if the reported sentence does
+    # not actually appear in the audited text, the whole attempt is refused rather than
+    # guessed at, the same fail-closed rule every locator in this module already follows.
+    fake_sa = {"blocking": ["UNSUPPORTED_NEGATIVES: 1 negative-shaped sentence(s) with "
+                            "no negative fact behind them: ['not in the article']"],
+              "audits": {"continuity_final": {"negative_admission": {"unmatched": [
+                  {"sentence": "None of this sentence is actually in the article at "
+                              "all."}]}}}}
+    check("an unlocatable negative finding makes the whole repair ineligible",
+          CP.safety_repair_findings(fake_sa, draft, "") is None)
+
+    # PERSISTENT: an edit-less repair reply still counts its one call and still HOLDs,
+    # with no second attempt.
+    noop = Scripted([{"edits": []}])
+    srep2 = CP.safety_repair(noop, final, findings, LEDGER, packet)
+    check("an edit-less repair reply still counts its one call",
+          srep2.get("model_calls") == 1 and len(noop.calls) == 1, srep2)
+    check("and the persistent blocker still HOLDs -- no rescue, no second attempt",
+          srep2["status"] != CP.PASS, srep2)
+
+
 def test_continuity_added_material_is_locatable_and_gets_one_bounded_repair():
     """The gap a real production replay exposed (2026-09-09): CONTINUITY_ADDED_MATERIAL
     used to make an otherwise-repairable Safety HOLD ineligible outright, because the

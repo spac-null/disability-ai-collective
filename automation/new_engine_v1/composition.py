@@ -3405,6 +3405,10 @@ SAFETY_REPAIRABLE_PREFIXES = (
     "CUT_LEAKAGE", "PACKAGE_CUT_LEAKAGE",
     "NEW_UNSUPPORTED_FACTS", "PACKAGE_UNSUPPORTED_FACTS",
     "CONTINUITY_ADDED_MATERIAL",
+    # Article surface only (owner-directed, 2026-09-09, one observed production case).
+    # PACKAGE_UNSUPPORTED_NEGATIVES is the package-surface sibling of this same audit and
+    # is deliberately NOT included -- this fix is scoped to the one blocker observed.
+    "UNSUPPORTED_NEGATIVES",
 )
 
 _DELTA_ADDED_RELATION = re.compile(r"^editing added \d+ (\w+) relation")
@@ -3578,6 +3582,20 @@ def _safety_locate_findings(sa: dict) -> list | None:
         for span, why in spans:
             if not add(span, why):
                 return None
+
+    # UNSUPPORTED_NEGATIVES is article-only for this fix (its package-surface sibling,
+    # PACKAGE_UNSUPPORTED_NEGATIVES, is out of scope -- see SAFETY_REPAIRABLE_PREFIXES).
+    # Unlike CONTINUITY_ADDED_MATERIAL, the finding already carries the exact offending
+    # sentence -- negative_admission_audit (story.py) reports the full sentence, not a
+    # fragment -- so no diff or token search is needed, only the same verbatim-in-text
+    # check every other category here already uses.
+    neg = ((sa.get("audits") or {}).get("continuity_final") or {}).get(
+        "negative_admission") or {}
+    for h in neg.get("unmatched") or []:
+        sent = h.get("sentence") or ""
+        if not add(sent, "unsupported negative relation -- no ledger fact licenses "
+                         "this negation: %r" % sent):
+            return None
     return findings or None
 
 
@@ -3623,6 +3641,14 @@ REPAIR_SAFETY_SYSTEM = (
     "\n"
     "Use operation DELETE for anything you can simply remove; use NARROW only when a "
     "narrower true wording, licensed by a cited fact, survives.\n"
+    "\n"
+    "UNSUPPORTED NEGATIVE RELATIONS HAVE ZERO FACTUAL PERMISSION. A finding that quotes a "
+    "sentence asserting an absence, an exclusivity or a comparison (\"none of them are\", "
+    "\"the only one that\", \"unlike the others\") with no ledger fact behind it is not "
+    "fixed by asserting the opposite -- \"none are alike\" does not become \"they are "
+    "alike\". Both directions are claims the evidence does not make. Delete the negative "
+    "relation, or narrow the sentence to what the cited fact actually states; never turn "
+    "an unsupported \"not X\" into an unsupported (or any) \"X\".\n"
     "\n"
     "You may not touch a sentence no finding names, and you may not improve style "
     "anywhere else."
