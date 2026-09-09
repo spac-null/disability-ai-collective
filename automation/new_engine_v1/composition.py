@@ -3504,14 +3504,21 @@ def _continuity_added_spans(draft_text: str, final_text: str,
     return out or None
 
 
-def _safety_locate_findings(sa: dict) -> list | None:
+def _safety_locate_findings(sa: dict, allowed_prefixes=SAFETY_REPAIRABLE_PREFIXES
+                           ) -> list | None:
     """Turn a passed safety_audit's OWN structured sub-data into quoted, Grounding-shaped
     findings ({id, classification, quote, why}), or None if any blocking category present
     cannot be confidently and safely turned into one. Never guesses a span: a category
     this function does not recognise, or a token/phrase it cannot find verbatim in the
-    text, makes the whole result ineligible rather than partially attempted."""
+    text, makes the whole result ineligible rather than partially attempted.
+
+    `allowed_prefixes` narrows eligibility below the full SAFETY_REPAIRABLE_PREFIXES set
+    -- used by the package-only completion pass (STAGE 9c) to refuse anything but the
+    exact machine/provenance-surface categories it is bounded to, even though this
+    function already knows how to locate the others too.
+    """
     blocking = sa.get("blocking") or []
-    if not blocking or any(not any(b.startswith(p) for p in SAFETY_REPAIRABLE_PREFIXES)
+    if not blocking or any(not any(b.startswith(p) for p in allowed_prefixes)
                            for b in blocking):
         return None
     text = sa.get("audited_text") or ""
@@ -3600,17 +3607,20 @@ def _safety_locate_findings(sa: dict) -> list | None:
 
 
 def safety_repair_findings(sa: dict, article_text: str, pkg_text: str = "",
-                           draft_text: str = "") -> list | None:
+                           draft_text: str = "",
+                           allowed_prefixes=SAFETY_REPAIRABLE_PREFIXES) -> list | None:
     """Public entry: attach the audited surfaces safety_audit did not carry forward on
     its own result, then locate. See _safety_locate_findings for the eligibility rule.
 
     `draft_text` is the writer's own draft (pre-Continuity) -- needed only to locate a
     CONTINUITY_ADDED_MATERIAL span (see _continuity_added_spans); every other category
     locates from `sa` and `article_text` alone, as before.
+
+    `allowed_prefixes` -- see _safety_locate_findings.
     """
     sa = dict(sa, audited_text=article_text, audited_package_text=pkg_text,
              audited_draft_text=draft_text)
-    return _safety_locate_findings(sa)
+    return _safety_locate_findings(sa, allowed_prefixes)
 
 
 REPAIR_SAFETY_SYSTEM = (
@@ -3675,6 +3685,206 @@ def safety_repair(provider, article_text: str, findings: list, ledger: dict,
                          if errs else "the safety repair deleted the whole article",
                 "failures": errs, "model_calls": 1, "provider": ident}
     return {"status": PASS, "article_text": text, "edits": prov,
+            "findings_answered": [f.get("id") for f in findings],
+            "rejected_edits": errs,
+            "provider": ident, "model_calls": 1, "repairs": 1}
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# STAGE 9c -- ONE PACKAGE-ONLY SAFETY REPAIR (owner-directed, 2026-09-09)
+# ══════════════════════════════════════════════════════════════════════════════
+# WHY THIS EXISTS. Two live continuations of the same retained Worth-PASS article
+# reproduced an identical mechanism: the article-body Safety repair (Stage 9b) correctly
+# removed a machine-language leak, the package is then REGENERATED from the repaired
+# article by its own fresh model call (make_package() -> editorial_package(), a real
+# call this module has always made and does not touch here), and the regenerated
+# title/dek reintroduced the exact same leaked phrase -- "the evidence" -- because the
+# article's actual subject matter makes that a natural phrase to reach for. The one
+# general Safety repair had already been spent on the article body, so a defect in prose
+# that did not exist until AFTER that repair ran had no opportunity of its own, and the
+# article HELD on a surface Stage 9b was never shown.
+#
+# THE DIAGNOSIS THE OWNER GAVE, exactly: Safety was not too strict. A new model-generated
+# surface (the regenerated package) is created AFTER the article repair, and the article
+# repair cannot repair text that did not exist yet.
+#
+# NARROW ON PURPOSE. Eligible ONLY for the exact machine/provenance-surface categories
+# this module already knows how to locate on the package surface --
+# PACKAGE_MACHINE_LANGUAGE and PACKAGE_CUT_LEAKAGE (the same hard-confidence threshold
+# CUT_LEAKAGE itself uses) -- via the SAME _safety_locate_findings() Stage 9b uses,
+# restricted to just these two prefixes. PACKAGE_UNSUPPORTED_FACTS and
+# PACKAGE_UNSUPPORTED_NEGATIVES are deliberately excluded: those are factual-surface
+# claims, not machine language, and this stage is not the place to widen factual
+# permission. If ANY remaining blocking finding is outside this pair -- including a
+# genuine factual package defect -- the whole attempt is ineligible and the run falls
+# straight through to the unchanged terminal HOLD below, exactly as before this stage
+# existed.
+#
+# THIS RUNS ONLY AFTER THE ARTICLE ITSELF IS ALREADY SAFETY-CLEAN. The eligibility check
+# above is also the proof of that: PACKAGE_* categories can only be present in
+# `sa["blocking"]` alongside a clean article, because every article-surface category
+# uses a different, non-"PACKAGE_"-prefixed name. There is no separate flag to keep in
+# sync with that fact -- it falls out of the same one check.
+#
+# THE PACKAGE FIELDS ONLY -- never the article body. apply_package_safety_repair()
+# verifies each edit the same way apply_grounding_repair() verifies Safety's and
+# Grounding's own repairs: `original` must be an exact quote found in the ONE package
+# field it names (title/dek/homepage_excerpt/meta_description/social_hook), and
+# `repaired` may add no number or entity the article or the licensed packet did not
+# already carry. No fact_ids, no Ledger-cited widening -- a package fix only ever
+# subtracts or paraphrases machine language, it never needs to add anything a citation
+# could license.
+#
+# NO REGENERATION AFTER THIS. The repaired package dict, once accepted, IS what proceeds
+# downstream -- there is no second make_package() call here and none after this stage
+# returns, so the surface Safety's final recheck approves is the exact surface Grounding,
+# Fact Check and the Reader (and the publication bridge, downstream of all of them) will
+# see. That is the sequencing bug this stage exists to close, not just its eligible
+# category list.
+#
+# ONE CALL, then the SAME final safety recheck Stage 9b already runs. No second package
+# repair, no article regeneration, no roulette.
+PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES = ("PACKAGE_MACHINE_LANGUAGE", "PACKAGE_CUT_LEAKAGE")
+
+
+def _package_field_containing(text: str, package: dict) -> str | None:
+    """Which PACKAGE FIELD KEY (not the human-facing surface label surface_of() returns)
+    carries this quote, so an edit can be applied to the exact field it targets."""
+    q = normalize_span(text or "")
+    if not q or not package:
+        return None
+    for field, _label in PACKAGE_SURFACE_LABELS:
+        v = normalize_span(str(package.get(field) or ""))
+        if len(v) >= 12 and len(q) >= 12 and (q in v or v in q):
+            return field
+    return None
+
+
+def apply_package_safety_repair(package: dict, edits: list, findings: list,
+                                packet: dict) -> tuple:
+    """Apply subtractive edits to PACKAGE FIELDS only. Returns (package, provenance,
+    errs) -- a new package dict, never a mutation of the one passed in.
+
+    Same discipline as apply_grounding_repair(), adapted to a package's shape (five
+    named fields, not one string): every edit answers a real finding, its `original`
+    must be found verbatim in the ONE field it names, and its `repaired` wording may add
+    no number or entity the article/packet did not already license. There is no
+    fact_ids widening here -- this stage only ever subtracts or paraphrases machine
+    language, which needs no new permission to remove.
+    """
+    ids = {str(f.get("id")) for f in findings}
+    approved = ST.render(packet)
+    a_nums = _numbers_of(approved)
+    a_ents = ST._entities(approved, skip_sentence_initial=False)
+    out = dict(package or {})
+    prov, errs = [], []
+    for i, e in enumerate(edits or [], 1):
+        if not isinstance(e, dict):
+            errs.append("edit %d is not an object" % i)
+            continue
+        fid = str(e.get("finding_id") or "")
+        orig = (e.get("original") or "").strip()
+        rep = (e.get("repaired") or "").strip()
+        op = e.get("operation")
+        if fid not in ids:
+            errs.append("edit %d cites finding %r, which was not reported" % (i, fid))
+            continue
+        if op not in REPAIR_OPS:
+            errs.append("edit %d has operation %r, not one of %s"
+                        % (i, op, ", ".join(REPAIR_OPS)))
+            continue
+        field = _package_field_containing(orig, out)
+        if field is None:
+            errs.append("edit %d: the original is not in any package field: %r"
+                        % (i, orig[:80]))
+            continue
+        target = out.get(field) or ""
+        if not orig or normalize_span(orig) not in normalize_span(target):
+            errs.append("edit %d: the original is not in field %s: %r"
+                        % (i, field, orig[:80]))
+            continue
+        if orig not in target:
+            errs.append("edit %d: quoted text does not match field %s exactly "
+                        "(whitespace or punctuation drift) -- refused rather than "
+                        "guessed at" % (i, field))
+            continue
+        new_nums = sorted(_numbers_of(rep) - _numbers_of(orig) - a_nums)
+        new_ents = sorted(ST._entities(rep) - ST._entities(orig) - a_ents)
+        if new_nums or new_ents:
+            errs.append("edit %d ADDS rather than subtracts -- numbers=%s entities=%s "
+                        "(a package fix may only remove or paraphrase, never add)"
+                        % (i, new_nums, new_ents))
+            continue
+        out[field] = target.replace(orig, rep, 1) if rep else target.replace(orig, "", 1)
+        prov.append({"finding_id": fid, "operation": op, "field": field,
+                     "original": orig, "repaired": rep})
+    return out, prov, errs
+
+
+REPAIR_PACKAGE_SAFETY_SYSTEM = (
+    "You are removing specific safety-screen defects from the PUBLICATION PACKAGE of a "
+    "finished, already-approved, already Safety-clean article -- its title, dek, "
+    "homepage excerpt, meta description and social hook. A mechanical screen has named "
+    "the exact package field and the exact phrase: language that names the article's "
+    "own machinery (\"the evidence\", \"the record\") or a term that was supposed to "
+    "stay cut.\n"
+    "\n"
+    "YOU ARE EDITING PACKAGE FIELDS ONLY. Not the article body -- it is not shown to "
+    "you and no finding here concerns it. Each field stands alone; a fix to the dek "
+    "does not touch the title, the excerpt, or any other field.\n"
+    "\n"
+    "PREFER DELETION OVER REPLACEMENT. Cut the offending word or phrase and leave the "
+    "rest of the field untouched; if that leaves the field ungrammatical or empty, "
+    "paraphrase the field into ordinary reader-facing language that says the same "
+    "thing without naming the article's own apparatus.\n"
+    "\n"
+    "COPY `original` VERBATIM from the field you are fixing. An `original` not found "
+    "word for word in that field is refused and the finding goes unanswered.\n"
+    "\n"
+    "ADD NOTHING. No number, name, place or claim the field did not already carry. A "
+    "package fix only ever removes or rephrases; it never adds a fact, an entity, an "
+    "angle, or a reason for the article to exist that the article itself does not "
+    "already carry.\n"
+    "\n"
+    "You may not touch a field no finding names."
+)
+
+
+def package_repair_prompt(package: dict, findings: list, ledger: dict) -> str:
+    L = ["THE PACKAGE FIELDS"]
+    for field, label in PACKAGE_SURFACE_LABELS:
+        v = str((package or {}).get(field) or "").strip()
+        if v:
+            L += ["", "%s (%s)" % (label, field), "  %s" % v]
+    L += ["", "WHAT THE SAFETY SCREEN FOUND"]
+    for f in findings:
+        L += ["", "FINDING %s  [%s]" % (f.get("id"), f.get("classification")),
+             "  passage : %s" % str(f.get("quote"))[:400],
+             "  why     : %s" % str(f.get("why"))[:600]]
+    L += ["", REPAIR_GROUNDING_SCHEMA]
+    return "\n".join(L)
+
+
+def package_safety_repair(provider, package: dict, findings: list, ledger: dict,
+                          packet: dict) -> dict:
+    """STAGE 9c. Exactly one call. Subtractive, package-fields-only, mechanically
+    audited by apply_package_safety_repair(), and never repeated."""
+    if not findings:
+        return {"status": SKIPPED, "reason": "no repairable package finding",
+                "model_calls": 0}
+    obj, ident = _ask(provider, REPAIR_PACKAGE_SAFETY_SYSTEM,
+                      package_repair_prompt(package, findings, ledger),
+                      2_000, SAFETY, SAFETY_HOLD)
+    edits = obj.get("edits")
+    if not isinstance(edits, list) or not edits:
+        return {"status": HOLD, "reason": "the package repair returned no edits",
+                "model_calls": 1, "provider": ident}
+    pkg, prov, errs = apply_package_safety_repair(package, edits, findings, packet)
+    if not prov:
+        return {"status": HOLD,
+                "reason": "the package repair did not stay within its permissions",
+                "failures": errs, "model_calls": 1, "provider": ident}
+    return {"status": PASS, "package": pkg, "edits": prov,
             "findings_answered": [f.get("id") for f in findings],
             "rejected_edits": errs,
             "provider": ident, "model_calls": 1, "repairs": 1}
@@ -4846,6 +5056,32 @@ def run_story_architecture_composition(
                     sa["after_safety_repair"] = True
                     repairs[SAFETY] = 1
                     calls[SAFETY] = calls.get(SAFETY, 0) + srep.get("model_calls", 0)
+
+        # ONE PACKAGE-ONLY SAFETY REPAIR (STAGE 9c), tried only when every remaining
+        # blocking finding is package-surface machine language -- see the STAGE 9c
+        # comment above for the eligibility rule and why "the article is clean" falls
+        # out of that same check rather than needing a separate flag. This is the fix
+        # for a package REGENERATED just above (by make_package(), inside the article
+        # repair's own PASS branch) reintroducing a leak the article repair had no way
+        # to see coming, because the text it would need to fix did not exist yet.
+        if sa["status"] != PASS:
+            pfindings = safety_repair_findings(
+                sa, final, package_prose(pkg), draft_text=draft,
+                allowed_prefixes=PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES)
+            if pfindings:
+                prep = package_safety_repair(P, pkg, pfindings, ledger, wr["packet"])
+                calls[SAFETY] = calls.get(SAFETY, 0) + prep.get("model_calls", 0)
+                if prep["status"] == PASS:
+                    # No make_package() call here or after -- the repaired package IS
+                    # what proceeds downstream, so nothing model-generated can silently
+                    # invalidate this recheck the way the regeneration above did.
+                    pkg = pkg_ref[0] = prep["package"]
+                    sa = record(SAFETY, audit(final, pkg))
+                    sa["carried_text"] = carried
+                    sa["continuity_discarded"] = bool(delta_errs)
+                    sa["after_package_safety_repair"] = True
+                    repairs[SAFETY] = 1
+                    calls[SAFETY] = calls.get(SAFETY, 0) + prep.get("model_calls", 0)
 
         if sa["status"] != PASS:
             why = "; ".join(sa["blocking"])[:600]

@@ -2587,6 +2587,225 @@ def test_a_clean_run_makes_no_repair_calls_at_all():
           [prov.stage_of(i) for i in range(len(prov.calls))])
 
 
+def test_package_only_safety_repair_permissions():
+    """apply_package_safety_repair()/safety_repair_findings() directly: package fields
+    only, no new facts, and the narrow eligibility that keeps this stage from ever
+    touching a genuine factual package defect. See
+    test_package_only_safety_repair_after_regeneration below for the full pipeline
+    wiring (when it fires, that no text regenerates after, call-count bounds)."""
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    # title left empty: package_prose() joins every non-empty field with a blank line,
+    # and CE.sentences() has no field boundary to respect -- an unpunctuated title
+    # right before the dek would merge into the same "sentence" as the leak. A real
+    # editorial_package() title is short prose without this specific fixture artifact;
+    # leaving it out here keeps the test about the repair, not about sentence-splitting.
+    package = {"title": "",
+              "dek": "As the evidence shows, the room keeps its own record.",
+              "homepage_excerpt": "", "meta_description": "", "social_hook": ""}
+    sa = {"blocking": ["PACKAGE_MACHINE_LANGUAGE: frames [('the evidence', 1)], "
+                       "scaffold []"],
+         "audits": {"continuity_final": {}, "publication_package": {
+             "prose_leaks": {"ok": False, "frames": [("the evidence", 1)]},
+             "scaffold": {"ok": True, "leaked": []},
+             "cut_adherence": {"violations": []},
+             "factual_surface": {"unapproved_sensory": [], "unapproved_numbers": [],
+                                 "unapproved_entities": []}}}}
+    findings = CP.safety_repair_findings(
+        sa, DRAFT, CP.package_prose(package),
+        allowed_prefixes=CP.PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES)
+    check("the package leak is located", bool(findings), findings)
+    check("the located quote is package text, not article text",
+          all(f["quote"] not in DRAFT for f in findings), findings)
+
+    accept = Scripted([{"edits": [{
+        "finding_id": findings[0]["id"], "operation": "DELETE",
+        "original": findings[0]["quote"], "repaired": "The room keeps its own record.",
+        "fact_ids": []}]}])
+    prep = CP.package_safety_repair(accept, package, findings, LEDGER, packet)
+    check("exactly one package repair call, accepted",
+          prep["status"] == CP.PASS and prep.get("model_calls") == 1, prep)
+    check("the result carries a package, never an article body",
+          "package" in prep and "article_text" not in prep, prep)
+    check("the repaired package no longer carries the leak",
+          "the evidence" not in prep["package"]["dek"].lower(), prep["package"])
+    check("fields the repair did not touch survive untouched",
+          prep["package"]["title"] == package["title"])
+
+    # 4. an edit that adds a new entity/number is refused, not applied.
+    inject = Scripted([{"edits": [{
+        "finding_id": findings[0]["id"], "operation": "REPHRASE",
+        "original": findings[0]["quote"],
+        "repaired": "As Anneke Mertens' 47 sources show, the room keeps its own "
+                    "record.",
+        "fact_ids": []}]}])
+    prep2 = CP.package_safety_repair(inject, package, findings, LEDGER, packet)
+    check("an edit that adds a new entity/number is refused, not applied",
+          prep2["status"] != CP.PASS, prep2)
+
+    # 6. a factual/non-package-only category present anywhere makes the WHOLE attempt
+    # ineligible, even alongside a genuine, otherwise-repairable package leak --
+    # narrow means narrow, not "repair what you can and ignore the rest".
+    mixed_sa = dict(sa, blocking=sa["blocking"] + [
+        "PACKAGE_UNSUPPORTED_FACTS on ['DEK']: numbers=[] entities=[] "
+        "sensory=['loud']"])
+    check("a factual/non-package-only blocker makes package repair ineligible",
+          CP.safety_repair_findings(
+              mixed_sa, DRAFT, CP.package_prose(package),
+              allowed_prefixes=CP.PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES) is None)
+
+    # A genuine article-surface finding is likewise never eligible for this stage,
+    # even in isolation -- PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES has no article
+    # category in it at all.
+    article_sa = dict(sa, blocking=["NEW_UNSUPPORTED_FACTS: sensory=['pink']"])
+    check("an article-surface finding is never eligible for the package-only stage",
+          CP.safety_repair_findings(
+              article_sa, DRAFT, CP.package_prose(package),
+              allowed_prefixes=CP.PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES) is None)
+
+
+def test_package_only_safety_repair_after_regeneration():
+    """Full pipeline: the real mechanism a live retained-artifact replay found twice
+    (2026-09-09). The article carries an unlicensed sensory word ('pink'); the existing
+    article-level Safety repair (Stage 9b) fixes it and make_package() regenerates the
+    package from the repaired article -- and the FRESH regeneration is scripted here to
+    reintroduce a machine-language leak the article fix never could have prevented,
+    because the text with the leak did not exist until this exact moment. Proves: no
+    package-only repair when the regenerated package is clean, exactly one when it is
+    not, HOLD if the package repair itself does not clear it, and that nothing
+    regenerates the package again afterward."""
+
+    class _PackageThenLeak:
+        """Answers PROSE_FINISH/CONTINUITY/PACKAGE the same way Scripted does, except
+        the SECOND and any later PACKAGE call returns a hand-built package carrying a
+        machine-language leak, simulating exactly the real regeneration mechanism.
+        Everything else pops from `replies`, same contract as Scripted."""
+        model = "test"
+        url = "http://127.0.0.1:0/v1"
+
+        def __init__(self, replies, leak=True):
+            self.replies = list(replies)
+            self.calls = []
+            self._pkg_calls = 0
+            self.leak = leak
+
+        def complete(self, system, user, max_tokens=3000, timeout=180,
+                    temperature=None, deadline=None):
+            self.calls.append({"system": system, "user": user})
+            if "the last writer to touch a finished" in system.lower():
+                return Reply(user.split("THE ARTICLE\n", 1)[-1].strip())
+            if "editor who decides how a finished" in system.lower():
+                self._pkg_calls += 1
+                article = user.split("THE FINISHED ARTICLE\n", 1)[-1]
+                if self.leak and self._pkg_calls > 1:
+                    pkg = {"title": "A room made of salt",
+                          "dek": "As the evidence shows, the room keeps its own "
+                                 "record.",
+                          "homepage_excerpt": package_from(article)["homepage_excerpt"],
+                          "meta_description":
+                              package_from(article)["meta_description"],
+                          "social_hook": package_from(article)["social_hook"]}
+                else:
+                    pkg = package_from(article)
+                return Reply(json.dumps({"package": pkg}))
+            if not self.replies:
+                raise AssertionError("the run made more model calls than the script "
+                                     "allows (%d so far)" % len(self.calls))
+            r = self.replies.pop(0)
+            return Reply(r if isinstance(r, str) else json.dumps(r))
+
+        def stage_of(self, i):
+            s = self.calls[i]["system"]
+            if "the last writer to touch a finished" in s.lower():
+                return "PROSE_FINISH"
+            if "editor who decides how a finished" in s.lower():
+                return "PACKAGE"
+            for name, marker in (("LEDGER", "freezing an evidence ledger"),
+                                 ("WORTH", "whether a story belongs"),
+                                 ("ARCHITECTURE", "building the reader's path"),
+                                 ("WRITER", "writing one finished article from an "
+                                           "approved"),
+                                 ("CONTINUITY", "the continuity editor")):
+                if marker.lower() in s.lower():
+                    return name
+            if "ordinary intelligent reader" in s:
+                return "READER"
+            return "?"
+
+    bad_draft = DRAFT.replace(
+        "The room was built from Himalayan salt bricks",
+        "The room was built from pink Himalayan salt bricks")
+    fix_pink = {"edits": [{
+        "finding_id": "SF1", "operation": "DELETE",
+        "original": "The room was built from pink Himalayan salt bricks, and the "
+                    "pavilion was dug partway into the ground.",
+        "repaired": "The room was built from Himalayan salt bricks, and the "
+                    "pavilion was dug partway into the ground.",
+        "fact_ids": []}]}
+    fix_dek = {"edits": [{
+        "finding_id": "SF1", "operation": "DELETE",
+        "original": "As the evidence shows, the room keeps its own record.",
+        "repaired": "The room keeps its own record.", "fact_ids": []}]}
+
+    def run_it(replies, leak=True, ground=None):
+        import new_engine_v1.stages as S
+        real = S.ground
+        S.ground = lambda *a, **k: dict(ground if ground is not None else GROUND_CLEAN)
+        prov = _PackageThenLeak(replies, leak=leak)
+        try:
+            return prov, CP.run_story_architecture_composition(
+                prov, pack=PACK, source_text=S0, source_sha="x",
+                subject=PACK["subject"], fact_check_fn=lambda a: dict(FC_CLEAN))
+        finally:
+            S.ground = real
+
+    # 1. the regenerated package comes back clean (leak=False) -> no package repair.
+    prov1, out1 = run_it(
+        [{"facts": list(LEDGER.values())}, WORTH, ARCH, envelope(bad_draft),
+         _edits_from(bad_draft), fix_pink, READER_OK], leak=False)
+    check("a clean regenerated package needs no package repair",
+          out1["status"] == CP.PASS, out1.get("failure_reason"))
+    # exactly one "?" here: the mandatory article-level repair (Stage 9b, fixing
+    # "pink") that this fixture always needs, whether or not the package leaks
+    # afterward. A second "?" would be the package-only repair firing when it should
+    # not have -- the regenerated package is clean, so it must not.
+    check("no package-only repair call was spent on a clean regenerated package",
+          [prov1.stage_of(i) for i in range(len(prov1.calls))].count("?") == 1,
+          [prov1.stage_of(i) for i in range(len(prov1.calls))])
+
+    # 2/7. the regenerated package leaks -> exactly one package-only repair.
+    prov2, out2 = run_it(
+        [{"facts": list(LEDGER.values())}, WORTH, ARCH, envelope(bad_draft),
+         _edits_from(bad_draft), fix_pink, fix_dek, READER_OK], leak=True)
+    check("the package leak is repaired and the run reaches PASS",
+          out2["status"] == CP.PASS, out2.get("failure_reason"))
+    check("exactly one package-only repair call (the second '?')",
+          [prov2.stage_of(i) for i in range(len(prov2.calls))].count("?") == 2,
+          [prov2.stage_of(i) for i in range(len(prov2.calls))])
+    check("the repair is recorded on SAFETY",
+          out2["repairs_by_stage"].get(CP.SAFETY) == 1, out2["repairs_by_stage"])
+
+    # 8. no PACKAGE call happens after the final Safety PASS -- the repaired package,
+    # not a third regeneration, is what proceeds downstream.
+    stages2 = [prov2.stage_of(i) for i in range(len(prov2.calls))]
+    last_package_idx = max(i for i, s in enumerate(stages2) if s == "PACKAGE")
+    check("the repaired package is what reaches the reader, not a fresh regeneration",
+          stages2[last_package_idx + 1:].count("PACKAGE") == 0, stages2)
+    check("the surviving dek is the repaired one",
+          "the evidence" not in (out2["package"] or {}).get("dek", "").lower(),
+          out2.get("package"))
+
+    # 5. the package repair itself does not clear it -> HOLD, no second attempt.
+    prov3, out3 = run_it(
+        [{"facts": list(LEDGER.values())}, WORTH, ARCH, envelope(bad_draft),
+         _edits_from(bad_draft), fix_pink, {"edits": []}], leak=True)
+    check("a package repair that fixes nothing still HOLDs",
+          out3["status"] == CP.HOLD and out3["failure_stage"] == CP.SAFETY,
+          out3.get("failure_reason"))
+    check("no second package repair was attempted",
+          [prov3.stage_of(i) for i in range(len(prov3.calls))].count("?") == 2,
+          [prov3.stage_of(i) for i in range(len(prov3.calls))])
+
+
 def test_a_repairable_safety_hold_gets_exactly_one_repair_and_recheck():
     """The rescue path: a Writer-introduced unlicensed sensory word ('pink', the same
     fixture as the no-regeneration test below) is the exact shape safety_repair_findings
