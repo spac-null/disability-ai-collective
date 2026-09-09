@@ -3649,13 +3649,18 @@ def grounding_completion_prompt(article_text: str, findings: list, ledger: dict,
 # is invented, nothing is reworded, nothing is imported from a Ledger fact other than the
 # words already there: this is length-reducing subtraction, not disguised generation.
 #
-# WHY NOT JUST USE suggested_patch VERBATIM. The Grounder's own narrower wording is a
-# genuine rewrite -- "a separate experiment with" became "one experiment involving" here,
-# a preposition and article changed, not merely a word removed. Trusting it whole would
-# be trusting an ungoverned model output exactly the way this operator exists to avoid.
-# Only the WORDS it implies are unsupported are read from it in spirit; what is actually
-# deleted is decided against the Ledger, the one authority this file already treats as
-# fixed.
+# WHY THIS IS NOT suggested_patch. The Grounder's own narrower wording is a genuine
+# rewrite -- "a separate experiment with" became "one experiment involving" here, a
+# preposition and article changed, not merely a word removed. This operator will not
+# emit that, because what it deletes is decided against the Ledger rather than taken
+# from a model's phrasing.
+#
+# suggested_patch is now tried too, as a SEPARATE candidate source (see
+# suggested_patch_candidate below, added 2026-09-09 after the retained Poetry
+# continuation spent all five iterations rediscovering a correction the Grounder had
+# already written down). That does not make it authority and does not weaken this
+# operator: it is one more candidate, accepted only by the same transactional Safety
+# check and Grounding recheck everything else here goes through.
 #
 # ELIGIBILITY IS NARROW AND FALLS THROUGH CLEANLY. No POS tagger, no synonym table, no
 # per-word allowlist: if the deletion cannot be constructed (the quote cannot be located
@@ -3720,6 +3725,98 @@ def deterministic_subtractive_edit(article_text: str, finding: dict,
     return {"finding_id": finding.get("id"), "operation": "DELETE",
            "original": original_sentence, "repaired": repaired, "fact_ids": [],
            "what_was_removed": ", ".join(sorted(unsupported))}
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SUGGESTED_PATCH -- the correction the Grounder already wrote (owner-directed,
+# 2026-09-09)
+# ══════════════════════════════════════════════════════════════════════════════
+# WHY. Retained Poetry continuation …-2026-09-09T214338 HELD on ONE finding:
+#
+#   quote           "In a separate experiment with 27 German-speaking participants"
+#   why             the source says only "one experiment that involved 27 German-
+#                   speaking participants"; "separate" asserts a relationship it
+#                   does not settle
+#   suggested_patch "In one experiment that involved 27 German-speaking participants"
+#
+# The completion loop then spent all five iterations -- one deterministic candidate and
+# four model repair calls -- trying to invent that sentence, and made the article worse
+# every time (1 -> 3, 1 -> 2, safety-rejected, 1 -> 2, 1 -> 4). Zero accepted. The
+# correction was sitting in the finding the loop was reading.
+#
+# suggested_patch IS NOT FACTUAL AUTHORITY and is not trusted here. It is a CANDIDATE
+# SOURCE, nothing more: the Grounder has already spent a model call diagnosing the claim
+# and sometimes states the narrow fix, so testing what it said costs no repair-model call
+# at all. Whether the article changes is still decided by apply_local_grounding_repair(),
+# then Safety, then a fresh Grounding recheck, then strict blocker shrink -- the same
+# acceptance path a deterministic candidate and a model proposal go through, with no
+# privileged route for any origin.
+#
+# THE SPAN QUESTION, which is what makes this safe or unsafe. The Grounder's schema calls
+# suggested_patch "a minimal replacement for that clause" -- the clause being the
+# finding's own `quote`. But apply_local_grounding_repair() replaces the whole SENTENCE
+# containing `original`. Handing it (original=quote, repaired=patch) would therefore
+# delete everything else in that sentence -- in the case above, the entire
+# psychophysiology clause -- while looking like a minimal fix. So the candidate is built
+# at SENTENCE granularity: find the one sentence carrying the quote, substitute the patch
+# for the quote INSIDE it, and offer the whole before/after sentence pair. Anything that
+# cannot be established exactly -- the quote is absent, appears more than once, spans
+# more than one sentence, or the substitution changes nothing -- is ineligible and falls
+# through to the operators below, which is the same fail-closed rule every other locator
+# in this file uses.
+
+
+def suggested_patch_edit(article_text: str, finding: dict) -> dict | None:
+    """A NARROW candidate edit for ONE finding built from its own suggested_patch, or
+    None when the span relationship cannot be established exactly.
+
+    Never widens the edit beyond the sentence the quote lives in, and never invents: the
+    repaired sentence is the article's own sentence with the Grounder's replacement
+    substituted for the flagged clause, character for character.
+    """
+    quote = str(finding.get("quote") or "").strip()
+    patch = str(finding.get("suggested_patch") or "").strip()
+    if not quote or not patch or patch == quote:
+        return None
+    # UNIQUELY LOCATABLE, verbatim. Two occurrences means an edit here would silently
+    # fix one and leave the other, and guessing which is exactly what this refuses.
+    if article_text.count(quote) != 1:
+        return None
+    hosts = [x for x in CE.sentences(article_text) if quote in x]
+    if len(hosts) != 1:
+        return None
+    sentence = hosts[0]
+    repaired = sentence.replace(quote, patch, 1)
+    if repaired.strip() == sentence.strip():
+        return None
+    return {"finding_id": str(finding.get("id")), "operation": "NARROW",
+            "original": sentence, "repaired": repaired, "fact_ids": [],
+            "what_was_removed": "the wording the grounder flagged, replaced by the "
+                                "narrower one it proposed"}
+
+
+def suggested_patch_candidate(article_text: str, findings: list, ledger: dict,
+                              packet: dict) -> dict | None:
+    """The suggested-patch candidate for a WHOLE target list -- eligible only if EVERY
+    finding in it yields a locally constructible patch edit, the same all-or-nothing rule
+    deterministic_subtraction_candidate uses and for the same reason: mixing origins
+    inside one proposal makes a rejection impossible to attribute. Verified by the SAME
+    apply_local_grounding_repair() every other Grounding repair here uses -- there is no
+    separate validator for this origin, and it cites no fact_ids, so its wording is
+    licensed by exactly what its own sentence already carried."""
+    edits = []
+    for f in findings:
+        e = suggested_patch_edit(article_text, f)
+        if e is None:
+            return None
+        edits.append(e)
+    text, prov, errs = apply_local_grounding_repair(article_text, edits, findings,
+                                                    ledger, packet)
+    if not prov or errs:
+        return None
+    return {"status": PASS, "article_text": text, "edits": prov,
+            "findings_answered": sorted({str(e.get("finding_id")) for e in prov}),
+            "rejected_edits": errs, "model_calls": 0, "suggested_patch": True}
 
 
 def deterministic_subtraction_candidate(article_text: str, findings: list, ledger: dict,
@@ -3788,11 +3885,16 @@ def _edit_signature(edits: list) -> tuple:
                          str(e.get("repaired"))) for e in (edits or [])))
 
 
+ORIGIN_SUGGESTED_PATCH = "SUGGESTED_PATCH"
+ORIGIN_DETERMINISTIC = "DETERMINISTIC_SUBTRACTION"
+ORIGIN_MODEL = "MODEL"
+
 GROUNDING_COMPLETION_DETAIL_KEYS = (
     "grounding_completion_phase", "grounding_completion_history",
     "grounding_completion_iterations", "grounding_repair_proposals",
     "grounding_repairs_accepted", "grounding_repairs_rejected",
     "grounding_deterministic_attempts", "grounding_deterministic_accepted",
+    "grounding_suggested_patch_attempts", "grounding_suggested_patch_accepted",
     "accepted_edits", "initial_blocker_count", "final_blocker_count", "model_calls",
     "repairs")
 
@@ -3838,6 +3940,7 @@ def grounding_completion_loop(
     g = initial
     iterations = proposals = accepted = rejected = 0
     deterministic_attempts = deterministic_accepted = 0
+    suggested_patch_attempts = suggested_patch_accepted = 0
     model_calls = 0
     tried = set()
     rejection = None
@@ -3871,20 +3974,34 @@ def grounding_completion_loop(
             break
 
         iterations += 1
-        # PREFERRED ORDER: a deterministic, model-free subtraction first -- see
-        # deterministic_subtraction_candidate's own comment. `sig not in tried` is what
-        # makes this "try once, then fall back": a deterministic candidate that was
-        # already tried and rejected (Safety, or no progress) would just reconstruct
-        # identically here, so it is skipped in favour of the model path rather than
-        # retried forever.
-        det = deterministic_subtraction_candidate(accepted_text, target, ledger, packet)
-        used_deterministic = det is not None and _edit_signature(det["edits"]) not in tried
-        if used_deterministic:
-            prop = det
-            deterministic_attempts += 1
-        else:
+        # PREFERRED ORDER, cheapest-and-most-already-known first:
+        #   1. SUGGESTED_PATCH -- the narrow correction the Grounder already wrote when
+        #      it diagnosed the claim. Costs no repair-model call at all.
+        #   2. DETERMINISTIC_SUBTRACTION -- a model-free deletion decided against the
+        #      Ledger. Also free.
+        #   3. MODEL -- one repair call, when neither of the above can be constructed.
+        # `sig not in tried` is what makes each of these "try once, then fall through":
+        # a free candidate that was already rejected would reconstruct identically here,
+        # so it is skipped in favour of the next origin rather than retried forever.
+        # ORIGIN CHANGES NOTHING ABOUT ACCEPTANCE -- every candidate below reaches the
+        # identical Safety check, Grounding recheck and strict-shrink test.
+        origin = None
+        prop = None
+        patch = suggested_patch_candidate(accepted_text, target, ledger, packet)
+        if patch is not None and _edit_signature(patch["edits"]) not in tried:
+            prop, origin = patch, ORIGIN_SUGGESTED_PATCH
+            suggested_patch_attempts += 1
+        if prop is None:
+            det = deterministic_subtraction_candidate(accepted_text, target, ledger,
+                                                      packet)
+            if det is not None and _edit_signature(det["edits"]) not in tried:
+                prop, origin = det, ORIGIN_DETERMINISTIC
+                deterministic_attempts += 1
+        if prop is None:
             prop = grounding_repair_proposal(provider, accepted_text, target, ledger,
                                              packet, rejection)
+            origin = ORIGIN_MODEL
+        used_deterministic = origin == ORIGIN_DETERMINISTIC
         proposals += 1
         model_calls += prop.get("model_calls", 0)
 
@@ -3892,13 +4009,14 @@ def grounding_completion_loop(
             rejected += 1
             rejection = {"reason": prop.get("reason", "the proposal was refused")}
             history.append({"iteration": iterations, "outcome": "no_usable_proposal",
-                            "reason": rejection["reason"]})
+                            "origin": origin, "reason": rejection["reason"]})
             break
 
         sig = _edit_signature(prop.get("edits"))
         if sig in tried:
             rejected += 1
-            history.append({"iteration": iterations, "outcome": "repeated_proposal"})
+            history.append({"iteration": iterations, "outcome": "repeated_proposal",
+                            "origin": origin})
             break
         tried.add(sig)
 
@@ -3916,6 +4034,7 @@ def grounding_completion_loop(
             rejection = {"reason": "introduced a new Safety blocker",
                         "detail": candidate_safety["blocking"][:4]}
             history.append({"iteration": iterations, "outcome": "safety_rejected",
+                            "origin": origin,
                             "deterministic": used_deterministic,
                             "detail": rejection["detail"]})
             continue
@@ -3930,12 +4049,15 @@ def grounding_completion_loop(
             accepted += 1
             if used_deterministic:
                 deterministic_accepted += 1
+            if origin == ORIGIN_SUGGESTED_PATCH:
+                suggested_patch_accepted += 1
             accepted_text = candidate_text
             g = candidate_grounding
             final_safety = candidate_safety
             accepted_edits.extend(prop.get("edits") or [])
             rejection = None
             history.append({"iteration": iterations, "outcome": "accepted",
+                            "origin": origin,
                             "deterministic": used_deterministic,
                             "blocking_before": before_count,
                             "blocking_after": len(g["blocking"]),
@@ -3948,6 +4070,7 @@ def grounding_completion_loop(
                 "detail": [str(f.get("quote") or "")[:100]
                           for f in candidate_grounding["blocking"][:4]]}
             history.append({"iteration": iterations, "outcome": "no_progress",
+                            "origin": origin,
                             "deterministic": used_deterministic,
                             "reason": rejection["reason"]})
 
@@ -3966,6 +4089,8 @@ def grounding_completion_loop(
     out["accepted_edits"] = accepted_edits
     out["grounding_deterministic_attempts"] = deterministic_attempts
     out["grounding_deterministic_accepted"] = deterministic_accepted
+    out["grounding_suggested_patch_attempts"] = suggested_patch_attempts
+    out["grounding_suggested_patch_accepted"] = suggested_patch_accepted
     return out
 
 

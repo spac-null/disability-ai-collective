@@ -181,8 +181,13 @@ def test_completion_uses_the_same_validator_not_a_copy():
     fn = next(n for n in ast.walk(tree)
               if isinstance(n, ast.FunctionDef) and n.name == "grounding_completion")
     calls = {getattr(n.func, "id", "") for n in ast.walk(fn) if isinstance(n, ast.Call)}
-    check("grounding_completion calls apply_grounding_repair",
-          "apply_grounding_repair" in calls, sorted(calls))
+    # apply_local_grounding_repair since Grounding's repair became claim-local rather
+    # than packet-wide -- the INVARIANT is unchanged (completion reuses the validator,
+    # it does not carry a copy), only the validator's name moved. Every candidate origin
+    # in the loop -- suggested patch, deterministic subtraction, model proposal -- goes
+    # through this same function.
+    check("grounding_completion calls apply_local_grounding_repair",
+          "apply_local_grounding_repair" in calls, sorted(calls))
     check("and defines no validator of its own",
           not any(k in src.split("def grounding_completion")[1].split("\ndef ")[0]
                   for k in ("validate_turn_support", "_numbers_of(", "def ")),
@@ -678,6 +683,13 @@ SUB_FINDING = dict(_finding(
     "F1", "In a separate experiment with 27 German-speaking participants",
     cls="TRUE_UNCERTAIN"),
     suggested_patch="In one experiment involving 27 German-speaking participants")
+# The SAME finding with no suggested_patch. Since 2026-09-09 the completion loop tries a
+# suggested-patch candidate BEFORE the deterministic one, so a finding carrying a patch
+# never reaches the deterministic operator through the loop. The tests below are about
+# that operator, so they use this variant -- which is also the proof that a finding
+# WITHOUT a patch still behaves exactly as it did before that change.
+SUB_FINDING_NO_PATCH = {k: v for k, v in SUB_FINDING.items()
+                        if k != "suggested_patch"}
 
 
 def test_unsupported_modifier_is_removed_by_deterministic_subtraction():
@@ -696,8 +708,8 @@ def test_unsupported_modifier_is_removed_by_deterministic_subtraction():
     restore, gcalls = _ground_seq([_ground_reply([])])   # PASS once "separate" is gone
     try:
         prov = _LoopProvider([])   # would raise if the model path were ever reached
-        result = _run_loop(prov, _initial([SUB_FINDING]), article=SUB_ARTICLE,
-                           ledger=SUB_LEDGER)
+        result = _run_loop(prov, _initial([SUB_FINDING_NO_PATCH]),
+                           article=SUB_ARTICLE, ledger=SUB_LEDGER)
     finally:
         restore()
     check("the run reaches PASS via the deterministic edit alone",
@@ -719,8 +731,8 @@ def test_deterministic_subtraction_spends_zero_model_calls_when_it_succeeds():
     restore, gcalls = _ground_seq([_ground_reply([])])
     try:
         prov = _LoopProvider([])
-        result = _run_loop(prov, _initial([SUB_FINDING]), article=SUB_ARTICLE,
-                           ledger=SUB_LEDGER)
+        result = _run_loop(prov, _initial([SUB_FINDING_NO_PATCH]),
+                           article=SUB_ARTICLE, ledger=SUB_LEDGER)
     finally:
         restore()
     check("the provider was never called for a repair proposal", prov.calls == 0,
@@ -749,9 +761,9 @@ def test_deletion_that_leaves_an_unsupported_proposition_is_rejected():
     """4. If removing the word does not actually resolve the finding (the recheck still
     reports the SAME finding), the deterministic candidate is rejected transactionally,
     exactly like a model proposal that fails to shrink the blocking set."""
-    restore, gcalls = _ground_seq([_ground_reply([SUB_FINDING])])
+    restore, gcalls = _ground_seq([_ground_reply([SUB_FINDING_NO_PATCH])])
     try:
-        result = _run_loop(_LoopProvider([]), _initial([SUB_FINDING]),
+        result = _run_loop(_LoopProvider([]), _initial([SUB_FINDING_NO_PATCH]),
                            article=SUB_ARTICLE, ledger=SUB_LEDGER, max_iterations=1)
     finally:
         restore()
@@ -776,7 +788,7 @@ def test_deletion_that_creates_a_safety_problem_is_rejected():
 
     restore, gcalls = _ground_seq([])   # never reached -- Safety rejects first
     try:
-        result = _run_loop(_LoopProvider([]), _initial([SUB_FINDING]),
+        result = _run_loop(_LoopProvider([]), _initial([SUB_FINDING_NO_PATCH]),
                            audit_fn=audit_fn, article=SUB_ARTICLE, ledger=SUB_LEDGER,
                            max_iterations=1)
     finally:
@@ -856,9 +868,10 @@ def test_emergency_ceiling_unchanged():
                                "repaired": original_sentence.replace(
                                    "psychophysiology", "psychophysiology" + " " * i),
                                "fact_ids": []}]} for i in range(1, 5)]
-    restore, gcalls = _ground_seq([_ground_reply([SUB_FINDING])] * 5)
+    restore, gcalls = _ground_seq([_ground_reply([SUB_FINDING_NO_PATCH])] * 5)
     try:
-        result = _run_loop(_LoopProvider(model_edits), _initial([SUB_FINDING]),
+        result = _run_loop(_LoopProvider(model_edits),
+                           _initial([SUB_FINDING_NO_PATCH]),
                            article=SUB_ARTICLE, ledger=SUB_LEDGER)
     finally:
         restore()
@@ -868,6 +881,273 @@ def test_emergency_ceiling_unchanged():
     check("exactly one of the five attempts was the deterministic candidate",
           result["grounding_deterministic_attempts"] == 1, result)
     check("still HOLD", result["status"] != CP.PASS, result)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SUGGESTED_PATCH AS A CANDIDATE SOURCE (owner-directed, 2026-09-09)
+# ══════════════════════════════════════════════════════════════════════════════
+# Retained Poetry continuation …-2026-09-09T214338 HELD on ONE finding whose own
+# suggested_patch was the correct fix, after spending all five iterations (one
+# deterministic candidate, four model repair calls) failing to invent it -- every attempt
+# made the article worse. These tests pin the rule: try what the Grounder already wrote
+# FIRST, and still make it earn acceptance the same way everything else does.
+SP_ARTICLE = SUB_ARTICLE
+SP_LEDGER = SUB_LEDGER
+# The EXACT production finding, patch included.
+SP_FINDING = dict(SUB_FINDING)
+SP_PATCHED_SENTENCE = (
+    "In one experiment involving 27 German-speaking participants, researchers used "
+    "psychophysiology to show that recited poetry could produce a range of responses "
+    "from chills to goosebumps.")
+
+
+def test_suggested_patch_resolves_the_production_blocker():
+    """1/2. The production shape end to end: the candidate is built from the finding's
+    own suggested_patch, survives the transaction, the blocker disappears, and NO
+    repair-proposal model call is spent. The mandatory Grounding recheck still costs its
+    own call -- what is saved is the repair step."""
+    edit = CP.suggested_patch_edit(SP_ARTICLE, SP_FINDING)
+    check("an edit is constructed", edit is not None, edit)
+    check("it is offered at SENTENCE granularity, not the bare clause -- otherwise the "
+          "validator's sentence-level replace would delete the rest of the sentence",
+          edit["original"].startswith("In a separate experiment")
+          and edit["original"].rstrip().endswith("goosebumps."), edit["original"])
+    check("the repaired sentence is the article's own, with only the flagged clause "
+          "replaced", edit["repaired"] == SP_PATCHED_SENTENCE, edit["repaired"])
+
+    restore, gcalls = _ground_seq([_ground_reply([])])
+    try:
+        prov = _LoopProvider([])      # raises if a repair proposal is ever requested
+        result = _run_loop(prov, _initial([SP_FINDING]), article=SP_ARTICLE,
+                           ledger=SP_LEDGER)
+    finally:
+        restore()
+    check("the run reaches PASS", result["status"] == CP.PASS, result.get("blocking"))
+    check("via the suggested patch, accepted",
+          result["grounding_suggested_patch_accepted"] == 1
+          and result["grounding_repairs_accepted"] == 1, result)
+    check("no repair-proposal model call was spent at all", prov.calls == 0, prov.calls)
+    check("model_calls covers only the mandatory recheck", result["model_calls"] == 1,
+          result)
+    check("the corrected sentence is in the accepted article",
+          SP_PATCHED_SENTENCE in result["article_text"], result["article_text"])
+    check("the neighbouring sentences survive byte-for-byte -- the patch is local",
+          "Psychology experts have given an account of why a poem should move anyone "
+          "at all." in result["article_text"]
+          and "Something similar is at work in ongoing doctoral research by the author "
+              "of these exercises." in result["article_text"], result["article_text"])
+    check("and the deterministic operator was never reached",
+          result["grounding_deterministic_attempts"] == 0, result)
+
+
+def test_suggested_patch_is_tried_before_deterministic_and_before_the_model():
+    """3/4. Ordering, proven on a finding BOTH free operators could serve: the
+    deterministic subtraction can construct an edit here (it is the very fixture that
+    test proves), and the suggested patch is still what runs."""
+    check("the deterministic operator could have served this finding",
+          CP.deterministic_subtractive_edit(SP_ARTICLE, SP_FINDING, SP_LEDGER)
+          is not None)
+    restore, gcalls = _ground_seq([_ground_reply([])])
+    try:
+        prov = _LoopProvider([])
+        result = _run_loop(prov, _initial([SP_FINDING]), article=SP_ARTICLE,
+                           ledger=SP_LEDGER)
+    finally:
+        restore()
+    check("the suggested patch was attempted, the deterministic one was not",
+          (result["grounding_suggested_patch_attempts"],
+           result["grounding_deterministic_attempts"]) == (1, 0), result)
+    check("and the model was never asked", prov.calls == 0, prov.calls)
+    check("the history names the origin",
+          [h.get("origin") for h in result["grounding_completion_history"]]
+          == [CP.ORIGIN_SUGGESTED_PATCH], result["grounding_completion_history"])
+
+
+def test_a_rejected_suggested_patch_falls_through_to_the_next_origin():
+    """8/9/5. The patch resolves nothing (the recheck reports a DIFFERENT single blocker
+    -- same count, so no progress): it is rejected, the accepted article is untouched,
+    and the next iteration falls through the preference order -- to the deterministic
+    operator here, since that origin CAN serve the survivor, and only past it to the
+    model when it cannot."""
+    other = _finding("F9", "Something similar is at work in ongoing doctoral research "
+                           "by the author of these exercises.")
+    restore, gcalls = _ground_seq([_ground_reply([other]), _ground_reply([])])
+    try:
+        prov = _LoopProvider([])      # raises if the model is reached at all
+        result = _run_loop(prov, _initial([SP_FINDING]), article=SP_ARTICLE,
+                           ledger=SP_LEDGER)
+    finally:
+        restore()
+    check("the patch was tried first and refused for no progress",
+          result["grounding_completion_history"][0]["origin"]
+          == CP.ORIGIN_SUGGESTED_PATCH
+          and result["grounding_completion_history"][0]["outcome"] == "no_progress",
+          result["grounding_completion_history"])
+    check("the next iteration fell through to the NEXT free origin, not straight to "
+          "the model",
+          result["grounding_completion_history"][1]["origin"]
+          == CP.ORIGIN_DETERMINISTIC, result["grounding_completion_history"])
+    check("so no repair-proposal call was spent at all", prov.calls == 0, prov.calls)
+    check("the run reaches PASS", result["status"] == CP.PASS, result)
+    check("no suggested patch was ever accepted",
+          result["grounding_suggested_patch_accepted"] == 0, result)
+
+
+def test_a_rejected_suggested_patch_reaches_the_model_when_no_free_origin_serves():
+    """9, the tail of the same order. The survivor's overclaim is a bare YEAR, which the
+    word-content-only deterministic operator can never touch and which carries no
+    suggested_patch -- so the fall-through continues past both free origins to the model
+    proposal, exactly as it did before this candidate source existed."""
+    patched_f2 = dict(F2, suggested_patch="The chair was carved in 1991 exactly.")
+    restore, gcalls = _ground_seq([_ground_reply([F1]), _ground_reply([])])
+    try:
+        # EDIT2, not EDIT1: a proposal may only answer a finding the grounder actually
+        # reported in THIS target set, which is F2.
+        prov = _LoopProvider([EDIT2])
+        result = _run_loop(prov, _initial([patched_f2]))
+    finally:
+        restore()
+    origins = [h.get("origin") for h in result["grounding_completion_history"]]
+    check("the patch went first, the model was reached on the fall-through",
+          origins == [CP.ORIGIN_SUGGESTED_PATCH, CP.ORIGIN_MODEL], origins)
+    check("exactly one repair-proposal call, for the model fallback only",
+          prov.calls == 1, prov.calls)
+    check("the run reaches PASS via the model", result["status"] == CP.PASS, result)
+
+
+def test_a_rejected_suggested_patch_never_mutates_the_accepted_article():
+    """5. Transactional: the patch is refused and the article is byte-for-byte the
+    input."""
+    restore, gcalls = _ground_seq([_ground_reply([SP_FINDING])])
+    try:
+        result = _run_loop(_LoopProvider([]), _initial([SP_FINDING]),
+                           article=SP_ARTICLE, ledger=SP_LEDGER, max_iterations=1)
+    finally:
+        restore()
+    check("nothing was accepted", result["grounding_repairs_accepted"] == 0, result)
+    check("the suggested patch is what was tried",
+          result["grounding_suggested_patch_attempts"] == 1, result)
+    check("the accepted article is unchanged", result["article_text"] == SP_ARTICLE,
+          result["article_text"])
+
+
+def test_a_suggested_patch_that_creates_a_safety_problem_is_rejected():
+    """7. Safety is a real gate for this origin too, not a formality."""
+    calls = {"n": 0}
+
+    def audit_fn(text, package, **kw):
+        calls["n"] += 1
+        return {"status": CP.HOLD, "model_calls": 0,
+                "blocking": [{"classification": "NEW_UNSUPPORTED_FACTS", "quote": "x"}]}
+
+    restore, gcalls = _ground_seq([])
+    try:
+        result = _run_loop(_LoopProvider([]), _initial([SP_FINDING]), audit_fn=audit_fn,
+                           article=SP_ARTICLE, ledger=SP_LEDGER, max_iterations=1)
+    finally:
+        restore()
+    check("no repair was accepted", result["grounding_repairs_accepted"] == 0, result)
+    check("the accepted article is byte-for-byte the input",
+          result["article_text"] == SP_ARTICLE, result["article_text"])
+    check("Safety ran and Grounding was never reached",
+          calls["n"] == 1 and gcalls["n"] == 0, (calls, gcalls))
+    check("the rejection is attributed to the suggested patch",
+          result["grounding_completion_history"][0]["origin"]
+          == CP.ORIGIN_SUGGESTED_PATCH
+          and result["grounding_completion_history"][0]["outcome"] == "safety_rejected",
+          result["grounding_completion_history"])
+
+
+def test_a_suggested_patch_that_adds_an_entity_or_number_is_refused_locally():
+    """6. The patch goes through the SAME apply_local_grounding_repair() guard as every
+    other origin -- it cites no fact_ids, so it may carry only what its own sentence
+    already had. No separate validator, no widened permission."""
+    adds_entity = dict(SP_FINDING,
+                       suggested_patch="In one experiment run by Anneke Mertens with "
+                                       "27 German-speaking participants")
+    edit = CP.suggested_patch_edit(SP_ARTICLE, adds_entity)
+    check("the edit is still constructed -- eligibility is about spans, not facts",
+          edit is not None, edit)
+    _, prov, errs = CP.apply_local_grounding_repair(SP_ARTICLE, [edit], [adds_entity],
+                                                    SP_LEDGER, {})
+    check("but the shared validator refuses it", not prov and errs, (prov, errs))
+    check("and it names the addition, not a patch-specific excuse",
+          "ADDS rather than subtracts" in errs[0], errs)
+    check("so no candidate is built for the loop at all",
+          CP.suggested_patch_candidate(SP_ARTICLE, [adds_entity], SP_LEDGER, {})
+          is None)
+
+    adds_number = dict(SP_FINDING,
+                       suggested_patch="In one experiment involving 42 German-speaking "
+                                       "participants")
+    check("a patch that changes a number is refused the same way",
+          CP.suggested_patch_candidate(SP_ARTICLE, [adds_number], SP_LEDGER, {})
+          is None)
+
+
+def test_suggested_patch_eligibility_is_fail_closed():
+    """11/12. Missing, empty, identical, unlocatable, ambiguous or multi-sentence
+    patches are ineligible and change nothing -- the loop behaves exactly as it did
+    before this candidate source existed."""
+    check("no suggested_patch at all -> no candidate",
+          CP.suggested_patch_edit(SP_ARTICLE, SUB_FINDING_NO_PATCH) is None)
+    check("empty patch -> no candidate",
+          CP.suggested_patch_edit(SP_ARTICLE, dict(SP_FINDING, suggested_patch="  "))
+          is None)
+    check("a patch identical to the quote -> no candidate",
+          CP.suggested_patch_edit(
+              SP_ARTICLE, dict(SP_FINDING, suggested_patch=SP_FINDING["quote"]))
+          is None)
+    check("a quote that is not in the article verbatim -> no candidate",
+          CP.suggested_patch_edit(
+              SP_ARTICLE, dict(SP_FINDING, quote="a phrase that is not there")) is None)
+    twice = SP_ARTICLE + " In a separate experiment with 27 German-speaking " \
+                         "participants, more was found."
+    check("a quote appearing twice is ambiguous -> no candidate, never a guess",
+          CP.suggested_patch_edit(twice, SP_FINDING) is None)
+    spanning = dict(SP_FINDING,
+                    quote="from chills to goosebumps. Something similar is at work")
+    check("a quote spanning two sentences -> no candidate",
+          CP.suggested_patch_edit(SP_ARTICLE, spanning) is None)
+
+
+def test_a_repeated_suggested_patch_cannot_loop():
+    """10. Once tried and refused, the identically-reconstructed patch is skipped rather
+    than retried -- the loop falls through to the next origin instead of spinning."""
+    restore, gcalls = _ground_seq([_ground_reply([SP_FINDING])] * 4)
+    try:
+        prov = _LoopProvider([_edit("F1", "nothing that is in the article", "")] * 4)
+        result = _run_loop(prov, _initial([SP_FINDING]), article=SP_ARTICLE,
+                           ledger=SP_LEDGER)
+    finally:
+        restore()
+    origins = [h.get("origin") for h in result["grounding_completion_history"]]
+    check("the patch is attempted exactly once, never again",
+          origins.count(CP.ORIGIN_SUGGESTED_PATCH) == 1, origins)
+    check("and the loop still terminates", result["status"] != CP.PASS, result)
+    check("nothing was accepted", result["grounding_repairs_accepted"] == 0, result)
+
+
+def test_every_candidate_origin_shares_one_acceptance_block():
+    """13/14. Structural: there is exactly ONE strict-progress acceptance test in the
+    loop and one Safety gate, reached by all three origins -- no privileged fast path --
+    and the fuse is untouched."""
+    src = (HERE / "new_engine_v1" / "composition.py").read_text()
+    body = src.split("def grounding_completion_loop")[1].split("\ndef ")[0]
+    check("one and only one strict-shrink comparison in the loop",
+          body.count("len(candidate_grounding[\"blocking\"]) < before_count") == 1, body[:0])
+    check("one and only one Safety gate in the loop",
+          body.count("candidate_safety[\"status\"] != PASS") == 1)
+    check("one and only one Grounding recheck in the loop",
+          body.count("candidate_grounding = ground_candidate(") == 1)
+    check("all three origins are constructed before that single block",
+          body.index("ORIGIN_MODEL") < body.index("candidate_safety = audit_fn"), )
+    check("the fuse is unchanged at 5",
+          CP.GROUNDING_COMPLETION_MAX_ITERATIONS == 5,
+          CP.GROUNDING_COMPLETION_MAX_ITERATIONS)
+    check("suggested_patch is never treated as authority -- it cites no fact ids",
+          CP.suggested_patch_edit(SP_ARTICLE, SP_FINDING)["fact_ids"] == [])
+
 
 
 def main():
@@ -903,7 +1183,17 @@ def main():
                test_neighboring_sentence_is_byte_for_byte_unchanged,
                test_fallback_to_model_proposal_when_subtraction_is_not_applicable,
                test_strict_progress_semantics_unchanged_for_deterministic_candidates,
-               test_emergency_ceiling_unchanged):
+               test_emergency_ceiling_unchanged,
+               test_suggested_patch_resolves_the_production_blocker,
+               test_suggested_patch_is_tried_before_deterministic_and_before_the_model,
+               test_a_rejected_suggested_patch_falls_through_to_the_next_origin,
+               test_a_rejected_suggested_patch_reaches_the_model_when_no_free_origin_serves,
+               test_a_rejected_suggested_patch_never_mutates_the_accepted_article,
+               test_a_suggested_patch_that_creates_a_safety_problem_is_rejected,
+               test_a_suggested_patch_that_adds_an_entity_or_number_is_refused_locally,
+               test_suggested_patch_eligibility_is_fail_closed,
+               test_a_repeated_suggested_patch_cannot_loop,
+               test_every_candidate_origin_shares_one_acceptance_block):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)
