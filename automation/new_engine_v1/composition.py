@@ -3366,6 +3366,177 @@ def grounding_repair(provider, article_text: str, findings: list, ledger: dict,
             "provider": ident, "model_calls": 1, "repairs": 1}
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# STAGE 9b -- ONE SAFETY REPAIR (owner-directed, 2026-09-09)
+# ══════════════════════════════════════════════════════════════════════════════
+# WHY THIS EXISTS. Real production evidence (three retained Worth-PASS runs, one day)
+# showed articles discarded outright for defects this module's own machinery can already
+# name precisely and that a bounded, mechanically-verified subtractive edit can already
+# fix -- a leaked "the evidence shows" left over from Prose Finish, one unlicensed sensory
+# word Continuity's discard fell back onto. Before this stage existed, ANY Safety block
+# was terminal: no repair was ever attempted, and a good article with one bad clause died
+# exactly like a wrong story. The owner's ruling: a wrong story is refused; a good story
+# with a bad sentence is fixed. This is that fix, and nothing more than that fix.
+#
+# WHAT MAKES A SAFETY FINDING ELIGIBLE. Only categories this module already knows how to
+# turn into a QUOTED, LOCATABLE span: MACHINE_LANGUAGE, PACKAGE_MACHINE_LANGUAGE,
+# CUT_LEAKAGE, PACKAGE_CUT_LEAKAGE (hard-confidence cut-term leakage only -- the same
+# threshold the audit itself already applies), and the unapproved numbers/entities/sensory
+# tokens behind NEW_UNSUPPORTED_FACTS / PACKAGE_UNSUPPORTED_FACTS. If EVERY blocking entry
+# can be turned into a span, repair is attempted; if even one cannot -- CUT_AUDIT_BLIND
+# above all, which the audit's own comment calls "a derivation bug" rather than a named
+# defect -- the whole run stays exactly as terminal as it always was. Fail-closed, same as
+# every other guard in this file: an unfamiliar category is refused, not guessed at.
+#
+# THE MECHANICAL GUARANTEE IS THE SAME ONE GROUNDING ALREADY HAS. Synthetic findings in
+# Grounding's own {id, classification, quote} shape are handed to the SAME
+# apply_grounding_repair() and the SAME REPAIR_OPS/REPAIR_GROUNDING_SCHEMA contract Stage
+# 8b already uses, unmodified. No new verification code, no new way for an edit to add a
+# fact, an entity or a relation the ledger does not already license -- this stage supplies
+# a different set of findings to prove the identical machine check.
+#
+# ONE CALL. The caller re-audits the result with the existing safety_audit() (unchanged)
+# before doing anything else with it. If the repaired text does not pass, that is a
+# terminal HOLD: no second repair, no Writer regeneration, no loop.
+SAFETY_REPAIRABLE_PREFIXES = (
+    "MACHINE_LANGUAGE", "PACKAGE_MACHINE_LANGUAGE",
+    "CUT_LEAKAGE", "PACKAGE_CUT_LEAKAGE",
+    "NEW_UNSUPPORTED_FACTS", "PACKAGE_UNSUPPORTED_FACTS",
+)
+
+
+def _safety_locate_findings(sa: dict) -> list | None:
+    """Turn a passed safety_audit's OWN structured sub-data into quoted, Grounding-shaped
+    findings ({id, classification, quote, why}), or None if any blocking category present
+    cannot be confidently and safely turned into one. Never guesses a span: a category
+    this function does not recognise, or a token/phrase it cannot find verbatim in the
+    text, makes the whole result ineligible rather than partially attempted."""
+    blocking = sa.get("blocking") or []
+    if not blocking or any(not any(b.startswith(p) for p in SAFETY_REPAIRABLE_PREFIXES)
+                           for b in blocking):
+        return None
+    text = sa.get("audited_text") or ""
+    pkg_text = sa.get("audited_package_text") or ""
+    findings, seen, n = [], set(), 0
+
+    def add(quote: str, why: str, on_package: bool = False):
+        nonlocal n
+        span = (quote or "").strip()
+        target = pkg_text if on_package else text
+        if not span or normalize_span(span) not in normalize_span(target):
+            return False
+        if span in seen:
+            return True
+        seen.add(span)
+        n += 1
+        findings.append({"id": "SF%d" % n, "classification": "TRUE_UNSUPPORTED",
+                         "quote": span, "why": why})
+        return True
+
+    # blocking is always built from a["continuity_final"] -- screens(final_text) -- which
+    # is the surface actually publishing whether or not Continuity's own edit survived
+    # (composition.py's own "f = a['continuity_final']" is unconditional; the key name
+    # predates the fallback and does not mean Continuity specifically). Never look at
+    # a["writer_draft"] here: it is a different, pre-fallback surface the blocking list
+    # was not computed from, and locating a finding against it could quote text that
+    # was never actually published.
+    for surface, key in (("article", "continuity_final"),
+                         ("publication_package", "publication_package")):
+        audits = (sa.get("audits") or {}).get(key) or {}
+        on_pkg = surface == "publication_package"
+        for frame, _n in (audits.get("prose_leaks") or {}).get("frames") or []:
+            sent = _sentence_containing(pkg_text if on_pkg else text, frame)
+            if not add(sent or frame, "machine/provenance language: %r" % frame, on_pkg):
+                return None
+        for name in (audits.get("scaffold") or {}).get("leaked") or []:
+            sent = _sentence_containing(pkg_text if on_pkg else text, name)
+            if not add(sent or name, "scaffold name leaked into prose: %r" % name, on_pkg):
+                return None
+        for v in (audits.get("cut_adherence") or {}).get("violations") or []:
+            if cut_term_confidence(v["term"]) != CUT_HIGH:
+                continue
+            sent = _sentence_containing(pkg_text if on_pkg else text, v["match"])
+            if not add(sent or v["match"],
+                       "cut term leaked into prose: %r" % v["match"], on_pkg):
+                return None
+        surf = (audits.get("factual_surface") or {})
+        for tok in (list(surf.get("unapproved_sensory") or [])
+                   + list(surf.get("unapproved_numbers") or [])):
+            sent = _sentence_containing(pkg_text if on_pkg else text, str(tok))
+            if not add(sent, "unlicensed factual surface: %r" % tok, on_pkg):
+                return None
+        for ent in surf.get("unapproved_entities") or []:
+            sent = _sentence_containing(pkg_text if on_pkg else text, ent)
+            if not add(sent, "unlicensed entity: %r" % ent, on_pkg):
+                return None
+    return findings or None
+
+
+def safety_repair_findings(sa: dict, article_text: str, pkg_text: str = "") -> list | None:
+    """Public entry: attach the audited surfaces safety_audit did not carry forward on
+    its own result, then locate. See _safety_locate_findings for the eligibility rule."""
+    sa = dict(sa, audited_text=article_text, audited_package_text=pkg_text)
+    return _safety_locate_findings(sa)
+
+
+REPAIR_SAFETY_SYSTEM = (
+    "You are removing specific safety-screen defects from a finished, otherwise-approved "
+    "article. A mechanical screen has named the exact passages: language that names the "
+    "article's own machinery (\"the evidence\", \"the record\", a scaffold name), a term "
+    "that was supposed to stay cut, or a word/number/name the frozen evidence does not "
+    "carry. The evidence is frozen and is the same evidence the article was written from.\n"
+    "\n"
+    "YOU ARE AN EXCISING EDITOR, NOT A WRITER. You take words OUT of a sentence that is "
+    "already there. You do not compose a better sentence and put it back.\n"
+    "\n"
+    "PREFER DELETION OVER REPLACEMENT. In order: cut the offending word or phrase and "
+    "leave the rest of the sentence untouched; if that will not do, cut the clause; if "
+    "that will not do, delete the sentence. Re-writing the sentence around the problem is "
+    "the one move that is never available.\n"
+    "\n"
+    "COPY `original` VERBATIM. Character for character from the article, including "
+    "punctuation and capitalisation. An `original` that is not found in the article word "
+    "for word is refused and the finding goes unanswered.\n"
+    "\n"
+    "THE REPAIRED SENTENCE MUST BE WEAKER THAN THE ORIGINAL, NEVER STRONGER, and may "
+    "introduce no number, name or relation (cause, consequence, equivalence, comparison, "
+    "superlative, generalisation, negation, absence, time) the original did not already "
+    "carry, unless a fact you cite carries it. If deleting the flagged word leaves an "
+    "ungrammatical sentence, delete the smallest surrounding unit that reads cleanly "
+    "instead -- a clause, or the whole sentence.\n"
+    "\n"
+    "Use operation DELETE for anything you can simply remove; use NARROW only when a "
+    "narrower true wording, licensed by a cited fact, survives.\n"
+    "\n"
+    "You may not touch a sentence no finding names, and you may not improve style "
+    "anywhere else."
+)
+
+
+def safety_repair(provider, article_text: str, findings: list, ledger: dict,
+                  packet: dict) -> dict:
+    """STAGE 9b. Exactly one call. Subtractive, mechanically audited by the SAME
+    apply_grounding_repair() Stage 8b uses, and never repeated."""
+    if not findings:
+        return {"status": SKIPPED, "reason": "no repairable finding", "model_calls": 0}
+    obj, ident = _ask(provider, REPAIR_SAFETY_SYSTEM,
+                      repair_prompt(article_text, findings, ledger),
+                      4_000, SAFETY, SAFETY_HOLD)
+    edits = obj.get("edits")
+    if not isinstance(edits, list) or not edits:
+        return {"status": HOLD, "reason": "the safety repair returned no edits",
+                "model_calls": 1, "provider": ident}
+    text, prov, errs = apply_grounding_repair(article_text, edits, findings, ledger, packet)
+    if not prov or not text.strip():
+        return {"status": HOLD,
+                "reason": "the safety repair did not stay within its permissions"
+                         if errs else "the safety repair deleted the whole article",
+                "failures": errs, "model_calls": 1, "provider": ident}
+    return {"status": PASS, "article_text": text, "edits": prov,
+            "findings_answered": [f.get("id") for f in findings],
+            "rejected_edits": errs,
+            "provider": ident, "model_calls": 1, "repairs": 1}
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # STAGE 8c -- ONE GROUNDING COMPLETION PASS
@@ -3621,6 +3792,101 @@ def reader_gate(provider, article_text: str, advisories: list | None = None) -> 
             "one_line": obj.get("one_line", ""),
             "advisories_shown": len(advisories or []),
             "provider": ident, "model_calls": 1}
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# STAGE 10b -- ONE READER REPAIR (owner-directed, 2026-09-09)
+# ══════════════════════════════════════════════════════════════════════════════
+# WHY THIS EXISTS. A real Worth-PASS article held on eight of nine Reader dimensions at
+# once, including CRIP_MINDS_FIT -- and the Reader's own note said the material EARNED
+# the reading and the prose never delivered it: "the piece comes within one sentence of
+# the material that would earn it... and walks past it without a word". That is a
+# description of execution, not of a wrong story, and Worth had already settled that the
+# story belongs here. Before this stage existed, that HOLD was terminal regardless.
+#
+# CRIP_MINDS_FIT IS NOT SPECIAL-CASED OUT OF REPAIR, AND NOT TRUSTED BLINDLY EITHER. The
+# owner's own distinction -- is Reader rejecting the reading Worth approved, or only
+# saying the article failed to make it legible -- is not decided by parsing the Reader's
+# prose for which one it meant. It is decided by what happens next: repair is attempted
+# on WHATEVER dimensions are held, article-wide, in ONE bounded rewrite, using only
+# material the architecture and ledger already license -- and then the SAME reader_gate()
+# checks the result again, once. If CRIP_MINDS_FIT genuinely could not be earned because
+# the reading was never really there, one rewrite will not manufacture it, and the recheck
+# will say so -- which is the terminal HOLD, exactly as before. If it could, the recheck
+# passes. The distinction is proven by the outcome, not asserted in advance.
+#
+# WHY A WHOLE-ARTICLE REWRITE, WHERE SAFETY'S REPAIR IS SUBTRACTIVE-ONLY. Reader defects
+# are mostly not excisable: BREATHING wants a promised example actually given room,
+# MOMENTUM wants a redundant paragraph cut and the ones around it rejoined, OPENING wants
+# the first sentences reordered around what is already in the piece. None of that is a
+# span deletion. So this stage is built on the SAME contract PROSE_FINISH already uses --
+# free rewrite, ADD NOTHING, checked afterwards by a deterministic guard it cannot see or
+# argue with -- except the guard here is the EXISTING safety_audit(), unmodified, which
+# already refuses any number, entity or sensory word the packet does not license. A
+# rewrite that invents material to satisfy Reader fails that guard exactly as an invented
+# fact from any other stage would, and the result is a terminal SAFETY_HOLD, not a
+# published invention.
+#
+# ONE CALL, ONE MANDATORY SAFETY RECHECK, ONE READER RECHECK. No second rewrite regardless
+# of outcome, and no rerun of Worth, Ledger or Architecture -- the reading and the facts
+# are not this stage's to revisit.
+READER_REPAIR_SYSTEM = (
+    "One or more readers have already approved this article's subject and its central "
+    "reading. A hard reader has now read the finished prose and held it on specific "
+    "dimensions, each with the exact passage that failed. Your job is to fix the "
+    "EXECUTION the reader named, using only what is already in the article and in the "
+    "PERMITTED MATERIAL below -- nothing else exists for you to add.\n"
+    "\n"
+    "ADD NOTHING NOT ALREADY LICENSED. No fact, number, date, name, place, quotation, "
+    "cause, consequence or comparison beyond what the article already states or the "
+    "permitted material below already grants. If a dimension asks for more concrete "
+    "material (BREATHING, RESEARCH_LOAD, CRIP_MINDS_FIT) it means: use the specific, "
+    "particular material already available and not yet given room -- not invented "
+    "detail, however plausible.\n"
+    "\n"
+    "DO NOT CHANGE THE ARGUMENT OR THE READING. Same subject, same central claim, same "
+    "facts, same conclusion. You are re-delivering what is already true of this piece, "
+    "not reframing it toward a different one. A CRIP_MINDS_FIT hold is answered by "
+    "making the existing material legible -- concrete, specific, earned -- never by "
+    "adding a sentence that asserts the reading in the abstract.\n"
+    "\n"
+    "ADDRESS ONLY THE HELD DIMENSIONS, using their notes and quoted passages as your "
+    "brief. A dimension not named was already passing; do not touch material only "
+    "relevant to it.\n"
+    "\n"
+    "Return ONLY the finished article body. No preamble, no notes, no explanation of what "
+    "you changed, no frontmatter, no headers."
+)
+
+
+def reader_repair_prompt(article_text: str, held: dict, packet: dict) -> str:
+    L = ["THE ARTICLE", article_text, "", "WHAT THE READER HELD"]
+    for dim, v in held.items():
+        L += ["", "DIMENSION %s" % dim, "  note: %s" % str((v or {}).get("note", ""))[:500]]
+        for p in (v or {}).get("passages") or []:
+            L.append("  passage: %s" % str(p)[:300])
+    L += ["", "PERMITTED MATERIAL -- the writer packet this article was licensed from. "
+             "Nothing outside the article and this packet may be added:",
+         ST.render(packet)[:6000]]
+    return "\n".join(L)
+
+
+def reader_repair(provider, article_text: str, held: dict, packet: dict) -> dict:
+    """STAGE 10b. Exactly one call, whole-article. Not mechanically span-verified the way
+    Safety's repair is -- verification is delegated to the caller's mandatory re-run of
+    the existing safety_audit() (unchanged) before this result is trusted at all."""
+    if not held:
+        return {"status": SKIPPED, "reason": "no held dimension", "model_calls": 0}
+    comp = provider.complete(system=READER_REPAIR_SYSTEM,
+                             user=reader_repair_prompt(article_text, held, packet),
+                             max_tokens=4_000)
+    text = _clean_article(comp.text or "")
+    if not text.strip():
+        return {"status": HOLD, "reason": "the editorial repair returned no article",
+                "model_calls": 1}
+    return {"status": PASS, "article_text": text,
+            "dimensions_addressed": sorted(held),
+            "provider": _identity(comp), "model_calls": 1, "repairs": 1}
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -4253,6 +4519,36 @@ def run_story_architecture_composition(
                 sa["carried_text"] = carried
                 sa["polish_discarded_at_safety"] = True
         sa["continuity_discarded"] = bool(delta_errs)
+
+        # ONE SAFETY REPAIR, tried before the pre-polish fallback's own failure becomes
+        # terminal. See safety_repair_findings/safety_repair above for the eligibility
+        # rule and the mechanical guarantee (the SAME apply_grounding_repair() Stage 8b
+        # uses). A category this stage does not recognise makes the whole attempt
+        # ineligible, and the run falls straight through to the unchanged HOLD below.
+        if sa["status"] != PASS:
+            sfindings = safety_repair_findings(sa, final, package_prose(pkg))
+            if sfindings:
+                srep = safety_repair(P, final, sfindings, ledger, wr["packet"])
+                # Counted here, unconditionally, because the model call happened whether
+                # or not the repair was accepted -- a repair that HOLDs still cost one
+                # call, and the line below (after record()'s reset, on PASS only) would
+                # otherwise leave a rejected repair attempt invisible to the bookkeeping.
+                calls[SAFETY] = calls.get(SAFETY, 0) + srep.get("model_calls", 0)
+                if srep["status"] == PASS:
+                    final = srep["article_text"]
+                    pkg = pkg_ref[0] = make_package(final)
+                    # record() would reset calls[SAFETY] to 0 (safety_audit() is a
+                    # deterministic, model-free check, same as every other call to it in
+                    # this function) -- so the repair's own one call is added AFTER, the
+                    # same way Grounding's repair attributes its cost to its own stage
+                    # rather than to the re-audit that follows it.
+                    sa = record(SAFETY, audit(final, pkg, repair=srep))
+                    sa["carried_text"] = carried
+                    sa["continuity_discarded"] = bool(delta_errs)
+                    sa["after_safety_repair"] = True
+                    repairs[SAFETY] = 1
+                    calls[SAFETY] = calls.get(SAFETY, 0) + srep.get("model_calls", 0)
+
         if sa["status"] != PASS:
             why = "; ".join(sa["blocking"])[:600]
             if delta_errs:
@@ -4425,6 +4721,59 @@ def run_story_architecture_composition(
 
         if reader:
             rg = record(READER, reader_gate(P, final, sa.get("advisories")))
+
+            # ONE EDITORIAL REPAIR, article-wide, before a Reader HOLD becomes terminal.
+            # See reader_repair above for why this is a free rewrite rather than a
+            # subtractive edit, and for why CRIP_MINDS_FIT is not special-cased out of
+            # it. The result is trusted only after the SAME safety_audit() and the SAME
+            # ground_candidate() this run already used, both unmodified -- a rewrite
+            # that invents anything to satisfy Reader fails one of them exactly as an
+            # invention from any other stage would, and that is a terminal SAFETY_HOLD
+            # or GROUNDING_HOLD, not a published fabrication.
+            if rg["status"] != PASS:
+                rrep = reader_repair(P, final, rg["held"], wr["packet"])
+                # Attributed to READER, not SAFETY: this is the editorial repair's own
+                # call, whatever gate it later survives or fails. Counted here,
+                # unconditionally, so a repair that never reaches a recheck (HOLD here,
+                # or a SAFETY_HOLD/GROUNDING_HOLD return below) still shows its one call.
+                calls[READER] = calls.get(READER, 0) + rrep.get("model_calls", 0)
+                if rrep["status"] == PASS:
+                    repaired = rrep["article_text"]
+                    pkg_r = make_package(repaired)
+                    sa_r = record(SAFETY, audit(repaired, pkg_r))
+                    sa_r["carried_text"] = carried
+                    sa_r["after_reader_repair"] = True
+                    if sa_r["status"] != PASS:
+                        return out(
+                            SAFETY,
+                            "the editorial repair did not survive the safety stack: %s"
+                            % "; ".join(sa_r["blocking"])[:400],
+                            SAFETY_HOLD, repaired, pkg_r, surface)
+                    g_r = record(GROUNDING, ground_candidate(
+                        P, bundle_text(repaired, pkg_r), source_text, source_sha, pack,
+                        arch, wr["packet"]))
+                    g_r["after_reader_repair"] = True
+                    if g_r["status"] != PASS:
+                        return out(
+                            GROUNDING,
+                            "the editorial repair did not survive grounding: %s"
+                            % [f.get("classification") for f in g_r["blocking"]][:4],
+                            GROUNDING_HOLD, repaired, pkg_r, surface)
+                    final, pkg = repaired, pkg_r
+                    pkg_ref[0] = pkg_r
+                    # record() sets calls[READER] to the recheck's OWN call count and
+                    # repairs[READER] to reader_gate()'s "repairs" key (which does not
+                    # exist, so 0) -- overwriting both the gate+repair call total and the
+                    # repair flag just set. Both are restored on top of it immediately
+                    # after, the same way Safety's repair survives its own post-record()
+                    # reset above.
+                    reader_calls_so_far = calls[READER]
+                    rg2 = record(READER, reader_gate(P, final, sa_r.get("advisories")))
+                    calls[READER] = reader_calls_so_far + rg2.get("model_calls", 0)
+                    repairs[READER] = 1
+                    rg2["after_editorial_repair"] = True
+                    rg = rg2
+
             if rg["status"] != PASS:
                 return out(READER,
                            "reader HOLD on %s" % ", ".join(sorted(rg["held"])),

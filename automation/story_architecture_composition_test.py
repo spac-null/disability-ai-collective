@@ -2451,14 +2451,135 @@ def test_continuity_runs_exactly_once():
               if prov2.stage_of(i) == "WRITER") == 1)
 
 
+def test_a_clean_run_makes_no_repair_calls_at_all():
+    """A PASS at Safety and a PASS at Reader spend nothing extra. STAGE 9b and STAGE 10b
+    exist to complete a Worth-approved article that has a fixable defect -- they must be
+    silent, and free, when there is no defect to fix."""
+    prov, out = run(full_script())
+    check("the run passes clean", out["status"] == CP.PASS, out.get("failure_reason"))
+    check("no safety repair is recorded", not out["repairs_by_stage"].get(CP.SAFETY))
+    check("no reader repair is recorded", not out["repairs_by_stage"].get(CP.READER))
+    check("no repair-shaped call was made",
+          "?" not in [prov.stage_of(i) for i in range(len(prov.calls))],
+          [prov.stage_of(i) for i in range(len(prov.calls))])
+
+
+def test_a_repairable_safety_hold_gets_exactly_one_repair_and_recheck():
+    """The rescue path: a Writer-introduced unlicensed sensory word ('pink', the same
+    fixture as the no-regeneration test below) is the exact shape safety_repair_findings
+    already knows how to locate -- ONE subtractive edit through the SAME
+    apply_grounding_repair() Stage 8b uses, then the SAME safety_audit() again."""
+    bad_draft = DRAFT.replace("The room was built from Himalayan salt bricks",
+                              "The room was built from pink Himalayan salt bricks")
+    fixed = bad_draft.replace(
+        "The room was built from pink Himalayan salt bricks, and the pavilion was dug "
+        "partway into the ground.",
+        "The room was built from Himalayan salt bricks, and the pavilion was dug "
+        "partway into the ground.")
+    repair = {"edits": [{
+        "finding_id": "SF1", "operation": "NARROW",
+        "original": "The room was built from pink Himalayan salt bricks, and the "
+                    "pavilion was dug partway into the ground.",
+        "repaired": "The room was built from Himalayan salt bricks, and the pavilion "
+                    "was dug partway into the ground.",
+        "fact_ids": ["F01", "F02"], "what_was_removed": "the unlicensed colour"}]}
+    prov, out = run(full_script()[:3]
+                    + [envelope(bad_draft), _edits_from(bad_draft), repair, READER_OK])
+    check("the repair rescues the article", out["status"] == CP.PASS,
+          out.get("failure_reason"))
+    check("'pink' is gone", "pink" not in out["article_text"].lower(),
+          out["article_text"])
+    check("the safety repair is recorded exactly once",
+          out["repairs_by_stage"].get(CP.SAFETY) == 1, out["repairs_by_stage"])
+    check("exactly one repair call is spent",
+          out["model_calls_by_stage"].get(CP.SAFETY) == 1, out["model_calls_by_stage"])
+    check("the recheck reused the real safety_audit, unmodified",
+          out["detail"][CP.SAFETY].get("after_safety_repair") is True)
+    stages_called = [prov.stage_of(i) for i in range(len(prov.calls))]
+    check("still exactly one writer and one continuity pass -- no regeneration",
+          stages_called.count("WRITER") == 1 and stages_called.count("CONTINUITY") == 1,
+          stages_called)
+    check("and it reached the reader", out["stages"][CP.READER] == CP.PASS)
+
+
+def test_a_reader_repair_that_fabricates_is_caught_not_published():
+    """The bound the owner called VERY IMPORTANT: a repair may improve execution, it may
+    not manufacture a new reason the article deserves to exist. If a Reader rewrite
+    invents material to satisfy a held dimension, the SAME safety_audit() this run
+    already used refuses the invention -- a terminal SAFETY_HOLD, not a quiet publish."""
+    held = {"dimensions": dict(
+                {d: {"verdict": "PASS", "note": "", "passages": []}
+                 for d in CP.READER_DIMENSIONS},
+                BREATHING={"verdict": "HOLD", "note": "give the fragrance room",
+                           "passages": ["fragrances, with the aim of engaging all "
+                                       "senses"]}),
+            "overall": "HOLD", "one_line": "the sensory material is compressed"}
+    invented = DRAFT + "\n\nThe fragrance was jasmine, chosen by the curator Anneke Mertens."
+    prov, out = run(full_script(reader=held) + [invented])
+    check("a fabricated rewrite is refused, not published",
+          out["status"] == CP.HOLD, out.get("failure_reason"))
+    check("it holds at safety, on the invented surface",
+          out["failure_stage"] == CP.SAFETY, out.get("failure_stage"))
+    check("the invented name is what is named",
+          "Mertens" in out["failure_reason"] or "jasmine" in out["failure_reason"],
+          out["failure_reason"])
+    check("a held run is never publication-ready, fabricated draft or not",
+          out["publication_ready"] is False, out["publication_ready"])
+    check("no second reader recheck was spent chasing a rescue",
+          out["model_calls_by_stage"].get(CP.READER) == 2, out["model_calls_by_stage"])
+
+
+def test_a_core_crip_minds_fit_rejection_stays_terminal_through_repair():
+    """CRIP_MINDS_FIT is not special-cased OUT of repair by inspecting the Reader's
+    prose (see STAGE 10b's own comment for why): the one bounded rewrite is attempted
+    on whatever is held, the same as any other dimension, and the distinction the owner
+    asked for -- a wrong story stays refused, a good story gets fixed -- is enforced by
+    the SAME safety/grounding/reader checks the rewrite must survive, not by a classifier
+    reading the verdict text in advance. When the reading genuinely was never there, one
+    rewrite does not manufacture it, and the recheck says so: still HOLD, still no second
+    attempt, and Worth is never re-run to reconsider the subject."""
+    held = {"dimensions": dict(
+                {d: {"verdict": "PASS", "note": "", "passages": []}
+                 for d in CP.READER_DIMENSIONS},
+                CRIP_MINDS_FIT={
+                    "verdict": "HOLD",
+                    "note": "the connection is asserted in one abstract paragraph and "
+                            "never earned by the material -- this is a resemblance, not "
+                            "a reading the catalogue itself carries",
+                    "passages": ["a record decides which kinds of perceiving it can "
+                                "carry"]}),
+            "overall": "HOLD", "one_line": "the fit is asserted, not earned"}
+    # The rewrite tries and cannot manufacture what was not there; the recheck holds on
+    # the identical dimension.
+    prov, out = run(full_script(reader=held) + [DRAFT, held])
+    check("still HOLD -- Worth's approval is not overridden by a rewrite",
+          out["failure_stage"] == CP.READER, out.get("failure_stage"))
+    check("CRIP_MINDS_FIT is still the named defect",
+          "CRIP_MINDS_FIT" in out["failure_reason"], out["failure_reason"])
+    check("exactly one attempt was made, not zero and not two",
+          out["repairs_by_stage"].get(CP.READER) == 1
+          and out["model_calls_by_stage"].get(CP.READER) == 3,
+          (out["repairs_by_stage"], out["model_calls_by_stage"]))
+    check("Worth is not reachable from here -- there is no code path back to it",
+          "worth_gate" not in CP.reader_repair.__doc__.lower()
+          and "WORTH" not in CP.READER_REPAIR_SYSTEM)
+
+
 def test_a_failed_safety_audit_does_not_regenerate_anything():
     # An invented colour, in the WRITER's own draft. It has to originate there rather
     # than in the editor: an editor that invents something is discarded by the continuity
     # fail-safe, so a continuity-introduced defect never reaches the safety stack. This
     # test is about what happens when the ARTICLE ITSELF is unsafe.
+    #
+    # "pink" is an unlicensed sensory word -- exactly the shape STAGE 9b's safety_repair
+    # now knows how to locate and attempt ONE repair on (owner ruling, 2026-09-09: a good
+    # article with a bad clause is fixed, not discarded outright). The scripted repair
+    # reply below returns no usable edit, so the article is still NOT rescued and the run
+    # still HOLDs -- but the attempt itself, and its one call, must be visible.
     bad_draft = DRAFT.replace("The room was built from Himalayan salt bricks",
                               "The room was built from pink Himalayan salt bricks")
-    prov, out = run(full_script()[:3] + [envelope(bad_draft), _edits_from(bad_draft), READER_OK])
+    prov, out = run(full_script()[:3]
+                    + [envelope(bad_draft), _edits_from(bad_draft), {"edits": []}, READER_OK])
     check("the run holds at safety", out["failure_stage"] == CP.SAFETY,
           out.get("failure_stage"))
     check("the unapproved surface is named",
@@ -2467,10 +2588,14 @@ def test_a_failed_safety_audit_does_not_regenerate_anything():
     stages_called = [prov.stage_of(i) for i in range(len(prov.calls))]
     check("the writer ran exactly once", stages_called.count("WRITER") == 1)
     check("continuity ran exactly once", stages_called.count("CONTINUITY") == 1)
-    check("NO REGENERATION OF ANY KIND",
+    check("NO WRITER OR CONTINUITY REGENERATION -- one safety repair attempt only",
           stages_called == ["LEDGER", "WORTH", "ARCHITECTURE", "WRITER", "CONTINUITY",
-                            "PROSE_FINISH", "PACKAGE"],
+                            "PROSE_FINISH", "PACKAGE", "?"],
           stages_called)
+    check("the safety repair call is counted",
+          out["model_calls_by_stage"].get(CP.SAFETY) == 1, out["model_calls_by_stage"])
+    check("but an edit-less repair is not recorded as an accepted repair",
+          not out["repairs_by_stage"].get(CP.SAFETY), out["repairs_by_stage"])
     check("the held article is still returned for a human to read",
           bool(out["article_text"]))
     check("and continuity was NOT discarded -- the editor did nothing wrong",
@@ -2566,20 +2691,62 @@ def test_the_reader_gate_runs_last_and_returns_passages():
                 OPENING={"verdict": "HOLD", "note": "a framing device stands in front",
                          "passages": ["The room was built from Himalayan salt"]}),
             "overall": "HOLD", "one_line": "the opening keeps the reader waiting"}
-    prov, out = run(full_script(reader=held))
+    # STAGE 10b (owner-directed, 2026-09-09): a reader HOLD now gets ONE editorial
+    # repair and ONE recheck before it is terminal. The recheck below is scripted to
+    # HOLD again on the exact same dimension -- this is the "repair genuinely does not
+    # rescue it" case, proving the attempt is bounded rather than proving it is skipped.
+    prov, out = run(full_script(reader=held) + [DRAFT, held])
     check("a reader hold holds the run", out["failure_stage"] == CP.READER)
     check("the held dimension is named", "OPENING" in out["failure_reason"],
           out["failure_reason"])
     check("the exact passage is returned",
           out["detail"][CP.READER]["passages"]["OPENING"] ==
           ["The room was built from Himalayan salt"])
-    check("NO AUTO-REWRITE FOLLOWS",
+    check("ONE EDITORIAL REPAIR AND ONE RECHECK, NO SECOND ATTEMPT",
           [prov.stage_of(i) for i in range(len(prov.calls))]
+          # the second PACKAGE is make_package() rebuilding the furniture from the
+          # repaired prose, the same re-bundling Grounding's own repair already does
           == ["LEDGER", "WORTH", "ARCHITECTURE", "WRITER", "CONTINUITY",
-                            "PROSE_FINISH", "PACKAGE", "READER"])
+                            "PROSE_FINISH", "PACKAGE", "READER", "?", "PACKAGE", "READER"],
+          [prov.stage_of(i) for i in range(len(prov.calls))])
+    check("the repair is recorded", out["repairs_by_stage"].get(CP.READER) == 1,
+          out["repairs_by_stage"])
+    check("gate + repair + recheck all counted",
+          out["model_calls_by_stage"].get(CP.READER) == 3, out["model_calls_by_stage"])
+    check("the recheck is marked as such",
+          out["detail"][CP.READER].get("after_editorial_repair") is True)
     check("the reader ran after grounding and fact check",
           out["stages"][CP.GROUNDING] == CP.PASS
           and out["stages"][CP.FACT_CHECK] == CP.PASS)
+
+
+def test_a_reader_editorial_repair_can_rescue_the_article():
+    """The rescue path the HOLD-then-HOLD test above deliberately does not exercise:
+    the repair actually fixes the named dimension, the recheck passes, and the run
+    completes -- exactly once, never looping to try for a cleaner rewrite."""
+    held = {"dimensions": dict(
+                {d: {"verdict": "PASS", "note": "", "passages": []}
+                 for d in CP.READER_DIMENSIONS},
+                MOMENTUM={"verdict": "HOLD",
+                          "note": "a paragraph restates the one before it",
+                          "passages": ["The pallets and the eleven days are in the "
+                                      "record."]}),
+            "overall": "HOLD", "one_line": "the ending repeats itself"}
+    rewritten = DRAFT + "\n\nThe record ends where the pallets and the days end."
+    prov, out = run(full_script(reader=held) + [rewritten, READER_OK])
+    check("the repair rescues the article", out["status"] == CP.PASS,
+          out.get("failure_reason"))
+    check("the rewritten prose is what carries", rewritten.strip() in out["article_text"])
+    check("exactly one reader repair is recorded",
+          out["repairs_by_stage"].get(CP.READER) == 1)
+    check("gate + repair + recheck all counted",
+          out["model_calls_by_stage"].get(CP.READER) == 3, out["model_calls_by_stage"])
+    check("the safety and grounding re-checks the repair passed through are visible",
+          out["detail"][CP.SAFETY].get("after_reader_repair") is True)
+    stages_called = [prov.stage_of(i) for i in range(len(prov.calls))]
+    check("still exactly one writer and one continuity pass",
+          stages_called.count("WRITER") == 1 and stages_called.count("CONTINUITY") == 1,
+          stages_called)
 
     partial = {"dimensions": {"OPENING": {"verdict": "PASS"}}, "overall": "PASS"}
     _, out2 = run(full_script(reader=partial))
