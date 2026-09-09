@@ -215,31 +215,43 @@ def test_the_lubetkin_residue_completes():
 
 # ── G/H. once only, and a survivor still holds ──────────────────────────────────────
 def test_completion_can_happen_at_most_once():
+    """STAGE 8c's fixed one-completion-pass budget (and Stage 8b's fixed one-repair
+    budget alongside it) is SUPERSEDED, for Grounding, by grounding_completion_loop's
+    progress-bounded loop (owner-directed, 2026-09-09). completion_eligible() and
+    grounding_completion() above are still exercised directly, by the tests above them
+    in this file -- their eligibility/validator-reuse guarantees are unchanged, in case
+    anything else ever calls them again -- but neither function, nor grounding_repair()
+    (Stage 8b), is wired into the main orchestration any more: grounding_completion_loop
+    replaces all three call sites at once, and it is ITS OWN iteration ceiling that now
+    bounds Grounding repair, not a fixed call count."""
     src = (HERE / "new_engine_v1" / "composition.py").read_text()
     tree = ast.parse(src)
-    sites = [n for n in ast.walk(tree) if isinstance(n, ast.Call)
-             and getattr(n.func, "id", "") == "grounding_completion"]
-    check("there is exactly one call site in the whole module", len(sites) == 1,
-          "%d found" % len(sites))
-    fn = next(n for n in ast.walk(tree)
-              if isinstance(n, ast.FunctionDef) and n.name == "grounding_completion")
-    check("grounding_completion itself makes one provider call and no loop",
-          len([n for n in ast.walk(fn) if isinstance(n, ast.Call)
-               and getattr(n.func, "id", "") == "_ask"]) == 1
-          and not any(isinstance(n, (ast.For, ast.While)) for n in ast.walk(fn)))
-    # And the runner cannot reach it twice: the call sits under `attempt = 2`, and the
-    # only grounding call after it sets attempt = 3, after which nothing loops back.
-    body = src.split("def _run_story_architecture")[-1] if "_run_story_architecture" in src else src
-    check("no grounding attempt beyond 3 exists anywhere",
-          '"attempt"] = 4' not in src and "attempt = 4" not in src)
-    check("completion is reached only after a passing first repair",
-          "if rep[\"status\"] == PASS:" in src
-          and src.index("if rep[\"status\"] == PASS:")
-              < src.index("_ok, _why, _comp_findings = completion_eligible"))
+    old_sites = [n for n in ast.walk(tree) if isinstance(n, ast.Call)
+                and getattr(n.func, "id", "") in ("grounding_completion", "grounding_repair")]
+    check("the old fixed-budget functions have no call site left in the module "
+          "(superseded by grounding_completion_loop)",
+          len(old_sites) == 0, "%d found" % len(old_sites))
+    loop_fn = next(n for n in ast.walk(tree)
+                  if isinstance(n, ast.FunctionDef)
+                  and n.name == "grounding_completion_loop")
+    check("the replacement is bounded by a WHILE with the max-iterations fuse, not an "
+          "unbounded loop",
+          any(isinstance(n, ast.While) for n in ast.walk(loop_fn)))
+    check("the fuse constant is what the loop signature defaults to",
+          "max_iterations: int = GROUNDING_COMPLETION_MAX_ITERATIONS" in src)
+    orch = src.split("def run_story_architecture_composition")[-1]
+    check("the orchestration calls the loop, not either old fixed-budget function",
+          "grounding_completion_loop(" in orch
+          and "completion_eligible(" not in orch
+          and " grounding_completion(" not in orch)
 
 
 def test_a_survivor_after_completion_still_holds():
-    """Completion is not a licence to pass: what it fails to remove still blocks."""
+    """A repair that leaves a claim standing is not a licence to pass: what it fails to
+    remove still blocks. What runs the recheck that catches it is now
+    grounding_completion_loop's own per-iteration Grounding call (see
+    test_completion_can_happen_at_most_once for the replacement), not a fixed
+    second/third attempt -- the survivor property itself is unchanged."""
     art = KEEP + " " + SURVIVOR + "\n"
     text, prov, errs = CP.apply_grounding_repair(
         art, [{"finding_id": "F1", "operation": "NARROW", "original": SURVIVOR,
@@ -250,23 +262,375 @@ def test_a_survivor_after_completion_still_holds():
     check("but the claim is still in the text for the final recheck to find",
           "measures the arrangement" in text, text)
     src = (HERE / "new_engine_v1" / "composition.py").read_text()
-    check("and a third-attempt hold is reported as such",
-          "AFTER one factual repair and one completion pass" in src)
+    check("and a HOLD after some number of repair attempts is reported as such",
+          "repair attempt(s) over" in src, src.count("repair attempt(s) over"))
 
 
 # ── the model-call budget, structurally ─────────────────────────────────────────────
 def test_the_model_call_budget():
+    """grounding_completion_loop's own per-iteration budget: at most one repair-proposal
+    call and one Grounding recheck call each pass through the loop body (Safety is
+    deterministic -- the caller's own audit_fn, never a new _ask call), every call's
+    model_calls actually accumulated rather than assumed, and the loop bounded by the
+    max-iterations fuse rather than `while True`."""
     src = (HERE / "new_engine_v1" / "composition.py").read_text()
-    seg = src.split("_ok, _why, _comp_findings = completion_eligible")[1].split(
-        "pkg = pkg_ref[0]")[0]
-    check("completion adds nothing when it is not eligible",
-          "if _ok:" in seg and seg.index("if _ok:") < seg.index("grounding_completion("))
-    check("the completion repair is one call", seg.count("grounding_completion(") == 1)
-    check("the final recheck is one call", seg.count("ground_candidate(") == 1)
-    check("the post-completion safety audit is deterministic, not a provider call",
-          "audit(final, pkg, repair=comp)" in seg and "_ask(" not in seg)
-    check("its model_calls are accounted to GROUNDING",
-          'calls[GROUNDING] = calls.get(GROUNDING, 0) + comp.get("model_calls", 0)' in seg)
+    tree = ast.parse(src)
+    fn = next(n for n in ast.walk(tree)
+              if isinstance(n, ast.FunctionDef) and n.name == "grounding_completion_loop")
+    calls_in_loop = [getattr(n.func, "id", "") for n in ast.walk(fn)
+                     if isinstance(n, ast.Call)]
+    check("exactly one repair-proposal call site in the loop body",
+          calls_in_loop.count("grounding_repair_proposal") == 1, calls_in_loop)
+    check("exactly one Grounding recheck call site in the loop body",
+          calls_in_loop.count("ground_candidate") == 1, calls_in_loop)
+    check("Safety is checked via the caller's own audit_fn, never a new _ask call",
+          "_ask" not in calls_in_loop)
+    check("the loop is bounded by the max-iterations fuse, not `while True`",
+          any(isinstance(n, ast.While)
+              and not (isinstance(n.test, ast.Constant) and n.test.value is True)
+              for n in ast.walk(fn)))
+    check("model_calls accumulates from every source actually spent",
+          'model_calls += prop.get("model_calls", 0)' in src
+          and 'model_calls += candidate_safety.get("model_calls", 0)' in src
+          and 'model_calls += candidate_grounding.get("model_calls", 0)' in src)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# grounding_completion_loop -- PROGRESS-BOUNDED COMPLETION, direct (owner-directed,
+# 2026-09-09)
+# ══════════════════════════════════════════════════════════════════════════════
+# Direct tests of the loop itself: a scripted provider answers repair-proposal calls, a
+# stubbed new_engine_v1.stages.ground (the same substitution every Grounding test in
+# this repo uses) answers Grounding rechecks, and a hand-written audit_fn stands in for
+# the real safety_audit() -- the loop takes audit_fn as an injected callable
+# specifically so its OWN transactional logic (accept/reject, progress, repeats, the
+# ceiling) can be tested without a full Writer packet/architecture/cut-report/negative-
+# lineage rig. safety_audit()'s own correctness is proven elsewhere; these tests are
+# about what the loop does with whatever audit_fn tells it.
+import json as _json                                                  # noqa: E402
+import new_engine_v1.stages as _stages                                # noqa: E402
+
+
+class _Reply:
+    def __init__(self, text):
+        self.text = text
+
+    def identity(self):
+        return {"provider": "test", "requested_model": "test", "actual_model": "test",
+               "fallback_used": False}
+
+
+class _LoopProvider:
+    """Answers repair-proposal calls in order. Nothing else inside
+    grounding_completion_loop calls provider.complete() -- Safety is audit_fn, Grounding
+    is the stubbed new_engine_v1.stages.ground."""
+    model = "test"
+    url = "http://127.0.0.1:0/v1"
+
+    def __init__(self, replies):
+        self.replies = list(replies)
+        self.calls = 0
+        self.prompts: list = []
+
+    def complete(self, system, user, max_tokens=3000, timeout=180, temperature=None,
+                deadline=None):
+        self.calls += 1
+        self.prompts.append(user)
+        if not self.replies:
+            raise AssertionError("grounding_completion_loop made more repair-proposal "
+                                 "calls than the test scripted")
+        r = self.replies.pop(0)
+        return _Reply(r if isinstance(r, str) else _json.dumps(r))
+
+
+def _ground_seq(replies):
+    """Install a scripted new_engine_v1.stages.ground -- `replies` are
+    {"status": "settled", "findings": [...]} dicts, the shape S.ground itself returns
+    (ground_candidate(), the REAL function, does the unsupported/blocking derivation).
+    Returns (restore, calls) -- callers MUST call restore() in a finally block."""
+    real = _stages.ground
+    seq = list(replies)
+    calls = {"n": 0}
+
+    def fake(*a, **k):
+        calls["n"] += 1
+        return dict(seq.pop(0) if seq else {"status": "settled", "findings": []})
+
+    _stages.ground = fake
+
+    def restore():
+        _stages.ground = real
+    return restore, calls
+
+
+def _ground_reply(findings):
+    return {"status": "settled", "findings": list(findings)}
+
+
+def _initial(findings):
+    """A ground_candidate()-shaped result to hand the loop as its already-computed
+    `initial` -- only `status` and `blocking` are read internally; `grounding_status` is
+    carried for parity with the real function's own output shape."""
+    return {"status": CP.PASS if not findings else CP.GROUNDING_HOLD,
+           "blocking": list(findings),
+           "grounding_status": "settled" if not findings else "held"}
+
+
+def _finding(fid, quote, cls="TRUE_UNSUPPORTED"):
+    return {"id": fid, "classification": cls, "quote": quote, "repairable": True,
+           "why": "the sources do not carry this"}
+
+
+def _pass_audit(text, package, **kw):
+    return {"status": CP.PASS, "blocking": [], "model_calls": 0}
+
+
+def _edit(fid, original, repaired):
+    return {"edits": [{"finding_id": fid, "operation": "DELETE", "original": original,
+                       "repaired": repaired, "fact_ids": []}]}
+
+
+LOOP_ARTICLE = ("The room was painted in 1990. The chair was carved in 1991. The table "
+                "was built in 1992.")
+LOOP_LEDGER: dict = {}
+LOOP_PACKET: dict = {}
+LOOP_ARCH = None
+LOOP_PACK = {"subject": "test", "sources": []}
+
+F1 = _finding("F1", "The room was painted in 1990.")
+F2 = _finding("F2", "The chair was carved in 1991.")
+F3 = _finding("F3", "The table was built in 1992.")
+EDIT1 = _edit("F1", "The room was painted in 1990.", "The room was painted.")
+EDIT2 = _edit("F2", "The chair was carved in 1991.", "The chair was carved.")
+EDIT3 = _edit("F3", "The table was built in 1992.", "The table was built.")
+
+
+def _run_loop(provider, initial, audit_fn=_pass_audit, max_iterations=None):
+    kw = {}
+    if max_iterations is not None:
+        kw["max_iterations"] = max_iterations
+    return CP.grounding_completion_loop(
+        provider, LOOP_ARTICLE, None, initial, LOOP_LEDGER, LOOP_PACKET, LOOP_ARCH,
+        LOOP_PACK, "source text", "sha", audit_fn, **kw)
+
+
+def test_three_independent_blockers_all_repair_and_pass():
+    """3 independent local Grounding blockers can all be repaired and PASS -- the
+    article must NOT HOLD merely because there were more than the old
+    COMPLETION_MAX_FINDINGS=2 ceiling. Each proposal answers ONE finding; the recheck
+    after each shows the blocking set strictly shrinking, 3 -> 2 -> 1 -> 0."""
+    restore, gcalls = _ground_seq([
+        _ground_reply([F2, F3]), _ground_reply([F3]), _ground_reply([])])
+    try:
+        result = _run_loop(_LoopProvider([EDIT1, EDIT2, EDIT3]), _initial([F1, F2, F3]))
+    finally:
+        restore()
+    check("the run reaches PASS", result["status"] == CP.PASS, result.get("blocking"))
+    check("all three years are gone",
+          "1990" not in result["article_text"] and "1991" not in result["article_text"]
+          and "1992" not in result["article_text"], result["article_text"])
+    check("three iterations, three proposals, three acceptances",
+          result["grounding_completion_iterations"] == 3
+          and result["grounding_repair_proposals"] == 3
+          and result["grounding_repairs_accepted"] == 3, result)
+    check("zero rejections -- every proposal made progress",
+          result["grounding_repairs_rejected"] == 0, result)
+    check("initial/final blocker counts are exact",
+          result["initial_blocker_count"] == 3 and result["final_blocker_count"] == 0,
+          result)
+    check("all three edits are individually auditable",
+          {e["finding_id"] for e in result["accepted_edits"]} == {"F1", "F2", "F3"},
+          result["accepted_edits"])
+    check("the grounder ran exactly three times, once per accepted repair",
+          gcalls["n"] == 3, gcalls)
+
+
+def test_accepted_repair_strictly_reduces_blocker_set():
+    restore, _ = _ground_seq([_ground_reply([F2])])
+    try:
+        result = _run_loop(_LoopProvider([EDIT1]), _initial([F1, F2]), max_iterations=1)
+    finally:
+        restore()
+    check("the accepted candidate's blocking set is strictly smaller",
+          result["final_blocker_count"] < result["initial_blocker_count"], result)
+    check("one accepted repair", result["grounding_repairs_accepted"] == 1, result)
+
+
+def test_a_repair_that_replaces_one_blocker_with_another_is_rejected():
+    """1 blocker -> 1 DIFFERENT blocker is not progress: the count did not shrink."""
+    different = _finding("F9", "A completely different unsupported claim.")
+    restore, gcalls = _ground_seq([_ground_reply([different])])
+    try:
+        result = _run_loop(_LoopProvider([EDIT1]), _initial([F1]), max_iterations=1)
+    finally:
+        restore()
+    check("the proposal is rejected, not accepted",
+          result["grounding_repairs_accepted"] == 0, result)
+    check("the accepted text is unchanged from the input",
+          result["article_text"] == LOOP_ARTICLE, result["article_text"])
+    check("the ORIGINAL blocker is what the final state still shows -- a rejected "
+          "candidate's blocking set is never adopted",
+          result["blocking"] == [F1], result["blocking"])
+
+
+def test_a_repair_introducing_a_new_safety_blocker_is_rejected_and_never_mutates_the_article():
+    calls = {"n": 0}
+
+    def audit_fn(text, package, **kw):
+        calls["n"] += 1
+        return {"status": CP.HOLD,
+               "blocking": [{"classification": "NEW_UNSUPPORTED_FACTS", "quote": "x"}],
+               "model_calls": 0}
+
+    restore, gcalls = _ground_seq([])  # never reached -- Safety rejects first
+    try:
+        result = _run_loop(_LoopProvider([EDIT1]), _initial([F1]), audit_fn=audit_fn,
+                           max_iterations=1)
+    finally:
+        restore()
+    check("no repair was accepted", result["grounding_repairs_accepted"] == 0, result)
+    check("the accepted article is byte-for-byte the input",
+          result["article_text"] == LOOP_ARTICLE, result["article_text"])
+    check("Safety was checked and Grounding was never reached",
+          calls["n"] == 1 and gcalls["n"] == 0, (calls, gcalls))
+
+
+def test_a_rejected_repair_can_be_followed_by_a_different_successful_proposal():
+    """First proposal fixes F1, but the recheck reports F3 newly flagged alongside the
+    still-unfixed F2 -- the same count (2), so no progress and the proposal is rejected,
+    accepted_text unchanged. The second proposal, told why, answers F2 instead and the
+    set genuinely shrinks (2 -> 1); the third resolves F3 (still present, since the
+    rejected first attempt never touched the article) and reaches PASS."""
+    restore, gcalls = _ground_seq([
+        _ground_reply([F3, F2]),   # after 1st proposal: 2 -> 2, no shrink -- rejected
+        _ground_reply([F3]),       # after 2nd proposal: 2 -> 1, shrinks -- accepted
+        _ground_reply([])])        # after 3rd proposal: 1 -> 0, PASS
+    try:
+        result = _run_loop(_LoopProvider([EDIT1, EDIT2, EDIT3]), _initial([F1, F2]),
+                           max_iterations=5)
+    finally:
+        restore()
+    check("the run reaches PASS", result["status"] == CP.PASS, result)
+    check("two repairs are eventually accepted",
+          result["grounding_repairs_accepted"] == 2, result)
+    check("one was rejected first", result["grounding_repairs_rejected"] == 1, result)
+    check("three iterations were spent", result["grounding_completion_iterations"] == 3,
+          result)
+    check("the accepted edits are the SECOND and THIRD proposals', not the rejected "
+          "first", [e["finding_id"] for e in result["accepted_edits"]] == ["F2", "F3"],
+          result)
+
+
+def test_repeating_the_same_ineffective_proposal_terminates_hold():
+    restore, gcalls = _ground_seq([_ground_reply([F1])])  # same blocking after the retry
+    try:
+        result = _run_loop(_LoopProvider([EDIT1, EDIT1]), _initial([F1]),
+                           max_iterations=5)
+    finally:
+        restore()
+    check("the run HOLDs", result["status"] != CP.PASS, result)
+    check("only one recheck was ever spent -- the repeat is caught before a second one",
+          gcalls["n"] == 1, gcalls)
+    check("two proposals were made (detected, not silently retried forever)",
+          result["grounding_repair_proposals"] == 2, result)
+
+
+def _distinct_valid_narrowings(n: int) -> list:
+    """`n` distinct, individually-valid subtractive rewrites of F1's sentence -- distinct
+    by internal spacing (which apply_local_grounding_repair's number/entity extraction
+    treats identically to the single-spaced form, so every one of them is accepted at
+    the local-permission check), never by whitespace-only content that .strip() would
+    collapse to the same "" every time."""
+    return [{"edits": [{"finding_id": "F1", "operation": "DELETE",
+                        "original": "The room was painted in 1990.",
+                        "repaired": ("The room" + " " * i + "was painted."),
+                        "fact_ids": []}]} for i in range(1, n + 1)]
+
+
+def test_a_no_progress_repair_terminates_hold_within_the_fuse():
+    """Every retry swaps in yet another different single blocker -- never repeating a
+    signature, so only the STRICT-SHRINK requirement (not the repeat guard) is what
+    stops this from running forever."""
+    swaps = [_finding("F%d" % i, "claim %d" % i) for i in range(2, 8)]
+    restore, gcalls = _ground_seq([_ground_reply([f]) for f in swaps])
+    try:
+        result = _run_loop(_LoopProvider(_distinct_valid_narrowings(6)), _initial([F1]),
+                           max_iterations=CP.GROUNDING_COMPLETION_MAX_ITERATIONS)
+    finally:
+        restore()
+    check("the run HOLDs -- no progress was ever made", result["status"] != CP.PASS,
+          result)
+    check("nothing was ever accepted", result["grounding_repairs_accepted"] == 0, result)
+    check("the fuse, not an infinite retry, is what stopped it",
+          result["grounding_completion_iterations"]
+          == CP.GROUNDING_COMPLETION_MAX_ITERATIONS, result)
+
+
+def test_the_emergency_ceiling_prevents_runaway_execution():
+    """Each proposal's wording differs (so the repeat-signature guard alone would not
+    stop it), and the grounder is scripted to keep reporting exactly one blocker every
+    time -- so ONLY the max_iterations fuse can end this."""
+    restore, gcalls = _ground_seq([_ground_reply([F1]) for _ in range(8)])
+    try:
+        result = _run_loop(_LoopProvider(_distinct_valid_narrowings(8)), _initial([F1]),
+                           max_iterations=3)
+    finally:
+        restore()
+    check("the loop stops at exactly the fuse, not before or after",
+          result["grounding_completion_iterations"] == 3, result)
+    check("still HOLD", result["status"] != CP.PASS, result)
+
+
+def test_local_neighbor_context_is_supplied_to_the_repair_model():
+    """Real production shape (retained Poetry, 2026-09-09): the sentence after the
+    flagged passage refers back to it ('Something similar...') -- the repair proposal
+    must be SHOWN that neighbor, read-only, so it can avoid breaking it."""
+    article = ("The device was tested in a lab. The chair was carved in 1991. "
+              "Something similar happened with the table.")
+    findings = [_finding("F1", "The chair was carved in 1991.")]
+    prov = _LoopProvider([_edit("F1", "The chair was carved in 1991.", "")])
+    result = CP.grounding_repair_proposal(prov, article, findings, LOOP_LEDGER,
+                                          LOOP_PACKET)
+    check("a repair proposal was made", result["status"] == CP.PASS, result)
+    check("the previous sentence is in the prompt",
+          "The device was tested in a lab." in prov.prompts[0], prov.prompts[0])
+    check("the next sentence -- the one with the dangling reference -- is in the prompt",
+          "Something similar happened with the table." in prov.prompts[0],
+          prov.prompts[0])
+    check("the system prompt instructs against breaking what a neighbor depends on",
+          "DO NOT REMOVE INFORMATION THAT AN UNEDITED NEIGHBORING SENTENCE DEPENDS ON"
+          in CP.GROUNDING_COMPLETION_LOOP_SYSTEM)
+    check("and the prompt itself labels the context as read-only",
+          "NEXT SENTENCE (read-only" in prov.prompts[0], prov.prompts[0])
+
+
+def test_grounding_repair_proposal_uses_the_claim_local_validator():
+    """Factual permission stays claim-local, unchanged: the proposal step is verified by
+    apply_local_grounding_repair(), never the packet-wide apply_grounding_repair() --
+    the SAME guarantee test_grounding_repair_permission_is_claim_local_not_packet_wide
+    already proves for the function itself; this proves the LOOP actually calls it."""
+    tree = ast.parse((HERE / "new_engine_v1" / "composition.py").read_text())
+    fn = next(n for n in ast.walk(tree)
+             if isinstance(n, ast.FunctionDef) and n.name == "grounding_repair_proposal")
+    calls = {getattr(n.func, "id", "") for n in ast.walk(fn) if isinstance(n, ast.Call)}
+    check("grounding_repair_proposal validates with the claim-local function",
+          "apply_local_grounding_repair" in calls, sorted(calls))
+    check("never the packet-wide one", "apply_grounding_repair" not in calls,
+          sorted(calls))
+
+
+def test_no_worth_or_ledger_rerun_inside_the_loop():
+    """No Worth rerun, no Ledger rerun, no new research, no Architecture rerun, no
+    Writer regeneration, anywhere the progress-bounded loop can reach."""
+    tree = ast.parse((HERE / "new_engine_v1" / "composition.py").read_text())
+    for name in ("grounding_completion_loop", "grounding_repair_proposal"):
+        fn = next(n for n in ast.walk(tree)
+                 if isinstance(n, ast.FunctionDef) and n.name == name)
+        calls = {getattr(n.func, "id", "") for n in ast.walk(fn)
+                if isinstance(n, ast.Call)}
+        check("%s reruns none of Worth/Ledger/Architecture/Writer" % name,
+              not calls & {"freeze_ledger", "worth_gate", "architect", "write_article"},
+              sorted(calls))
 
 
 def main():
@@ -282,7 +646,18 @@ def main():
                test_the_lubetkin_residue_completes,
                test_completion_can_happen_at_most_once,
                test_a_survivor_after_completion_still_holds,
-               test_the_model_call_budget):
+               test_the_model_call_budget,
+               test_three_independent_blockers_all_repair_and_pass,
+               test_accepted_repair_strictly_reduces_blocker_set,
+               test_a_repair_that_replaces_one_blocker_with_another_is_rejected,
+               test_a_repair_introducing_a_new_safety_blocker_is_rejected_and_never_mutates_the_article,
+               test_a_rejected_repair_can_be_followed_by_a_different_successful_proposal,
+               test_repeating_the_same_ineffective_proposal_terminates_hold,
+               test_a_no_progress_repair_terminates_hold_within_the_fuse,
+               test_the_emergency_ceiling_prevents_runaway_execution,
+               test_local_neighbor_context_is_supplied_to_the_repair_model,
+               test_grounding_repair_proposal_uses_the_claim_local_validator,
+               test_no_worth_or_ledger_rerun_inside_the_loop):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)

@@ -3487,6 +3487,313 @@ def grounding_repair(provider, article_text: str, findings: list, ledger: dict,
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# STAGE 8b/8c REPLACED -- PROGRESS-BOUNDED GROUNDING COMPLETION (owner-directed,
+# 2026-09-09)
+# ══════════════════════════════════════════════════════════════════════════════
+# WHY. grounding_repair() above is committed the moment apply_local_grounding_repair()
+# approves an edit's OWN added surface -- it never asks whether the resulting ARTICLE is
+# actually better. The retained "Poetry as climate communication" continuation showed
+# exactly the gap that leaves open: the one repair narrowed a claim by cutting
+# "...to show that recited poetry could produce a range of responses from chills to
+# goosebumps" from the flagged sentence, correctly by the edit's own local-permission
+# check (the edit added no number, entity or relation). But the very next, UNEDITED
+# sentence opened with "Something similar is at work..." -- a reference to the reaction
+# the cut just removed. The result was a genuine article-body defect (Safety correctly
+# raised NEW_UNSUPPORTED_FACTS / CONTINUITY_ADDED_MATERIAL on it), and by the time Safety
+# caught it the one grounding-repair budget was already spent, so the whole article HELD
+# on a defect ITS OWN repair had just introduced.
+#
+# THE FIX IS NOT A "SOMETHING" DETECTOR. No local-permission check, however good, can
+# know what an untouched neighboring sentence depends on -- that is a property of the
+# WHOLE resulting article, and the only thing that can answer it is running the real
+# Safety and Grounding checks against the candidate BEFORE it becomes the accepted
+# article. So repair here is TRANSACTIONAL: a proposal is applied to a temporary copy,
+# validated in full, and only committed if it demonstrably leaves the article in a
+# strictly better state. A proposal that fails validation is discarded whole -- the
+# accepted article is exactly what it was before the proposal was tried -- and the
+# reason is handed to the next proposal so the model does not repeat it blind.
+#
+# PROGRESS IS DEFINED NARROWLY, ON PURPOSE. Different wording, a model's own claim of
+# improvement, or the same finding count with different findings are NOT progress --
+# only a Grounding blocking set that is STRICTLY SMALLER counts, and only alongside a
+# Safety recheck that introduces no NEW blocker. "1 blocker -> 1 different blocker" and
+# "Grounding improvement + a new Safety problem" are both rejected, not accepted with a
+# caveat.
+#
+# THE CEILING IS A FUSE, NOT A BUDGET. MAX_GROUNDING_COMPLETION_ITERATIONS bounds
+# pathological execution; the loop is expected to stop earlier, on a PASS, on a
+# proposal that cannot be turned into a candidate, on a repeated ineffective proposal, or
+# on one iteration of no progress that the next iteration's rejection feedback also fails
+# to fix within the fuse.
+#
+# FACTUAL AUTHORITY IS UNCHANGED. Every proposal still goes through
+# apply_local_grounding_repair() -- the SAME claim-local guard grounding_repair() already
+# uses: a repair may use only what its own local span already carried and what its own
+# cited Ledger facts explicitly license, never the whole packet, never new research,
+# never a new Ledger fact.
+#
+# SCOPE. Grounding only. Reader's editorial repair and the article-Safety repair (Stage
+# 9b) are untouched -- this policy is proven here, on real production evidence, before it
+# is considered anywhere else. If an accepted repair needs its package re-validated under
+# existing pipeline semantics (it does not, currently: a Grounding factual repair changes
+# only the article, never the package -- package regeneration after a factual repair is
+# not part of today's semantics and this loop does not add it), the caller reaches for
+# the SAME package_only_safety_completion() every other regenerated-package call site
+# already uses; nothing here duplicates that logic.
+GROUNDING_COMPLETION_MAX_ITERATIONS = 5
+
+
+def _sentence_containing_quote(article_text: str, quote: str) -> int | None:
+    """Index into CE.sentences(article_text) of the sentence carrying `quote`, or None."""
+    sents = CE.sentences(article_text)
+    return next((i for i, s in enumerate(sents)
+                if normalize_span(quote) in normalize_span(s)
+                or normalize_span(s) in normalize_span(quote)), None)
+
+
+def neighbor_context_for(article_text: str, quote: str) -> tuple[str, str]:
+    """(previous_sentence, next_sentence) around the sentence carrying `quote` -- READ-ONLY
+    context so a repair proposal can see, without being permitted to touch, what an
+    untouched neighboring sentence depends on before it removes anything. ("", "") if the
+    quote cannot be located, exactly like every other locate-or-refuse guard in this
+    file."""
+    sents = CE.sentences(article_text)
+    idx = _sentence_containing_quote(article_text, quote)
+    if idx is None:
+        return "", ""
+    return (sents[idx - 1] if idx > 0 else "",
+            sents[idx + 1] if idx + 1 < len(sents) else "")
+
+
+GROUNDING_COMPLETION_LOOP_SYSTEM = REPAIR_GROUNDING_SYSTEM + "\n\n" + (
+    "ONE MORE RULE, ABOVE ALL THE OTHERS ABOVE: DO NOT REMOVE INFORMATION THAT AN "
+    "UNEDITED NEIGHBORING SENTENCE DEPENDS ON. Each finding below is shown with the "
+    "sentence immediately before and after it, as READ-ONLY CONTEXT -- not for you to "
+    "edit, but for you to check before you cut. If the next sentence refers back to "
+    "something in the passage you are about to narrow or delete ('similar', 'that "
+    "reaction', 'the same effect', 'this', 'it'), and your edit would remove the thing "
+    "it refers to, your edit breaks a sentence you are not allowed to touch. In that "
+    "case: choose a different narrowing that keeps the referent, or delete only within "
+    "the sentence the finding actually names. Never solve this by rewriting the "
+    "neighboring sentence itself -- it was not flagged, and editing it is not "
+    "available to you here.\n"
+    "\n"
+    "YOUR PROPOSAL IS PROVISIONAL, NOT A COMMIT. It is applied to a copy, checked "
+    "against Safety and against the Grounder again, and kept only if the resulting "
+    "article is genuinely better -- fewer Grounding blockers, and no new Safety "
+    "blocker. If it fails either check, the article you were shown is exactly what "
+    "proceeds to your next attempt, unchanged; nothing you propose here is ever lost "
+    "silently. If you are told a previous proposal was rejected and why, do not repeat "
+    "it -- propose something that answers the stated reason."
+)
+
+
+def grounding_completion_prompt(article_text: str, findings: list, ledger: dict,
+                                rejection: dict | None = None) -> str:
+    """Same shape as repair_prompt(), plus READ-ONLY neighboring-sentence context per
+    finding and, on a retry, the previous proposal's rejection reason -- concise and
+    structured, never the previous transcript."""
+    L = ["THE ARTICLE", article_text, "", "WHAT THE GROUNDER FOUND"]
+    for f in findings:
+        L += ["", "FINDING %s  [%s]" % (f.get("id"), f.get("classification")),
+              "  passage : %s" % str(f.get("quote"))[:400],
+              "  why     : %s" % str(f.get("why"))[:600]]
+        if f.get("suggested_patch"):
+            L.append("  a narrower wording the grounder believes is supported: %s"
+                     % str(f["suggested_patch"])[:300])
+        prev_s, next_s = neighbor_context_for(article_text, str(f.get("quote") or ""))
+        if prev_s:
+            L.append("  PREVIOUS SENTENCE (read-only, do not edit): %s" % prev_s[:300])
+        if next_s:
+            L.append("  NEXT SENTENCE (read-only, do not edit -- check it does not "
+                     "depend on what you are about to remove): %s" % next_s[:300])
+        rel = _relevant_facts(str(f.get("quote") or ""), ledger,
+                              str(f.get("why") or ""))
+        if rel:
+            L.append("  THE FROZEN EVIDENCE FOR THIS PASSAGE:")
+            for fid, fact in rel:
+                L.append("    %s  %s" % (fid, fact.get("proposition", "")[:220]))
+                if fact.get("support_span"):
+                    L.append("        span: %r" % fact["support_span"][:200])
+    if rejection:
+        L += ["", "YOUR PREVIOUS PROPOSAL WAS REJECTED BECAUSE: %s"
+             % str(rejection.get("reason", ""))[:300]]
+        if rejection.get("detail"):
+            L.append("  detail: %s" % str(rejection["detail"])[:400])
+        L.append("Do not repeat that proposal. Propose something that answers this "
+                "reason instead.")
+    L += ["", REPAIR_GROUNDING_SCHEMA]
+    return "\n".join(L)
+
+
+def grounding_repair_proposal(provider, article_text: str, findings: list, ledger: dict,
+                              packet: dict, rejection: dict | None = None) -> dict:
+    """ONE surgical, local repair proposal for the progress-bounded completion loop.
+    Exactly one model call. Verified by the SAME apply_local_grounding_repair()
+    grounding_repair() (Stage 8b) already uses -- claim-local, never packet-wide.
+
+    Unlike grounding_repair(), this NEVER raises on an empty or wholly-refused result: a
+    proposal that produces nothing usable is one more piece of information for the loop
+    (try a different target, or stop), not a terminal failure of the whole article.
+    """
+    if not findings:
+        return {"status": SKIPPED, "reason": "no repairable finding", "model_calls": 0}
+    obj, ident = _ask(provider, GROUNDING_COMPLETION_LOOP_SYSTEM,
+                      grounding_completion_prompt(article_text, findings, ledger,
+                                                  rejection),
+                      6_000, GROUNDING, GROUNDING_HOLD)
+    edits = obj.get("edits")
+    if not isinstance(edits, list) or not edits:
+        return {"status": HOLD, "reason": "the repair proposal returned no edits",
+                "model_calls": 1, "provider": ident}
+    text, prov, errs = apply_local_grounding_repair(article_text, edits, findings,
+                                                     ledger, packet)
+    if not prov:
+        return {"status": HOLD,
+                "reason": ("the repair proposal did not stay within its permissions"
+                          if errs else "the repair proposal answered no finding"),
+                "failures": errs, "model_calls": 1, "provider": ident}
+    if not text.strip():
+        return {"status": HOLD, "reason": "the repair proposal deleted the whole article",
+                "model_calls": 1, "provider": ident}
+    return {"status": PASS, "article_text": text, "edits": prov,
+            "findings_answered": sorted({str(e.get("finding_id")) for e in prov}),
+            "rejected_edits": errs, "provider": ident, "model_calls": 1}
+
+
+def _edit_signature(edits: list) -> tuple:
+    """A hashable fingerprint of a proposal's edits, to detect the model repeating the
+    same effective edit after a rejection -- not by string identity, by (finding, before,
+    after)."""
+    return tuple(sorted((str(e.get("finding_id")), str(e.get("original")),
+                         str(e.get("repaired"))) for e in (edits or [])))
+
+
+def grounding_completion_loop(
+        provider, article_text: str, package: dict | None, initial: dict, ledger: dict,
+        packet: dict, arch: dict | None, pack: dict, source_text: str, source_sha: str,
+        audit_fn, max_iterations: int = GROUNDING_COMPLETION_MAX_ITERATIONS) -> dict:
+    """TRANSACTIONAL, PROGRESS-BOUNDED Grounding completion. Replaces the fixed
+    one-repair-plus-one-completion-pass budget (Stage 8b + Stage 8c) with a loop that
+    keeps trying bounded local repairs only as long as each one demonstrably leaves the
+    article in a strictly better state, subject to a mechanical iteration fuse.
+
+    `initial` is the grounding result already computed by the caller (one model call the
+    caller already paid for -- never repeated here). `audit_fn` is the caller's own
+    safety_audit() closure (bound to the run's draft/packet/arch/ledger/cut/negative
+    lineage), reused exactly as every other post-Writer stage in this run uses it, so a
+    candidate is checked against the SAME Safety this run enforces everywhere else.
+
+    Returns a dict shaped like ground_candidate()'s own result (status/blocking/
+    grounding_status/...), PLUS `article_text` (the accepted text, `article_text` on the
+    input if nothing was ever accepted) and the bookkeeping the caller folds into its own
+    calls/repairs dicts: `model_calls`, `iterations`, `proposals`, `accepted`, `rejected`,
+    `initial_blocker_count`, `final_blocker_count`.
+    """
+    accepted_text = article_text
+    g = initial
+    iterations = proposals = accepted = rejected = 0
+    model_calls = 0
+    tried = set()
+    rejection = None
+    history: list = []
+    # Every accepted proposal's own edit provenance, flat and in acceptance order -- so
+    # "what changed and why" stays fully auditable without a caller having to reassemble
+    # it from `history`, the same way g["repair"]["edits"] used to answer that question
+    # for the single fixed repair this loop replaces.
+    accepted_edits: list = []
+    # The Safety verdict for the LAST accepted candidate, exactly as computed inside the
+    # loop (with that candidate's own `repair=` baseline widening already applied) -- the
+    # caller records THIS, never a fresh re-audit outside the loop, which could omit that
+    # widening and reject a candidate this loop already proved passes.
+    final_safety = None
+
+    while g["status"] != PASS and iterations < max_iterations:
+        target = repairable_findings(g["blocking"])
+        if not target:
+            break
+
+        iterations += 1
+        prop = grounding_repair_proposal(provider, accepted_text, target, ledger,
+                                         packet, rejection)
+        proposals += 1
+        model_calls += prop.get("model_calls", 0)
+
+        if prop["status"] != PASS:
+            rejected += 1
+            rejection = {"reason": prop.get("reason", "the proposal was refused")}
+            history.append({"iteration": iterations, "outcome": "no_usable_proposal",
+                            "reason": rejection["reason"]})
+            break
+
+        sig = _edit_signature(prop.get("edits"))
+        if sig in tried:
+            rejected += 1
+            history.append({"iteration": iterations, "outcome": "repeated_proposal"})
+            break
+        tried.add(sig)
+
+        candidate_text = prop["article_text"]
+        # `repair=prop` -- same as every other post-repair audit in this run -- so the
+        # facts THIS proposal's own edits cited widen the approved baseline exactly as
+        # much as they are entitled to, and no more. Without it a legitimate CORRECT_TIME
+        # /CORRECT_DATE or attribution-restoring edit could be rejected here for
+        # "introducing" surface its own cited facts already license.
+        candidate_safety = audit_fn(candidate_text, package, repair=prop)
+        model_calls += candidate_safety.get("model_calls", 0)
+
+        if candidate_safety["status"] != PASS:
+            rejected += 1
+            rejection = {"reason": "introduced a new Safety blocker",
+                        "detail": candidate_safety["blocking"][:4]}
+            history.append({"iteration": iterations, "outcome": "safety_rejected",
+                            "detail": rejection["detail"]})
+            continue
+
+        candidate_grounding = ground_candidate(
+            provider, bundle_text(candidate_text, package), source_text, source_sha,
+            pack, arch, packet)
+        model_calls += candidate_grounding.get("model_calls", 0)
+
+        before_count = len(g["blocking"])
+        if len(candidate_grounding["blocking"]) < before_count:
+            accepted += 1
+            accepted_text = candidate_text
+            g = candidate_grounding
+            final_safety = candidate_safety
+            accepted_edits.extend(prop.get("edits") or [])
+            rejection = None
+            history.append({"iteration": iterations, "outcome": "accepted",
+                            "blocking_before": before_count,
+                            "blocking_after": len(g["blocking"]),
+                            "findings_answered": prop.get("findings_answered")})
+        else:
+            rejected += 1
+            rejection = {
+                "reason": "grounding blocker count did not shrink (%d -> %d)"
+                          % (before_count, len(candidate_grounding["blocking"])),
+                "detail": [str(f.get("quote") or "")[:100]
+                          for f in candidate_grounding["blocking"][:4]]}
+            history.append({"iteration": iterations, "outcome": "no_progress",
+                            "reason": rejection["reason"]})
+
+    out = dict(g)
+    out["article_text"] = accepted_text
+    out["model_calls"] = model_calls
+    out["repairs"] = accepted
+    out["grounding_completion_iterations"] = iterations
+    out["grounding_repair_proposals"] = proposals
+    out["grounding_repairs_accepted"] = accepted
+    out["grounding_repairs_rejected"] = rejected
+    out["initial_blocker_count"] = len(initial["blocking"])
+    out["final_blocker_count"] = len(g["blocking"])
+    out["grounding_completion_history"] = history
+    out["final_safety"] = final_safety
+    out["accepted_edits"] = accepted_edits
+    return out
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # STAGE 9b -- ONE SAFETY REPAIR (owner-directed, 2026-09-09)
 # ══════════════════════════════════════════════════════════════════════════════
 # WHY THIS EXISTS. Real production evidence (three retained Worth-PASS runs, one day)
@@ -5321,92 +5628,53 @@ def run_story_architecture_composition(
 
         g = repackage_if_only_the_furniture_failed(g)
 
-        # ONE GROUNDED FACTUAL REPAIR, then the FULL hard safety stack again, then the
-        # Grounder again. A second grounding failure is the end of the article: no second
-        # repair, no Writer regeneration, no architecture rerun, no new research.
-        if g["status"] != PASS and repairable_findings(g["blocking"]):
-            rep = grounding_repair(P, final, g["blocking"], ledger, wr["packet"])
-            if rep["status"] == PASS:
-                g["repair"] = {k: v for k, v in rep.items() if k != "article_text"}
-                calls[GROUNDING] = calls.get(GROUNDING, 0) + rep["model_calls"]
-                repairs[GROUNDING] = 1
-                final = rep["article_text"]
-
-                # The complete stack, against the REPAIRED article. A factual correction
-                # is still prose the Writer did not write, and it is audited as such.
-                sa2 = record(SAFETY, audit(final, pkg, repair=rep))
-                sa2["after_factual_repair"] = True
-                if sa2["status"] != PASS:
+        # PROGRESS-BOUNDED GROUNDING COMPLETION (owner-directed, 2026-09-09) replaces the
+        # old fixed one-repair-plus-one-completion-pass budget (Stage 8b + Stage 8c) --
+        # see grounding_completion_loop for why. Repair continues only as long as each
+        # accepted proposal is TRANSACTIONALLY proven better -- a strictly smaller
+        # Grounding blocking set, no new Safety blocker -- subject to
+        # GROUNDING_COMPLETION_MAX_ITERATIONS as a runaway fuse, never as a target. No
+        # Writer regeneration, no architecture rerun, no new research, at any point; the
+        # package is untouched throughout (a Grounding factual repair changes only the
+        # article, exactly as before).
+        if g["status"] != PASS:
+            gc = grounding_completion_loop(P, final, pkg, g, ledger, wr["packet"], arch,
+                                           pack, source_text, source_sha, audit)
+            # gc["model_calls"] is ONLY this call's own (proposals + rechecks) -- added to
+            # what calls[GROUNDING] already carries from the initial check (and any
+            # furniture repackage above) before record() overwrites it with the total,
+            # the same accumulate-then-record pattern every repair path in this run uses.
+            gc["model_calls"] = calls.get(GROUNDING, 0) + gc["model_calls"]
+            g = record(GROUNDING, gc)
+            if gc["grounding_repairs_accepted"]:
+                final = gc["article_text"]
+                # The winning candidate's OWN Safety verdict, computed inside the loop
+                # with that candidate's own `repair=` baseline widening -- reused exactly,
+                # never re-derived here, so this can never disagree with what the loop
+                # itself already proved. See grounding_completion_loop's `final_safety`.
+                sa_gc = gc["final_safety"]
+                sa_gc["after_grounding_completion"] = True
+                if sa_gc["status"] != PASS:
                     return out(SAFETY,
-                               "the factual repair did not survive the safety stack: %s"
-                               % "; ".join(sa2["blocking"])[:400],
+                               "an accepted grounding repair did not survive the safety "
+                               "stack: %s" % "; ".join(sa_gc["blocking"])[:400],
                                SAFETY_HOLD, final, pkg, surface)
-
-                g2 = record(GROUNDING, ground_candidate(P, bundle_text(final, pkg),
-                                                        source_text, source_sha, pack,
-                                                        arch, wr["packet"]))
-                g2["repair"] = g["repair"]
-                g2["attempt"] = 2
-                calls[GROUNDING] = calls.get(GROUNDING, 0) + 1
-                repairs[GROUNDING] = 1
-                g = g2
-
-                # ── ONE COMPLETION PASS, AND ONLY FOR A RESIDUE ──────────────
-                # Not a retry. The first repair was accepted and applied; what is left is
-                # the same claim in a second place, which two production runs showed the
-                # first pass does not reliably reach (see STAGE 8c). It runs at most once,
-                # on at most COMPLETION_MAX_FINDINGS findings the Grounder itself marked
-                # repairable, through the SAME apply_grounding_repair contract, followed by
-                # one final Grounder call. Whatever that call says is final: there is no
-                # third pass, and this block is the only place completion is reachable.
-                _ok, _why, _comp_findings = completion_eligible(g, rep)
-                if _ok:
-                    comp = grounding_completion(P, final, _comp_findings, ledger,
-                                                wr["packet"])
-                    calls[GROUNDING] = calls.get(GROUNDING, 0) + comp.get("model_calls", 0)
-                    g["completion_considered"] = _why
-                    if comp["status"] == PASS:
-                        g["completion"] = {k: v for k, v in comp.items()
-                                           if k != "article_text"}
-                        final = comp["article_text"]
-
-                        # The full hard stack again, on the completed text. Deterministic,
-                        # no provider: a completion is prose the Writer did not write, and
-                        # it is audited exactly as the first repair's output is.
-                        sa3 = record(SAFETY, audit(final, pkg, repair=comp))
-                        sa3["after_completion_pass"] = True
-                        if sa3["status"] != PASS:
-                            return out(SAFETY,
-                                       "the completion pass did not survive the safety "
-                                       "stack: %s" % "; ".join(sa3["blocking"])[:400],
-                                       SAFETY_HOLD, final, pkg, surface)
-
-                        g3 = record(GROUNDING,
-                                    ground_candidate(P, bundle_text(final, pkg),
-                                                     source_text, source_sha, pack,
-                                                     arch, wr["packet"]))
-                        g3["repair"] = g["repair"]
-                        g3["completion"] = g["completion"]
-                        g3["attempt"] = 3
-                        calls[GROUNDING] = calls.get(GROUNDING, 0) + 1
-                        g = g3
-                    else:
-                        g["completion_skipped"] = comp.get("reason", "")
-                        g["completion_rejected_edits"] = comp.get("rejected_edits", [])
-                else:
-                    g["completion_considered"] = _why
 
         pkg = pkg_ref[0]
         g = repackage_if_only_the_furniture_failed(g)
         pkg = pkg_ref[0]
 
         if g["status"] != PASS:
+            _iters = g.get("grounding_completion_iterations")
+            _after = (" AFTER %d repair attempt(s) over %d iteration(s), %d accepted, "
+                      "%d rejected"
+                      % (g.get("grounding_repair_proposals", 0), _iters,
+                         g.get("grounding_repairs_accepted", 0),
+                         g.get("grounding_repairs_rejected", 0))
+                      if _iters else "")
             return out(GROUNDING,
                        "grounding status %r; %d blocking finding(s)%s: %s"
-                       % (g["grounding_status"], len(g["blocking"]),
-                          {2: " AFTER one factual repair",
-                           3: " AFTER one factual repair and one completion pass"}
-                          .get(g.get("attempt"), ""),
+                       % (g["grounding_status"], len(g["blocking"]), _after,
                           [("%s %s %s" % (f.get("classification"),
                                           surface_of(str(f.get("quote") or ""), pkg),
                                           str(f.get("quote") or f.get("claim") or "")[:70]))

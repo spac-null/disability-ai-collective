@@ -2037,9 +2037,11 @@ def test_one_grounded_factual_repair_then_the_full_stack_again():
     check("1. a clean grounder spends no repair", out["status"] == CP.PASS
           and calls["n"] == 1, (out.get("failure_reason"), calls))
     check("   and no repair is recorded",
-          not out["detail"][CP.GROUNDING].get("repair"))
+          not out["detail"][CP.GROUNDING].get("accepted_edits"))
 
-    # 2. A repairable HOLD -> exactly one repair, then safety, then Grounder again.
+    # 2. A repairable HOLD -> exactly one accepted repair (the blocking set strictly
+    # shrinks to empty), then safety, then Grounder again -- now via the progress-bounded
+    # completion loop rather than a fixed one-shot repair.
     prov, calls, out = run_g([GROUND_DIRTY, GROUND_CLEAN], [repair])
     check("2. one repair rescues the article", out["status"] == CP.PASS,
           out.get("failure_reason"))
@@ -2047,22 +2049,36 @@ def test_one_grounded_factual_repair_then_the_full_stack_again():
     check("   exactly one repair", out["repairs_by_stage"].get(CP.GROUNDING) == 1)
     check("   the repaired wording is what carries", fixed in out["article_text"])
     check("   and it reached the reader", out["stages"][CP.READER] == CP.PASS)
+    check("   exactly one iteration, one proposal, one acceptance",
+          out["detail"][CP.GROUNDING]["grounding_completion_iterations"] == 1
+          and out["detail"][CP.GROUNDING]["grounding_repair_proposals"] == 1
+          and out["detail"][CP.GROUNDING]["grounding_repairs_accepted"] == 1,
+          out["detail"][CP.GROUNDING])
 
-    # 6. Provenance: every edit auditable.
-    ed = out["detail"][CP.GROUNDING]["repair"]["edits"][0]
+    # 6. Provenance: every accepted edit auditable, flat on the grounding detail --
+    # accepted_edits replaces the old single g["repair"]["edits"] this loop supersedes.
+    ed = out["detail"][CP.GROUNDING]["accepted_edits"][0]
     for field in ("finding_id", "operation", "original", "repaired",
                   "what_was_removed", "fact_ids", "support_spans",
                   "authorising_finding"):
         check("   provenance carries %s" % field, ed.get(field) is not None, ed)
     check("   and names the authorising finding", ed["finding_id"] == "G1")
 
-    # 7. A second grounding failure is the end.
-    prov, calls, out = run_g([GROUND_DIRTY, GROUND_DIRTY], [repair])
-    check("7. a second grounder HOLD ends the article",
+    # 7. The SAME repair proposed twice in a row (no progress the first time, the
+    # identical proposal repeated the second) terminates HOLD -- the repeat-signature
+    # guard, not a fixed repair count. Two grounder calls total: the initial check and
+    # the one recheck after the first (rejected, no-progress) proposal; the second
+    # proposal is caught as a repeat BEFORE it would spend a third.
+    prov, calls, out = run_g([GROUND_DIRTY, GROUND_DIRTY], [repair, repair])
+    check("7. a repeated ineffective proposal ends the article",
           out["failure_stage"] == CP.GROUNDING, out.get("failure_stage"))
-    check("   and says it was after a repair",
-          "AFTER one factual repair" in out["failure_reason"], out["failure_reason"])
-    check("   NEVER a second repair", calls["n"] == 2, calls)
+    check("   and says how many attempts it took",
+          "2 iteration" in out["failure_reason"], out["failure_reason"])
+    check("   no repair was ever accepted",
+          out["detail"][CP.GROUNDING]["grounding_repairs_accepted"] == 0,
+          out["detail"][CP.GROUNDING])
+    check("   the grounder ran exactly twice, never a third recheck", calls["n"] == 2,
+          calls)
     stages = [prov.stage_of(i) for i in range(len(prov.calls))]
     check("   no Writer regeneration", stages.count("WRITER") == 1, stages)
     check("   the fact check is not reached",
