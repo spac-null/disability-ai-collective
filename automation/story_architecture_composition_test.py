@@ -2753,6 +2753,72 @@ def test_package_only_safety_repair_permissions():
               allowed_prefixes=CP.PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES) is None)
 
 
+def test_package_only_safety_completion_wrapper_contract():
+    """package_only_safety_completion() directly: the ONE semantic owner every
+    regenerated-package call site (article repair, Reader repair, Grounding's
+    furniture-only repackage) now shares, rather than each re-deriving STAGE 9c's
+    eligibility rule and one-call budget on its own. It is a thin, non-auditing wrapper
+    around the same safety_repair_findings()/package_safety_repair() pair
+    test_package_only_safety_repair_permissions already exercises directly -- this test
+    is about the wrapper's own contract (attempted True/False, no article access), not a
+    second proof of the repair mechanics underneath it."""
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    package = {"title": "",
+              "dek": "As the evidence shows, the room keeps its own record.",
+              "homepage_excerpt": "", "meta_description": "", "social_hook": ""}
+    leak_sa = {"blocking": ["PACKAGE_MACHINE_LANGUAGE: frames [('the evidence', 1)], "
+                            "scaffold []"],
+              "audits": {"continuity_final": {}, "publication_package": {
+                  "prose_leaks": {"ok": False, "frames": [("the evidence", 1)]},
+                  "scaffold": {"ok": True, "leaked": []},
+                  "cut_adherence": {"violations": []},
+                  "factual_surface": {"unapproved_sensory": [], "unapproved_numbers": [],
+                                      "unapproved_entities": []}}}}
+
+    # 6. a non-package / factual finding makes the whole attempt ineligible -- no model
+    # call spent, "attempted": False, exactly what every call site checks before doing
+    # its own re-audit.
+    factual_sa = dict(leak_sa, blocking=["NEW_UNSUPPORTED_FACTS: sensory=['pink']"])
+    never_called = Scripted([])
+    comp = CP.package_only_safety_completion(
+        never_called, factual_sa, DRAFT, package, LEDGER, packet, DRAFT)
+    check("a factual finding is ineligible: no attempt, no model call",
+          comp == {"attempted": False}, comp)
+    check("and no call was made", never_called.calls == [])
+
+    # 2/7/8. an eligible package leak IS attempted, exactly once, and the function
+    # never sees or returns the article body -- a package-only repair structurally
+    # cannot touch article prose because this wrapper never passes it any.
+    accept = Scripted([{"edits": [{
+        "finding_id": "SF1", "operation": "DELETE",
+        "original": "As the evidence shows, the room keeps its own record.",
+        "repaired": "The room keeps its own record.", "fact_ids": []}]}])
+    comp2 = CP.package_only_safety_completion(
+        accept, leak_sa, DRAFT, package, LEDGER, packet, DRAFT)
+    check("an eligible leak is attempted", comp2["attempted"] is True, comp2)
+    check("exactly one model call was spent", len(accept.calls) == 1, accept.calls)
+    check("the repair result carries a package, never an article body",
+          "package" in comp2["repair"] and "article_text" not in comp2["repair"],
+          comp2["repair"])
+    check("the leak is gone from the returned package",
+          "the evidence" not in comp2["repair"]["package"]["dek"].lower(),
+          comp2["repair"]["package"])
+
+    # 4. an edit that adds a new entity/number is refused by the SAME mechanical check
+    # test_package_only_safety_repair_permissions already proves for
+    # apply_package_safety_repair() -- this wrapper adds no permission of its own, so a
+    # HOLD here is proof the wrapper does not loosen anything on the way through.
+    inject = Scripted([{"edits": [{
+        "finding_id": "SF1", "operation": "REPHRASE",
+        "original": "As the evidence shows, the room keeps its own record.",
+        "repaired": "As Anneke Mertens' 47 sources show, the room keeps its own record.",
+        "fact_ids": []}]}])
+    comp3 = CP.package_only_safety_completion(
+        inject, leak_sa, DRAFT, package, LEDGER, packet, DRAFT)
+    check("a repair that adds a new entity/number is refused, not applied",
+          comp3["repair"]["status"] != CP.PASS, comp3["repair"])
+
+
 def test_package_only_safety_repair_after_regeneration():
     """Full pipeline: the real mechanism a live retained-artifact replay found twice
     (2026-09-09). The article carries an unlicensed sensory word ('pink'); the existing
@@ -3368,6 +3434,230 @@ def test_a_reader_editorial_repair_can_rescue_the_article():
     check("a reader gate that skips dimensions is refused",
           out2["failure_stage"] == CP.READER
           and "did not report on" in out2["failure_reason"], out2.get("failure_reason"))
+
+
+class _ReaderPackageThenLeak:
+    """Same double as _PackageThenLeak in test_package_only_safety_repair_after_
+    regeneration, adapted for the READER path: every PACKAGE call is answered from
+    package_from() EXCEPT the second one, which is exactly the package make_package()
+    builds from the Reader-repaired article -- the surface bug #106 found nothing
+    covering. Everything else pops from `replies`, same contract as Scripted."""
+    model = "test"
+    url = "http://127.0.0.1:0/v1"
+
+    def __init__(self, replies, leak=True):
+        self.replies = list(replies)
+        self.calls = []
+        self._pkg_calls = 0
+        self.leak = leak
+
+    def complete(self, system, user, max_tokens=3000, timeout=180,
+                temperature=None, deadline=None):
+        self.calls.append({"system": system, "user": user})
+        if "the last writer to touch a finished" in system.lower():
+            return Reply(user.split("THE ARTICLE\n", 1)[-1].strip())
+        if "editor who decides how a finished" in system.lower():
+            self._pkg_calls += 1
+            article = user.split("THE FINISHED ARTICLE\n", 1)[-1]
+            if self.leak and self._pkg_calls > 1:
+                pkg = {"title": "A room made of salt",
+                      "dek": "As the evidence shows, the room keeps its own record.",
+                      "homepage_excerpt": package_from(article)["homepage_excerpt"],
+                      "meta_description": package_from(article)["meta_description"],
+                      "social_hook": package_from(article)["social_hook"]}
+            else:
+                pkg = package_from(article)
+            return Reply(json.dumps({"package": pkg}))
+        if not self.replies:
+            raise AssertionError("the run made more model calls than the script "
+                                 "allows (%d so far)" % len(self.calls))
+        r = self.replies.pop(0)
+        return Reply(r if isinstance(r, str) else json.dumps(r))
+
+    def stage_of(self, i):
+        s = self.calls[i]["system"]
+        if "the last writer to touch a finished" in s.lower():
+            return "PROSE_FINISH"
+        if "editor who decides how a finished" in s.lower():
+            return "PACKAGE"
+        for name, marker in (("LEDGER", "freezing an evidence ledger"),
+                             ("WORTH", "whether a story belongs"),
+                             ("ARCHITECTURE", "building the reader's path"),
+                             ("WRITER", "writing one finished article from an "
+                                       "approved"),
+                             ("CONTINUITY", "the continuity editor")):
+            if marker.lower() in s.lower():
+                return name
+        if "ordinary intelligent reader" in s:
+            return "READER"
+        return "?"
+
+
+def _reader_momentum_hold():
+    return {"dimensions": dict(
+                {d: {"verdict": "PASS", "note": "", "passages": []}
+                 for d in CP.READER_DIMENSIONS},
+                MOMENTUM={"verdict": "HOLD",
+                          "note": "a paragraph restates the one before it",
+                          "passages": ["The pallets and the eleven days are in the "
+                                      "record."]}),
+            "overall": "HOLD", "one_line": "the ending repeats itself"}
+
+
+def test_reader_repair_package_leak_gets_package_only_completion():
+    """THE BUG THIS TASK EXISTS TO CLOSE. The Reader repair rewrites the article,
+    make_package() regenerates the package from that rewrite, and the regeneration is
+    scripted here to reintroduce the same machine-language leak
+    test_package_only_safety_repair_after_regeneration proves for the article-repair
+    path -- proving the Reader path was the one call site STAGE 9c's original,
+    single-site placement did not reach. Routed through the SAME
+    package_only_safety_completion() shared owner: one package-only repair, one
+    recheck, PASS, and nothing regenerates the package a third time."""
+    reader_repair_reply = {"edits": [{
+        "dimension": "MOMENTUM", "operation": "DELETE",
+        "original": "The pallets and the eleven days are in the record.",
+        "repaired": ""}]}
+    fix_dek = {"edits": [{
+        "finding_id": "SF1", "operation": "DELETE",
+        "original": "As the evidence shows, the room keeps its own record.",
+        "repaired": "The room keeps its own record.", "fact_ids": []}]}
+
+    def run_it(replies, leak=True):
+        import new_engine_v1.stages as S
+        real = S.ground
+        S.ground = lambda *a, **k: dict(GROUND_CLEAN)
+        prov = _ReaderPackageThenLeak(replies, leak=leak)
+        try:
+            return prov, CP.run_story_architecture_composition(
+                prov, pack=PACK, source_text=S0, source_sha="x",
+                subject=PACK["subject"], fact_check_fn=lambda a: dict(FC_CLEAN))
+        finally:
+            S.ground = real
+
+    prov, out = run_it(
+        full_script(reader=_reader_momentum_hold())
+        + [reader_repair_reply, fix_dek, READER_OK])
+    check("the Reader-path package leak is repaired and the run reaches PASS",
+          out["status"] == CP.PASS, out.get("failure_reason"))
+    check("the surviving dek is the repaired one, not the leaked one",
+          "the evidence" not in (out["package"] or {}).get("dek", "").lower(),
+          out.get("package"))
+    check("the restating sentence the Reader repair targeted is still gone",
+          "The pallets and the eleven days are in the record." not in
+          out["article_text"], out["article_text"])
+    check("both repairs are recorded on their own stages",
+          out["repairs_by_stage"].get(CP.READER) == 1
+          and out["repairs_by_stage"].get(CP.SAFETY) == 1, out["repairs_by_stage"])
+    # The package-only repair spent exactly one model call. record(SAFETY, audit(...))
+    # overwrites calls[SAFETY] to the audit's own (always zero) count on the way to this
+    # PASS, so the "before" and "after" increments around it are not two contributions
+    # landing in the total -- the first is wiped before the second is added. Asserting
+    # the exact delta here, not just that a repair happened, is what would have caught a
+    # genuine double- or zero-count regression in either direction.
+    check("the package-only repair's one model call is counted exactly once on SAFETY",
+          out["model_calls_by_stage"].get(CP.SAFETY) == 1,
+          out["model_calls_by_stage"])
+    check("the recheck is marked as both a reader-repair and package-repair recheck",
+          out["detail"][CP.SAFETY].get("after_reader_repair") is True
+          and out["detail"][CP.SAFETY].get("after_package_safety_repair") is True,
+          out["detail"][CP.SAFETY])
+    stages_called = [prov.stage_of(i) for i in range(len(prov.calls))]
+    check("exactly two package builds -- the original and the one regenerated after "
+          "the Reader repair -- and no third regeneration after the package repair",
+          stages_called.count("PACKAGE") == 2, stages_called)
+    check("two unattributed calls -- the reader repair and the package-only repair --"
+          " and neither is a second attempt at either",
+          stages_called.count("?") == 2, stages_called)
+
+
+def test_reader_repair_package_leak_that_survives_package_repair_holds():
+    """The package-only repair itself does not clear the leak -> terminal HOLD, no
+    second attempt, exactly the bound test_package_only_safety_repair_after_
+    regeneration proves for the article-repair path."""
+    reader_repair_reply = {"edits": [{
+        "dimension": "MOMENTUM", "operation": "DELETE",
+        "original": "The pallets and the eleven days are in the record.",
+        "repaired": ""}]}
+
+    import new_engine_v1.stages as S
+    real = S.ground
+    S.ground = lambda *a, **k: dict(GROUND_CLEAN)
+    prov = _ReaderPackageThenLeak(
+        full_script(reader=_reader_momentum_hold())
+        + [reader_repair_reply, {"edits": []}], leak=True)
+    try:
+        out = CP.run_story_architecture_composition(
+            prov, pack=PACK, source_text=S0, source_sha="x",
+            subject=PACK["subject"], fact_check_fn=lambda a: dict(FC_CLEAN))
+    finally:
+        S.ground = real
+    check("a package repair that fixes nothing still HOLDs",
+          out["status"] == CP.HOLD and out["failure_stage"] == CP.SAFETY,
+          out.get("failure_reason"))
+    stages_called = [prov.stage_of(i) for i in range(len(prov.calls))]
+    check("no second package-only repair was attempted -- just the reader repair and "
+          "the one package repair that failed to clear it",
+          stages_called.count("?") == 2, stages_called)
+    check("no third package regeneration was attempted either",
+          stages_called.count("PACKAGE") == 2, stages_called)
+
+
+def test_furniture_repackage_leak_gets_package_only_completion():
+    """The other regenerated-package call site: Grounding's furniture-only repackage
+    (repackage_if_only_the_furniture_failed) rewrites the package with refusals, and the
+    rewrite is scripted here to reintroduce a machine-language leak. Before this task
+    that Safety failure was an immediate terminal HOLD; now it gets the same one
+    package-only repair chance every other regenerated package gets, without touching
+    the one-repackage-per-run rule (repackaged[0] is still spent exactly once)."""
+    _, clean = run(full_script())
+    dek = (clean["package"] or {})["dek"]
+
+    calls = {"n": 0}
+
+    def staged_ground(*a, **k):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return {"status": "settled",
+                    "findings": [{"classification": "TRUE_UNSUPPORTED",
+                                  "quote": dek[:80], "why": "not in the sources"}]}
+        return dict(GROUND_CLEAN)
+
+    fix_dek = {"edits": [{
+        "finding_id": "SF1", "operation": "DELETE",
+        "original": "As the evidence shows, the room keeps its own record.",
+        "repaired": "The room keeps its own record.", "fact_ids": []}]}
+    prov = _ReaderPackageThenLeak(full_script()[:5] + [fix_dek, READER_OK], leak=True)
+    import new_engine_v1.stages as S
+    real = S.ground
+    S.ground = staged_ground
+    try:
+        out = CP.run_story_architecture_composition(
+            prov, pack=PACK, source_text=S0, source_sha="deadbeef",
+            subject=PACK["subject"], fact_check_fn=lambda a: dict(FC_CLEAN))
+    finally:
+        S.ground = real
+    check("the article is not lost to a leaked, rewritten package",
+          out["status"] == CP.PASS, out.get("failure_reason"))
+    check("the surviving dek is the repaired one, not the leaked one",
+          "the evidence" not in (out["package"] or {}).get("dek", "").lower(),
+          out.get("package"))
+    check("the package-only repair is recorded on SAFETY, not GROUNDING",
+          out["repairs_by_stage"].get(CP.SAFETY) == 1
+          and not out["repairs_by_stage"].get(CP.GROUNDING), out["repairs_by_stage"])
+    # Same exact-delta assertion as the Reader-path completion test: one repair call,
+    # counted once on SAFETY, not wiped to zero or doubled by the record()/audit()
+    # overwrite the increment sits around.
+    check("the package-only repair's one model call is counted exactly once on SAFETY",
+          out["model_calls_by_stage"].get(CP.SAFETY) == 1,
+          out["model_calls_by_stage"])
+    check("the recheck is marked as both a repackage and package-repair recheck",
+          out["detail"][CP.SAFETY].get("after_repackage") is True
+          and out["detail"][CP.SAFETY].get("after_package_safety_repair") is True,
+          out["detail"][CP.SAFETY])
+    check("the grounder ran exactly twice -- no third repackage attempt",
+          calls["n"] == 2)
+    check("and it publishes with the repaired package",
+          out["publication_ready"] is True and bool(out["package"]))
 
 
 def test_composition_reuses_the_existing_provider_abstraction():

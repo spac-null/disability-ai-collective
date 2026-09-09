@@ -4009,6 +4009,50 @@ def package_safety_repair(provider, package: dict, findings: list, ledger: dict,
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# POST-REPAIR SAFETY COMPLETION -- the ONE semantic owner of STAGE 9c, shared
+# ══════════════════════════════════════════════════════════════════════════════
+# WHY THIS EXISTS. STAGE 9c above was written once, for the article-repair path: repair
+# the article body, make_package() regenerates the package from the repaired article, and
+# the fresh package can reintroduce the exact machine-language leak the article repair
+# just removed ("the evidence" is a natural phrase to reach for on this subject). That
+# path already tries one package-only repair before holding.
+#
+# But the article-repair path is not the only place this module calls make_package() on
+# text a repair produced and then re-audits the result: Reader repair regenerates a
+# package from its rewritten article the same way, and Grounding's furniture-only
+# repackage (see repackage_if_only_the_furniture_failed, below) regenerates a package with
+# explicit refusals for the same reason. Both used to go straight to a HOLD on a Safety
+# failure, because STAGE 9c's package-only retry lived only in the article-repair branch
+# -- copying its body into each new call site would give this rule three places to drift
+# out of sync. This function is the one place it is implemented; every call site above
+# calls it and does its own re-audit + bookkeeping afterward, exactly as STAGE 9c always
+# has.
+#
+# NOT A NEW MECHANISM. Same eligibility (PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES, via the
+# same safety_repair_findings()/_safety_locate_findings() STAGE 9b uses), same one-call
+# package_safety_repair(), same "article must already be Safety-clean" property that falls
+# out of the prefix check rather than a separate flag. It does not audit and does not touch
+# a caller's calls/repairs/record() bookkeeping -- those differ by call site (attributed to
+# SAFETY, READER or GROUNDING's own stage depending on who is calling), so bookkeeping stays
+# with the caller, the same way it always has for STAGE 9c.
+def package_only_safety_completion(provider, sa: dict, final_text: str, package: dict | None,
+                                   ledger: dict, packet: dict, draft_text: str) -> dict:
+    """Given a FAILED safety_audit() result `sa` for (final_text, package), try the one
+    narrow package-only repair STAGE 9c defines. Returns {"attempted": False} if no
+    finding in `sa["blocking"]` is eligible (no model call spent), or {"attempted": True,
+    "findings": [...], "repair": <package_safety_repair() result>} otherwise -- `repair`
+    carries its own PASS/HOLD status and, on PASS, the new package at repair["package"].
+    """
+    pfindings = safety_repair_findings(
+        sa, final_text, package_prose(package), draft_text=draft_text,
+        allowed_prefixes=PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES)
+    if not pfindings:
+        return {"attempted": False}
+    prep = package_safety_repair(provider, package, pfindings, ledger, packet)
+    return {"attempted": True, "findings": pfindings, "repair": prep}
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # STAGE 8c -- ONE GROUNDING COMPLETION PASS
 # ══════════════════════════════════════════════════════════════════════════════
 # WHY THIS EXISTS, and why it is not "another repair". Two production runs showed the
@@ -5186,11 +5230,10 @@ def run_story_architecture_composition(
         # repair's own PASS branch) reintroducing a leak the article repair had no way
         # to see coming, because the text it would need to fix did not exist yet.
         if sa["status"] != PASS:
-            pfindings = safety_repair_findings(
-                sa, final, package_prose(pkg), draft_text=draft,
-                allowed_prefixes=PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES)
-            if pfindings:
-                prep = package_safety_repair(P, pkg, pfindings, ledger, wr["packet"])
+            comp = package_only_safety_completion(
+                P, sa, final, pkg, ledger, wr["packet"], draft)
+            if comp["attempted"]:
+                prep = comp["repair"]
                 calls[SAFETY] = calls.get(SAFETY, 0) + prep.get("model_calls", 0)
                 if prep["status"] == PASS:
                     # No make_package() call here or after -- the repaired package IS
@@ -5241,10 +5284,32 @@ def run_story_architecture_composition(
             sa_p = record(SAFETY, audit(final, pkg_ref[0]))
             sa_p["after_repackage"] = True
             if sa_p["status"] != PASS:
-                raise CompositionHold(
-                    SAFETY, SAFETY_HOLD,
-                    ["the rewritten package did not pass the safety stack"]
-                    + sa_p["blocking"][:6])
+                # The furniture-only rewrite above is itself a freshly regenerated
+                # package, exactly the shape package_only_safety_completion exists for --
+                # it may reintroduce the same class of machine-language leak the rewrite
+                # was trying to avoid. This spends its OWN one-shot budget (a distinct
+                # regenerated surface from any package-only repair already used earlier
+                # in the run), not a second attempt on the same surface, and does not
+                # change the one-repackage-per-run rule above (`repackaged[0]` is already
+                # set).
+                comp_p = package_only_safety_completion(
+                    P, sa_p, final, pkg_ref[0], ledger, wr["packet"], draft)
+                if comp_p["attempted"]:
+                    prep_p = comp_p["repair"]
+                    calls[SAFETY] = calls.get(SAFETY, 0) + prep_p.get("model_calls", 0)
+                    if prep_p["status"] == PASS:
+                        pkg_ref[0] = prep_p["package"]
+                        sa_p = record(SAFETY, audit(final, pkg_ref[0]))
+                        sa_p["after_repackage"] = True
+                        sa_p["after_package_safety_repair"] = True
+                        repairs[SAFETY] = 1
+                        calls[SAFETY] = calls.get(SAFETY, 0) + prep_p.get(
+                            "model_calls", 0)
+                if sa_p["status"] != PASS:
+                    raise CompositionHold(
+                        SAFETY, SAFETY_HOLD,
+                        ["the rewritten package did not pass the safety stack"]
+                        + sa_p["blocking"][:6])
             g_new = record(GROUNDING, ground_candidate(P, bundle_text(final, pkg_ref[0]),
                                                        source_text, source_sha, pack,
                                                        arch, wr["packet"]))
@@ -5399,11 +5464,32 @@ def run_story_architecture_composition(
                     sa_r["carried_text"] = carried
                     sa_r["after_reader_repair"] = True
                     if sa_r["status"] != PASS:
-                        return out(
-                            SAFETY,
-                            "the editorial repair did not survive the safety stack: %s"
-                            % "; ".join(sa_r["blocking"])[:400],
-                            SAFETY_HOLD, repaired, pkg_r, surface)
+                        # The Reader repair regenerated the package from the rewritten
+                        # article the same way the article-repair path does above, and it
+                        # can reintroduce the same package-surface leak -- see
+                        # package_only_safety_completion for why this is not a second,
+                        # special-cased mechanism.
+                        comp_r = package_only_safety_completion(
+                            P, sa_r, repaired, pkg_r, ledger, wr["packet"], draft)
+                        if comp_r["attempted"]:
+                            prep_r = comp_r["repair"]
+                            calls[SAFETY] = calls.get(SAFETY, 0) + prep_r.get(
+                                "model_calls", 0)
+                            if prep_r["status"] == PASS:
+                                pkg_r = prep_r["package"]
+                                sa_r = record(SAFETY, audit(repaired, pkg_r))
+                                sa_r["carried_text"] = carried
+                                sa_r["after_reader_repair"] = True
+                                sa_r["after_package_safety_repair"] = True
+                                repairs[SAFETY] = 1
+                                calls[SAFETY] = calls.get(SAFETY, 0) + prep_r.get(
+                                    "model_calls", 0)
+                        if sa_r["status"] != PASS:
+                            return out(
+                                SAFETY,
+                                "the editorial repair did not survive the safety stack: %s"
+                                % "; ".join(sa_r["blocking"])[:400],
+                                SAFETY_HOLD, repaired, pkg_r, surface)
                     g_r = record(GROUNDING, ground_candidate(
                         P, bundle_text(repaired, pkg_r), source_text, source_sha, pack,
                         arch, wr["packet"]))
