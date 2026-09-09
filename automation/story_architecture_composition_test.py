@@ -15,6 +15,7 @@ past the transport.
 """
 from __future__ import annotations
 
+import ast
 import copy
 import json
 import re
@@ -3799,6 +3800,330 @@ def test_a_grounding_failure_in_the_furniture_rewrites_the_furniture():
           out["detail"][CP.GROUNDING].get("repackage_findings"))
     check("and it publishes with the rewritten package",
           out["publication_ready"] is True and bool(out["package"]))
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# POST-REPACKAGE GROUNDING LOOP-BACK (owner-directed, 2026-09-09)
+# ══════════════════════════════════════════════════════════════════════════════
+# Real production gap, retained Poetry: the furniture repackage's own mandatory recheck
+# discovered a brand-new ARTICLE-surface finding ("Researchers working on eco-poetry...")
+# that had never been offered to any repair mechanism -- the run went straight to a
+# terminal HOLD with zero repair attempts. These tests force call-site-2's repackage
+# specifically (not call-site-1's, which the pre-existing main loop already handled): a
+# MIXED initial finding (one article, G1, one package, the auto-package's own dek) makes
+# split_by_surface's art_bad non-empty, so the FIRST repackage call skips and the main
+# grounding_completion_loop() is what resolves G1, leaving the package survivor to
+# trigger repackage at the SECOND call site -- the one this fix closes.
+G1 = dict(GROUND_DIRTY["findings"][0])
+G2 = {"id": "G2", "classification": "TRUE_UNSUPPORTED",
+     "quote": "The salt arrived in nine tonne pallets and was laid by two masons over "
+              "eleven days.",
+     "why": "the duration is not carried by the evidence"}
+FIX_G1 = {"edits": [{"finding_id": "G1", "operation": "NARROW",
+                     "original": "No entry describes what any visitor heard.",
+                     "repaired": "No catalogue entry in the eight describes what any "
+                                 "visitor heard.",
+                     "fact_ids": ["F05"], "what_was_removed": "the unbounded scope"}]}
+FIX_G2 = {"edits": [{"finding_id": "G2", "operation": "NARROW",
+                     "original": "The salt arrived in nine tonne pallets and was laid "
+                                 "by two masons over eleven days.",
+                     "repaired": "The salt arrived in nine tonne pallets and was laid "
+                                 "by two masons.",
+                     "fact_ids": ["F03"], "what_was_removed": "the duration"}]}
+
+
+def _run_post_repackage(ground_seq, extra=None):
+    """ground_seq: successive S.ground replies. `extra`: replies for repair-proposal
+    calls (the model path), consumed in the order grounding_completion_loop() makes
+    them -- same convention run_g() in test_one_grounded_factual_repair_then_the_full_
+    stack_again already uses."""
+    _, clean = run(full_script())
+    dek = (clean["package"] or {})["dek"]
+    import new_engine_v1.stages as S
+    real = S.ground
+    seq = list(ground_seq)
+    calls = {"n": 0}
+
+    def fake(*a, **k):
+        calls["n"] += 1
+        return dict(seq.pop(0) if seq else GROUND_CLEAN)
+
+    S.ground = fake
+    script = full_script()[:5] + list(extra or []) + [READER_OK]
+    prov = Scripted(script)
+    try:
+        out = CP.run_story_architecture_composition(
+            prov, pack=PACK, source_text=S0, source_sha="x",
+            subject=PACK["subject"], fact_check_fn=lambda a: dict(FC_CLEAN))
+        return prov, calls, out, dek
+    finally:
+        S.ground = real
+
+
+def test_furniture_repackage_then_clean_grounding_continues_normally():
+    """1. Repackage fires, its recheck is clean (PASS) -- the run continues normally,
+    with no post-repackage loop-back attempted at all."""
+    _, clean = run(full_script())
+    dek = (clean["package"] or {})["dek"]
+    ground_seq = [
+        {"status": "settled", "findings": [
+            dict(G1), {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+                       "why": "not in the sources"}]},   # 1: mixed, initial
+        {"status": "settled", "findings": [               # 2: main loop's recheck after
+            {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],           # G1 fix
+             "why": "not in the sources"}]},              #    -- package survives alone
+        dict(GROUND_CLEAN),                                # 3: repackage's own recheck
+    ]
+    prov, calls, out, _dek = _run_post_repackage(ground_seq, [FIX_G1])
+    check("the run reaches PASS", out["status"] == CP.PASS, out.get("failure_reason"))
+    check("the grounder ran exactly three times", calls["n"] == 3, calls)
+    check("G1's own repair (the main loop, before repackage) is still recorded",
+          out["repairs_by_stage"].get(CP.GROUNDING) == 1, out["repairs_by_stage"])
+    gd = out["detail"][CP.GROUNDING]
+    check("no post-repackage loop-back ever fired -- the repackage recheck was clean",
+          gd.get("grounding_completion_phase") != "POST_REPACKAGE", gd)
+    # The repackage's own clean recheck REPLACED st[GROUNDING]; G1's repair still has to
+    # be readable off the persisted run, or the artifact says an article nobody edited
+    # passed on the first read.
+    pre = gd.get("pre_repackage_completion")
+    check("the pre-repackage phase's history survives the repackage's own recheck",
+          bool(pre) and pre.get("grounding_completion_phase") == "PRE_REPACKAGE", pre)
+    check("and it names G1's own accepted edit",
+          any(e.get("finding_id") == "G1" for e in (pre or {}).get("accepted_edits")
+              or []), pre)
+    check("and it publishes", out["publication_ready"] is True and bool(out["package"]))
+
+
+def test_post_repackage_article_blocker_enters_the_completion_loop():
+    """2/3. Repackage's recheck surfaces a brand-new ARTICLE finding (G2) -- it is fed
+    into the SAME grounding_completion_loop(), repaired transactionally, and the run
+    reaches PASS, instead of an immediate terminal HOLD with zero repair attempts."""
+    _, clean = run(full_script())
+    dek = (clean["package"] or {})["dek"]
+    ground_seq = [
+        {"status": "settled", "findings": [
+            dict(G1), {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+                       "why": "not in the sources"}]},           # 1: mixed, initial
+        {"status": "settled", "findings": [
+            {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+             "why": "not in the sources"}]},                     # 2: after G1 fix
+        {"status": "settled", "findings": [dict(G2)]},           # 3: after repackage --
+                                                                  #    a NEW article finding
+        dict(GROUND_CLEAN),                                      # 4: after G2 fix
+    ]
+    prov, calls, out, _dek = _run_post_repackage(ground_seq, [FIX_G1, FIX_G2])
+    check("the run reaches PASS via the post-repackage repair",
+          out["status"] == CP.PASS, out.get("failure_reason"))
+    check("the grounder ran exactly four times", calls["n"] == 4, calls)
+    check("the duration is gone from the published article",
+          "over eleven days" not in out["article_text"], out["article_text"])
+    gd = out["detail"][CP.GROUNDING]
+    check("the final grounding stage is marked as the post-repackage phase",
+          gd.get("grounding_completion_phase") == "POST_REPACKAGE", gd)
+    check("G2 is recorded as an accepted post-repackage edit",
+          any(e.get("finding_id") == "G2" for e in gd.get("accepted_edits") or []), gd)
+    check("and it publishes", out["publication_ready"] is True and bool(out["package"]))
+
+
+def test_post_repackage_no_progress_repair_still_holds_honestly():
+    """4. The post-repackage repair does not resolve G2 (the recheck reports it again,
+    unchanged) -- the run HOLDs honestly rather than looping forever or silently
+    dropping the finding."""
+    _, clean = run(full_script())
+    dek = (clean["package"] or {})["dek"]
+    ground_seq = [
+        {"status": "settled", "findings": [
+            dict(G1), {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+                       "why": "not in the sources"}]},
+        {"status": "settled", "findings": [
+            {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+             "why": "not in the sources"}]},
+        {"status": "settled", "findings": [dict(G2)]},
+        {"status": "settled", "findings": [dict(G2)]},   # unchanged -- no progress
+    ]
+    prov, calls, out, _dek = _run_post_repackage(ground_seq, [FIX_G1, FIX_G2, FIX_G2])
+    check("the run HOLDs", out["status"] == CP.HOLD, out.get("failure_reason"))
+    check("the failure is attributed to GROUNDING", out["failure_stage"] == CP.GROUNDING,
+          out.get("failure_stage"))
+    check("G2's own claim is named in the failure reason",
+          "eleven days" in out["failure_reason"] or "duration" in out["failure_reason"]
+          or "TRUE_UNSUPPORTED" in out["failure_reason"], out["failure_reason"])
+
+
+def test_post_repackage_package_only_blocker_holds_without_article_roulette():
+    """6. Repackage's own recheck survives ONLY as a package-surface finding again (not
+    article) -- the one-repackage budget is already spent, so this correctly HOLDs
+    without ever spending an article-repair attempt on something the article-repair
+    loop cannot fix."""
+    _, clean = run(full_script())
+    dek = (clean["package"] or {})["dek"]
+    ground_seq = [
+        {"status": "settled", "findings": [
+            dict(G1), {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+                       "why": "not in the sources"}]},
+        {"status": "settled", "findings": [
+            {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+             "why": "not in the sources"}]},
+        {"status": "settled", "findings": [                       # still package-only
+            {"classification": "TRUE_UNSUPPORTED", "quote": dek[:60],
+             "why": "still not in the sources after the rewrite"}]},
+    ]
+    prov, calls, out, _dek = _run_post_repackage(ground_seq, [FIX_G1])
+    check("the run HOLDs", out["status"] == CP.HOLD, out.get("failure_reason"))
+    check("no post-repackage repair call was ever spent -- the loop-back never fires "
+          "for a package-only survivor",
+          calls["n"] == 3, calls)
+    # S.ground is faked throughout, so every GROUNDING-marked provider call here IS a
+    # repair proposal -- there is exactly one, G1's, from the pre-repackage phase.
+    stages_called = [prov.stage_of(i) for i in range(len(prov.calls))]
+    check("exactly one repair-proposal call total (G1's), never a second for the "
+          "uneditable package survivor",
+          stages_called.count("GROUNDING") == 1, stages_called)
+
+
+def test_post_repackage_mixed_result_article_proceeds_package_remains_authoritative():
+    """7. Repackage's recheck finds BOTH a new article finding and the package finding
+    again -- the loop-back repairs the article portion, but the surviving package
+    finding still HOLDs the run (the one repackage budget is already spent; a package
+    finding after that point is authoritative, not another rewrite opportunity)."""
+    _, clean = run(full_script())
+    dek = (clean["package"] or {})["dek"]
+    ground_seq = [
+        {"status": "settled", "findings": [
+            dict(G1), {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+                       "why": "not in the sources"}]},
+        {"status": "settled", "findings": [
+            {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+             "why": "not in the sources"}]},
+        {"status": "settled", "findings": [                        # mixed survivor set
+            dict(G2),
+            {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+             "why": "not in the sources"}]},
+        {"status": "settled", "findings": [                        # G2 fixed, package
+            {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],   # survives alone
+             "why": "not in the sources"}]},
+    ]
+    prov, calls, out, _dek = _run_post_repackage(ground_seq, [FIX_G1, FIX_G2])
+    check("the run HOLDs -- the package survivor is authoritative",
+          out["status"] == CP.HOLD, out.get("failure_reason"))
+    check("the article's own overclaim is gone even though the run HOLDs",
+          "over eleven days" not in out["article_text"], out["article_text"])
+    check("the failure reason names a package surface, not the article",
+          any(s in out["failure_reason"] for s in CP.PACKAGE_SURFACES),
+          out["failure_reason"])
+
+
+def test_post_repackage_repair_uses_the_exact_just_rebuilt_package():
+    """8. The package object used for every post-repackage repair candidate's Safety and
+    Grounding checks is the EXACT one repackage just rebuilt -- never regenerated again
+    to enter the loop-back. Only two PACKAGE stage calls happen in the whole run: the
+    original build and the one repackage rewrite."""
+    _, clean = run(full_script())
+    dek = (clean["package"] or {})["dek"]
+    ground_seq = [
+        {"status": "settled", "findings": [
+            dict(G1), {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+                       "why": "not in the sources"}]},
+        {"status": "settled", "findings": [
+            {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+             "why": "not in the sources"}]},
+        {"status": "settled", "findings": [dict(G2)]},
+        dict(GROUND_CLEAN),
+    ]
+    prov, calls, out, _dek = _run_post_repackage(ground_seq, [FIX_G1, FIX_G2])
+    check("the run reaches PASS", out["status"] == CP.PASS, out.get("failure_reason"))
+    stages_called = [prov.stage_of(i) for i in range(len(prov.calls))]
+    check("exactly two package builds in the whole run -- never a third to enter the "
+          "post-repackage loop-back",
+          stages_called.count("PACKAGE") == 2, stages_called)
+
+
+def test_post_repackage_safety_rejection_leaves_accepted_article_unchanged():
+    """9. A post-repackage proposal that introduces a machine-language leak is rejected
+    transactionally by Safety INSIDE the loop -- so it is never accepted, the article is
+    left exactly as it stood before that proposal was tried, and the run HOLDs on the
+    grounding finding it failed to answer. A rejected candidate is not a Safety failure
+    of the run: nothing it touched ever became the article."""
+    _, clean = run(full_script())
+    dek = (clean["package"] or {})["dek"]
+    unsafe_fix_g2 = {"edits": [{
+        "finding_id": "G2", "operation": "NARROW",
+        "original": "The salt arrived in nine tonne pallets and was laid by two masons "
+                    "over eleven days.",
+        "repaired": "As the evidence shows, the salt arrived in nine tonne pallets and "
+                    "was laid by two masons.",
+        "fact_ids": ["F03"], "what_was_removed": "the duration"}]}
+    ground_seq = [
+        {"status": "settled", "findings": [
+            dict(G1), {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+                       "why": "not in the sources"}]},
+        {"status": "settled", "findings": [
+            {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+             "why": "not in the sources"}]},
+        {"status": "settled", "findings": [dict(G2)]},
+    ]
+    prov, calls, out, _dek = _run_post_repackage(ground_seq, [FIX_G1, unsafe_fix_g2])
+    check("the run HOLDs on the unanswered grounding finding -- the rejected candidate "
+          "was never accepted, so it is not a Safety failure of the run",
+          out["failure_stage"] == CP.GROUNDING, out.get("failure_stage"))
+    check("the leaked phrase never reached the published article",
+          "the evidence" not in out["article_text"].lower(), out["article_text"])
+    check("the article otherwise still carries G1's own accepted fix",
+          "No catalogue entry in the eight" in out["article_text"], out["article_text"])
+    check("the grounder never got a chance to recheck the unsafe candidate",
+          calls["n"] == 3, calls)
+
+
+def test_pre_and_post_repackage_completion_histories_both_survive():
+    """10. The pre-repackage phase's own completion history (resolving G1) is not lost
+    when the post-repackage phase's own result later overwrites st[GROUNDING] -- both
+    survive in the one persisted record, distinguished by an explicit phase marker."""
+    _, clean = run(full_script())
+    dek = (clean["package"] or {})["dek"]
+    ground_seq = [
+        {"status": "settled", "findings": [
+            dict(G1), {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+                       "why": "not in the sources"}]},
+        {"status": "settled", "findings": [
+            {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+             "why": "not in the sources"}]},
+        {"status": "settled", "findings": [dict(G2)]},
+        dict(GROUND_CLEAN),
+    ]
+    prov, calls, out, _dek = _run_post_repackage(ground_seq, [FIX_G1, FIX_G2])
+    check("the run reaches PASS", out["status"] == CP.PASS, out.get("failure_reason"))
+    gd = out["detail"][CP.GROUNDING]
+    check("the top-level record is stamped as the post-repackage phase",
+          gd.get("grounding_completion_phase") == "POST_REPACKAGE", gd)
+    pre = gd.get("pre_repackage_completion")
+    check("the pre-repackage phase's own history survives underneath it",
+          bool(pre) and pre.get("grounding_completion_phase") == "PRE_REPACKAGE", pre)
+    check("and it names G1's own accepted edit, not G2's",
+          any(e.get("finding_id") == "G1" for e in (pre or {}).get("accepted_edits") or
+              []),
+          pre)
+    check("the post-repackage phase's own edits are on the top-level record, not mixed "
+          "into the pre-repackage one",
+          any(e.get("finding_id") == "G2" for e in gd.get("accepted_edits") or [])
+          and not any(e.get("finding_id") == "G2"
+                     for e in (pre or {}).get("accepted_edits") or []),
+          gd)
+
+
+def test_no_second_furniture_repackage_is_possible():
+    """5. The post-repackage loop-back can never itself trigger a second repackage: it
+    only ever edits article text, and `repackaged[0]` is already spent by the time it
+    runs. Verified structurally -- grounding_completion_loop() has no call to
+    repackage_if_only_the_furniture_failed or make_package anywhere in its body."""
+    tree = ast.parse((HERE / "new_engine_v1" / "composition.py").read_text())
+    fn = next(n for n in ast.walk(tree)
+             if isinstance(n, ast.FunctionDef) and n.name == "grounding_completion_loop")
+    calls_in_loop = {getattr(n.func, "id", "") for n in ast.walk(fn)
+                     if isinstance(n, ast.Call)}
+    check("the loop never calls the repackage mechanism",
+          "repackage_if_only_the_furniture_failed" not in calls_in_loop, calls_in_loop)
+    check("the loop never calls make_package",
+          "make_package" not in calls_in_loop, calls_in_loop)
 
 
 def test_the_writer_is_told_not_to_tidy_away_a_qualifier():

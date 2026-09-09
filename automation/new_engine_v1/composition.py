@@ -3788,6 +3788,31 @@ def _edit_signature(edits: list) -> tuple:
                          str(e.get("repaired"))) for e in (edits or [])))
 
 
+GROUNDING_COMPLETION_DETAIL_KEYS = (
+    "grounding_completion_phase", "grounding_completion_history",
+    "grounding_completion_iterations", "grounding_repair_proposals",
+    "grounding_repairs_accepted", "grounding_repairs_rejected",
+    "grounding_deterministic_attempts", "grounding_deterministic_accepted",
+    "accepted_edits", "initial_blocker_count", "final_blocker_count", "model_calls",
+    "repairs")
+
+
+def grounding_completion_detail(result: dict | None) -> dict | None:
+    """The audit-bearing subset of a grounding_completion_loop() result.
+
+    Exists because record(GROUNDING, ...) REPLACES st[GROUNDING] wholesale, and both the
+    furniture repackage and the post-repackage loop-back record a later Grounding result
+    over an earlier completion phase's. Without carrying this forward, a run that
+    repaired the article, repackaged, then repaired again persists only the last phase --
+    the earlier accepted edits become unreconstructable from the artifact, which is
+    exactly how a production repair sequence was lost on 2026-09-09. Returns None for a
+    plain grounding result that never went through the loop.
+    """
+    if not result or "grounding_completion_history" not in result:
+        return None
+    return {k: result[k] for k in GROUNDING_COMPLETION_DETAIL_KEYS if k in result}
+
+
 def grounding_completion_loop(
         provider, article_text: str, package: dict | None, initial: dict, ledger: dict,
         packet: dict, arch: dict | None, pack: dict, source_text: str, source_sha: str,
@@ -3829,7 +3854,19 @@ def grounding_completion_loop(
     final_safety = None
 
     while g["status"] != PASS and iterations < max_iterations:
-        target = repairable_findings(g["blocking"])
+        # ARTICLE-SURFACE ONLY. This loop edits article text through
+        # apply_local_grounding_repair() and nothing else -- it structurally cannot
+        # construct an edit for a PACKAGE-surface finding (the quote is never found in
+        # the article, so both the deterministic and model paths refuse it every time).
+        # Letting a package finding sit in `target` regardless would spend a real
+        # iteration -- and a real repair-model call -- discovering that fact anew each
+        # time, instead of once. split_by_surface() is the SAME classification the
+        # furniture-repackage mechanism already uses to decide what it may rewrite; a
+        # package-surface survivor is authoritative here exactly as it is there: it
+        # blocks the run (the caller's own terminal check sees it in `g["blocking"]`
+        # either way), it just never consumes an article-repair attempt doing so.
+        target, _package_only = split_by_surface(repairable_findings(g["blocking"]),
+                                                  package)
         if not target:
             break
 
@@ -5756,11 +5793,20 @@ def run_story_architecture_composition(
                         SAFETY, SAFETY_HOLD,
                         ["the rewritten package did not pass the safety stack"]
                         + sa_p["blocking"][:6])
+            # Captured BEFORE record() below overwrites both st[GROUNDING] and the
+            # GROUNDING counters with this bare recheck's own (repairs 0). Whatever the
+            # pre-repackage completion phase accepted really happened and is still in
+            # `final`; the artifact has to keep saying so.
+            carried = grounding_completion_detail(gr)
+            g_repairs = repairs.get(GROUNDING, 0)
             g_new = record(GROUNDING, ground_candidate(P, bundle_text(final, pkg_ref[0]),
                                                        source_text, source_sha, pack,
                                                        arch, wr["packet"]))
             g_new["after_repackage"] = True
             g_new["repackage_findings"] = [f.get("surface") for f in pkg_bad]
+            if carried:
+                g_new["pre_repackage_completion"] = carried
+            repairs[GROUNDING] = g_repairs + g_new.get("repairs", 0)
             calls[GROUNDING] = calls.get(GROUNDING, 0) + 1
             repairs[PACKAGE] = repairs.get(PACKAGE, 0) + 1
             return g_new
@@ -5784,6 +5830,11 @@ def run_story_architecture_composition(
             # furniture repackage above) before record() overwrites it with the total,
             # the same accumulate-then-record pattern every repair path in this run uses.
             gc["model_calls"] = calls.get(GROUNDING, 0) + gc["model_calls"]
+            # PHASE MARKER, not a second loop: this IS the same grounding_completion_loop
+            # -- tagged so its own history survives being read even after a later phase
+            # (below) has to overwrite st[GROUNDING] with its own result. See
+            # test_pre_and_post_repackage_completion_histories_survive_persistence.
+            gc["grounding_completion_phase"] = "PRE_REPACKAGE"
             g = record(GROUNDING, gc)
             if gc["grounding_repairs_accepted"]:
                 final = gc["article_text"]
@@ -5800,8 +5851,59 @@ def run_story_architecture_composition(
                                SAFETY_HOLD, final, pkg, surface)
 
         pkg = pkg_ref[0]
+        _repackaged_before = repackaged[0]
         g = repackage_if_only_the_furniture_failed(g)
         pkg = pkg_ref[0]
+
+        # POST-REPACKAGE LOOP-BACK (owner-directed, 2026-09-09). Real production
+        # evidence, retained Poetry: the furniture repackage's own mandatory recheck can
+        # discover a brand-new ARTICLE-surface finding nothing has tried to fix yet --
+        # the one-shot furniture rewrite did not touch the article, so this is not a
+        # residue of that rewrite, it is a fresh Grounding read that simply did not agree
+        # with an earlier one. Before this fix, such a finding went straight to a
+        # terminal HOLD with zero repair attempts of any kind -- not a repair-quality
+        # failure and not a ceiling failure, an integration gap: nothing routed it back
+        # into completion at all.
+        #
+        # ONE semantic owner: the SAME grounding_completion_loop() the pre-repackage
+        # phase already used, on the CURRENT accepted article and the EXACT
+        # just-rebuilt package (pkg_ref[0] -- never regenerated here; if an accepted
+        # article repair makes that package invalid, the loop's own Grounding recheck
+        # against it is what would expose that, same as any other candidate). Fires
+        # ONLY when repackage fired AT THIS CALL (not when call-site-1's repackage
+        # already ran and fed its result into the phase above through the ordinary
+        # `g["status"] != PASS` path) -- `_repackaged_before` distinguishes the two so
+        # this never re-processes findings the phase above already had its own chance
+        # at. The one-repackage-per-run rule is untouched: this loop only ever edits
+        # article text, so it cannot itself trigger a second repackage, and
+        # `repackaged[0]` is already spent by the time this runs.
+        if repackaged[0] and not _repackaged_before and g["status"] != PASS:
+            carried_pre = g.get("pre_repackage_completion")
+            art_bad, _pkg_bad = split_by_surface(g["blocking"], pkg_ref[0])
+            if art_bad:
+                gc2 = grounding_completion_loop(P, final, pkg_ref[0], g, ledger,
+                                                wr["packet"], arch, pack, source_text,
+                                                source_sha, audit)
+                gc2["model_calls"] = calls.get(GROUNDING, 0) + gc2["model_calls"]
+                gc2["grounding_completion_phase"] = "POST_REPACKAGE"
+                # Carried by the repackage itself (single source), not re-derived here:
+                # grounding_completion_loop() returns dict(g) of its LAST grounding
+                # result, so an accepted post-repackage repair would otherwise drop the
+                # key the un-repaired path happens to inherit.
+                if carried_pre is not None:
+                    gc2["pre_repackage_completion"] = carried_pre
+                g = record(GROUNDING, gc2)
+                if gc2["grounding_repairs_accepted"]:
+                    final = gc2["article_text"]
+                    sa_gc2 = gc2["final_safety"]
+                    sa_gc2["after_grounding_completion"] = True
+                    sa_gc2["after_repackage"] = True
+                    if sa_gc2["status"] != PASS:
+                        return out(SAFETY,
+                                   "an accepted post-repackage grounding repair did not "
+                                   "survive the safety stack: %s"
+                                   % "; ".join(sa_gc2["blocking"])[:400],
+                                   SAFETY_HOLD, final, pkg_ref[0], surface)
 
         if g["status"] != PASS:
             _iters = g.get("grounding_completion_iterations")
