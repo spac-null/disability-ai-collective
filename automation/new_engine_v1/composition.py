@@ -3324,9 +3324,126 @@ def apply_grounding_repair(article_text: str, edits: list, findings: list,
     return out.strip(), prov, errs
 
 
+def apply_local_grounding_repair(article_text: str, edits: list, findings: list,
+                                 ledger: dict, packet: dict) -> tuple:
+    """Grounding's OWN repair (Stage 8b's first repair and Stage 8c's completion pass),
+    claim-locally -- unlike apply_grounding_repair() just above, which Safety's article
+    repair (Stage 9b) and the package-only repair keep using UNCHANGED.
+
+    Real production evidence (retained Poetry, live continuation, 2026-09-09):
+    apply_grounding_repair()'s number/entity permission is `a_nums | cited_facts` --
+    the WHOLE packet, unioned with what the edit's own fact_ids cite -- so an edit
+    correcting one unsupported proposition could still introduce an entity or number
+    that happened to appear ANYWHERE else in the packet, unrelated to the proposition
+    being fixed. One such edit introduced the entity "Something", caught by the
+    mandatory post-repair Safety recheck -- correctly, but wastefully: the one repair
+    opportunity was spent turning an unsupported claim into a DIFFERENT unsupported
+    claim rather than fixing the one that was found.
+
+    Everything here is identical to apply_grounding_repair() -- same fields, same
+    REPAIR_OPS, same sentence-level application, same ST.validate_turn_support()
+    relation check (which was already claim-local: it only ever checks against `lic`,
+    the edit's own cited facts, never the whole packet) -- with two changes:
+
+    1. `orig` must additionally be found inside a SINGLE paragraph, never spanning two.
+       Not new to what this file's other local repairs already require; new only to
+       Grounding, which previously located by sentence only.
+    2. Number/entity permission drops the packet-wide term entirely. What a rewrite may
+       carry is exactly what its own local span already had, plus what its OWN cited
+       fact_ids explicitly license -- never merely because something appears somewhere
+       else in the packet or the ledger.
+
+    `packet` is accepted only for call-site parity with apply_grounding_repair() --
+    this claim-local variant never reads it, which is the point of change 2 above.
+    """
+    ids = {str(f.get("id")) for f in findings}
+    paras = CE.paragraphs(article_text)
+    out, prov, errs = article_text, [], []
+    for i, e in enumerate(edits or [], 1):
+        if not isinstance(e, dict):
+            errs.append("edit %d is not an object" % i)
+            continue
+        fid = str(e.get("finding_id") or "")
+        orig = (e.get("original") or "").strip()
+        rep = (e.get("repaired") or "").strip()
+        op = e.get("operation")
+        if fid not in ids:
+            errs.append("edit %d cites finding %r, which the grounder did not report"
+                        % (i, fid))
+            continue
+        if op not in REPAIR_OPS:
+            errs.append("edit %d has operation %r, not one of %s"
+                        % (i, op, ", ".join(REPAIR_OPS)))
+            continue
+        if not orig or normalize_span(orig) not in normalize_span(out):
+            errs.append("edit %d: the original is not in the article: %r"
+                        % (i, orig[:80]))
+            continue
+        host_idx = next((j for j, p in enumerate(paras)
+                        if normalize_span(orig) in normalize_span(p)), None)
+        if host_idx is None:
+            errs.append("edit %d spans more than one paragraph -- not a local edit: %r"
+                        % (i, orig[:80]))
+            continue
+        # THE REPAIR MAY ONLY SUBTRACT, licensed by exactly what its own local span
+        # already had and what its OWN CITED facts explicitly carry -- never the whole
+        # packet, which is the one change from apply_grounding_repair() above.
+        lic = [f for f in (e.get("fact_ids") or []) if f in ledger]
+        lic_text = " ".join(
+            "%s %s" % ((ledger[f] or {}).get("proposition", ""),
+                       (ledger[f] or {}).get("support_span", "")) for f in lic)
+        allowed_nums = _numbers_of(lic_text)
+        allowed_ents = ST._entities(lic_text, skip_sentence_initial=False)
+        new_nums = sorted(_numbers_of(rep) - _numbers_of(orig) - allowed_nums)
+        new_ents = sorted(ST._entities(rep) - ST._entities(orig) - allowed_ents)
+        # A time correction necessarily changes temporal content; that is the operation.
+        # Every other relation class is still refused. Unchanged from
+        # apply_grounding_repair() -- this check was already claim-local.
+        new_rel = [x for x in (ST.validate_turn_support(rep, lic, ledger)
+                               if rep and lic else [])
+                   if not (x["relation"] == ST.TEMPORAL
+                           and op in ("CORRECT_TIME", "CORRECT_DATE"))]
+        if new_nums or new_ents or new_rel:
+            errs.append("edit %d ADDS rather than subtracts -- numbers=%s entities=%s "
+                        "relations=%s (licensed only by this local span and the cited "
+                        "facts %s, not the whole packet)"
+                        % (i, new_nums, new_ents,
+                           [x["relation"] for x in new_rel], lic))
+            continue
+        unknown = sorted(set(e.get("fact_ids") or []) - set(ledger))
+        if unknown:
+            errs.append("edit %d cites fact ids not in the ledger: %s" % (i, unknown))
+            continue
+        if orig not in out:
+            errs.append("edit %d: quoted text does not match the article exactly "
+                        "(whitespace or punctuation drift) -- refused rather than "
+                        "guessed at" % i)
+            continue
+        target = next((s for s in CE.sentences(out)
+                       if normalize_span(orig) in normalize_span(s)
+                       or normalize_span(s) in normalize_span(orig)), None)
+        if target is None:
+            errs.append("edit %d: could not locate the sentence to replace" % i)
+            continue
+        out = out.replace(target, rep, 1) if rep else out.replace(target, "", 1)
+        out = re.sub(r"[ \t]{2,}", " ", out)
+        prov.append({"finding_id": fid, "operation": op,
+                     "original": target.strip(), "repaired": rep,
+                     "what_was_removed": e.get("what_was_removed", ""),
+                     "fact_ids": lic,
+                     "support_spans": [ (ledger.get(f) or {}).get("support_span", "")
+                                        for f in lic ][:4],
+                     "authorising_finding": next(
+                         (str(x.get("why"))[:300] for x in findings
+                          if str(x.get("id")) == fid), "")})
+    return out.strip(), prov, errs
+
+
 def grounding_repair(provider, article_text: str, findings: list, ledger: dict,
                      packet: dict) -> dict:
-    """STAGE 8b. Exactly one call. Subtractive, audited, and never repeated."""
+    """STAGE 8b. Exactly one call. Subtractive, audited, and never repeated. Verified
+    by apply_local_grounding_repair() -- claim-local, not apply_grounding_repair()'s
+    packet-wide permission (see that function's own docstring for why)."""
     target = repairable_findings(findings)
     if not target:
         return {"status": SKIPPED, "reason": "no repairable finding", "model_calls": 0}
@@ -3337,8 +3454,9 @@ def grounding_repair(provider, article_text: str, findings: list, ledger: dict,
     if not isinstance(edits, list) or not edits:
         raise CompositionHold(GROUNDING, GROUNDING_HOLD,
                               ["the factual repair returned no edits"])
-    text, prov, errs = apply_grounding_repair(article_text, edits, target, ledger, packet)
-    # PARTIAL ACCEPTANCE. apply_grounding_repair already validates each edit on its own and
+    text, prov, errs = apply_local_grounding_repair(article_text, edits, target, ledger,
+                                                    packet)
+    # PARTIAL ACCEPTANCE. apply_local_grounding_repair already validates each edit on its own and
     # skips the ones that fail, so the accepted set is exactly the set that passed the
     # guard -- nothing here relaxes it, and no rejected edit is applied.
     #
@@ -4026,10 +4144,13 @@ def grounding_completion(provider, article_text: str, findings: list, ledger: di
     if not isinstance(edits, list) or not edits:
         return {"status": SKIPPED, "reason": "the completion pass proposed no edit",
                 "model_calls": 1, "provider": ident}
-    # THE SAME VALIDATOR. Not a relaxed one, not a copy: the identical function the first
-    # repair goes through, so a completion edit that adds a relation is refused for the
-    # same reason and with the same message.
-    text, prov, errs = apply_grounding_repair(article_text, edits, findings, ledger, packet)
+    # THE SAME VALIDATOR. Not a relaxed one, not a copy: the identical claim-local
+    # function the first repair goes through (apply_local_grounding_repair(), not the
+    # packet-wide apply_grounding_repair() Safety and the package-only repair keep
+    # using), so a completion edit that adds a relation, or an entity from elsewhere in
+    # the packet, is refused for the same reason and with the same message.
+    text, prov, errs = apply_local_grounding_repair(article_text, edits, findings,
+                                                    ledger, packet)
     if errs and not prov:
         # Every edit refused. The article is unchanged, so a further grounder call would
         # only rediscover the same findings. Report and let the existing HOLD stand.

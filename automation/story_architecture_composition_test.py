@@ -2069,6 +2069,96 @@ def test_one_grounded_factual_repair_then_the_full_stack_again():
           out["stages"][CP.FACT_CHECK] == CP.NOT_RUN)
 
 
+def test_grounding_repair_permission_is_claim_local_not_packet_wide():
+    """Real production evidence (retained Poetry, live continuation, 2026-09-09):
+    Grounding's OWN repair (Stage 8b's first repair AND Stage 8c's completion pass --
+    both call the SAME apply_local_grounding_repair(), so one set of checks against it
+    covers both) introduced a spurious entity ("Something") present nowhere the
+    specific edit cited, only somewhere else in the packet -- caught by the mandatory
+    Safety recheck, wastefully: the one repair opportunity was spent turning one
+    unsupported claim into a DIFFERENT unsupported claim rather than fixing the one
+    found. apply_grounding_repair() itself (Safety's article repair, the package-only
+    repair) is untouched -- see its own tests -- this is Grounding's own repair only.
+    """
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    findings = [{"id": "G1", "classification": "TRUE_UNSUPPORTED",
+                "quote": "No entry describes what any visitor heard."}]
+
+    # 3. an entity present only ELSEWHERE in the packet -- not licensed by the cited
+    # fact -- is refused. This is the exact shape "Something" was: real, just not here.
+    leak = [{"finding_id": "G1", "operation": "NARROW",
+            "original": "No entry describes what any visitor heard.",
+            "repaired": "Anneke Mertens found that no entry describes what any "
+                        "visitor heard.",
+            "fact_ids": ["F05"]}]
+    _, prov, errs = CP.apply_local_grounding_repair(DRAFT, leak, findings, LEDGER,
+                                                    packet)
+    check("an entity not licensed by the cited fact is refused, even if it is real "
+          "elsewhere in the packet", not prov and any("entities" in e for e in errs),
+          errs)
+
+    # 1/2/6. deletion of the exact implicated span is accepted, and every OTHER
+    # paragraph is byte-for-byte untouched.
+    delete = [{"finding_id": "G1", "operation": "DELETE",
+              "original": "No entry describes what any visitor heard.",
+              "repaired": "", "fact_ids": []}]
+    text2, prov2, errs2 = CP.apply_local_grounding_repair(DRAFT, delete, findings,
+                                                          LEDGER, packet)
+    check("deletion of the exact implicated span is accepted",
+          bool(prov2) and not errs2, errs2)
+    check("the edited span is gone",
+          "No entry describes what any visitor heard." not in text2, text2)
+    check("unrelated paragraphs are untouched",
+          "The room was built from Himalayan salt bricks" in text2
+          and "The catalogue records eight rooms" in text2
+          and "The pallets and the eleven days are in the record" in text2, text2)
+
+    # 5. a Ledger-licensed narrowing -- citing a fact that actually carries the added
+    # content -- is accepted.
+    ledger2 = dict(LEDGER)
+    ledger2["F30"] = F("F30", "None of the eight catalogue entries describes what a "
+                       "visitor heard.",
+                       "None of the eight catalogue entries describes what a visitor "
+                       "heard", kind="DISPOSITION")
+    narrow = [{"finding_id": "G1", "operation": "NARROW",
+              "original": "No entry describes what any visitor heard.",
+              "repaired": "No entry of the eight describes what a visitor heard.",
+              "fact_ids": ["F30"]}]
+    _, prov3, errs3 = CP.apply_local_grounding_repair(DRAFT, narrow, findings, ledger2,
+                                                      packet)
+    check("a Ledger-licensed narrowing is accepted", bool(prov3) and not errs3, errs3)
+
+    # 4. a new CAUSAL relation, not licensed by the cited fact, is refused -- the
+    # "X caused Y" the owner named explicitly, not a permitted "X happened before Y".
+    causal = [{"finding_id": "G1", "operation": "NARROW",
+              "original": "No entry describes what any visitor heard.",
+              "repaired": "No entry describes what any visitor heard because the "
+                          "catalogue omits it.",
+              "fact_ids": ["F05"]}]
+    _, prov4, errs4 = CP.apply_local_grounding_repair(DRAFT, causal, findings, LEDGER,
+                                                      packet)
+    check("a new CAUSE relation not licensed by the cited fact is refused",
+          not prov4 and any("CAUSE" in e for e in errs4), errs4)
+
+    # A cross-paragraph "original" is refused as not local -- new to Grounding's own
+    # repair (it previously located by sentence only).
+    cross = [{"finding_id": "G1", "operation": "NARROW",
+             "original": "all the senses.\n\nThe catalogue records eight rooms.",
+             "repaired": "all the senses. The catalogue records rooms.",
+             "fact_ids": []}]
+    _, prov5, errs5 = CP.apply_local_grounding_repair(DRAFT, cross, findings, LEDGER,
+                                                      packet)
+    check("an edit spanning two paragraphs is refused, not applied",
+          not prov5 and errs5, errs5)
+
+    # 7/9/10: bounded count, no third repair, and the mandatory recheck are untouched
+    # by this fix -- they are proven by the EXISTING full-pipeline tests
+    # (test_one_grounded_factual_repair_then_the_full_stack_again and others) still
+    # passing unmodified, since none of that bookkeeping changed; only the permission
+    # math inside the one function both grounding_repair() and grounding_completion()
+    # already called.
+
+
 def test_the_factual_repair_can_only_subtract():
     """A declaration of intent is not a permission. Every edit is checked mechanically."""
     packet, _ = CP.writer_packet(ARCH, LEDGER)
