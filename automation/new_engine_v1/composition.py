@@ -5119,7 +5119,8 @@ def _numbered_paragraphs(text: str) -> str:
                        for i, p in enumerate(CE.paragraphs(text), 1))
 
 
-def reader_repair_prompt(article_text: str, held: dict, packet: dict) -> str:
+def reader_repair_prompt(article_text: str, held: dict, packet: dict,
+                        rejection: dict | None = None) -> str:
     L = ["THE ARTICLE, BY PARAGRAPH", _numbered_paragraphs(article_text), "",
         "WHAT THE READER HELD"]
     for dim, v in held.items():
@@ -5128,8 +5129,28 @@ def reader_repair_prompt(article_text: str, held: dict, packet: dict) -> str:
             L.append("  passage: %s" % str(p)[:300])
     L += ["", "PERMITTED MATERIAL -- the writer packet this article was licensed from. "
              "Nothing outside the article and this packet may be added:",
-         ST.render(packet)[:6000],
-         "", READER_REPAIR_SCHEMA]
+         ST.render(packet)[:6000]]
+    if rejection:
+        # CONCISE AND STRUCTURED, never a transcript -- the same shape
+        # grounding_completion_prompt() already uses on its own retries.
+        L += ["", "YOUR PREVIOUS PROPOSAL WAS REJECTED.",
+             "REJECTED_BECAUSE: %s" % str(rejection.get("reason", ""))[:200]]
+        if rejection.get("detail"):
+            L.append("BLOCKING_PASSAGES: %s" % str(rejection["detail"])[:500])
+        if rejection.get("reason") in (READER_REJECTED_GROUNDING,
+                                       READER_REJECTED_SAFETY):
+            # The one instruction that matters here. It is NOT "fix the facts": the
+            # Reader has no factual authority and asking it to repair its own factual
+            # damage is how a prose gate quietly becomes a second grounder.
+            L.append("Your previous prose edit introduced factual assertions the "
+                    "evidence does not carry. Try a SMALLER readability edit that uses "
+                    "only the factual content already in the original sentence -- "
+                    "delete or simplify, do not recharacterise what a study showed or "
+                    "what a method proves.")
+        else:
+            L.append("That edit did not reduce what the reader is holding. Try a "
+                    "different passage, or a smaller edit to the same one.")
+    L += ["", READER_REPAIR_SCHEMA]
     return "\n".join(L)
 
 
@@ -5242,16 +5263,256 @@ def apply_reader_repair(article_text: str, edits: list, held: dict,
     return out.strip(), prov, errs
 
 
-def reader_repair(provider, article_text: str, held: dict, packet: dict) -> dict:
-    """STAGE 10b. Exactly one call, local edits only -- never a full-article rewrite.
+# ══════════════════════════════════════════════════════════════════════════════
+# TRANSACTIONAL, PROGRESS-BOUNDED READER COMPLETION (owner-directed, 2026-09-09)
+# ══════════════════════════════════════════════════════════════════════════════
+# WHY THIS EXISTS, from the run that produced it. Retained Poetry continuation
+# …-2026-09-09T211900: Safety PASS, Grounding PASS, Fact Check PASS, and the Reader then
+# held EIGHT of its nine dimensions across fourteen implicated passages. One editorial
+# repair ran, made five local edits -- four of them good -- and the fifth rewrote the
+# closing sentence's characterisation:
+#
+#   before  "rests on a method that names a bodily reaction as its measure of success
+#            and bodily perception as the way to take part"     <- Grounder accepted this
+#   after   "rests on a method that TAKES CHILLS AND GOOSEBUMPS AS PROOF A POEM HAS
+#            WORKED, and hearing, smelling, seeing and feeling as the way to take part"
+#
+# "proof a poem has worked" is a claim the evidence does not make. make_package() then
+# regenerated the package from the damaged article and propagated that exact
+# characterisation into the title, dek, excerpt and meta description -- so ONE bad local
+# edit became six blocking Grounding findings, five of them on package surfaces. The run
+# terminal-HELD, and the factually clean article that had passed three gates was gone.
+#
+# THE SEMANTIC ERROR IN THE OLD CODE was not the budget. It was ownership: a Reader
+# repair was treated as an ACCEPTED article that Grounding then judged, so a Reader
+# failure was recorded as a Grounding failure and the only way forward would have been to
+# have Grounding repair the Reader's invention. That makes "Reader creates factual damage
+# -> Grounding cleans it up" a normal architecture. It is not one.
+#
+# A READER REPAIR IS A PROPOSAL. It is not accepted until it survives factual validation.
+# Safety and Grounding here are ACCEPTANCE TESTS FOR THE PROPOSAL, never repair triggers:
+# if either fails, the PROPOSAL is rejected, the previously accepted article and package
+# stand byte-for-byte, and the Reader may try a different, smaller edit with a concise
+# reason why the last one was refused. Nothing asks the Reader to fix facts.
+#
+# PROGRESS IS PER PASSAGE, NOT PER DIMENSION. READABILITY holding on three passages and
+# then on one is real progress even though READABILITY still says HOLD -- counting
+# dimensions would call that "no progress" and stop on the iteration that worked. See
+# reader_blocker_signature.
+READER_COMPLETION_MAX_ITERATIONS = 5
+
+READER_REJECTED_SAFETY = "SAFETY_INTRODUCED_BLOCKERS"
+READER_REJECTED_GROUNDING = "GROUNDING_INTRODUCED_UNSUPPORTED_CLAIMS"
+READER_REJECTED_NO_PROGRESS = "NO_READER_PROGRESS"
+
+
+def reader_blocker_signature(rg: dict) -> list:
+    """The CANONICAL Reader blocker multiset: one entry per (dimension, implicated
+    passage), or one entry for the dimension itself when it holds without naming a
+    passage.
+
+    Counting HOLD DIMENSIONS would be the wrong measure -- the production run held
+    READABILITY on two passages and ENGINE_LANGUAGE_LEAK on three, and fixing one passage
+    leaves the dimension holding. That is progress and must be allowed to continue.
+    Passages are normalised (the same normalize_span every other locator here uses) so a
+    whitespace difference in the Reader's own quoting is not mistaken for a new blocker.
+    Sorted, so it compares as a multiset: strictly fewer entries is progress, the same
+    number of different entries is not.
+    """
+    out = []
+    for dim, v in (rg.get("held") or {}).items():
+        passages = [p for p in ((v or {}).get("passages") or []) if str(p).strip()]
+        if not passages:
+            out.append((str(dim), ""))
+            continue
+        for p in passages:
+            out.append((str(dim), normalize_span(str(p))))
+    return sorted(out)
+
+
+def reader_completion_loop(provider, article_text: str, package: dict | None, rg: dict,
+                           packet: dict, ledger: dict, draft_text: str, pack: dict,
+                           arch: dict | None, source_text: str, source_sha: str,
+                           audit_fn, package_fn, gate_fn,
+                           package_completion_fn=None,
+                           max_iterations: int = READER_COMPLETION_MAX_ITERATIONS
+                           ) -> dict:
+    """TRANSACTIONAL, PROGRESS-BOUNDED Reader completion. Replaces the one-repair budget
+    with a loop that keeps proposing local editorial repairs only as long as each one
+    provably leaves the article BETTER FOR THE READER and NO WORSE FACTUALLY.
+
+    `rg` is the Reader gate result the caller already paid for -- never re-run here for
+    the initial state. `audit_fn`, `package_fn` and `gate_fn` are the caller's own
+    safety_audit / make_package / reader_gate closures, reused exactly, so a candidate is
+    judged by the SAME Safety, the SAME package generation and the SAME Reader this run
+    enforces everywhere else. `package_completion_fn(sa, article, package)` is the
+    already-merged progress-bounded package Safety completion, applied to a candidate's
+    TEMPORARY package only.
+
+    Returns a dict carrying `article_text` and `package` (the ACCEPTED ones -- the inputs
+    unchanged if nothing was ever accepted), the final Reader gate result at `gate`, and
+    the audit the caller persists: reader_completion_iterations, reader_repair_proposals,
+    reader_repairs_accepted, reader_repairs_rejected, reader_completion_history,
+    reader_initial_blocker_count, reader_final_blocker_count, plus `model_calls` and the
+    accepted candidate's own `final_safety` / `final_grounding`.
+
+    EVERY REJECTION IS TOTAL. A candidate that fails Safety or Grounding takes its
+    regenerated package down with it: no package built from a rejected article can become
+    accepted state, which is the whole reason the package is regenerated inside the loop
+    rather than by the caller afterwards.
+    """
+    accepted_text = article_text
+    accepted_pkg = package
+    accepted_gate = rg
+    accepted_safety = None
+    accepted_grounding = None
+    iterations = proposals = accepted = rejected = 0
+    # SPLIT BY STAGE, not lumped into READER. A candidate's Safety re-audit and Grounding
+    # recheck are Safety's and Grounding's own calls wherever they are made -- the same
+    # attribution every other repair path in this module already uses. Only the repair
+    # proposals and the Reader rechecks belong to READER.
+    reader_calls = safety_calls = grounding_calls = 0
+    package_repair_used = False
+    tried = set()
+    rejection = None
+    history: list = []
+    before_sig = reader_blocker_signature(rg)
+    initial_count = len(before_sig)
+
+    while accepted_gate["status"] != PASS and iterations < max_iterations:
+        held = accepted_gate.get("held") or {}
+        if not held:
+            break
+        iterations += 1
+        prop = reader_repair(provider, accepted_text, held, packet, rejection)
+        proposals += 1
+        reader_calls += prop.get("model_calls", 0)
+
+        if prop["status"] != PASS:
+            rejected += 1
+            history.append({"iteration": iterations, "outcome": "no_usable_proposal",
+                            "reason": prop.get("reason", "the proposal was refused"),
+                            "blockers_before": len(before_sig)})
+            break
+
+        sig = _reader_edit_signature(prop.get("edits"))
+        if sig in tried:
+            rejected += 1
+            history.append({"iteration": iterations, "outcome": "repeated_proposal",
+                            "blockers_before": len(before_sig)})
+            break
+        tried.add(sig)
+
+        candidate_text = prop["article_text"]
+        entry = {"iteration": iterations, "blockers_before": len(before_sig),
+                 "edits": [{k: e.get(k) for k in ("dimension", "paragraph", "original",
+                                                  "repaired")}
+                           for e in (prop.get("edits") or [])]}
+
+        # ONE package regeneration per candidate, on the TEMPORARY article. It is
+        # discarded with the candidate if anything below refuses it.
+        candidate_pkg = package_fn(candidate_text)
+        candidate_sa = audit_fn(candidate_text, candidate_pkg)
+        safety_calls += candidate_sa.get("model_calls", 0)
+        candidate_pkg_repaired = False
+        if candidate_sa["status"] != PASS and package_completion_fn is not None:
+            fixed_pkg, extra_calls, candidate_sa = package_completion_fn(
+                candidate_sa, candidate_text, candidate_pkg)
+            safety_calls += extra_calls
+            if fixed_pkg is not None:
+                candidate_pkg = fixed_pkg
+                candidate_pkg_repaired = True
+        entry["safety"] = candidate_sa["status"]
+        entry["package_repaired"] = candidate_pkg_repaired
+        if candidate_sa["status"] != PASS:
+            rejected += 1
+            rejection = {"reason": READER_REJECTED_SAFETY,
+                         "detail": (candidate_sa.get("blocking") or [])[:4]}
+            entry.update(outcome="safety_rejected", reason=rejection["detail"])
+            history.append(entry)
+            continue
+
+        candidate_g = ground_candidate(provider, bundle_text(candidate_text,
+                                                             candidate_pkg),
+                                       source_text, source_sha, pack, arch, packet)
+        grounding_calls += candidate_g.get("model_calls", 0)
+        entry["grounding"] = candidate_g["status"]
+        if candidate_g["status"] != PASS:
+            # THE POINT OF THE WHOLE MECHANISM. Not "now repair these findings" -- the
+            # Reader's proposal is simply refused, and the factually clean article that
+            # reached this stage is still the accepted one.
+            rejected += 1
+            rejection = {"reason": READER_REJECTED_GROUNDING,
+                         "detail": [str(f.get("quote") or f.get("claim") or "")[:120]
+                                    for f in (candidate_g.get("blocking") or [])[:4]]}
+            entry.update(outcome="grounding_rejected", reason=rejection["detail"])
+            history.append(entry)
+            continue
+
+        candidate_gate = gate_fn(candidate_text, candidate_sa.get("advisories"))
+        reader_calls += candidate_gate.get("model_calls", 0)
+        after_sig = reader_blocker_signature(candidate_gate)
+        entry["blockers_after"] = len(after_sig)
+        if len(after_sig) >= len(before_sig):
+            rejected += 1
+            rejection = {"reason": READER_REJECTED_NO_PROGRESS,
+                         "detail": "reader blocker count did not shrink (%d -> %d)"
+                                   % (len(before_sig), len(after_sig))}
+            entry.update(outcome="no_progress", reason=rejection["detail"])
+            history.append(entry)
+            continue
+
+        accepted += 1
+        accepted_text = candidate_text
+        accepted_pkg = candidate_pkg
+        accepted_gate = candidate_gate
+        accepted_safety = candidate_sa
+        accepted_grounding = candidate_g
+        package_repair_used = candidate_pkg_repaired
+        before_sig = after_sig
+        rejection = None
+        entry.update(outcome="accepted")
+        history.append(entry)
+
+    return {"status": accepted_gate["status"], "article_text": accepted_text,
+            "package": accepted_pkg, "gate": accepted_gate,
+            "final_safety": accepted_safety, "final_grounding": accepted_grounding,
+            "model_calls": reader_calls + safety_calls + grounding_calls,
+            "reader_model_calls": reader_calls,
+            "safety_model_calls": safety_calls,
+            "grounding_model_calls": grounding_calls,
+            "package_repair_used": package_repair_used,
+            "reader_completion_iterations": iterations,
+            "reader_repair_proposals": proposals,
+            "reader_repairs_accepted": accepted,
+            "reader_repairs_rejected": rejected,
+            "reader_completion_history": history,
+            "reader_initial_blocker_count": initial_count,
+            "reader_final_blocker_count": len(before_sig)}
+
+
+def _reader_edit_signature(edits: list) -> tuple:
+    """A hashable fingerprint of a Reader proposal, to catch the model re-proposing an
+    edit that was already refused. Same idea as _edit_signature, keyed on the fields a
+    Reader edit actually has."""
+    return tuple(sorted((str(e.get("dimension")), str(e.get("paragraph")),
+                         str(e.get("original")), str(e.get("repaired")))
+                        for e in (edits or [])))
+
+
+def reader_repair(provider, article_text: str, held: dict, packet: dict,
+                  rejection: dict | None = None) -> dict:
+    """STAGE 10b. ONE proposal, local edits only -- never a full-article rewrite.
     Mechanically verified by apply_reader_repair(), the same discipline
     apply_grounding_repair() already applies to Safety and Grounding's own repairs.
     Verification here does not replace the caller's mandatory re-run of the existing
-    safety_audit() (unchanged); it is the first guard, not the only one."""
+    safety_audit() and ground_candidate() (both unchanged); it is the first guard, not
+    the only one. `rejection` carries the previous proposal's refusal reason on a
+    retry -- concise and structured, never a transcript."""
     if not held:
         return {"status": SKIPPED, "reason": "no held dimension", "model_calls": 0}
     obj, ident = _ask(provider, READER_REPAIR_SYSTEM,
-                      reader_repair_prompt(article_text, held, packet),
+                      reader_repair_prompt(article_text, held, packet, rejection),
                       4_000, READER, READER_HOLD)
     edits = obj.get("edits")
     if not isinstance(edits, list) or not edits:
@@ -5871,6 +6132,31 @@ def run_story_architecture_composition(
             r["audited_text_sha256"] = C.sha256_text(text or "")
             return r
 
+        def _reader_gate_of(text, advisories):
+            """The run's own reader_gate, as a plain callable for the completion loop.
+            Never records: a CANDIDATE's gate result is not the run's Reader verdict
+            until the loop accepts it."""
+            return reader_gate(P, text, advisories)
+
+        def _candidate_package_completion(sa_c, article_c, package_c):
+            """Progress-bounded package Safety completion on a CANDIDATE's temporary
+            package. Returns (package_or_None, model_calls, safety_result). Nothing here
+            touches accepted state or the run's counters -- if the Reader candidate is
+            refused further down, this package is discarded with it."""
+            comp = package_only_safety_completion(
+                P, sa_c, article_c, package_c, ledger, wr["packet"], draft,
+                audit_fn=audit)
+            if not comp["attempted"]:
+                return None, 0, sa_c
+            prep = comp["repair"]
+            n = prep.get("model_calls", 0)
+            if prep["status"] != PASS:
+                return None, n, sa_c
+            sa_new = audit(article_c, prep["package"])
+            sa_new["after_package_safety_repair"] = True
+            _carry_package_completion(sa_new, prep)
+            return prep["package"], n, sa_new
+
         pkg = make_package(final)
         pkg_ref = [pkg]
         sa = record(SAFETY, audit(final, pkg))
@@ -6179,80 +6465,59 @@ def run_story_architecture_composition(
         if reader:
             rg = record(READER, reader_gate(P, final, sa.get("advisories")))
 
-            # ONE EDITORIAL REPAIR, article-wide, before a Reader HOLD becomes terminal.
-            # See reader_repair above for why this is a free rewrite rather than a
-            # subtractive edit, and for why CRIP_MINDS_FIT is not special-cased out of
-            # it. The result is trusted only after the SAME safety_audit() and the SAME
-            # ground_candidate() this run already used, both unmodified -- a rewrite
-            # that invents anything to satisfy Reader fails one of them exactly as an
-            # invention from any other stage would, and that is a terminal SAFETY_HOLD
-            # or GROUNDING_HOLD, not a published fabrication.
+            # TRANSACTIONAL, PROGRESS-BOUNDED EDITORIAL COMPLETION (owner-directed,
+            # 2026-09-09) replaces the old one-repair-then-terminal budget -- see
+            # reader_completion_loop for the production run that forced it. The
+            # difference that matters is not the count: a Reader repair is now a
+            # PROPOSAL, and the SAME safety_audit() and ground_candidate() this run
+            # already uses are its ACCEPTANCE TESTS, not repair triggers. A proposal that
+            # invents anything is refused whole -- with the package it regenerated -- and
+            # the article that reached this stage factually clean stays exactly as it is.
             if rg["status"] != PASS:
-                rrep = reader_repair(P, final, rg["held"], wr["packet"])
-                # Attributed to READER, not SAFETY: this is the editorial repair's own
-                # call, whatever gate it later survives or fails. Counted here,
-                # unconditionally, so a repair that never reaches a recheck (HOLD here,
-                # or a SAFETY_HOLD/GROUNDING_HOLD return below) still shows its one call.
-                calls[READER] = calls.get(READER, 0) + rrep.get("model_calls", 0)
-                if rrep["status"] == PASS:
-                    repaired = rrep["article_text"]
-                    pkg_r = make_package(repaired)
-                    sa_r = record(SAFETY, audit(repaired, pkg_r))
-                    sa_r["carried_text"] = carried
-                    sa_r["after_reader_repair"] = True
-                    if sa_r["status"] != PASS:
-                        # The Reader repair regenerated the package from the rewritten
-                        # article the same way the article-repair path does above, and it
-                        # can reintroduce the same package-surface leak -- see
-                        # package_only_safety_completion for why this is not a second,
-                        # special-cased mechanism.
-                        comp_r = package_only_safety_completion(
-                            P, sa_r, repaired, pkg_r, ledger, wr["packet"], draft,
-                            audit_fn=audit)
-                        if comp_r["attempted"]:
-                            prep_r = comp_r["repair"]
-                            calls[SAFETY] = calls.get(SAFETY, 0) + prep_r.get(
-                                "model_calls", 0)
-                            if prep_r["status"] == PASS:
-                                pkg_r = prep_r["package"]
-                                sa_r = record(SAFETY, audit(repaired, pkg_r))
-                                sa_r["carried_text"] = carried
-                                sa_r["after_reader_repair"] = True
-                                sa_r["after_package_safety_repair"] = True
-                                _carry_package_completion(sa_r, prep_r)
-                                repairs[SAFETY] = 1
-                                calls[SAFETY] = calls.get(SAFETY, 0) + prep_r.get(
-                                    "model_calls", 0)
-                        if sa_r["status"] != PASS:
-                            return out(
-                                SAFETY,
-                                "the editorial repair did not survive the safety stack: %s"
-                                % "; ".join(sa_r["blocking"])[:400],
-                                SAFETY_HOLD, repaired, pkg_r, surface)
-                    g_r = record(GROUNDING, ground_candidate(
-                        P, bundle_text(repaired, pkg_r), source_text, source_sha, pack,
-                        arch, wr["packet"]))
-                    g_r["after_reader_repair"] = True
-                    if g_r["status"] != PASS:
-                        return out(
-                            GROUNDING,
-                            "the editorial repair did not survive grounding: %s"
-                            % [f.get("classification") for f in g_r["blocking"]][:4],
-                            GROUNDING_HOLD, repaired, pkg_r, surface)
-                    final, pkg = repaired, pkg_r
-                    pkg_ref[0] = pkg_r
-                    # record() sets calls[READER] to the recheck's OWN call count and
-                    # repairs[READER] to reader_gate()'s "repairs" key (which does not
-                    # exist, so 0) -- overwriting both the gate+repair call total and the
-                    # repair flag just set. Both are restored on top of it immediately
-                    # after, the same way Safety's repair survives its own post-record()
-                    # reset above.
-                    reader_calls_so_far = calls[READER]
-                    rg2 = record(READER, reader_gate(P, final, sa_r.get("advisories")))
-                    calls[READER] = reader_calls_so_far + rg2.get("model_calls", 0)
+                rc = reader_completion_loop(
+                    P, final, pkg, rg, wr["packet"], ledger, draft, pack, arch,
+                    source_text, source_sha,
+                    audit_fn=audit, package_fn=make_package, gate_fn=_reader_gate_of,
+                    package_completion_fn=_candidate_package_completion)
+                # Per stage, never lumped: the proposals and Reader rechecks are
+                # READER's, the candidate audits and any package repair are SAFETY's, the
+                # candidate rechecks are GROUNDING's -- the same attribution every other
+                # repair path in this function uses.
+                calls[READER] = calls.get(READER, 0) + rc["reader_model_calls"]
+                _loop_safety_calls = rc["safety_model_calls"]
+                _loop_grounding_calls = rc["grounding_model_calls"]
+                if rc["reader_repairs_accepted"]:
+                    # ONLY here does accepted state move -- and article and package move
+                    # together, because the package is the one the accepted article's own
+                    # Safety and Grounding actually approved.
+                    final, pkg = rc["article_text"], rc["package"]
+                    pkg_ref[0] = pkg
                     repairs[READER] = 1
-                    rg2["after_editorial_repair"] = True
-                    rg = rg2
+                    if rc["final_safety"] is not None:
+                        # record() resets calls[SAFETY]/repairs[SAFETY] to this audit's
+                        # own (model-free) counts, so the loop's Safety cost and any
+                        # package repair it accepted are restored on top, the same
+                        # accumulate-after-record pattern used everywhere above.
+                        sa_r = record(SAFETY, rc["final_safety"])
+                        sa_r["carried_text"] = carried
+                        sa_r["after_reader_repair"] = True
+                        calls[SAFETY] = calls.get(SAFETY, 0) + _loop_safety_calls
+                        if rc["package_repair_used"]:
+                            repairs[SAFETY] = 1
+                    if rc["final_grounding"] is not None:
+                        g_r = record(GROUNDING, rc["final_grounding"])
+                        g_r["after_reader_repair"] = True
+                        calls[GROUNDING] = calls.get(GROUNDING, 0) + _loop_grounding_calls
+                reader_calls_so_far = calls[READER]
+                rg = record(READER, rc["gate"])
+                calls[READER] = reader_calls_so_far
+                repairs[READER] = 1 if rc["reader_repairs_accepted"] else 0
+                rg["after_editorial_repair"] = True
+                for k in ("reader_completion_iterations", "reader_repair_proposals",
+                          "reader_repairs_accepted", "reader_repairs_rejected",
+                          "reader_completion_history", "reader_initial_blocker_count",
+                          "reader_final_blocker_count"):
+                    rg[k] = rc[k]
 
             if rg["status"] != PASS:
                 return out(READER,

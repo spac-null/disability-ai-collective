@@ -3185,14 +3185,28 @@ def test_a_reader_repair_that_fabricates_is_caught_not_published():
     leak_edit = {"edits": [{
         "dimension": "BREATHING", "operation": "REPHRASE", "original": original,
         "repaired": "Inside it there were fragrances, as the evidence shows."}]}
-    _, out2 = run(full_script(reader=held) + [leak_edit])
+    # Under transactional Reader completion (2026-09-09) Safety is the ACCEPTANCE TEST
+    # for the proposal, not a verdict on the run: the leak is caught in a CANDIDATE that
+    # is then discarded whole, so the article that holds is the clean one that arrived
+    # here, and the run holds where the real unfixed defect is -- at the Reader. Before
+    # this change the same leak was recorded as a SAFETY failure of an article whose
+    # accepted text never contained it.
+    _, out2 = run(full_script(reader=held) + [leak_edit, leak_edit])
     check("a machine-language leak the local check cannot see is still refused, not "
           "published", out2["status"] == CP.HOLD, out2.get("failure_reason"))
-    check("it holds at safety this time -- the edit passed the local check and reached "
-          "the article, and the mandatory backstop caught it there",
-          out2["failure_stage"] == CP.SAFETY, out2.get("failure_stage"))
-    check("no second reader recheck was spent chasing a rescue",
-          out2["model_calls_by_stage"].get(CP.READER) == 2, out2["model_calls_by_stage"])
+    check("the leak never entered the accepted article",
+          "as the evidence shows" not in out2["article_text"], out2["article_text"])
+    check("and the accepted article is the original, byte for byte",
+          original in out2["article_text"], out2["article_text"])
+    check("it holds at the READER on the real unfixed defect, not at SAFETY on prose "
+          "the accepted article never carried",
+          out2["failure_stage"] == CP.READER and "BREATHING" in out2["failure_reason"],
+          (out2.get("failure_stage"), out2.get("failure_reason")))
+    rd2 = out2["detail"][CP.READER]
+    check("the candidate was refused by Safety, and the repeat then ended the loop",
+          [h["outcome"] for h in rd2["reader_completion_history"]]
+          == ["safety_rejected", "repeated_proposal"], rd2["reader_completion_history"])
+    check("nothing was accepted", rd2["reader_repairs_accepted"] == 0, rd2)
 
 
 def test_a_core_crip_minds_fit_rejection_stays_terminal_through_repair():
@@ -3223,15 +3237,33 @@ def test_a_core_crip_minds_fit_rejection_stays_terminal_through_repair():
         "dimension": "CRIP_MINDS_FIT", "operation": "COMPRESS",
         "original": "Each entry says what its room was for.",
         "repaired": "Each entry states its purpose."}]}
-    prov, out = run(full_script(reader=held) + [repair_reply, held])
+    # Under progress-bounded completion (2026-09-09) the budget is no longer "one
+    # attempt": it is "keep going while the reader's blocker set strictly shrinks". Here
+    # it never shrinks -- the recheck returns the identical HOLD -- so the first proposal
+    # is refused for no progress, and the model re-proposing the same edit terminates the
+    # loop on the repeat guard rather than buying a third validation cycle. Same
+    # editorial outcome as before (still HOLD, still CRIP_MINDS_FIT, Worth never
+    # revisited); what changed is that "no rescue" is now a PROVEN lack of progress
+    # rather than an arbitrary count.
+    prov, out = run(full_script(reader=held) + [repair_reply, held, repair_reply])
     check("still HOLD -- Worth's approval is not overridden by a rewrite",
           out["failure_stage"] == CP.READER, out.get("failure_stage"))
     check("CRIP_MINDS_FIT is still the named defect",
           "CRIP_MINDS_FIT" in out["failure_reason"], out["failure_reason"])
-    check("exactly one attempt was made, not zero and not two",
-          out["repairs_by_stage"].get(CP.READER) == 1
-          and out["model_calls_by_stage"].get(CP.READER) == 3,
-          (out["repairs_by_stage"], out["model_calls_by_stage"]))
+    rd = out["detail"][CP.READER]
+    check("nothing was accepted -- the article is not 'improved' into publication",
+          rd["reader_repairs_accepted"] == 0
+          and not out["repairs_by_stage"].get(CP.READER),
+          (rd["reader_repairs_accepted"], out["repairs_by_stage"]))
+    check("the first proposal was refused for no progress, the second for repeating it",
+          [h["outcome"] for h in rd["reader_completion_history"]]
+          == ["no_progress", "repeated_proposal"], rd["reader_completion_history"])
+    check("the blocker set never shrank",
+          (rd["reader_initial_blocker_count"], rd["reader_final_blocker_count"])
+          == (1, 1), rd)
+    check("bounded: two proposals, never the runaway ceiling",
+          rd["reader_repair_proposals"] == 2
+          and rd["reader_completion_iterations"] == 2, rd)
     check("Worth is not reachable from here -- there is no code path back to it",
           "worth_gate" not in CP.reader_repair.__doc__.lower()
           and "WORTH" not in CP.READER_REPAIR_SYSTEM)
@@ -3373,24 +3405,26 @@ def test_the_reader_gate_runs_last_and_returns_passages():
         "original": "The room was built from Himalayan salt bricks, and the pavilion "
                     "was dug partway into the ground.",
         "repaired": "The room was built from Himalayan salt bricks."}]}
-    prov, out = run(full_script(reader=held) + [repair_reply, held])
+    prov, out = run(full_script(reader=held) + [repair_reply, held, repair_reply])
     check("a reader hold holds the run", out["failure_stage"] == CP.READER)
     check("the held dimension is named", "OPENING" in out["failure_reason"],
           out["failure_reason"])
     check("the exact passage is returned",
           out["detail"][CP.READER]["passages"]["OPENING"] ==
           ["The room was built from Himalayan salt"])
-    check("ONE EDITORIAL REPAIR AND ONE RECHECK, NO SECOND ATTEMPT",
+    check("each candidate costs one repair, one package rebuild and one recheck; the "
+          "repeat is refused before a second recheck is bought",
           [prov.stage_of(i) for i in range(len(prov.calls))]
           # the second PACKAGE is make_package() rebuilding the furniture from the
-          # repaired prose, the same re-bundling Grounding's own repair already does
+          # candidate prose, the same re-bundling Grounding's own repair already does
           == ["LEDGER", "WORTH", "ARCHITECTURE", "WRITER", "CONTINUITY",
-                            "PROSE_FINISH", "PACKAGE", "READER", "?", "PACKAGE", "READER"],
+                            "PROSE_FINISH", "PACKAGE", "READER", "?", "PACKAGE", "READER",
+                            "?"],
           [prov.stage_of(i) for i in range(len(prov.calls))])
-    check("the repair is recorded", out["repairs_by_stage"].get(CP.READER) == 1,
-          out["repairs_by_stage"])
-    check("gate + repair + recheck all counted",
-          out["model_calls_by_stage"].get(CP.READER) == 3, out["model_calls_by_stage"])
+    check("nothing was accepted, so no repair is recorded",
+          not out["repairs_by_stage"].get(CP.READER), out["repairs_by_stage"])
+    check("gate + two proposals + one recheck all counted",
+          out["model_calls_by_stage"].get(CP.READER) == 4, out["model_calls_by_stage"])
     check("the recheck is marked as such",
           out["detail"][CP.READER].get("after_editorial_repair") is True)
     check("the reader ran after grounding and fact check",
@@ -3588,9 +3622,12 @@ def test_reader_repair_package_leak_gets_package_only_completion():
 
 
 def test_reader_repair_package_leak_that_survives_package_repair_holds():
-    """The package-only repair itself does not clear the leak -> terminal HOLD, no
-    second attempt, exactly the bound test_package_only_safety_repair_after_
-    regeneration proves for the article-repair path."""
+    """9. The package-only repair does not clear the leak -- so the whole Reader
+    CANDIDATE is refused, and the package built from it dies with it. This is the
+    transactional boundary that matters most: a package regenerated from a rejected
+    Reader candidate must never become accepted state, and the run must hold where the
+    real unfixed defect is (the Reader's MOMENTUM finding) rather than on a Safety
+    failure in prose the accepted article never carried."""
     reader_repair_reply = {"edits": [{
         "dimension": "MOMENTUM", "operation": "DELETE",
         "original": "The pallets and the eleven days are in the record.",
@@ -3601,21 +3638,34 @@ def test_reader_repair_package_leak_that_survives_package_repair_holds():
     S.ground = lambda *a, **k: dict(GROUND_CLEAN)
     prov = _ReaderPackageThenLeak(
         full_script(reader=_reader_momentum_hold())
-        + [reader_repair_reply, {"edits": []}], leak=True)
+        + [reader_repair_reply, {"edits": []}, reader_repair_reply], leak=True)
     try:
         out = CP.run_story_architecture_composition(
             prov, pack=PACK, source_text=S0, source_sha="x",
             subject=PACK["subject"], fact_check_fn=lambda a: dict(FC_CLEAN))
     finally:
         S.ground = real
-    check("a package repair that fixes nothing still HOLDs",
-          out["status"] == CP.HOLD and out["failure_stage"] == CP.SAFETY,
-          out.get("failure_reason"))
+    check("the run HOLDs", out["status"] == CP.HOLD, out.get("failure_reason"))
+    check("it holds at the READER on the finding nothing fixed -- not at SAFETY on a "
+          "candidate's package the run never accepted",
+          out["failure_stage"] == CP.READER and "MOMENTUM" in out["failure_reason"],
+          (out.get("failure_stage"), out.get("failure_reason")))
+    check("the accepted article is unchanged -- the Reader's own edit went down with "
+          "its candidate",
+          "The pallets and the eleven days are in the record." in out["article_text"],
+          out["article_text"])
+    check("and the accepted package is the ORIGINAL clean one, never the leaking one "
+          "regenerated from the rejected candidate",
+          "the evidence" not in (out["package"] or {}).get("dek", "").lower(),
+          out.get("package"))
+    rd = out["detail"][CP.READER]
+    check("nothing was accepted", rd["reader_repairs_accepted"] == 0, rd)
+    check("the candidate was refused at Safety, then the repeat ended the loop",
+          [h["outcome"] for h in rd["reader_completion_history"]]
+          == ["safety_rejected", "repeated_proposal"], rd["reader_completion_history"])
     stages_called = [prov.stage_of(i) for i in range(len(prov.calls))]
-    check("no second package-only repair was attempted -- just the reader repair and "
-          "the one package repair that failed to clear it",
-          stages_called.count("?") == 2, stages_called)
-    check("no third package regeneration was attempted either",
+    check("one package regeneration for the one candidate, and no third build to "
+          "recover from its rejection",
           stages_called.count("PACKAGE") == 2, stages_called)
 
 
@@ -4646,6 +4696,303 @@ def test_two_field_package_leak_is_completed_and_downstream_gets_that_exact_pack
           out["package"])
     check("and it is not the leaking one the regeneration produced",
           out["package"] != prov.packages[-1], prov.packages[-1])
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# TRANSACTIONAL, PROGRESS-BOUNDED READER COMPLETION (owner-directed, 2026-09-09)
+# ══════════════════════════════════════════════════════════════════════════════
+# Real production failure, retained Poetry continuation …-2026-09-09T211900: Safety,
+# Grounding and Fact Check all PASSED, the Reader then held eight dimensions across
+# fourteen passages, one repair ran, and ONE of its five local edits rewrote
+#   "a method that names a bodily reaction as its measure of success"
+# into
+#   "a method that TAKES CHILLS AND GOOSEBUMPS AS PROOF A POEM HAS WORKED".
+# make_package() propagated that invention into the title, dek, excerpt and meta
+# description, and the run terminal-HELD at GROUNDING with six findings -- discarding an
+# article that had been factually clean. These tests pin the replacement rule: a Reader
+# repair is a PROPOSAL, Safety and Grounding are its acceptance tests, and a proposal
+# that invents anything is refused whole.
+def _reader_hold(**dims):
+    """A Reader gate reply holding `dims` (name -> list of implicated passages)."""
+    base = {d: {"verdict": "PASS", "note": "", "passages": []}
+            for d in CP.READER_DIMENSIONS}
+    for name, passages in dims.items():
+        base[name] = {"verdict": "HOLD", "note": "held for the test",
+                      "passages": list(passages)}
+    return {"dimensions": base, "overall": "HOLD", "one_line": "held"}
+
+
+# Three separate READABILITY passages, each a real sentence of DRAFT -- the production
+# shape (one dimension, several implicated passages) that a dimension-counting progress
+# measure would have called "no progress" on every successful iteration.
+_RP1 = "Each entry says what its room was for."
+_RP2 = "The hearing of the room is not."
+_RP3 = "A reviewer wrote that the catalogue keeps the intention of each room and drops the encounter."
+_RE1 = {"edits": [{"dimension": "READABILITY", "operation": "REPHRASE",
+                   "original": _RP1, "repaired": "Each entry states its purpose."}]}
+_RE2 = {"edits": [{"dimension": "READABILITY", "operation": "REPHRASE",
+                   "original": _RP2, "repaired": "The hearing of it is not."}]}
+_RE3 = {"edits": [{"dimension": "READABILITY", "operation": "DELETE",
+                   "original": _RP3, "repaired": ""}]}
+
+
+def test_reader_blocker_signature_counts_passages_not_dimensions():
+    """The measure the whole loop rests on. READABILITY holding on three passages is
+    three blockers, not one: fixing one of them is real progress even though the
+    dimension still says HOLD. Counting dimensions would stop the loop on exactly the
+    iteration that worked."""
+    def gate(**dims):
+        """reader_gate()'s OWN result shape -- {held: {dim: {passages: [...]}}} -- which
+        is what the loop reads. _reader_hold() above is the model REPLY that produces
+        it."""
+        return {"held": {k: {"verdict": "HOLD", "note": "n", "passages": list(v)}
+                         for k, v in dims.items()}}
+
+    three = CP.reader_blocker_signature(gate(READABILITY=[_RP1, _RP2, _RP3]))
+    two = CP.reader_blocker_signature(gate(READABILITY=[_RP1, _RP2]))
+    check("three implicated passages are three blockers", len(three) == 3, three)
+    check("two are two", len(two) == 2, two)
+    check("both are ONE held dimension -- which is why the dimension count cannot be "
+          "the measure",
+          len(gate(READABILITY=[_RP1, _RP2, _RP3])["held"])
+          == len(gate(READABILITY=[_RP1, _RP2])["held"]) == 1)
+    check("a dimension holding with no named passage still counts as one blocker",
+          CP.reader_blocker_signature(gate(ENDING=[])) == [("ENDING", "")])
+    check("a clean gate has an empty signature",
+          CP.reader_blocker_signature({"held": {}}) == [])
+    check("passages are normalised, so requoting whitespace is not a new blocker",
+          CP.reader_blocker_signature(gate(READABILITY=["  a   b "]))
+          == CP.reader_blocker_signature(gate(READABILITY=["a b"])))
+
+
+def test_three_reader_passages_can_all_complete():
+    """1/6. Three implicated passages in ONE dimension. Each local improvement is
+    accepted on its own strictly-shrinking evidence -- 3 -> 2 -> 1 -> 0 -- and the run
+    must not HOLD merely because repair #1 was spent."""
+    prov, out = run(full_script(reader=_reader_hold(READABILITY=[_RP1, _RP2, _RP3]))
+                    + [_RE1, _reader_hold(READABILITY=[_RP2, _RP3]),
+                       _RE2, _reader_hold(READABILITY=[_RP3]),
+                       _RE3, READER_OK])
+    check("the run reaches PASS", out["status"] == CP.PASS, out.get("failure_reason"))
+    rd = out["detail"][CP.READER]
+    check("three iterations, three accepted, none rejected",
+          (rd["reader_completion_iterations"], rd["reader_repairs_accepted"],
+           rd["reader_repairs_rejected"]) == (3, 3, 0), rd)
+    check("3 blockers became 0",
+          (rd["reader_initial_blocker_count"], rd["reader_final_blocker_count"])
+          == (3, 0), rd)
+    check("each step is recorded as accepted progress, 3->2->1->0",
+          [(h["blockers_before"], h["blockers_after"])
+           for h in rd["reader_completion_history"]] == [(3, 2), (2, 1), (1, 0)],
+          rd["reader_completion_history"])
+    check("all three passages are actually gone from the published article",
+          not any(p in out["article_text"] for p in (_RP1, _RP2, _RP3)),
+          out["article_text"])
+
+
+def test_a_reader_proposal_that_breaks_grounding_is_rejected_whole():
+    """2/3/4/5. THE PRODUCTION CASE. The first proposal is factually damaging -- the
+    Grounder refuses the candidate -- and the second, smaller proposal succeeds. Proves
+    the rejected candidate leaves BOTH the accepted article and the accepted package
+    byte-for-byte unchanged, and that Grounding is never asked to clean up after the
+    Reader."""
+    bad = {"edits": [{"dimension": "READABILITY", "operation": "REPHRASE",
+                      "original": _RP1,
+                      "repaired": "Each entry proves what its room achieved."}]}
+    calls = {"n": 0}
+
+    def staged_ground(*a, **k):
+        calls["n"] += 1
+        # The FIRST candidate recheck (call 2) refuses; everything else is clean.
+        if calls["n"] == 2:
+            return {"status": "settled", "findings": [
+                {"classification": "TRUE_UNSUPPORTED",
+                 "quote": "Each entry proves what its room achieved.",
+                 "why": "the evidence does not say any room achieved anything"}]}
+        return dict(GROUND_CLEAN)
+
+    import new_engine_v1.stages as S
+    real = S.ground
+    S.ground = staged_ground
+    prov = Scripted(full_script(reader=_reader_hold(READABILITY=[_RP1]))
+                    + [bad, _RE1, READER_OK])
+    try:
+        out = CP.run_story_architecture_composition(
+            prov, pack=PACK, source_text=S0, source_sha="x",
+            subject=PACK["subject"], fact_check_fn=lambda a: dict(FC_CLEAN))
+    finally:
+        S.ground = real
+    check("the run reaches PASS on the SECOND, smaller proposal",
+          out["status"] == CP.PASS, out.get("failure_reason"))
+    check("the factually damaging wording never reached the article",
+          "proves what its room achieved" not in out["article_text"],
+          out["article_text"])
+    check("the accepted second edit did land", "Each entry states its purpose."
+          in out["article_text"], out["article_text"])
+    rd = out["detail"][CP.READER]
+    check("the first candidate was refused by GROUNDING, the second accepted",
+          [h["outcome"] for h in rd["reader_completion_history"]]
+          == ["grounding_rejected", "accepted"], rd["reader_completion_history"])
+    check("the rejection is named as a Reader failure, not a Grounding repair job",
+          rd["reader_completion_history"][0]["grounding"] == CP.HOLD, rd)
+    check("one accepted, one rejected", (rd["reader_repairs_accepted"],
+                                          rd["reader_repairs_rejected"]) == (1, 1), rd)
+    check("the published package carries none of the rejected candidate's wording",
+          "proves" not in json.dumps(out["package"]).lower(), out["package"])
+    check("the run never HOLDs at GROUNDING for prose the Reader proposed",
+          out["failure_stage"] is None, out.get("failure_stage"))
+
+
+def test_a_grounding_rejected_reader_candidate_never_mutates_accepted_state():
+    """3/4/9. The same rejection with NO second chance scripted: the accepted article and
+    the accepted package are exactly what arrived at the Reader stage, and the package
+    the rejected candidate regenerated is discarded with it."""
+    bad = {"edits": [{"dimension": "READABILITY", "operation": "REPHRASE",
+                      "original": _RP1,
+                      "repaired": "Each entry proves what its room achieved."}]}
+    _, clean = run(full_script())
+    clean_pkg, clean_article = clean["package"], clean["article_text"]
+
+    calls = {"n": 0}
+
+    def staged_ground(*a, **k):
+        calls["n"] += 1
+        if calls["n"] >= 2:
+            return {"status": "settled", "findings": [
+                {"classification": "TRUE_UNSUPPORTED",
+                 "quote": "Each entry proves what its room achieved.",
+                 "why": "unsupported"}]}
+        return dict(GROUND_CLEAN)
+
+    import new_engine_v1.stages as S
+    real = S.ground
+    S.ground = staged_ground
+    prov = Scripted(full_script(reader=_reader_hold(READABILITY=[_RP1]))
+                    + [bad, bad])
+    try:
+        out = CP.run_story_architecture_composition(
+            prov, pack=PACK, source_text=S0, source_sha="x",
+            subject=PACK["subject"], fact_check_fn=lambda a: dict(FC_CLEAN))
+    finally:
+        S.ground = real
+    check("the run HOLDs at the READER, on the passage nothing fixed",
+          out["failure_stage"] == CP.READER and "READABILITY" in out["failure_reason"],
+          (out.get("failure_stage"), out.get("failure_reason")))
+    check("the accepted article is byte-for-byte what reached the Reader",
+          out["article_text"] == clean_article, out["article_text"])
+    check("the accepted package is byte-for-byte what reached the Reader",
+          out["package"] == clean_pkg, out["package"])
+    check("nothing was accepted", out["detail"][CP.READER]["reader_repairs_accepted"]
+          == 0, out["detail"][CP.READER])
+    check("and no reader repair is recorded on the stage counters",
+          not out["repairs_by_stage"].get(CP.READER), out["repairs_by_stage"])
+
+
+def test_reader_no_progress_and_repeat_terminate():
+    """7/10. A candidate that swaps one blocker for a different one is not progress, and
+    the model re-proposing a refused edit ends the loop rather than buying another
+    validation cycle."""
+    swap = {"edits": [{"dimension": "READABILITY", "operation": "REPHRASE",
+                       "original": _RP1, "repaired": "Each entry states its purpose."}]}
+    # same count, different passage -> not progress
+    prov, out = run(full_script(reader=_reader_hold(READABILITY=[_RP1]))
+                    + [swap, _reader_hold(READABILITY=[_RP2]), swap])
+    rd = out["detail"][CP.READER]
+    check("the run HOLDs", out["status"] == CP.HOLD, out.get("failure_reason"))
+    check("1 -> 1 different blocker is refused as no progress",
+          rd["reader_completion_history"][0]["outcome"] == "no_progress",
+          rd["reader_completion_history"])
+    check("the repeat then terminates the loop",
+          rd["reader_completion_history"][-1]["outcome"] == "repeated_proposal", rd)
+    check("nothing accepted, and the accepted article is untouched",
+          rd["reader_repairs_accepted"] == 0 and _RP1 in out["article_text"], rd)
+
+
+def test_reader_completion_emergency_fuse_bounds_a_runaway():
+    """11. The fuse is a runaway guard, not the stopping rule: with a stream of DIFFERENT
+    proposals that each make progress, the loop still stops at the ceiling."""
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    gate = _reader_hold(READABILITY=[_RP1, _RP2, _RP3])
+    seq = [_reader_hold(READABILITY=[_RP2, _RP3]), _reader_hold(READABILITY=[_RP3])]
+    gates = {"n": 0}
+
+    def gate_fn(text, adv):
+        g = seq[min(gates["n"], len(seq) - 1)]
+        gates["n"] += 1
+        return CP.reader_gate(Scripted([g]), text, adv)
+
+    prov = Scripted([_RE1, _RE2, _RE3])
+    import new_engine_v1.stages as S
+    real = S.ground
+    S.ground = lambda *a, **k: dict(GROUND_CLEAN)
+    try:
+        rc = CP.reader_completion_loop(
+            prov, DRAFT, {"title": "t", "dek": "d", "homepage_excerpt": "h",
+                          "meta_description": "m", "social_hook": "s"},
+            CP.reader_gate(Scripted([gate]), DRAFT, []), packet, LEDGER, DRAFT, PACK,
+            ARCH, S0, "x",
+            audit_fn=lambda a, p, **k: {"status": CP.PASS, "blocking": [],
+                                        "model_calls": 0, "advisories": []},
+            package_fn=lambda t: {"title": "t", "dek": "d", "homepage_excerpt": "h",
+                                  "meta_description": "m", "social_hook": "s"},
+            gate_fn=gate_fn, max_iterations=2)
+    finally:
+        S.ground = real
+    check("the loop stopped at the ceiling, not at PASS",
+          rc["reader_completion_iterations"] == 2 and rc["status"] != CP.PASS, rc)
+    check("no more proposals than iterations", rc["reader_repair_proposals"] == 2, rc)
+    check("real progress was banked, not discarded",
+          (rc["reader_initial_blocker_count"], rc["reader_final_blocker_count"])
+          == (3, 1), rc)
+    check("the default fuse is 5, and it is not the semantic rule",
+          CP.READER_COMPLETION_MAX_ITERATIONS == 5,
+          CP.READER_COMPLETION_MAX_ITERATIONS)
+
+
+def test_reader_completion_is_still_local_edits_only():
+    """13. No whole-article rewrite is reintroduced by the loop: the ONLY way a candidate
+    article is built is apply_reader_repair(), the same local-span contract, and the loop
+    itself constructs no prose."""
+    tree = ast.parse((HERE / "new_engine_v1" / "composition.py").read_text())
+    fn = next(n for n in ast.walk(tree)
+              if isinstance(n, ast.FunctionDef) and n.name == "reader_completion_loop")
+    called = {getattr(n.func, "id", "") for n in ast.walk(fn) if isinstance(n, ast.Call)}
+    check("the loop's only article producer is the local reader repair",
+          "reader_repair" in called, sorted(called))
+    check("it never reaches the writer, continuity or prose finish",
+          not ({"write_article", "continuity_edit", "prose_finish"} & called),
+          sorted(called))
+    check("the local-span contract is unchanged -- every edit still names one paragraph",
+          "ONE paragraph" in CP.READER_REPAIR_SYSTEM
+          and "NOT REWRITING THE ARTICLE" in CP.READER_REPAIR_SYSTEM)
+    check("the rejection feedback never asks the reader to repair facts",
+          "do not recharacterise" in CP.reader_repair_prompt(
+              DRAFT, {"READABILITY": {"note": "n", "passages": [_RP1]}},
+              CP.writer_packet(ARCH, LEDGER)[0],
+              {"reason": CP.READER_REJECTED_GROUNDING, "detail": ["x"]}))
+
+
+def test_reader_completion_history_is_persisted_in_full():
+    """The audit requirement: what happened must be readable off the persisted run
+    without inference -- the blocker counts, the proposed edits, and each iteration's
+    Safety and Grounding verdicts with the reason it was accepted or refused."""
+    prov, out = run(full_script(reader=_reader_hold(READABILITY=[_RP1, _RP2]))
+                    + [_RE1, _reader_hold(READABILITY=[_RP2]), _RE2, READER_OK])
+    check("the run reaches PASS", out["status"] == CP.PASS, out.get("failure_reason"))
+    rd = out["detail"][CP.READER]
+    for k in ("reader_completion_iterations", "reader_repair_proposals",
+              "reader_repairs_accepted", "reader_repairs_rejected",
+              "reader_completion_history", "reader_initial_blocker_count",
+              "reader_final_blocker_count"):
+        check("the persisted record carries %s" % k, k in rd, sorted(rd))
+    h = rd["reader_completion_history"][0]
+    for k in ("blockers_before", "blockers_after", "edits", "safety", "grounding",
+              "outcome"):
+        check("each iteration records %s" % k, k in h, h)
+    check("the proposed edits themselves are kept, not just a count",
+          h["edits"][0]["original"] == _RP1 and h["edits"][0]["dimension"]
+          == "READABILITY", h["edits"])
+
 
 
 def main() -> None:
