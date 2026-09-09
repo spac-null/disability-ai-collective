@@ -4518,21 +4518,246 @@ def package_safety_repair(provider, package: dict, findings: list, ledger: dict,
 # a caller's calls/repairs/record() bookkeeping -- those differ by call site (attributed to
 # SAFETY, READER or GROUNDING's own stage depending on who is calling), so bookkeeping stays
 # with the caller, the same way it always has for STAGE 9c.
+# ── WHY ONE SHOT WAS NEVER ENOUGH (owner-directed, 2026-09-09; production-verified) ──
+# Retained Poetry continuation …-2026-09-09T203816 HELD at SAFETY on
+# `PACKAGE_MACHINE_LANGUAGE: frames [('the evidence', 2)]` with
+# after_package_safety_repair already true. The repair had not failed, and it had not
+# stalled. It had been shown one third of the problem:
+#
+#   dek              "Among THE EVIDENCE that poems move anyone: ..."   <- repaired
+#   homepage_excerpt "THE EVIDENCE cited for it is bodily: ..."         <- never shown
+#   meta_description "... and THE EVIDENCE behind it."                  <- never shown
+#
+# The audit reports machine language as FRAMES -- (phrase, count) -- so three leaks in
+# three different fields collapse into the single frame ('the evidence', 3), and
+# _safety_locate_findings emits one finding per FRAME, quoting the FIRST sentence that
+# carries it. One finding, one field, one correct edit, 3 -> 2, budget spent, terminal
+# HOLD. Reconstructed deterministically from the retained artifact, not inferred.
+#
+# So the missing capability is not a better locator or a cleverer prompt: each pass does
+# exactly what it should and each pass strictly improves the package. What was arbitrary
+# was stopping after the first one. This replaces MAX = 1 with STRICT PROGRESS, the same
+# semantics grounding_completion_loop already uses on the article surface: keep going
+# only while the canonical package blocker set genuinely shrinks.
+#
+# NOTHING ELSE WIDENS. Same two eligible categories, same one-call
+# package_safety_repair(), same apply_package_safety_repair() permission check, same five
+# package prose fields, never the article body. Article Safety repair semantics are
+# untouched.
+#
+# NO DETERMINISTIC PATH HERE, DELIBERATELY. The article surface has one
+# (deterministic_subtraction_candidate) because a sentence can be dropped from a
+# paragraph and leave prose behind. A package field is one or two sentences that must
+# still read as a dek or a meta description afterwards, and "delete the sentence carrying
+# the frame" can empty the field of its only substance. Deleting just the phrase leaves
+# grammar this module cannot mechanically verify. Per the owner's own escape clause --
+# if deterministic deletion is not clearly safe, use the model repair -- there is no
+# deterministic package edit in this task, and no vocabulary rewriter.
+PACKAGE_SAFETY_COMPLETION_MAX_ITERATIONS = 5
+
+
+def package_blocker_signature(sa: dict) -> list:
+    """The CANONICAL package blocker multiset for a safety_audit result -- what "strict
+    progress" is measured against.
+
+    Read from the audit's OWN structured publication_package sub-data, never from the
+    blocking STRINGS, because a string is not a count: three leaks of one phrase in three
+    fields render as the one entry `PACKAGE_MACHINE_LANGUAGE: frames [('the evidence',
+    3)]`, and so do two, and so does one. Counting strings would call 3 -> 2 "no
+    progress" and stop the loop on its first genuinely successful iteration. A frame with
+    count n therefore contributes n entries.
+
+    Sorted, so it compares as a multiset: strictly fewer entries is progress; the same
+    number of DIFFERENT entries is not.
+    """
+    a = (sa.get("audits") or {}).get("publication_package") or {}
+    sig: list = []
+    for frame, n in (a.get("prose_leaks") or {}).get("frames") or []:
+        try:
+            n = int(n)
+        except (TypeError, ValueError):
+            n = 1
+        sig.extend([("machine_language", str(frame))] * max(n, 1))
+    for name in (a.get("scaffold") or {}).get("leaked") or []:
+        sig.append(("scaffold", str(name)))
+    for v in (a.get("cut_adherence") or {}).get("violations") or []:
+        if cut_term_confidence(str(v.get("term") or "")) == CUT_HIGH:
+            sig.append(("cut_term", str(v.get("match"))))
+    surf = a.get("factual_surface") or {}
+    for key in ("unapproved_entities", "unapproved_numbers", "unapproved_sensory",
+                "unapproved_spatial", "unapproved_scene"):
+        for tok in surf.get(key) or []:
+            sig.append((key, str(tok)))
+    return sorted(sig)
+
+
+def _package_blockers_only(sa: dict) -> bool:
+    """Every blocking entry is package-surface. An article-body blocker appearing during
+    a package-only loop means something outside this loop's remit changed, and the
+    candidate is refused rather than reasoned about."""
+    b = sa.get("blocking") or []
+    return bool(b) and all(str(x).startswith("PACKAGE_") for x in b)
+
+
+def _carry_package_completion(sa: dict, prep: dict) -> None:
+    """Attach the package completion's own audit to the Safety record that replaces it.
+
+    record(SAFETY, ...) writes a fresh safety_audit result, which knows nothing about the
+    repair sequence that produced the package it just approved. Without this, a run that
+    took three package iterations persists as though the package had simply been clean --
+    the same audit loss grounding_completion_detail() exists to prevent on the article
+    side. Cheap, additive, and read straight off the completion result."""
+    for k in ("package_completion_iterations", "package_completion_history",
+              "package_repairs_accepted", "package_repairs_rejected",
+              "package_initial_blocker_count", "package_final_blocker_count"):
+        if k in prep:
+            sa[k] = prep[k]
+
+
 def package_only_safety_completion(provider, sa: dict, final_text: str, package: dict | None,
-                                   ledger: dict, packet: dict, draft_text: str) -> dict:
-    """Given a FAILED safety_audit() result `sa` for (final_text, package), try the one
-    narrow package-only repair STAGE 9c defines. Returns {"attempted": False} if no
-    finding in `sa["blocking"]` is eligible (no model call spent), or {"attempted": True,
-    "findings": [...], "repair": <package_safety_repair() result>} otherwise -- `repair`
-    carries its own PASS/HOLD status and, on PASS, the new package at repair["package"].
+                                   ledger: dict, packet: dict, draft_text: str,
+                                   audit_fn=None,
+                                   max_iterations: int = PACKAGE_SAFETY_COMPLETION_MAX_ITERATIONS
+                                   ) -> dict:
+    """PROGRESS-BOUNDED package-only Safety completion (STAGE 9c). Given a FAILED
+    safety_audit() result `sa` for (final_text, package), repair the package -- and only
+    the package -- for as long as each accepted repair provably shrinks the canonical
+    package blocker set.
+
+    Returns {"attempted": False} if nothing in `sa["blocking"]` is eligible (no model call
+    spent), else {"attempted": True, "findings": <the first pass's findings>, "repair":
+    {...}}. `repair` keeps the shape every existing call site already reads: status PASS
+    with the accepted package at repair["package"] when at least one repair was accepted,
+    HOLD otherwise, and `model_calls` totalling the whole loop. Callers re-audit
+    afterwards exactly as they always have -- safety_audit() is deterministic and
+    model-free, so that costs nothing and keeps each call site's own bookkeeping
+    unchanged.
+
+    TRANSACTIONAL. Every proposal is applied to a TEMPORARY package and re-audited
+    against the EXACT same article; the accepted package is replaced only once a
+    candidate has passed all three acceptance rules, so a rejected proposal leaves it
+    byte-for-byte as it was. `audit_fn(article, package)` is the caller's own
+    safety_audit closure -- the same Safety this run enforces everywhere else, never a
+    re-derivation. Omitting it keeps the historical single-attempt behaviour, so a caller
+    that cannot supply one is never silently upgraded to a loop it did not ask for.
     """
     pfindings = safety_repair_findings(
         sa, final_text, package_prose(package), draft_text=draft_text,
         allowed_prefixes=PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES)
     if not pfindings:
         return {"attempted": False}
+
     prep = package_safety_repair(provider, package, pfindings, ledger, packet)
-    return {"attempted": True, "findings": pfindings, "repair": prep}
+    if audit_fn is None:
+        return {"attempted": True, "findings": pfindings, "repair": prep}
+
+    accepted_pkg = package
+    accepted = rejected = 0
+    model_calls = prep.get("model_calls", 0)
+    iterations = 1
+    history: list = []
+    accepted_edits: list = []
+    tried = set()
+    before_sig = package_blocker_signature(sa)
+    initial_count = len(before_sig)
+    current = prep
+
+    while True:
+        if current["status"] != PASS:
+            rejected += 1
+            history.append({"iteration": iterations, "outcome": "no_usable_proposal",
+                            "reason": current.get("reason", "the proposal was refused")})
+            break
+
+        sig = _edit_signature(current.get("edits"))
+        if sig in tried:
+            rejected += 1
+            history.append({"iteration": iterations, "outcome": "repeated_proposal"})
+            break
+        tried.add(sig)
+
+        candidate_pkg = current["package"]
+        candidate_sa = audit_fn(final_text, candidate_pkg)
+        model_calls += candidate_sa.get("model_calls", 0)
+        after_sig = package_blocker_signature(candidate_sa)
+
+        # RULE 1: no article-body blocker introduced. RULE 2: no new factual package
+        # surface -- an entity, number or relation the package did not carry shows up
+        # here as a PACKAGE_ category outside the two this stage is bounded to, and is
+        # refused rather than repaired. RULE 3: the canonical set strictly shrinks.
+        if candidate_sa["status"] != PASS and not _package_blockers_only(candidate_sa):
+            rejected += 1
+            history.append({"iteration": iterations, "outcome": "article_blocker_introduced",
+                            "detail": (candidate_sa.get("blocking") or [])[:4]})
+            break
+        ineligible = [b for b in (candidate_sa.get("blocking") or [])
+                      if not any(str(b).startswith(pre)
+                                 for pre in PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES)]
+        if ineligible:
+            rejected += 1
+            history.append({"iteration": iterations, "outcome": "factual_blocker_introduced",
+                            "detail": ineligible[:4]})
+            break
+        if len(after_sig) >= len(before_sig):
+            rejected += 1
+            history.append({"iteration": iterations, "outcome": "no_progress",
+                            "reason": "package blocker count did not shrink (%d -> %d)"
+                                      % (len(before_sig), len(after_sig))})
+            break
+
+        accepted += 1
+        accepted_pkg = candidate_pkg
+        accepted_edits.extend(current.get("edits") or [])
+        history.append({"iteration": iterations, "outcome": "accepted",
+                        "blocking_before": len(before_sig),
+                        "blocking_after": len(after_sig),
+                        "fields": sorted({e.get("field")
+                                          for e in current.get("edits") or []})})
+        before_sig = after_sig
+        sa = candidate_sa
+
+        if candidate_sa["status"] == PASS or not after_sig:
+            break
+        if iterations >= max_iterations:
+            history.append({"iteration": iterations, "outcome": "iteration_ceiling"})
+            break
+
+        nxt = safety_repair_findings(
+            sa, final_text, package_prose(accepted_pkg), draft_text=draft_text,
+            allowed_prefixes=PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES)
+        if not nxt:
+            history.append({"iteration": iterations, "outcome": "no_eligible_findings"})
+            break
+        iterations += 1
+        current = package_safety_repair(provider, accepted_pkg, nxt, ledger, packet)
+        model_calls += current.get("model_calls", 0)
+
+    if accepted:
+        repair = {"status": PASS, "package": accepted_pkg, "edits": accepted_edits,
+                  "findings_answered": [f.get("id") for f in pfindings],
+                  "provider": current.get("provider") or prep.get("provider"),
+                  "model_calls": model_calls, "repairs": accepted}
+    elif prep.get("status") == PASS:
+        # THE TRANSACTIONAL BOUNDARY. package_safety_repair() said PASS because the EDIT
+        # was within its permissions -- that is not the same thing as the loop having
+        # accepted the resulting package, which it did not (no progress, or the candidate
+        # introduced a blocker). Returning prep unchanged here would hand every existing
+        # call site a `repair["package"]` to adopt, silently publishing a package the
+        # acceptance rules had just refused. Caught by
+        # test_a_new_factual_package_blocker_stops_the_loop.
+        repair = {"status": HOLD,
+                  "reason": "the package repair was refused by the completion rules: %s"
+                            % (history[-1].get("outcome") if history else "no progress"),
+                  "provider": prep.get("provider"), "model_calls": model_calls}
+    else:
+        repair = dict(prep, model_calls=model_calls)
+    repair["package_completion_iterations"] = iterations
+    repair["package_completion_history"] = history
+    repair["package_repairs_accepted"] = accepted
+    repair["package_repairs_rejected"] = rejected
+    repair["package_initial_blocker_count"] = initial_count
+    repair["package_final_blocker_count"] = len(before_sig)
+    return {"attempted": True, "findings": pfindings, "repair": repair}
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -5714,7 +5939,7 @@ def run_story_architecture_composition(
         # to see coming, because the text it would need to fix did not exist yet.
         if sa["status"] != PASS:
             comp = package_only_safety_completion(
-                P, sa, final, pkg, ledger, wr["packet"], draft)
+                P, sa, final, pkg, ledger, wr["packet"], draft, audit_fn=audit)
             if comp["attempted"]:
                 prep = comp["repair"]
                 calls[SAFETY] = calls.get(SAFETY, 0) + prep.get("model_calls", 0)
@@ -5727,6 +5952,7 @@ def run_story_architecture_composition(
                     sa["carried_text"] = carried
                     sa["continuity_discarded"] = bool(delta_errs)
                     sa["after_package_safety_repair"] = True
+                    _carry_package_completion(sa, prep)
                     repairs[SAFETY] = 1
                     calls[SAFETY] = calls.get(SAFETY, 0) + prep.get("model_calls", 0)
 
@@ -5776,7 +6002,8 @@ def run_story_architecture_composition(
                 # change the one-repackage-per-run rule above (`repackaged[0]` is already
                 # set).
                 comp_p = package_only_safety_completion(
-                    P, sa_p, final, pkg_ref[0], ledger, wr["packet"], draft)
+                    P, sa_p, final, pkg_ref[0], ledger, wr["packet"], draft,
+                    audit_fn=audit)
                 if comp_p["attempted"]:
                     prep_p = comp_p["repair"]
                     calls[SAFETY] = calls.get(SAFETY, 0) + prep_p.get("model_calls", 0)
@@ -5785,6 +6012,7 @@ def run_story_architecture_composition(
                         sa_p = record(SAFETY, audit(final, pkg_ref[0]))
                         sa_p["after_repackage"] = True
                         sa_p["after_package_safety_repair"] = True
+                        _carry_package_completion(sa_p, prep_p)
                         repairs[SAFETY] = 1
                         calls[SAFETY] = calls.get(SAFETY, 0) + prep_p.get(
                             "model_calls", 0)
@@ -5979,7 +6207,8 @@ def run_story_architecture_composition(
                         # package_only_safety_completion for why this is not a second,
                         # special-cased mechanism.
                         comp_r = package_only_safety_completion(
-                            P, sa_r, repaired, pkg_r, ledger, wr["packet"], draft)
+                            P, sa_r, repaired, pkg_r, ledger, wr["packet"], draft,
+                            audit_fn=audit)
                         if comp_r["attempted"]:
                             prep_r = comp_r["repair"]
                             calls[SAFETY] = calls.get(SAFETY, 0) + prep_r.get(
@@ -5990,6 +6219,7 @@ def run_story_architecture_composition(
                                 sa_r["carried_text"] = carried
                                 sa_r["after_reader_repair"] = True
                                 sa_r["after_package_safety_repair"] = True
+                                _carry_package_completion(sa_r, prep_r)
                                 repairs[SAFETY] = 1
                                 calls[SAFETY] = calls.get(SAFETY, 0) + prep_r.get(
                                     "model_calls", 0)

@@ -4214,6 +4214,440 @@ def test_a_discarded_polish_takes_its_package_with_it():
           and out["owner_review"] is False)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# PROGRESS-BOUNDED PACKAGE SAFETY COMPLETION (owner-directed, 2026-09-09)
+# ══════════════════════════════════════════════════════════════════════════════
+# Real production gap, retained Poetry continuation …-2026-09-09T203816: the package
+# carried "the evidence" in THREE fields, the audit reported them as the ONE frame
+# ('the evidence', 3), _safety_locate_findings emitted ONE finding quoting the FIRST
+# sentence carrying it, the repair correctly fixed that one field -- and the one-shot
+# budget then terminal-HELD with two leaks left. Each pass was right; stopping after
+# the first one was arbitrary. These tests pin the replacement rule: keep going while
+# the CANONICAL package blocker set strictly shrinks.
+_PKG_LEAK_FIELDS = ("title", "dek", "homepage_excerpt", "meta_description",
+                    "social_hook")
+
+
+def _leak_audit(frame="the evidence", extra_blocking=None, entity_guard=True):
+    """A deterministic stand-in for the run's safety_audit closure, over the PACKAGE
+    only: it counts real occurrences of `frame` across the package fields and reports
+    them the way the real audit does -- as ONE (phrase, count) frame, which is exactly
+    the collapsing that made one-shot repair incomplete in production. `entity_guard`
+    reproduces the real audit's package factual surface: a name the package did not
+    carry before shows up as PACKAGE_UNSUPPORTED_FACTS, an ineligible category."""
+    def audit(article, package, repair=None):
+        prose = CP.package_prose(package)
+        n = prose.lower().count(frame)
+        pl = {"ok": n == 0, "total": n,
+              "frames": [(frame, n)] if n else []}
+        surf = {"unapproved_sensory": [], "unapproved_numbers": [],
+                "unapproved_entities": []}
+        blocking = []
+        if n:
+            blocking.append("PACKAGE_MACHINE_LANGUAGE: frames %s, scaffold []"
+                            % [(frame, n)])
+        if entity_guard and "Anneke Mertens" in prose:
+            surf["unapproved_entities"] = ["Anneke Mertens"]
+            blocking.append("PACKAGE_UNSUPPORTED_FACTS on ['DEK']: numbers=[] "
+                            "entities=['Anneke Mertens'] sensory=[]")
+        blocking += list(extra_blocking or [])
+        return {"status": CP.HOLD if blocking else CP.PASS, "blocking": blocking,
+                "model_calls": 0,
+                "audits": {"continuity_final": {}, "publication_package": {
+                    "prose_leaks": pl, "scaffold": {"ok": True, "leaked": []},
+                    "cut_adherence": {"violations": []},
+                    "factual_surface": surf}}}
+    return audit
+
+
+def _two_leak_package():
+    # title/meta/social empty: package_prose() joins non-empty fields with a blank line
+    # and CE.sentences() has no field boundary to respect, so an unpunctuated title
+    # would merge into the leaking sentence. Same fixture discipline as
+    # test_package_only_safety_repair_permissions.
+    return {"title": "", "dek": "As the evidence shows, the room keeps its own record.",
+            "homepage_excerpt": "The evidence for it is plain.",
+            "meta_description": "", "social_hook": ""}
+
+
+_FIX_DEK = {"edits": [{"finding_id": "SF1", "operation": "DELETE",
+                       "original": "As the evidence shows, the room keeps its own "
+                                   "record.",
+                       "repaired": "The room keeps its own record.", "fact_ids": []}]}
+_FIX_EXCERPT = {"edits": [{"finding_id": "SF1", "operation": "DELETE",
+                           "original": "The evidence for it is plain.",
+                           "repaired": "It is plain.", "fact_ids": []}]}
+
+
+def _run_pkg_completion(replies, package=None, audit=None, **kw):
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    pkg = package if package is not None else _two_leak_package()
+    prov = Scripted(list(replies))
+    au = audit or _leak_audit()
+    comp = CP.package_only_safety_completion(
+        prov, au(DRAFT, pkg), DRAFT, pkg, LEDGER, packet, DRAFT, audit_fn=au, **kw)
+    return prov, comp, pkg
+
+
+def test_two_package_leaks_take_two_iterations_then_pass():
+    """1/2. Two independent PACKAGE_MACHINE_LANGUAGE leaks in two different fields --
+    reported by the audit as the single frame ('the evidence', 2), which is why one
+    pass could only ever see one of them. The loop runs twice and PASSes."""
+    prov, comp, original = _run_pkg_completion([_FIX_DEK, _FIX_EXCERPT])
+    r = comp["repair"]
+    check("the completion is attempted", comp["attempted"] is True, comp)
+    check("it PASSes", r["status"] == CP.PASS, r)
+    check("it took exactly two iterations", r["package_completion_iterations"] == 2, r)
+    check("both were accepted", r["package_repairs_accepted"] == 2, r)
+    check("two model calls, one per iteration", len(prov.calls) == 2, prov.calls)
+    check("2 canonical blockers became 0",
+          (r["package_initial_blocker_count"], r["package_final_blocker_count"])
+          == (2, 0), r)
+    check("neither leak survives in the returned package",
+          "the evidence" not in CP.package_prose(r["package"]).lower(), r["package"])
+    check("2 -> 1 was recorded as accepted progress, then 1 -> 0",
+          [(h.get("blocking_before"), h.get("blocking_after"))
+           for h in r["package_completion_history"] if h["outcome"] == "accepted"]
+          == [(2, 1), (1, 0)], r["package_completion_history"])
+    # 5/8. the package handed in is never mutated; the article is never an input the
+    # loop could edit even if it wanted to.
+    check("the caller's own package object was not mutated",
+          original == _two_leak_package(), original)
+    check("no article text is returned anywhere", "article_text" not in r, r)
+
+
+def test_partial_package_progress_is_accepted_then_holds_honestly():
+    """2. 2 blockers -> 1 blocker is real progress and is kept, even though the run
+    still cannot pass: the accepted package is the improved one, and the loop stops
+    when it runs out of usable proposals rather than reverting."""
+    refuse = {"edits": []}          # second pass returns nothing usable
+    prov, comp, _ = _run_pkg_completion([_FIX_DEK, refuse])
+    r = comp["repair"]
+    check("the accepted progress is kept", r["status"] == CP.PASS, r)
+    check("one repair accepted, one rejected",
+          (r["package_repairs_accepted"], r["package_repairs_rejected"]) == (1, 1), r)
+    check("2 canonical blockers became 1",
+          (r["package_initial_blocker_count"], r["package_final_blocker_count"])
+          == (2, 1), r)
+    check("the dek is fixed and the excerpt still leaks",
+          "the evidence" not in r["package"]["dek"].lower()
+          and "the evidence" in r["package"]["homepage_excerpt"].lower(), r["package"])
+    check("the loop stopped on the unusable proposal, not on a ceiling",
+          r["package_completion_history"][-1]["outcome"] == "no_usable_proposal", r)
+
+
+def test_same_count_different_blockers_is_not_progress():
+    """3. A repair that moves the leak rather than removing it -- 2 blockers become 2
+    different blockers -- is refused, and the accepted package stays exactly as it was.
+    Rewording is not progress; fewer canonical blockers is."""
+    move = {"edits": [{"finding_id": "SF1", "operation": "NARROW",
+                       "original": "As the evidence shows, the room keeps its own "
+                                   "record.",
+                       "repaired": "The evidence is plain here.", "fact_ids": []}]}
+    prov, comp, original = _run_pkg_completion([move])
+    r = comp["repair"]
+    check("nothing was accepted", r["package_repairs_accepted"] == 0, r)
+    check("the loop names it as no progress",
+          r["package_completion_history"][-1]["outcome"] == "no_progress", r)
+    check("no package is handed back -- the accepted one is untouched",
+          r["status"] != CP.PASS and "package" not in r, r)
+    check("the caller's package object is unmutated", original == _two_leak_package(),
+          original)
+    check("only one model call was spent on the dead end", len(prov.calls) == 1,
+          prov.calls)
+
+
+def test_package_repair_introducing_an_entity_is_rejected():
+    """4/5. A proposal that adds a name the package never carried is refused, and the
+    accepted package is left untouched. Two mechanisms agree here and both are proved:
+    apply_package_safety_repair() refuses the edit outright, and were it ever to get
+    past that, the re-audit reports an ineligible PACKAGE_UNSUPPORTED_FACTS category."""
+    inject = {"edits": [{"finding_id": "SF1", "operation": "NARROW",
+                         "original": "As the evidence shows, the room keeps its own "
+                                     "record.",
+                         "repaired": "As Anneke Mertens' 47 sources show, the room "
+                                     "keeps its own record.", "fact_ids": []}]}
+    prov, comp, original = _run_pkg_completion([inject])
+    r = comp["repair"]
+    check("the proposal is refused", r["status"] != CP.PASS, r)
+    check("nothing was accepted", r["package_repairs_accepted"] == 0, r)
+    check("no package is adopted at all", "package" not in r or r["package"] == original,
+          r)
+    check("the caller's package object is unmutated", original == _two_leak_package(),
+          original)
+
+
+def test_repeated_identical_package_proposal_terminates():
+    """6. The model repeating the same effective edit terminates the loop instead of
+    spinning on it. Two independent guards make that true and the first one reached
+    wins: an edit already applied can no longer be found verbatim in its field, so
+    apply_package_safety_repair() refuses it outright -- which is why the explicit
+    `tried` signature check above it is a belt-and-braces guard rather than the usual
+    path. Either way the property under test is the same one: bounded calls, no third
+    attempt, and the accepted package keeps the progress it had."""
+    prov, comp, _ = _run_pkg_completion([_FIX_DEK, _FIX_DEK])
+    r = comp["repair"]
+    check("one accepted, then the repeat is refused",
+          r["package_repairs_accepted"] == 1, r)
+    check("the loop terminated on the repeat rather than retrying it",
+          r["package_completion_history"][-1]["outcome"]
+          in ("repeated_proposal", "no_usable_proposal"),
+          r["package_completion_history"])
+    check("exactly two calls -- the repeat is not tried a third time",
+          len(prov.calls) == 2, prov.calls)
+    check("the accepted progress from the first pass is kept",
+          "the evidence" not in r["package"]["dek"].lower(), r["package"])
+
+
+def test_package_loop_stops_when_no_finding_is_eligible():
+    """7/9. A non-package Safety blocker is ineligible for this stage at every point,
+    not just the first: an article-surface finding present from the start spends no
+    model call at all."""
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    pkg = _two_leak_package()
+    au = _leak_audit(extra_blocking=["NEW_UNSUPPORTED_FACTS: sensory=['pink']"])
+    never = Scripted([])
+    comp = CP.package_only_safety_completion(
+        never, au(DRAFT, pkg), DRAFT, pkg, LEDGER, packet, DRAFT, audit_fn=au)
+    check("an article-surface blocker makes the whole attempt ineligible",
+          comp == {"attempted": False}, comp)
+    check("and no model call was spent", never.calls == [], never.calls)
+
+
+def test_a_new_factual_package_blocker_stops_the_loop():
+    """4/9. If a candidate's own re-audit reports a factual package category, the
+    candidate is refused and the loop stops -- this stage never widens factual
+    permission, in the first iteration or the fourth."""
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    pkg = _two_leak_package()
+
+    calls = {"n": 0}
+    base = _leak_audit(entity_guard=False)
+
+    def au(article, package, repair=None):
+        res = base(article, package, repair)
+        calls["n"] += 1
+        if calls["n"] > 1:      # the candidate's own re-audit
+            res["blocking"] = res["blocking"] + [
+                "PACKAGE_UNSUPPORTED_FACTS on ['DEK']: numbers=['47'] entities=[] "
+                "sensory=[]"]
+            res["status"] = CP.HOLD
+        return res
+
+    prov = Scripted([_FIX_DEK])
+    comp = CP.package_only_safety_completion(
+        prov, au(DRAFT, pkg), DRAFT, pkg, LEDGER, packet, DRAFT, audit_fn=au)
+    r = comp["repair"]
+    check("the candidate is refused", r["package_repairs_accepted"] == 0, r)
+    check("the loop names the factual blocker",
+          r["package_completion_history"][-1]["outcome"]
+          == "factual_blocker_introduced", r)
+    check("no package is handed back for the caller to adopt -- the edit was within "
+          "its permissions but the LOOP refused the package it produced",
+          r["status"] != CP.PASS and "package" not in r, r)
+
+
+def test_an_article_blocker_appearing_mid_loop_is_refused():
+    """8. The loop is package-only. If an article-surface blocker somehow appears in a
+    candidate's re-audit, the candidate is refused rather than reasoned about -- the
+    loop has no permission over article text and does not pretend to."""
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    pkg = _two_leak_package()
+    calls = {"n": 0}
+    base = _leak_audit(entity_guard=False)
+
+    def au(article, package, repair=None):
+        res = base(article, package, repair)
+        calls["n"] += 1
+        if calls["n"] > 1:
+            res["blocking"] = ["MACHINE_LANGUAGE: frames [('the record', 1)]"]
+            res["status"] = CP.HOLD
+        return res
+
+    prov = Scripted([_FIX_DEK])
+    comp = CP.package_only_safety_completion(
+        prov, au(DRAFT, pkg), DRAFT, pkg, LEDGER, packet, DRAFT, audit_fn=au)
+    r = comp["repair"]
+    check("the candidate is refused", r["package_repairs_accepted"] == 0, r)
+    check("the loop names the article blocker",
+          r["package_completion_history"][-1]["outcome"]
+          == "article_blocker_introduced", r)
+    check("and no package is handed back for the caller to adopt",
+          r["status"] != CP.PASS and "package" not in r, r)
+
+
+def test_package_completion_emergency_ceiling_bounds_a_runaway():
+    """10. The ceiling is a runaway guard, never a target: with a package leaking the
+    frame in more fields than the ceiling allows iterations, the loop stops at the
+    ceiling with real progress banked rather than running on."""
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    pkg = {"title": "", "dek": "The evidence one.",
+           "homepage_excerpt": "The evidence two.",
+           "meta_description": "The evidence three.",
+           "social_hook": "The evidence four."}
+    au = _leak_audit()
+    fixes = [{"edits": [{"finding_id": "SF1", "operation": "DELETE",
+                         "original": "The evidence %s." % w, "repaired": "Line %s." % w,
+                         "fact_ids": []}]}
+             for w in ("one", "two", "three", "four")]
+    prov = Scripted(fixes)
+    comp = CP.package_only_safety_completion(
+        prov, au(DRAFT, pkg), DRAFT, pkg, LEDGER, packet, DRAFT, audit_fn=au,
+        max_iterations=2)
+    r = comp["repair"]
+    check("the loop stopped at the ceiling",
+          r["package_completion_history"][-1]["outcome"] == "iteration_ceiling", r)
+    check("it did not exceed the ceiling", r["package_completion_iterations"] == 2, r)
+    check("no more calls than iterations", len(prov.calls) == 2, prov.calls)
+    check("real progress was still banked, not discarded",
+          (r["package_initial_blocker_count"], r["package_final_blocker_count"])
+          == (4, 2), r)
+    check("the default ceiling is 5, not 1",
+          CP.PACKAGE_SAFETY_COMPLETION_MAX_ITERATIONS == 5,
+          CP.PACKAGE_SAFETY_COMPLETION_MAX_ITERATIONS)
+
+
+def test_package_blocker_signature_counts_occurrences_not_strings():
+    """The whole fix rests on this: a frame is (phrase, count), so three leaks of one
+    phrase render as ONE blocking string. Counting strings would have called the
+    production 3 -> 2 repair "no progress" and stopped the loop on the very iteration
+    that worked."""
+    def sa(n):
+        return {"blocking": ["PACKAGE_MACHINE_LANGUAGE: frames [('the evidence', %d)], "
+                             "scaffold []" % n],
+                "audits": {"publication_package": {
+                    "prose_leaks": {"frames": [("the evidence", n)]},
+                    "scaffold": {"leaked": []}, "cut_adherence": {"violations": []},
+                    "factual_surface": {}}}}
+    check("three occurrences count as three", len(CP.package_blocker_signature(sa(3)))
+          == 3)
+    check("two count as two", len(CP.package_blocker_signature(sa(2))) == 2)
+    check("both render as exactly one blocking string -- which is why the string count "
+          "cannot be the progress measure",
+          len(sa(3)["blocking"]) == len(sa(2)["blocking"]) == 1)
+    check("a clean audit has an empty signature",
+          CP.package_blocker_signature({"audits": {"publication_package": {}}}) == [])
+
+
+
+def test_two_field_package_leak_is_completed_and_downstream_gets_that_exact_package():
+    """11/12, full pipeline. The regenerated package leaks the same frame in TWO fields
+    -- the production shape. Proves the loop runs twice inside one Safety stage, that
+    the exact package it finally clears is what Grounding, Fact Check and the Reader
+    receive, and that nothing regenerates a package after that Safety PASS."""
+
+    class _PackageThenTwoLeaks:
+        model = "test"
+        url = "http://127.0.0.1:0/v1"
+
+        def __init__(self, replies):
+            self.replies = list(replies)
+            self.calls = []
+            self._pkg_calls = 0
+            self.packages = []
+
+        def complete(self, system, user, max_tokens=3000, timeout=180,
+                    temperature=None, deadline=None):
+            self.calls.append({"system": system, "user": user})
+            if "the last writer to touch a finished" in system.lower():
+                return Reply(user.split("THE ARTICLE\n", 1)[-1].strip())
+            if "editor who decides how a finished" in system.lower():
+                self._pkg_calls += 1
+                article = user.split("THE FINISHED ARTICLE\n", 1)[-1]
+                pkg = package_from(article)
+                if self._pkg_calls > 1:
+                    # The leak goes in ALONGSIDE the generated fields, never instead of
+                    # them: a hand-built short excerpt fails the package stage's own
+                    # length validation and triggers its internal repair, which is a
+                    # different mechanism than the one under test.
+                    pkg = dict(pkg,
+                              dek="As the evidence shows, the room keeps its own "
+                                  "record.",
+                              homepage_excerpt="The evidence for it is plain. "
+                                               + pkg["homepage_excerpt"])
+                self.packages.append(pkg)
+                return Reply(json.dumps({"package": pkg}))
+            if not self.replies:
+                raise AssertionError("the run made more model calls than the script "
+                                     "allows (%d so far)" % len(self.calls))
+            r = self.replies.pop(0)
+            return Reply(r if isinstance(r, str) else json.dumps(r))
+
+        def stage_of(self, i):
+            sy = self.calls[i]["system"]
+            if "the last writer to touch a finished" in sy.lower():
+                return "PROSE_FINISH"
+            if "editor who decides how a finished" in sy.lower():
+                return "PACKAGE"
+            for name, marker in (("LEDGER", "freezing an evidence ledger"),
+                                 ("WORTH", "whether a story belongs"),
+                                 ("ARCHITECTURE", "building the reader's path"),
+                                 ("WRITER", "writing one finished article from an "
+                                           "approved"),
+                                 ("CONTINUITY", "the continuity editor")):
+                if marker.lower() in sy.lower():
+                    return name
+            if "ordinary intelligent reader" in sy:
+                return "READER"
+            return "?"
+
+    bad_draft = DRAFT.replace(
+        "The room was built from Himalayan salt bricks",
+        "The room was built from pink Himalayan salt bricks")
+    fix_pink = {"edits": [{
+        "finding_id": "SF1", "operation": "DELETE",
+        "original": "The room was built from pink Himalayan salt bricks, and the "
+                    "pavilion was dug partway into the ground.",
+        "repaired": "The room was built from Himalayan salt bricks, and the "
+                    "pavilion was dug partway into the ground.",
+        "fact_ids": []}]}
+
+    import new_engine_v1.stages as S
+    real = S.ground
+    S.ground = lambda *a, **k: dict(GROUND_CLEAN)
+    prov = _PackageThenTwoLeaks(
+        [{"facts": list(LEDGER.values())}, WORTH, ARCH, envelope(bad_draft),
+         _edits_from(bad_draft), fix_pink, _FIX_DEK, _FIX_EXCERPT, READER_OK])
+    try:
+        out = CP.run_story_architecture_composition(
+            prov, pack=PACK, source_text=S0, source_sha="x",
+            subject=PACK["subject"], fact_check_fn=lambda a: dict(FC_CLEAN))
+    finally:
+        S.ground = real
+
+    check("the run reaches PASS -- one-shot would have HELD here",
+          out["status"] == CP.PASS, out.get("failure_reason"))
+    stages = [prov.stage_of(i) for i in range(len(prov.calls))]
+    check("two package-only repair calls, one per leaking field",
+          stages.count("?") == 3, stages)      # 1 article repair + 2 package repairs
+    sd = out["detail"][CP.SAFETY]
+    check("the Safety record carries the completion's own audit -- two iterations, "
+          "two accepted, 2 canonical blockers to 0",
+          (sd.get("package_completion_iterations"),
+           sd.get("package_repairs_accepted"),
+           sd.get("package_initial_blocker_count"),
+           sd.get("package_final_blocker_count")) == (2, 2, 2, 0), sd)
+    check("and it is still recorded as one SAFETY repair on the stage counters",
+          out["repairs_by_stage"].get(CP.SAFETY) == 1
+          and sd.get("after_package_safety_repair") is True, out["repairs_by_stage"])
+    check("neither leak survives into the published package",
+          "the evidence" not in CP.package_prose(out["package"]).lower(),
+          out["package"])
+    # 12. exactly two PACKAGE stage calls in the whole run: the original build and the
+    # one post-article-repair regeneration. A third would mean a package was generated
+    # after Safety PASSed, invalidating the surface every downstream gate just approved.
+    check("no package is regenerated after the final Safety PASS",
+          stages.count("PACKAGE") == 2, stages)
+    # 11. downstream consumed THAT package, not a rebuilt one: the Reader and the
+    # publication surface carry the exact repaired fields.
+    check("the published package is the exact repaired one",
+          out["package"]["dek"] == "The room keeps its own record."
+          and out["package"]["homepage_excerpt"].startswith("It is plain."),
+          out["package"])
+    check("and it is not the leaking one the regeneration produced",
+          out["package"] != prov.packages[-1], prov.packages[-1])
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
