@@ -25,6 +25,7 @@ import engine_switch as ES                                   # noqa: E402
 import new_engine_candidate as CAND                          # noqa: E402
 import publication_safety_bridge as BRIDGE                   # noqa: E402
 import publish_best as PB                                    # noqa: E402
+from new_engine_v1 import composition as CP                  # noqa: E402
 from new_engine_v1 import contracts as C                     # noqa: E402
 from research_pack_fixture import stub_pack             # noqa: E402
 from new_engine_v1 import runner as R                        # noqa: E402
@@ -224,6 +225,84 @@ def test_bridge_fails_closed_per_check():
           BRIDGE.check_persona_leakage("The report records a crossing.")[0] is True)
 
 
+def _sa_out(stage_overrides=None, status=CP.PASS,
+           article="A real article with enough words to pass the artifact check.",
+           ready=None, decision=None):
+    """A minimal, synthetic new_engine_v1 `out` -- shaped exactly as
+    new_engine_v1.runner._run_story_architecture() actually returns one: `provider`
+    carries the composition_engine marker the bridge dispatches on, and `composition`
+    is composition.run_story_architecture_composition()'s own return shape (`stages`,
+    `status`, `article_text`, `publication_ready`), never a parallel invention."""
+    stages = {s: CP.PASS for s in CP.STAGES}
+    if stage_overrides:
+        stages.update(stage_overrides)
+    ready = (status == CP.PASS) if ready is None else ready
+    decision = decision or ("ACCEPT" if status == CP.PASS else "HOLD")
+    return {"decision": decision,
+           "provider": {"composition_engine": CP.COMPOSITION_STORY_ARCHITECTURE},
+           "composition": {"status": status, "stages": stages, "article_text": article,
+                           "publication_ready": ready, "words": len(article.split()),
+                           "subject": "test subject",
+                           "failure_stage": None if status == CP.PASS else "TEST_STAGE"},
+           "artifacts": {}}
+
+
+def test_new_engine_v1_bridge_contract():
+    """The story_architecture / new_engine_v1 publication-safety contract (owner
+    ruling, 2026-09-09): the bridge must evaluate THIS engine's own real gates, not
+    require legacy artifacts it never produces."""
+    # 1 (control): the existing legacy tests above already prove dispatch is
+    # unaffected -- test_bridge_all_checks_pass_grants_eligibility and
+    # test_bridge_fails_closed_per_check call evaluate() (now the dispatcher) against a
+    # legacy `out` with no composition_engine marker and still pass unchanged.
+    legacy_out = _accept_run()
+    check("a legacy `out` (no composition_engine marker) still dispatches to the "
+          "legacy contract", BRIDGE.evaluate(legacy_out, fact_check_fn=CLEAN_FACT_CHECK)
+          .eligible is True)
+
+    # 2. every required gate PASS -> eligible.
+    clean = _sa_out()
+    r = BRIDGE.evaluate(clean, fact_check_fn=CLEAN_FACT_CHECK)
+    check("new_engine_v1, every gate PASS -> eligible", r.eligible is True,
+          [c for c in r.checks if not c["ok"]])
+
+    # 3-7. one gate HOLD each -> ineligible, and named as the failing check.
+    for stage, check_name in ((CP.WORTH, "worth_pass"),
+                              (CP.SAFETY, "safety_pass"),
+                              (CP.GROUNDING, "grounding_pass"),
+                              (CP.FACT_CHECK, "fact_check_pass"),
+                              (CP.READER, "reader_pass")):
+        out = _sa_out({stage: CP.HOLD}, status=CP.HOLD)
+        r = BRIDGE.evaluate(out, fact_check_fn=CLEAN_FACT_CHECK)
+        check("%s HOLD -> ineligible" % stage, r.eligible is False)
+        check("...named by the failing check: %s" % check_name,
+              check_name in [c["check"] for c in r.failures],
+              [c["check"] for c in r.failures])
+
+    # 8. missing required final artifact -> ineligible, even if every stage says PASS
+    # (a stage can pass and still leave no publishable bytes, e.g. an empty package).
+    no_article = _sa_out(article="", ready=False)
+    r8 = BRIDGE.evaluate(no_article, fact_check_fn=CLEAN_FACT_CHECK)
+    check("no publishable article artifact -> ineligible", r8.eligible is False)
+    check("...named by the failing check",
+          "final_article_artifact_exists" in [c["check"] for c in r8.failures])
+
+    # 9. no fake legacy artifacts are required for new_engine_v1 -- the whole point.
+    names = [c["check"] for c in r.checks]           # from the READER-HOLD case above
+    check("discovery_source_anchor is not a new_engine_v1 check",
+          "discovery_source_anchor" not in names, names)
+    check("article_form_lineage is not a new_engine_v1 check",
+          "article_form_lineage" not in names, names)
+    # And REPLAYED (composition's own frozen= resume) satisfies the upstream gates a
+    # fresh PASS would -- the whole reason a retained Worth-PASS artifact can be
+    # completed and published without rerunning Research, Ledger or Worth.
+    replayed = _sa_out({CP.LEDGER: CP.REPLAYED, CP.WORTH: CP.REPLAYED,
+                        CP.ARCHITECTURE: CP.REPLAYED})
+    r9 = BRIDGE.evaluate(replayed, fact_check_fn=CLEAN_FACT_CHECK)
+    check("REPLAYED upstream stages are eligible, not just fresh PASS",
+          r9.eligible is True, [c for c in r9.checks if not c["ok"]])
+
+
 def test_bridge_imports_no_legacy_editorial_gate():
     import ast
     src = (HERE / "publication_safety_bridge.py").read_text()
@@ -321,6 +400,7 @@ def main():
                test_legacy_selector_eligibility_unchanged,
                test_bridge_all_checks_pass_grants_eligibility,
                test_bridge_fails_closed_per_check,
+               test_new_engine_v1_bridge_contract,
                test_bridge_imports_no_legacy_editorial_gate,
                test_eligible_candidate_is_selector_visible_and_rehearsal_is_not,
                test_no_rehearsal_candidate_in_live_drafts]:

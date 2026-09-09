@@ -40,6 +40,7 @@ HERE = pathlib.Path(__file__).parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
+from new_engine_v1 import composition as CP       # noqa: E402
 from new_engine_v1 import contracts as C          # noqa: E402
 from new_engine_v1 import invariants as INV       # noqa: E402
 
@@ -192,7 +193,32 @@ def coverage_state(claims_extracted: int, claims_checked: int, not_checked) -> d
 
 
 def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
-    """Run every required CURRENT_ENGINE check against a finished engine run.
+    """Run every required publication-safety check against a finished engine run, for
+    WHICHEVER of the two legitimate engine contracts produced `out`.
+
+    The two contracts have different artifact shapes by design -- legacy's
+    Discovery/Article Form lineage has no equivalent in story_architecture, which
+    freezes a Ledger and passes it through Worth, Safety, Grounding, Fact Check and
+    Reader instead. Neither shape is a degraded version of the other, so the dispatch
+    below is EXPLICIT, read from a field the composition path itself already sets --
+    never a heuristic guess at which artifacts happen to be present.
+
+    `out["provider"]["composition_engine"]` is set by
+    new_engine_v1.runner._run_story_architecture() to
+    composition.COMPOSITION_STORY_ARCHITECTURE precisely so a caller downstream (this
+    one) can know which contract it is looking at without inspecting artifact shapes.
+    Its absence -- every legacy run, and any run this field predates -- means legacy.
+    """
+    if (out.get("provider") or {}).get("composition_engine") == \
+            CP.COMPOSITION_STORY_ARCHITECTURE:
+        return _evaluate_new_engine_v1(out, fact_check_fn=fact_check_fn)
+    return _evaluate_legacy(out, fact_check_fn=fact_check_fn)
+
+
+def _evaluate_legacy(out: dict, *, fact_check_fn=None) -> BridgeResult:
+    """Run every required CURRENT_ENGINE check against a finished LEGACY engine run
+    (Discovery -> Article Form -> Writer -> Writer Grounding). Unchanged since before
+    the new_engine_v1 branch existed -- see `evaluate()` for the dispatcher.
 
     `fact_check_fn(article_text) -> dict` is the existing world-relative web fact check
     (orchestrator.fact_check._run_web_fact_check). It is injected so this module imports
@@ -333,22 +359,39 @@ def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
         r.add("human_detail_provenance", False,
               "check unavailable (%s)" % str(e)[:120])
 
-    # 9. world-relative fact check
-    #
-    # STRICT (2026-08-25). This is the ONLY check that reaches outside the
-    # source-relative editorial/provenance chain into the world -- checks 1-8 can all
-    # pass while a source faithfully contains a claim that is false about the world.
-    # It therefore may not infer success from an ABSENCE of contradictions; it must see
-    # positive evidence that world-relative checking actually executed.
-    #
-    # The first natural CURRENT_ENGINE run (production-20260825T070003Z-5a5f17d6) is
-    # why: claim extraction raised, the legacy path swallowed it and returned [], so
-    # this check read "contradicted=0 advisory=0 unverifiable=0" and passed a draft on
-    # which no world-relative check had run at all. Required now:
-    #     extraction_status == ok  AND  claims_extracted > 0  AND  completed
-    #     AND the existing contradiction policy passes
-    # Anything else -- extraction error, zero claims, unfinished verification, or a
-    # non-strict result that cannot prove any of it -- fails closed.
+    # 9. world-relative fact check -- shared with new_engine_v1, see
+    # _check_world_relative_fact_check below for why this is the ONE check both engine
+    # contracts run identically rather than each reading their own composition's verdict.
+    _check_world_relative_fact_check(r, article, fact_check_fn)
+
+    r.eligible = not r.failures
+    return r
+
+
+def _check_world_relative_fact_check(r: BridgeResult, article: str,
+                                     fact_check_fn) -> None:
+    """Check 9, factored out so new_engine_v1 runs the identical, authoritative check
+    rather than trusting composition's own internal FACT_CHECK stage verdict, which is
+    real but deliberately less strict (see the comment on composition.py's FACT_CHECK
+    stage: "a fact check that COULD NOT RUN is deliberately not blocked here... this
+    bridge will not stamp publication_eligible... without a real strict check"). Mutates
+    `r` in place, matching every other check in this module.
+
+    STRICT (2026-08-25). This is the ONLY check that reaches outside the
+    source-relative editorial/provenance chain into the world -- every other check can
+    pass while a source faithfully contains a claim that is false about the world.
+    It therefore may not infer success from an ABSENCE of contradictions; it must see
+    positive evidence that world-relative checking actually executed.
+
+    The first natural CURRENT_ENGINE run (production-20260825T070003Z-5a5f17d6) is
+    why: claim extraction raised, the legacy path swallowed it and returned [], so
+    this check read "contradicted=0 advisory=0 unverifiable=0" and passed a draft on
+    which no world-relative check had run at all. Required now:
+        extraction_status == ok  AND  claims_extracted > 0  AND  completed
+        AND the existing contradiction policy passes
+    Anything else -- extraction error, zero claims, unfinished verification, or a
+    non-strict result that cannot prove any of it -- fails closed.
+    """
     if fact_check_fn is None:
         r.add("world_relative_fact_check", False,
               "no fact-check function supplied; fail-closed, never assumed verified")
@@ -449,6 +492,94 @@ def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
         except Exception as e:
             r.add("world_relative_fact_check", False,
                   "fact check errored (%s); fail-closed" % str(e)[:120])
+
+
+def _evaluate_new_engine_v1(out: dict, *, fact_check_fn=None) -> BridgeResult:
+    """The new_engine_v1 / story_architecture publication-safety contract.
+
+    Every check here reads a field composition.run_story_architecture_composition()
+    already computes and persists -- `out["composition"]` is that function's own return
+    value, unmodified, from new_engine_v1.runner._run_story_architecture(). No parallel
+    state is created and no artifact is invented: LEDGER, WORTH, ARCHITECTURE, SAFETY,
+    GROUNDING and READER are read from `composition["stages"]`, the SAME per-stage
+    verdict the composition ladder itself is built on and the SAME field
+    story_architecture_composition_test.py already asserts against.
+
+    LEDGER, WORTH and ARCHITECTURE accept REPLAYED as well as PASS: a stage resumed
+    from a previous run's own frozen artifacts (composition's `frozen=` parameter) is
+    not a bypass of that stage -- check_architecture() still validates a replayed
+    architecture against the replayed ledger before REPLAYED is even recorded -- it is
+    exactly what "this was already earned" means. SAFETY, GROUNDING and READER are
+    never replayed by design (composition always re-runs them fresh, `frozen=` or not),
+    so only a literal PASS satisfies those three; a HOLD or a NOT_RUN blocks, without
+    inspecting which repair path led there.
+
+    FACT_CHECK is checked TWICE, deliberately, and the second one is authoritative: once
+    against composition's own recorded stage verdict (a real check, but one composition
+    itself is candid is not the whole story -- see the comment on composition.py's
+    FACT_CHECK stage), and once more via _check_world_relative_fact_check(), the SAME
+    strict, injected check legacy's check 9 already runs. new_engine_v1 earns
+    publication the same way legacy does: on real, positive evidence that a
+    world-relative check executed and found nothing contradicted -- never on composition
+    having merely reached the stage.
+    """
+    r = BridgeResult()
+    comp = out.get("composition") or {}
+    stages = comp.get("stages") or {}
+
+    def stage_ok(stage):
+        return stages.get(stage) in (CP.PASS, CP.REPLAYED)
+
+    r.add("engine_decision_accept", out.get("decision") == "ACCEPT",
+          "decision=%r" % out.get("decision"))
+    r.add("research_sufficient", bool(comp),
+          "composition ran" if comp else
+          "no composition result on this run -- research did not reach it, or this "
+          "is not a story_architecture run")
+    r.add("ledger_frozen_valid", stage_ok(CP.LEDGER),
+          "LEDGER=%r" % stages.get(CP.LEDGER))
+    r.add("worth_pass", stage_ok(CP.WORTH), "WORTH=%r" % stages.get(CP.WORTH))
+    r.add("architecture_valid", stage_ok(CP.ARCHITECTURE),
+          "ARCHITECTURE=%r" % stages.get(CP.ARCHITECTURE))
+    r.add("composition_completed", comp.get("status") == CP.PASS,
+          "composition status=%r (failure_stage=%r)"
+          % (comp.get("status"), comp.get("failure_stage")))
+    r.add("safety_pass", stages.get(CP.SAFETY) == CP.PASS,
+          "SAFETY=%r" % stages.get(CP.SAFETY))
+    r.add("grounding_pass", stages.get(CP.GROUNDING) == CP.PASS,
+          "GROUNDING=%r" % stages.get(CP.GROUNDING))
+    r.add("fact_check_pass", stages.get(CP.FACT_CHECK) == CP.PASS,
+          "composition's own FACT_CHECK stage=%r" % stages.get(CP.FACT_CHECK))
+    r.add("reader_pass", stages.get(CP.READER) == CP.PASS,
+          "READER=%r" % stages.get(CP.READER))
+    article = comp.get("article_text") or ""
+    r.add("final_article_artifact_exists",
+          bool(comp.get("publication_ready")) and bool(article.strip()),
+          "publication_ready=%r words=%s"
+          % (comp.get("publication_ready"), comp.get("words")))
+
+    # 7/8 equivalents: the same persona and human-detail provenance checks legacy runs,
+    # unchanged, against the same final article text.
+    ok, detail = check_persona_leakage(article)
+    r.add("no_persona_factual_authority", ok, detail)
+    try:
+        from orchestrator.human_detail_provenance import (
+            check_provenance, REASON_GROUNDED_QUOTE)
+        pack = out.get("artifacts", {}).get(C.RESEARCH_PACK)
+        authorised_text = "\n\n".join(
+            [comp.get("subject", "")] +
+            [s.get("text", "") for s in (pack.payload.get("sources", []) if pack else [])])
+        hd = check_provenance(article, authorised_text) or []
+        bad = [h for h in hd if h.get("reason") != REASON_GROUNDED_QUOTE]
+        r.add("human_detail_provenance", not bad,
+              "%d personal-detail claim(s), all grounded" % len(hd) if not bad
+              else "ungrounded personal detail: %s"
+                   % "; ".join("%s/%s" % (h.get("reason"), str(h.get("claim"))[:60])
+                               for h in bad[:2]))
+    except Exception as e:
+        r.add("human_detail_provenance", False, "check unavailable (%s)" % str(e)[:120])
+
+    _check_world_relative_fact_check(r, article, fact_check_fn)
 
     r.eligible = not r.failures
     return r
