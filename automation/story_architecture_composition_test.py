@@ -1428,6 +1428,10 @@ def test_an_unsupported_consequence_gets_a_subtractive_repair_contract():
           ST.validate_turn_support(juxtaposed, ["F04", "F06"], LEDGER))
     check("the repair contract names the validator finding",
           ST.TURN_RELATION_NOT_SUPPORTED in contract, contract)
+    check("the approved lens may be narrowed when its factual phrasing fails",
+          "approved lens does not change" not in contract
+          and "Worth approval is not factual license for a relation" in contract
+          and "`final_lens.lens_claim`" in contract, contract)
     check("the repair contract requires removal rather than a connective swap",
           "REMOVE THE UNSUPPORTED RELATION" in contract
           and "Do not replace its trigger word with a synonym" in contract, contract)
