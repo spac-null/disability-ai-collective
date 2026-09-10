@@ -27,6 +27,8 @@ from research_pack_fixture import stub_pack            # noqa: E402
 from new_engine_v1 import runner as R               # noqa: E402
 from new_engine_v1 import stages as S               # noqa: E402
 from new_engine_v1.decision import decide, ACCEPT, HOLD  # noqa: E402
+import selector_v2 as SV                            # noqa: E402
+from new_engine_v1 import composition as CP         # noqa: E402
 
 FAILURES = []
 
@@ -618,6 +620,33 @@ def test_infra_failure_stays_operator_visible():
     # the fake orchestrator's single stubbed seed method sufficient, and exercises
     # the documented rollback at the same time.
     os.environ["CRIPMINDS_SELECTOR"] = "legacy"
+    # AND THE SHADOW MUST BE OFF, EXPLICITLY (2026-09-10). Pinning the selector is not
+    # enough: `_selector_v2_shadow` fires precisely BECAUSE the authoritative selector is
+    # legacy, and it then opens the real discovery database and acquires up to a day's
+    # candidates through the live production fetcher. So this test passed on a laptop with
+    # no environment and HUNG on trident, where CRIPMINDS_SELECTOR_V2_SHADOW is set for
+    # production -- killed at 900s by `timeout`, 179 checks in, immediately after printing
+    # its own name. A test that asserts infrastructure-failure BEHAVIOUR must not depend on
+    # infrastructure, and must not inherit a production flag from the shell that runs it.
+    _shadow_before = os.environ.pop(SV.SHADOW_ENV, None)
+    check("the selector-v2 shadow is off, so no live acquisition can occur",
+          not SV.enabled(), os.environ.get(SV.SHADOW_ENV))
+    # AND THE COMPOSITION ENGINE MUST BE PINNED (2026-09-10). This test's CASES are
+    # legacy stages -- discovery, article form, writer, grounding -- so the legacy
+    # composition path is the one it means to exercise. COMPOSITION_ENGINE defaults to
+    # legacy, which is why it passed on a laptop with no environment. On trident that
+    # variable is set to story_architecture by /srv/secrets/openclaw.env, so
+    # run_scheduled built a REAL ClaudeCLIProvider and the architect stage blocked in
+    # subprocess.communicate against the live `claude` binary -- killed at 900s by
+    # `timeout`, 179 checks in. The faulthandler stack is unambiguous:
+    #   run_scheduled -> runner.run -> _run_story_architecture
+    #     -> run_composition_with_fallback -> run_story_architecture_composition
+    #       -> architect -> _ask -> claude_cli_provider.complete -> subprocess -> select
+    # A test that asserts infrastructure-failure BEHAVIOUR must not inherit a production
+    # engine switch from the shell that runs it, and must never spawn a real model.
+    check("the composition engine is pinned to legacy, so no model CLI is constructed",
+          CP.current_composition_engine() == CP.COMPOSITION_LEGACY,
+          os.environ.get(CP.COMPOSITION_ENGINE_ENV))
     CASES = {
         "discovery_provider": (dict(fail_discovery=True), True),
         "discovery_contract": (dict(discovery={k: v for k, v in DISCOVERY_REPLY.items()
@@ -642,6 +671,8 @@ def test_infra_failure_stays_operator_visible():
                   (label, got, out.get("run_status")))
     finally:
         NEP.Provider = real_provider
+        if _shadow_before is not None:
+            os.environ[SV.SHADOW_ENV] = _shadow_before
     os.environ.pop("NEW_ENGINE_V1_MODE", None)
     os.environ.pop("CRIPMINDS_SELECTOR", None)
 
@@ -663,7 +694,36 @@ def test_legacy_scheduled_path_unchanged():
                                  "final_output", "disposition"))
 
 
+# ── THIS SUITE IS THE LEGACY COMPOSITION CONTRACT (2026-09-10) ───────────────────
+# Every test here asserts the legacy path's artifacts -- DISCOVERY, ARTICLE_FORM,
+# WRITER_INPUT, GROUNDING_FINDINGS. COMPOSITION_ENGINE defaults to legacy, which is why
+# this file passed on a laptop with no environment and broke on trident, where
+# /srv/secrets/openclaw.env sets COMPOSITION_ENGINE=story_architecture. Two distinct
+# failures followed from that one inherited variable:
+#   * test_infra_failure_stays_operator_visible built a REAL ClaudeCLIProvider and blocked
+#     in subprocess.communicate against the live `claude` binary -- killed at 900s by
+#     `timeout`, 179 checks in. faulthandler stack: run_scheduled -> runner.run ->
+#     _run_story_architecture -> run_composition_with_fallback ->
+#     run_story_architecture_composition -> architect -> _ask ->
+#     claude_cli_provider.complete -> subprocess -> select.
+#   * the earlier tests fail outright with KeyError: 'DISCOVERY', because a
+#     story-architecture run emits no such artifact.
+# The story-architecture path has its own suite: story_architecture_composition_test.py.
+# So this file pins its own contract for its whole duration and restores the ambient value
+# afterwards, rather than inheriting a production switch from whatever shell runs it.
+# No test here may reach the network, a live model, a real database or real credentials.
 def main():
+    _engine_before = os.environ.get(CP.COMPOSITION_ENGINE_ENV)
+    os.environ[CP.COMPOSITION_ENGINE_ENV] = CP.COMPOSITION_LEGACY
+    try:
+        return _run_all()
+    finally:
+        os.environ.pop(CP.COMPOSITION_ENGINE_ENV, None)
+        if _engine_before is not None:
+            os.environ[CP.COMPOSITION_ENGINE_ENV] = _engine_before
+
+
+def _run_all():
     for fn in [test_default_off,
                test_full_path_and_provenance,
                test_grounding_receives_exactly_source_and_draft,
