@@ -47,6 +47,12 @@ if str(HERE) not in sys.path:
 import new_engine_candidate as CAND                      # noqa: E402
 import news_fetcher as NF                                # noqa: E402
 import selector_v2 as SV                                 # noqa: E402
+import knowledge_first as KF                             # noqa: E402
+
+# WHICH LANE COMMISSIONS. The ordinary-world collision lane remains the default so
+# nothing about the scheduled cron changes; the knowledge-first lane is requested
+# explicitly, per run, and is the PRIMARY lane for the proof it was built for.
+LANE_DEFAULT = KF.LANE_SECONDARY
 import publication_safety_bridge as BRIDGE               # noqa: E402
 import composition_factual_bridge as FCB                # noqa: E402
 import claude_cli_provider as CCP                      # noqa: E402
@@ -370,9 +376,30 @@ def publish_if_eligible(orch, run: str, path, result: dict) -> dict:
     return result
 
 
+def _commission_knowledge_first(orch, model: str) -> tuple:
+    """The PRIMARY lane's seed, or (None, record) if it cannot honestly commission one.
+
+    Returns the SAME seed shape `_select_seed` returns, so everything downstream of this
+    function -- acquisition, Research, Ledger, Worth, composition, every gate and the
+    publication bridge -- runs completely unchanged. This lane differs ONLY in how a
+    candidate is chosen. It sets no fact and relaxes no standard.
+    """
+    from new_engine_v1.research import search_urls
+    provider = Provider(model=model)
+    rec = KF.commission(provider, search_fn=search_urls,
+                        fetch_fn=lambda u: orch.get_source_text(u) or "",
+                        api_key=KF.search_key())
+    q = (rec.get("question") or {})
+    orch.logger.info("KNOWLEDGE_FIRST %s: question=%s (%s) -> %s",
+                     rec.get("status"), q.get("id"), q.get("title"),
+                     (rec.get("chosen") or {}).get("subject", "no story")[:110])
+    return rec.get("seed"), rec
+
+
 def run_scheduled(orch, *, rehearsal: bool = False,
                   evidence_root: str | None = None,
-                  model: str = DEFAULT_MODEL, research_fn=None) -> dict:
+                  model: str = DEFAULT_MODEL, research_fn=None,
+                  lane: str = LANE_DEFAULT) -> dict:
     """One scheduled CURRENT_ENGINE run. `orch` is the production orchestrator.
 
     Source acquisition reuses the stabilised upstream path; no legacy commission or Fable
@@ -385,18 +412,36 @@ def run_scheduled(orch, *, rehearsal: bool = False,
                 "message": "CRIPMINDS_ENGINE=new_engine_v1 but NEW_ENGINE_V1_MODE=%r; "
                            "refusing to run implicitly" % R.current_mode()}
 
-    try:
-        seed, selection = _select_seed(orch, model)
-    except (SV.SelectorFailure, SV.UnknownSelector) as e:
-        orch.logger.error("SELECTOR failed, run held: %s: %s", type(e).__name__, e)
-        return {"status": "hold", "engine": "new_engine_v1", "decision": "HOLD",
-                "reasons": ["selector failure: %s" % e],
-                "reason_code": "SELECTOR_FAILURE", "commit_success": False,
-                # Surfaces to production_orchestrator._is_infra_or_contract_failure,
-                # so the wrapper exits non-zero and an operator is told. A selector
-                # that cannot select is not an ordinary editorial HOLD.
-                "run_status": {"status": "PROVIDER_FAILURE", "stage": "SELECTOR",
-                               "detail": str(e)[:300]}}
+    commission = None
+    if lane == KF.LANE:
+        # PRIMARY LANE. An approved intellectual question comes first and the story is
+        # sought for it, instead of a general-news anchor arriving and a reading being
+        # sought for that. The ordinary-world lane below is untouched and still available.
+        seed, commission = _commission_knowledge_first(orch, model)
+        selection = None
+        if not seed:
+            return {"status": "no_usable_source", "engine": "new_engine_v1",
+                    "lane": KF.LANE, "commission": commission,
+                    "message": "KNOWLEDGE_FIRST could not commission a candidate: %s"
+                               % commission.get("status")}
+        try:
+            _ = seed["url"]
+        except Exception:
+            return {"status": "no_usable_source", "engine": "new_engine_v1",
+                    "lane": KF.LANE, "commission": commission}
+    else:
+        try:
+            seed, selection = _select_seed(orch, model)
+        except (SV.SelectorFailure, SV.UnknownSelector) as e:
+            orch.logger.error("SELECTOR failed, run held: %s: %s", type(e).__name__, e)
+            return {"status": "hold", "engine": "new_engine_v1", "decision": "HOLD",
+                    "reasons": ["selector failure: %s" % e],
+                    "reason_code": "SELECTOR_FAILURE", "commit_success": False,
+                    # Surfaces to production_orchestrator._is_infra_or_contract_failure,
+                    # so the wrapper exits non-zero and an operator is told. A selector
+                    # that cannot select is not an ordinary editorial HOLD.
+                    "run_status": {"status": "PROVIDER_FAILURE", "stage": "SELECTOR",
+                                   "detail": str(e)[:300]}}
     if not seed:
         attempts = getattr(orch, "_source_acquisition_attempts", [])
         exhausted = getattr(orch, "_source_acquisition_exhausted", False)
@@ -467,7 +512,15 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     (root / run / "ACQUISITION.json").write_text(json.dumps(
         {"seed_id": seed["id"],
          "attempts": getattr(orch, "_source_acquisition_attempts", []),
+         "lane": lane,
          "engine": "new_engine_v1"}, indent=2, sort_keys=True), encoding="utf-8")
+    if commission is not None:
+        # The commissioning record: which approved question, which story was chosen for
+        # it, and its own access-deficit self-check. Diagnostic only -- it licenses no
+        # fact, and no downstream stage reads it.
+        (root / run / "COMMISSION.json").write_text(
+            json.dumps(commission, indent=2, sort_keys=True, default=str),
+            encoding="utf-8")
 
     result = {"status": "hold" if out["decision"] != "ACCEPT" else "accept",
               "engine": "new_engine_v1", "engine_generation": CAND.ENGINE_GENERATION,
