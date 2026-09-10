@@ -397,8 +397,13 @@ def test_b_runs_every_gate_and_keeps_as_artifacts():
             [{"status": "settled", "findings": [dict(f)]},
              {"status": "settled", "findings": [dict(f)]},
              dict(H.GROUND_CLEAN)],
-            a_script=_a_script_no_reader(), b_script=_b_script(), out_dir=out_dir,
-            fact_check_fn=counting_fact_check)
+            a_script=_a_script_no_reader(),
+            # B writes DISTINCT prose here on purpose: if B reused A's exact article the
+            # hashes would coincide and the "top level is not A's article" assertion
+            # could not tell a fixed persister from a broken one.
+            b_script=_b_script(article=H.DRAFT.replace("# The room made of salt",
+                                                       "# A room of salt")),
+            out_dir=out_dir, fact_check_fn=counting_fact_check)
         a, b = out["composition_attempts"]
         check("B's own gates all ran",
               all(b["stages"].get(s) == CP.PASS
@@ -411,28 +416,68 @@ def test_b_runs_every_gate_and_keeps_as_artifacts():
               and b["stages"].get(CP.READER) == CP.PASS
               and a["stages"].get(CP.READER) == CP.NOT_RUN,
               (_stages_seen(prov), a["stages"].get(CP.READER)))
-        # A's artifacts survive B entirely: separate directories, A's never rewritten.
-        a_files = sorted(p.name for p in out_dir.iterdir() if p.is_file())
-        check("A's artifacts are retained after B ran",
-              "COMPOSITION_RESULT.json" in a_files and "WRITER_DRAFT.md" in a_files,
-              a_files)
-        b_dir = out_dir / "attempt-B"
+        # ATTEMPT ARTIFACT INTEGRITY. Production run
+        # production-20260910T093541Z-8a338f42 held ONE directory describing TWO
+        # different articles: A's COMPOSITION_RESULT.json/ARTICLE_FINAL.md beside the
+        # runner-level WRITER_OUTPUT.json built from B. The old assertions here treated
+        # "the top-level result still says A held" as A-retention working, and so could
+        # not see it. Winner identity at top level is the invariant.
+        a_dir, b_dir = out_dir / "attempt-A", out_dir / "attempt-B"
+        check("A's artifacts moved, whole, into attempt-A/", a_dir.is_dir()
+              and (a_dir / "COMPOSITION_RESULT.json").exists()
+              and (a_dir / "WRITER_DRAFT.md").exists(),
+              sorted(x.name for x in out_dir.iterdir()))
         check("B persisted to its own directory", b_dir.is_dir(),
-              sorted(p.name for p in out_dir.iterdir()))
-        a_res = json.loads((out_dir / "COMPOSITION_RESULT.json").read_text())
-        check("A's own retained result still says A held at GROUNDING",
+              sorted(x.name for x in out_dir.iterdir()))
+        a_res = json.loads((a_dir / "COMPOSITION_RESULT.json").read_text())
+        check("A's own retained record is intact and still says A held at GROUNDING",
               a_res["failure_stage"] == CP.GROUNDING
               and a_res["compose_mode"] == CP.COMPOSE_NORMAL, a_res.get("failure_stage"))
         b_res = json.loads((b_dir / "COMPOSITION_RESULT.json").read_text())
-        check("B's retained result is the SAFE_RECOMPOSE pass",
+        check("B's retained record is the SAFE_RECOMPOSE pass",
               b_res["status"] == CP.PASS
               and b_res["compose_mode"] == CP.COMPOSE_SAFE_RECOMPOSE, b_res.get("status"))
+        # THE DEFECT ITSELF: the top level must describe the attempt the verdict came
+        # from, and must not still be carrying the other attempt's article.
+        top = json.loads((out_dir / "COMPOSITION_RESULT.json").read_text())
+        check("the TOP-LEVEL result is the winning attempt's, not A's",
+              top["compose_mode"] == CP.COMPOSE_SAFE_RECOMPOSE
+              and top["status"] == CP.PASS, (top.get("compose_mode"), top.get("status")))
+        check("the top-level result agrees with what the orchestrator returned",
+              top["article_sha256"] == out["article_sha256"]
+              == b_res["article_sha256"], "")
+        check("and it is NOT A's article",
+              top["article_sha256"] != a_res["article_sha256"], "")
+        check("the top-level article file is the winner's too",
+              (out_dir / "ARTICLE_FINAL.md").read_text() == out["article_text"], "")
         check("A's bounded Grounding completion is recorded on A, not on B",
-              (out_dir / "FACTUAL_COMPLETION.json").exists()
+              (a_dir / "FACTUAL_COMPLETION.json").exists()
               and not (b_dir / "FACTUAL_COMPLETION.json").exists(), "")
+        check("no stale A-only artifact was left at the top level",
+              not any(x.is_file() and x.name.startswith("FACTUAL_COMPLETION")
+                      for x in out_dir.iterdir()), "")
 
 
 # ── 14./15./16./17. ownership, terminality, no third, accounting ──────────────
+def test_a_single_attempt_run_keeps_the_old_artifact_layout_exactly():
+    """The fallback must cost the common case nothing, INCLUDING nothing in its artifact
+    shape: a run that never falls back still persists straight into out_dir, with no
+    attempt-A/ or attempt-B/ subdirectory for a consumer to have to know about."""
+    import tempfile
+    with tempfile.TemporaryDirectory() as d:
+        out_dir = pathlib.Path(d) / "run"
+        prov, _g, out = _fallback_run([dict(H.GROUND_CLEAN)], out_dir=out_dir)
+        check("the run passed on its first attempt", out["status"] == CP.PASS
+              and out["composition_attempts_count"] == 1, out.get("failure_reason"))
+        names = sorted(x.name for x in out_dir.iterdir())
+        check("no attempt subdirectories were created",
+              "attempt-A" not in names and "attempt-B" not in names, names)
+        top = json.loads((out_dir / "COMPOSITION_RESULT.json").read_text())
+        check("the top-level result is that single attempt's",
+              top["compose_mode"] == CP.COMPOSE_NORMAL
+              and top["article_sha256"] == out["article_sha256"], "")
+
+
 def test_only_the_winning_attempt_can_publish():
     """14./18. The orchestrator returns the winning attempt's OWN result, so a held
     article and a refused package from A cannot reach publication state at all."""
@@ -588,6 +633,7 @@ def main() -> int:
                test_as_prose_cannot_reach_bs_writer_call,
                test_b_produces_its_own_prose_and_its_own_package,
                test_b_runs_every_gate_and_keeps_as_artifacts,
+               test_a_single_attempt_run_keeps_the_old_artifact_layout_exactly,
                test_only_the_winning_attempt_can_publish,
                test_a_held_b_is_terminal_and_there_is_no_third_composition,
                test_model_call_accounting_separates_the_two_attempts,

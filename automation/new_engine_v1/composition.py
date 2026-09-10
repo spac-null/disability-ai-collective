@@ -7109,15 +7109,58 @@ def run_composition_with_fallback(
         return r
 
     if not eligible:
+        # THE SINGLE-ATTEMPT LAYOUT IS UNTOUCHED. A already persisted to out_dir and
+        # nothing moves, so every existing consumer of a run directory -- the night
+        # driver, publish_best, the safety bridge -- sees exactly what it saw before this
+        # module existed. That is deliberate: the fallback must cost the common case
+        # nothing, including nothing in its artifact shape.
         return decorate(a, False)
+
+    # ── ATTEMPT ARTIFACT INTEGRITY (2026-09-10, cycle 1) ──────────────────────────
+    # WHY THIS EXISTS. Production run production-20260910T093541Z-8a338f42 held one
+    # directory describing TWO different articles: COMPOSITION_RESULT.json and
+    # ARTICLE_FINAL.md were A's (HOLD at READER, article 145d18e2), while the
+    # runner-level WRITER_OUTPUT.json the decision and the bridge are built from was B's
+    # (HOLD at GROUNDING, article 3eb5a36f). A had persisted to out_dir during its own
+    # run and nothing ever re-persisted the winner over it, so the top-level record
+    # contradicted the decision -- and the night driver, which reads
+    # COMPOSITION_RESULT.json, duly reported the wrong terminal stage for the run.
+    #
+    # Both attempts held there, so nothing mispublished. The dangerous shape is A HOLD
+    # with B PASS: the top level would read HOLD while the run legitimately publishes B,
+    # and any consumer trusting that file would refuse a good article -- suppressing the
+    # exact throughput this whole mechanism exists to produce.
+    #
+    # THE FIX IS PERSISTENCE ONLY. A's artifacts move, whole, into attempt-A/ BEFORE B
+    # runs, so they are safe from anything B does and are never overwritten. Then the
+    # attempt the run's verdict actually came from is persisted at top level. Moving
+    # FILES only, and before runner._persist has written anything of its own, is what
+    # makes this exact rather than a hardcoded filename list: whatever composition wrote
+    # for A goes to A's directory, and whatever it writes for the winner lands on top.
+    # No acceptance rule, no eligibility rule, no gate and no publication rule moves.
+    a_dir = None
+    if out_dir is not None:
+        root = pathlib.Path(out_dir)
+        a_dir = root / "attempt-A"
+        a_dir.mkdir(parents=True, exist_ok=True)
+        for f in sorted(root.iterdir()):
+            if f.is_file():
+                f.replace(a_dir / f.name)
+        attempts[0] = _attempt_record("A", a, a_dir)
 
     # B. Same frozen upstream, no article, no package, its own artifact directory. The
     # gates it will meet are the ones A met, unmodified.
-    b_dir = (pathlib.Path(out_dir) / "attempt-B") if out_dir is not None else None
+    b_dir = (root / "attempt-B") if out_dir is not None else None
     b = run_story_architecture_composition(
         provider, pack=pack, source_text=source_text, source_sha=source_sha,
         subject=subject, fact_check=fact_check, reader=reader, package=package,
         stop_after=stop_after, fact_check_fn=fact_check_fn, out_dir=b_dir,
         frozen=_frozen_upstream_of(a), compose_mode=COMPOSE_SAFE_RECOMPOSE)
     attempts.append(_attempt_record("B", b, b_dir))
+    # The top level now describes the attempt the run's verdict came from, and says which
+    # one that is. B is what run_composition_with_fallback returns, so B is what the
+    # runner builds WRITER_OUTPUT, the decision and publication state from -- the file
+    # and the decision can no longer disagree.
+    if out_dir is not None:
+        persist(out_dir, b)
     return decorate(b, True)
