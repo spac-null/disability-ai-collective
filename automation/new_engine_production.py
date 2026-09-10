@@ -376,6 +376,32 @@ def publish_if_eligible(orch, run: str, path, result: dict) -> dict:
     return result
 
 
+def _persist_commission(evidence_root, commission: dict, lane: str) -> None:
+    """Keep the commissioning record for a run that never produced a run directory.
+
+    WHY. A refused commission returns before any artifact directory is created, and the
+    record lived only in the returned dict -- so an operational driver reading
+    COMMISSION.json off disk saw nothing and logged nulls. The question, the proposed
+    stories and the exact refusal reason are the only evidence a refused knowledge-first
+    run leaves behind, and they were being thrown away. Diagnostic only: nothing reads it
+    back, and it licenses no fact.
+    """
+    if not commission:
+        return
+    try:
+        root = pathlib.Path(evidence_root or DEFAULT_EVIDENCE_ROOT)
+        d = root / ("commission-refused-%s"
+                    % datetime.datetime.now(datetime.timezone.utc)
+                    .strftime("%Y%m%dT%H%M%SZ"))
+        d.mkdir(parents=True, exist_ok=True)
+        (d / "COMMISSION.json").write_text(
+            json.dumps(dict(commission, lane=lane), indent=2, sort_keys=True,
+                       default=str), encoding="utf-8")
+    except Exception:
+        # A diagnostic write must never be able to change a run's outcome.
+        pass
+
+
 def _commission_knowledge_first(orch, model: str) -> tuple:
     """The PRIMARY lane's seed, or (None, record) if it cannot honestly commission one.
 
@@ -420,15 +446,28 @@ def run_scheduled(orch, *, rehearsal: bool = False,
         seed, commission = _commission_knowledge_first(orch, model)
         selection = None
         if not seed:
-            return {"status": "no_usable_source", "engine": "new_engine_v1",
-                    "lane": KF.LANE, "commission": commission,
-                    "message": "KNOWLEDGE_FIRST could not commission a candidate: %s"
-                               % commission.get("status")}
-        try:
-            _ = seed["url"]
-        except Exception:
-            return {"status": "no_usable_source", "engine": "new_engine_v1",
-                    "lane": KF.LANE, "commission": commission}
+            # A TECHNICAL failure is not editorial scarcity. A refused search, an expired
+            # key or a dead provider must reach an operator through run_status, exactly as
+            # a selector failure does -- not be reported as "no usable source", which
+            # reads as a day with nothing to write about. The lane marks its own technical
+            # failures; anything else is an honest refusal.
+            out = {"status": "hold" if commission.get("technical_failure")
+                             else "no_usable_source",
+                   "engine": "new_engine_v1", "lane": KF.LANE,
+                   "commission": commission,
+                   "message": "KNOWLEDGE_FIRST could not commission a candidate: %s"
+                              % commission.get("status")}
+            if commission.get("technical_failure"):
+                out["decision"] = "HOLD"
+                out["commit_success"] = False
+                out["reason_code"] = commission.get("status")
+                out["reasons"] = ["knowledge-first commissioning failed technically: %s"
+                                  % commission.get("error")]
+                # Surfaces to production_orchestrator._is_infra_or_contract_failure, so
+                # the wrapper exits non-zero and an operator is told.
+                out["run_status"] = commission["run_status"]
+            _persist_commission(evidence_root, commission, lane)
+            return out
     else:
         try:
             seed, selection = _select_seed(orch, model)

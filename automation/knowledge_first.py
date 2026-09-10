@@ -182,19 +182,41 @@ def propose_stories(provider, question: dict) -> dict:
             "provider": comp.identity() if hasattr(comp, "identity") else {}}
 
 
+class SearchUnavailable(Exception):
+    """The search provider could not be reached or refused the request.
+
+    A DISTINCT type on purpose. This was previously swallowed into an empty result list,
+    so a 403, an expired key, a network partition and "the web genuinely has nothing about
+    this story" all arrived at the caller as the same silent no-anchor refusal. That is the
+    failure mode that hid a real production blocker: OpenRouter began returning
+    `{"error":{"message":"Key limit exceeded (monthly limit)","code":403}}` and the lane
+    reported NO_FETCHABLE_ANCHOR, which reads as editorial scarcity. A provider failure is
+    an INFRASTRUCTURE failure and must reach an operator.
+    """
+
+
 def anchor_candidates(cand: dict, search_fn, *, api_key: str = "") -> list:
-    """Real URLs for one proposed story. The searcher NAMES pages; it supplies no text."""
+    """Real URLs for one proposed story. The searcher NAMES pages; it supplies no text.
+
+    Raises SearchUnavailable if EVERY query failed technically. A single query failing
+    while another returns results is ordinary and is not escalated -- what must never be
+    silently absorbed is a search path that did not run at all.
+    """
     urls: list = []
-    for q in (cand.get("search_queries") or [])[:MAX_QUERIES_PER_STORY]:
-        if not str(q or "").strip():
-            continue
+    errors: list = []
+    queries = [str(q) for q in (cand.get("search_queries") or [])[:MAX_QUERIES_PER_STORY]
+               if str(q or "").strip()]
+    for q in queries:
         try:
-            found = search_fn(str(q), api_key=api_key) or []
-        except Exception:
-            found = []
+            found = search_fn(q, api_key=api_key) or []
+        except Exception as e:
+            errors.append("%s: %s" % (type(e).__name__, str(e)[:200]))
+            continue
         for u in found[:MAX_URLS_PER_QUERY]:
             if u not in urls:
                 urls.append(u)
+    if queries and len(errors) == len(queries):
+        raise SearchUnavailable("; ".join(errors[:3]))
     return urls
 
 
@@ -213,6 +235,9 @@ def commission(provider, *, search_fn, fetch_fn, questions=None, exclude=None,
         proposed = propose_stories(provider, q)
     except Exception as e:
         rec["status"] = "COMMISSION_CALL_FAILED"
+        rec["technical_failure"] = True
+        rec["run_status"] = {"status": "PROVIDER_FAILURE", "stage": "KF_COMMISSION",
+                             "detail": "%s: %s" % (type(e).__name__, str(e)[:200])}
         rec["error"] = "%s: %s" % (type(e).__name__, str(e)[:200])
         return rec
     rec["model_calls"] = proposed.get("model_calls", 0)
@@ -223,7 +248,19 @@ def commission(provider, *, search_fn, fetch_fn, questions=None, exclude=None,
         return rec
 
     for cand in proposed["candidates"]:
-        for url in anchor_candidates(cand, search_fn, api_key=api_key):
+        try:
+            urls = anchor_candidates(cand, search_fn, api_key=api_key)
+        except SearchUnavailable as e:
+            # OPERATOR-VISIBLE, and it stops here rather than trying the next candidate:
+            # if search itself is down, every remaining candidate would fail identically
+            # and the run would look like it had honestly looked and found nothing.
+            rec["status"] = "SEARCH_UNAVAILABLE"
+            rec["technical_failure"] = True
+            rec["run_status"] = {"status": "PROVIDER_FAILURE", "stage": "KF_SEARCH",
+                                 "detail": str(e)[:300]}
+            rec["error"] = str(e)[:300]
+            return rec
+        for url in urls:
             try:
                 text = fetch_fn(url) or ""
             except Exception as e:

@@ -167,6 +167,114 @@ def test_it_refuses_rather_than_inventing_when_there_is_no_real_anchor():
                         questions=[])["status"] == "NO_QUESTION_AVAILABLE", "")
 
 
+def test_a_search_provider_failure_is_technical_not_editorial_scarcity():
+    """THE DEFECT THIS CLOSES. A 403, an expired key or a network partition used to be
+    swallowed into an empty URL list, so it arrived as a plain no-anchor refusal --
+    indistinguishable from "the web has nothing about this story". That is how a real
+    production blocker hid: OpenRouter began returning
+    `{"error":{"message":"Key limit exceeded (monthly limit)","code":403}}` and the lane
+    reported NO_FETCHABLE_ANCHOR, which reads as editorial scarcity."""
+    class Boom(Exception): pass
+
+    def dead_search(q, api_key=""):
+        raise Boom("HTTP Error 403: Forbidden")
+
+    rec = KF.commission(FakeProvider({"candidates": [CAND]}),
+                        search_fn=dead_search, fetch_fn=lambda u: "x" * 9999,
+                        questions=KF.load_questions(), rng=random.Random(1))
+    check("the status is SEARCH_UNAVAILABLE, not a no-anchor refusal",
+          rec["status"] == "SEARCH_UNAVAILABLE", rec["status"])
+    check("it is flagged as a technical failure",
+          rec.get("technical_failure") is True, rec.get("technical_failure"))
+    check("it carries an operator-visible run_status",
+          (rec.get("run_status") or {}).get("status") == "PROVIDER_FAILURE",
+          rec.get("run_status"))
+    check("the run_status names the stage that failed",
+          (rec.get("run_status") or {}).get("stage") == "KF_SEARCH", rec.get("run_status"))
+    check("the provider's own error survives for diagnosis",
+          "403" in str(rec.get("error")), rec.get("error"))
+    check("no seed is produced", rec.get("seed") is None, "")
+
+    # AND THE CONVERSE, which must stay an ordinary refusal.
+    ok = KF.commission(FakeProvider({"candidates": [CAND]}),
+                       search_fn=lambda q, api_key="": [],
+                       fetch_fn=lambda u: "x" * 9999,
+                       questions=KF.load_questions(), rng=random.Random(1))
+    check("a search that RAN and found nothing is NOT a technical failure",
+          ok["status"] == "NO_FETCHABLE_ANCHOR"
+          and not ok.get("technical_failure"), ok["status"])
+    check("and it carries no run_status", ok.get("run_status") is None, "")
+
+    # One query failing while another succeeds is ordinary, not an outage.
+    calls = {"n": 0}
+
+    def flaky(q, api_key=""):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise Boom("transient")
+        return ["https://example.org/a"]
+
+    half = KF.commission(FakeProvider({"candidates": [CAND]}), search_fn=flaky,
+                         fetch_fn=lambda u: "x" * 9999,
+                         questions=KF.load_questions(), rng=random.Random(1))
+    check("a partial search failure still commissions rather than escalating",
+          half["status"] == "COMMISSIONED", half["status"])
+
+
+def test_a_commissioning_call_failure_is_also_technical():
+    class Dead:
+        def complete(self, **kw): raise RuntimeError("provider down")
+    rec = KF.commission(Dead(), search_fn=lambda q, api_key="": [],
+                        fetch_fn=lambda u: "", questions=KF.load_questions(),
+                        rng=random.Random(1))
+    check("a dead commissioning provider is technical",
+          rec["status"] == "COMMISSION_CALL_FAILED"
+          and rec.get("technical_failure") is True, rec["status"])
+    check("with its own stage on the run_status",
+          (rec.get("run_status") or {}).get("stage") == "KF_COMMISSION",
+          rec.get("run_status"))
+
+
+def test_a_refused_commission_persists_its_own_record():
+    """A refused commission returns before any run directory exists, so the record lived
+    only in the returned dict and an operational driver reading COMMISSION.json off disk
+    logged nulls. The question, the proposed stories and the exact refusal reason are the
+    only evidence a refused run leaves."""
+    import json as _json
+    import tempfile
+    import new_engine_production as NEP
+    with tempfile.TemporaryDirectory() as d:
+        NEP._persist_commission(d, {"status": "SEARCH_UNAVAILABLE",
+                                    "technical_failure": True,
+                                    "question": {"id": "PR004-06", "title": "T"},
+                                    "error": "HTTP Error 403: Forbidden"}, KF.LANE)
+        found = list(pathlib.Path(d).glob("commission-refused-*/COMMISSION.json"))
+        check("the refusal record reaches disk", len(found) == 1,
+              [str(x) for x in pathlib.Path(d).iterdir()])
+        if not found:
+            return
+        rec = _json.loads(found[0].read_text())
+        check("it names the question it came from",
+              rec["question"]["id"] == "PR004-06", rec.get("question"))
+        check("it keeps the exact refusal reason", "403" in rec["error"], rec.get("error"))
+        check("and the lane", rec["lane"] == KF.LANE, rec.get("lane"))
+    check("an empty record writes nothing rather than an empty directory",
+          NEP._persist_commission(tempfile.mkdtemp(), {}, KF.LANE) is None, "")
+
+
+def test_the_caller_surfaces_a_technical_commission_failure_as_infra():
+    src = (HERE / "new_engine_production.py").read_text()
+    seg = src.split("if lane == KF.LANE:")[1].split("else:")[0]
+    check("a technical commissioning failure holds rather than reporting no source",
+          'commission.get("technical_failure")' in seg, "")
+    check("and passes the lane's own run_status through to the operator",
+          'out["run_status"] = commission["run_status"]' in seg, "")
+    check("an honest refusal still reports no_usable_source",
+          '"no_usable_source"' in seg, "")
+    check("and every refusal persists its record",
+          "_persist_commission(evidence_root, commission, lane)" in seg, "")
+
+
 def test_the_ordinary_world_lane_is_untouched_and_still_the_default():
     src = (HERE / "new_engine_production.py").read_text()
     check("the default lane is the ordinary-world collision lane",
@@ -199,6 +307,10 @@ def main() -> int:
                test_the_commissioning_call_is_given_a_question_and_no_facts,
                test_the_seed_is_the_shape_the_selector_already_returns,
                test_it_refuses_rather_than_inventing_when_there_is_no_real_anchor,
+               test_a_search_provider_failure_is_technical_not_editorial_scarcity,
+               test_a_commissioning_call_failure_is_also_technical,
+               test_a_refused_commission_persists_its_own_record,
+               test_the_caller_surfaces_a_technical_commission_failure_as_infra,
                test_the_ordinary_world_lane_is_untouched_and_still_the_default,
                test_no_downstream_factual_standard_is_touched_by_this_lane):
         print("\n" + fn.__name__)
