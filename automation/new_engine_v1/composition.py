@@ -7130,8 +7130,21 @@ MAX_COMPOSITION_ATTEMPTS = 2
 
 # ELIGIBLE A TERMINALS. A fresh composition can only plausibly help where the defect is
 # in the COMPOSITION SURFACE -- the prose or the furniture written from a sound ledger.
+#
+# READER IS DELIBERATELY NOT HERE (owner-directed, 2026-09-10). B recomposes from the SAME
+# FROZEN ARCHITECTURE, and the Reader's complaint is substantially about that architecture
+# rather than the prose realising it: across five retained Reader-terminal runs the same
+# five dimensions hold every time -- CRIP_MINDS_FIT, ENDING, MOMENTUM, READABILITY,
+# RESEARCH_LOAD -- and the Reader names the plan, not the sentences ("reads as a website
+# transcribed rather than research selected from"; "a leftover from the source document").
+# So B cannot fix a Reader hold, and twice it made the run strictly worse:
+#   production-20260910T093541Z-8a338f42  A reached READER (SAFETY+GROUNDING+FACT_CHECK
+#                                         all PASS) -> B regressed to GROUNDING
+#   production-20260910T110024Z-1906b00c  the same, again
+# Both times a draft that had cleared the entire factual stack was discarded for one that
+# had not. This is a NARROWING of eligibility: strictly fewer fallbacks, never more.
 FALLBACK_ELIGIBLE = {SAFETY: SAFETY_HOLD, GROUNDING: GROUNDING_HOLD,
-                     FACT_CHECK: FACT_CHECK_HOLD, READER: READER_HOLD}
+                     FACT_CHECK: FACT_CHECK_HOLD}
 # Upstream authority B would inherit. If any of these did not actually succeed in A,
 # there is nothing sound to recompose FROM.
 FALLBACK_REQUIRED_UPSTREAM = (LEDGER, WORTH, ARCHITECTURE)
@@ -7158,6 +7171,14 @@ def fallback_recomposition_eligible(result: dict | None) -> tuple:
         return False, "attempt passed; no fallback needed"
     # A fallback that could itself trigger a fallback is the third draft this rule
     # exists to forbid. Checked first, and by the attempt's own recorded mode.
+    # THE BUDGET IS SPENT, WHICHEVER ATTEMPT WON. Checked before compose_mode, because
+    # winner selection can legitimately return attempt A's own result (mode NORMAL) when
+    # A got further than B -- and that result must not look like a fresh first attempt.
+    # Relying on the returned mode alone made the no-third-composition guarantee an
+    # accident of which attempt happened to win.
+    if result.get("fallback_recomposition_triggered"):
+        return False, ("a fallback recomposition has already run for this story; "
+                       "%d compositions is the maximum" % MAX_COMPOSITION_ATTEMPTS)
     mode = result.get("compose_mode")
     if mode is None:
         return False, "result records no compose_mode; refusing rather than assuming one"
@@ -7200,6 +7221,25 @@ def _frozen_upstream_of(result: dict) -> dict:
     return {"ledger": (det.get(LEDGER) or {}).get("ledger"),
             "worth": det.get(WORTH),
             "architecture": (det.get(ARCHITECTURE) or {}).get("architecture")}
+
+
+def attempt_progress(result: dict | None) -> tuple:
+    """How far did this attempt actually get? Higher sorts as better.
+
+    (publishable, stage_index) -- a PASS outranks every HOLD, and among HOLDs the one that
+    reached a later stage in the STAGES order outranks the earlier one. Used ONLY to decide
+    which attempt a run reports and persists; it grants no publication rights, which still
+    require that attempt's own status to be PASS.
+    """
+    if not isinstance(result, dict):
+        return (-1, -1)
+    passed = 1 if result.get("status") == PASS else 0
+    stage = result.get("failure_stage")
+    try:
+        idx = len(STAGES) if passed else STAGES.index(stage)
+    except ValueError:
+        idx = -1
+    return (passed, idx)
 
 
 def _attempt_record(label: str, result: dict, out_dir) -> dict:
@@ -7248,7 +7288,7 @@ def run_composition_with_fallback(
     attempts = [_attempt_record("A", a, out_dir)]
     eligible, why = fallback_recomposition_eligible(a)
 
-    def decorate(winner, triggered):
+    def decorate(winner, triggered, winner_label="A", winner_dir=None):
         r = dict(winner)
         r["composition_attempts"] = attempts
         r["composition_attempts_count"] = len(attempts)
@@ -7260,7 +7300,11 @@ def run_composition_with_fallback(
             x["model_calls_total"] or 0 for x in attempts)
         r["fallback_recomposition_triggered"] = triggered
         r["fallback_recomposition_reason"] = why
-        r["winning_attempt"] = attempts[-1]["attempt"] if triggered else "A"
+        r["winning_attempt"] = winner_label
+        r["winning_attempt_dir"] = str(winner_dir) if winner_dir is not None else None
+        # So an auditor can see the comparison that chose, not just its outcome.
+        r["attempt_progress"] = {x["attempt"]: list(attempt_progress(
+            a if x["attempt"] == "A" else b)) for x in attempts}
         return r
 
     if not eligible:
@@ -7312,10 +7356,17 @@ def run_composition_with_fallback(
         stop_after=stop_after, fact_check_fn=fact_check_fn, out_dir=b_dir,
         frozen=_frozen_upstream_of(a), compose_mode=COMPOSE_SAFE_RECOMPOSE)
     attempts.append(_attempt_record("B", b, b_dir))
-    # The top level now describes the attempt the run's verdict came from, and says which
-    # one that is. B is what run_composition_with_fallback returns, so B is what the
-    # runner builds WRITER_OUTPUT, the decision and publication state from -- the file
-    # and the decision can no longer disagree.
+
+    # WHICH ATTEMPT DECIDES THE RUN (2026-09-10). Not "the last one" -- the one that got
+    # FURTHEST. B was reported unconditionally, so a B that regressed below A replaced a
+    # better draft AND relabelled the run's terminal stage, which corrupted the batch
+    # tallies it was being diagnosed from. Publication ownership is unchanged: `winner` can
+    # only be publication_ready if that attempt's own status is PASS, so this can never
+    # promote a held article. A tie goes to A, the cheaper normal composition.
+    winner, w_label = (b, "B") if attempt_progress(b) > attempt_progress(a) else (a, "A")
+    w_dir = b_dir if w_label == "B" else a_dir
     if out_dir is not None:
-        persist(out_dir, b)
-    return decorate(b, True)
+        # The top level describes the attempt the run's verdict came from. Its own
+        # directory keeps its full artifacts either way, so nothing is lost by not winning.
+        persist(out_dir, winner)
+    return decorate(winner, True, winner_label=w_label, winner_dir=w_dir)

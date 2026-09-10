@@ -198,13 +198,58 @@ def _res(stage, code, **kw):
 
 
 def test_every_eligible_composition_terminal_is_accepted():
-    """4. All four composition-surface terminals are eligible -- Reader and Fact Check
-    included, which the pipeline tests above do not each pay a full run to prove."""
+    """4. The composition-surface terminals a fresh composition can plausibly answer."""
     for stage, code in ((CP.SAFETY, CP.SAFETY_HOLD), (CP.GROUNDING, CP.GROUNDING_HOLD),
-                        (CP.FACT_CHECK, CP.FACT_CHECK_HOLD),
-                        (CP.READER, CP.READER_HOLD)):
+                        (CP.FACT_CHECK, CP.FACT_CHECK_HOLD)):
         ok, why = CP.fallback_recomposition_eligible(_res(stage, code))
         check("%s is an eligible composition terminal" % stage, ok, why)
+
+
+def test_a_reader_hold_does_not_earn_a_recomposition():
+    """A READER hold is NOT eligible. B recomposes from the same frozen architecture, and
+    the Reader's complaint is about that plan -- across five retained Reader-terminal runs
+    the same five dimensions hold every time and the Reader names the selection, not the
+    sentences. Twice in production B then regressed below an A that had cleared the whole
+    factual stack (8a338f42, 1906b00c), discarding the better draft."""
+    ok, why = CP.fallback_recomposition_eligible(_res(CP.READER, CP.READER_HOLD))
+    check("a READER hold is refused", not ok, why)
+    check("and the refusal names the stage, not the mode",
+          "READER" in why and "eligible composition terminal" in why, why)
+
+
+def test_the_fallback_budget_is_spent_whichever_attempt_wins():
+    """THE INVARIANT WINNER SELECTION NEARLY BROKE. Returning the furthest attempt means a
+    tie returns A's own result, whose compose_mode is NORMAL. If eligibility read only the
+    mode, that result would look like a fresh first attempt and a caller could spend a
+    third composition. The budget is recorded on the result itself."""
+    spent_a = _res(CP.GROUNDING, CP.GROUNDING_HOLD,
+                   fallback_recomposition_triggered=True)
+    ok, why = CP.fallback_recomposition_eligible(spent_a)
+    check("an A-won result after a fallback ran is refused", not ok, why)
+    check("and the refusal names the maximum", "maximum" in why, why)
+    spent_b = _res(CP.GROUNDING, CP.GROUNDING_HOLD,
+                   compose_mode=CP.COMPOSE_SAFE_RECOMPOSE,
+                   fallback_recomposition_triggered=True)
+    check("a B-won result after a fallback ran is refused",
+          not CP.fallback_recomposition_eligible(spent_b)[0], "")
+    check("a fresh attempt with no fallback spent is still eligible",
+          CP.fallback_recomposition_eligible(_res(CP.GROUNDING, CP.GROUNDING_HOLD))[0], "")
+
+
+def test_the_run_reports_the_attempt_that_got_furthest():
+    """A regressing B must not relabel the run. Publication rights are untouched: only a
+    PASS can be publication_ready, so this can never promote a held article."""
+    A_reader = {"status": CP.HOLD, "failure_stage": CP.READER}
+    B_ground = {"status": CP.HOLD, "failure_stage": CP.GROUNDING}
+    check("A at READER outranks B at GROUNDING",
+          CP.attempt_progress(A_reader) > CP.attempt_progress(B_ground), "")
+    check("a PASS outranks every HOLD",
+          CP.attempt_progress({"status": CP.PASS}) > CP.attempt_progress(A_reader), "")
+    check("a tie does not displace A",
+          not (CP.attempt_progress(dict(A_reader)) > CP.attempt_progress(dict(A_reader))), "")
+    check("an unknown stage sorts last, never ahead of a real one",
+          CP.attempt_progress({"status": CP.HOLD, "failure_stage": "NOPE"})
+          < CP.attempt_progress(B_ground), "")
 
 
 def test_pre_composition_holds_are_never_eligible():
@@ -523,12 +568,11 @@ def test_a_held_b_is_terminal_and_there_is_no_third_composition():
           out["composition_attempts_count"])
     check("exactly two WRITER calls -- no third draft",
           _stages_seen(prov).count("WRITER") == 2, _stages_seen(prov))
-    check("B's own result is not eligible for a further fallback",
-          CP.fallback_recomposition_eligible(out)[0] is False,
-          CP.fallback_recomposition_eligible(out)[1])
-    check("and the refusal names the maximum",
-          "maximum" in CP.fallback_recomposition_eligible(out)[1],
-          CP.fallback_recomposition_eligible(out)[1])
+    ok, why = CP.fallback_recomposition_eligible(out)
+    check("the returned result is not eligible for a further fallback", not ok, why)
+    check("and the refusal names the maximum", "maximum" in why, why)
+    check("the run records that its fallback budget is spent",
+          out["fallback_recomposition_triggered"] is True, out)
     check("nothing publishes", not out["publication_ready"], out)
 
 
@@ -626,6 +670,9 @@ def main() -> int:
                test_an_eligible_grounding_hold_generates_b_exactly_once,
                test_an_eligible_safety_hold_generates_b_exactly_once,
                test_every_eligible_composition_terminal_is_accepted,
+               test_a_reader_hold_does_not_earn_a_recomposition,
+               test_the_fallback_budget_is_spent_whichever_attempt_wins,
+               test_the_run_reports_the_attempt_that_got_furthest,
                test_pre_composition_holds_are_never_eligible,
                test_eligibility_fails_closed_on_everything_it_does_not_recognise,
                test_b_inherits_frozen_authority_and_nothing_else,
