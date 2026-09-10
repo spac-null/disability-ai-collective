@@ -3887,6 +3887,41 @@ def deterministic_subtractive_edit(article_text: str, finding: dict,
 # in this file uses.
 
 
+# ── A SUGGESTED PATCH IS REPLACEMENT PROSE, NOT AN INSTRUCTION (2026-09-10) ──────────
+# suggested_patch_edit() substitutes the Grounder's patch into the sentence VERBATIM
+# (`sentence.replace(quote, patch, 1)`). That is correct when the patch is the narrower
+# wording. But the Grounder sometimes answers with an EDITORIAL INSTRUCTION instead, and
+# the instruction was then written into the article character for character. Retained
+# production evidence, production-20260910T084202Z-09d602f1 attempt B iteration 2: a
+# Grounding finding quotes article text reading
+#     "(delete the trailing fragment; the preceding sentenc..."
+# -- i.e. an instruction had been executed into the prose and the next read flagged it.
+#
+# Refused fail-closed rather than interpreted: an instruction-shaped patch yields no
+# suggested-patch edit at all, and the loop falls through to the deterministic and model
+# origins it already has. This adds no capability and cannot change any accepted wording;
+# it only stops one class of text being inserted. Deliberately narrow -- a patch is
+# refused only when it OPENS with an editing imperative, is wholly parenthesised, or
+# refers to the sentence/clause as an object to be edited.
+_PATCH_IMPERATIVE = re.compile(
+    r"^\(?\s*(?:delete|remove|cut|drop|omit|strike|replace|rephrase|reword|rewrite|"
+    r"narrow|qualify|attribute|change|shorten|split|move|keep|use)\b", re.I)
+_PATCH_META = re.compile(
+    r"\b(?:the (?:preceding|previous|following|next|same|trailing|first|second) "
+    r"(?:sentence|clause|fragment|phrase|paragraph|half)|this (?:sentence|clause|phrase)"
+    r"|as above|see above)\b", re.I)
+
+
+def suggested_patch_is_instruction(patch: str) -> bool:
+    """Does this read as an instruction ABOUT the prose rather than the prose itself?"""
+    t = (patch or "").strip()
+    if not t:
+        return False
+    if t.startswith("(") and t.endswith(")"):
+        return True
+    return bool(_PATCH_IMPERATIVE.match(t)) or bool(_PATCH_META.search(t))
+
+
 def suggested_patch_edit(article_text: str, finding: dict) -> dict | None:
     """A NARROW candidate edit for ONE finding built from its own suggested_patch, or
     None when the span relationship cannot be established exactly.
@@ -3898,6 +3933,10 @@ def suggested_patch_edit(article_text: str, finding: dict) -> dict | None:
     quote = str(finding.get("quote") or "").strip()
     patch = str(finding.get("suggested_patch") or "").strip()
     if not quote or not patch or patch == quote:
+        return None
+    # An instruction is not a replacement. Refuse it here and let the deterministic and
+    # model origins answer this finding instead. See suggested_patch_is_instruction.
+    if suggested_patch_is_instruction(patch):
         return None
     # UNIQUELY LOCATABLE, verbatim. Two occurrences means an edit here would silently
     # fix one and leave the other, and guessing which is exactly what this refuses.
