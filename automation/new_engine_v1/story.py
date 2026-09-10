@@ -1141,9 +1141,22 @@ def _entities(text: str, skip_sentence_initial: bool = True) -> set:
     That false positive was real: "Jia" and "Jakarta" both open packet lines."""
     out = set()
     for s in re.split(r"(?<=[.!?])\s+", text):
-        toks = re.findall(r"\b[A-Z][A-Za-z'’.-]{2,}\b", s)
-        for tok in (toks[1:] if skip_sentence_initial else toks):
-            tok = tok.rstrip(".,")
+        matches = list(re.finditer(r"\b[A-Z][A-Za-z'’.-]{2,}\b", s))
+        for m in matches:
+            # POSITION, NOT MATCH ORDER (2026-09-10). This dropped `toks[0]` -- the first
+            # capitalised MATCH in the segment -- rather than a token that actually opens
+            # the sentence. On a segment whose opening words are lowercase, that silently
+            # discarded a real proper name: `_entities("a visit to Georgetown.")` returned
+            # nothing, and "Avanti" vanished from "Avanti Architects delivered it in May."
+            # A newly introduced entity could therefore evade the unapproved-entity
+            # comparison purely because of the capitalisation pattern before it. Skipping
+            # by position keeps the intended behaviour -- a grammatical capital that opens
+            # a sentence is not evidence of a name -- and stops exempting names that merely
+            # happen to be matched first. Verified against sentence starts, mid-sentence
+            # names, lowercase-prefixed fragments and leading quotation/markdown punctuation.
+            if skip_sentence_initial and not s[:m.start()].strip(" \t'\"“‘([#*_-"):
+                continue
+            tok = m.group(0).rstrip(".,")
             out.add(tok)
             out.add(re.sub(r"['’]s$", "", tok))          # Curated's -> Curated
             for part in re.split(r"[-.]", tok):          # Jakarta-based -> Jakarta
