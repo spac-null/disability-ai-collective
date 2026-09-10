@@ -1387,15 +1387,25 @@ def _sentences_of(text: str) -> list:
     return [s.strip() for s in re.split(r"(?<=[.!?])\s+", body.strip()) if s.strip()]
 
 
+def negative_shape_of(text: str) -> tuple:
+    """(kind, pattern) if this ONE string's shape asserts an absence, exclusivity or
+    first/last -- otherwise (None, None). The single owner of "is this negative-shaped",
+    so a permission decision and the audit that enforces it can never use two different
+    definitions of a negative."""
+    for pat, kind in NEGATIVE_SHAPES:
+        if re.search(pat, text or "", re.I):
+            return kind, pat
+    return None, None
+
+
 def negative_claim_scan(article_text: str) -> list:
     """Every sentence whose SHAPE asserts an absence, exclusivity or first/last."""
     out = []
     for s in _sentences_of(article_text):
-        for pat, kind in NEGATIVE_SHAPES:
-            if re.search(pat, s, re.I):
-                out.append({"sentence": s, "kind": kind,
-                            "pattern": pat.replace(r"\b", "")[:44]})
-                break
+        kind, pat = negative_shape_of(s)
+        if kind:
+            out.append({"sentence": s, "kind": kind,
+                        "pattern": pat.replace(r"\b", "")[:44]})
     return out
 
 

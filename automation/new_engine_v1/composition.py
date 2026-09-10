@@ -1973,16 +1973,55 @@ def label_sentences(article_text: str) -> dict:
             for i, s in enumerate(CE.sentences(article_text))}
 
 
+def attributed_negative_is_explicit(f: dict | None) -> bool:
+    """Does this fact's FROZEN proposition AND its VERBATIM support span both state the
+    negative?
+
+    WHY THIS EXISTS (owner-directed, 2026-09-10). `claim_type` describes the FORM of a
+    claim; whether its content is negative is a different dimension. An attributed
+    negative -- "<source> states that there is no X" -- is typed ATTRIBUTION, so the
+    permission compiler excluded it while the Architecture was simultaneously REQUIRING
+    the Writer to state it.
+
+    Retained production proof, production-20260910T073435Z-703b7b90 (pediatric mTBI):
+    Architecture beat B2 instructs "Add the field's own stated position ... there is no
+    objective clinical biomarker ..."; F39's frozen proposition and frozen support span
+    both say exactly that; F39 is in `use_facts`; F39 is typed ATTRIBUTION; the rendered
+    permission block lists only F13 and says "Nothing else." The run died on
+    UNSUPPORTED_NEGATIVES. Two instructions that cannot both be satisfied, and no repair
+    or recomposition can reconcile them because both come from frozen upstream.
+
+    THIS ADMITS NO NEW EVIDENCE. The fact must already be SELECTED by the architecture,
+    its frozen proposition must state the negative, and its verbatim source span must
+    state it INDEPENDENTLY -- a proposition that resolves an ambiguous source into a
+    negative the span does not carry stays refused. The shape test is
+    story.negative_shape_of(), the SAME single owner the UNSUPPORTED_NEGATIVES audit uses
+    to decide a sentence is negative, so a permission and the audit enforcing it cannot
+    disagree about what a negative is. Writer lineage, entity, number and relation checks
+    are all untouched.
+    """
+    prop = str((f or {}).get("proposition") or "")
+    span = str((f or {}).get("support_span") or "")
+    if not prop.strip() or not span.strip():
+        return False
+    return bool(ST.negative_shape_of(prop)[0]) and bool(ST.negative_shape_of(span)[0])
+
+
 def negative_permissions(arch: dict, ledger: dict) -> dict:
     """The negative facts the architecture actually USES, by id.
 
     Only these ids are admissible in a declaration, and every one of their propositions
     is already in the packet as a used fact, so naming them exposes no new evidence.
+
+    Admitted on either of two grounds: the fact's own claim_type is a recognised negative
+    type, or it is an ATTRIBUTED negative whose frozen proposition and frozen support span
+    both explicitly state it -- see attributed_negative_is_explicit().
     """
     use = set(arch.get("use_facts") or [])
     return {fid: f.get("proposition", "")
             for fid, f in (ledger or {}).items()
-            if fid in use and f.get("claim_type") in LG.NEGATIVE_TYPES}
+            if fid in use and (f.get("claim_type") in LG.NEGATIVE_TYPES
+                               or attributed_negative_is_explicit(f))}
 
 
 def verify_negative_lineage(article_text: str, declared, ledger: dict, packet: dict,
