@@ -4109,6 +4109,50 @@ def blocker_snapshot(findings, package: dict | None) -> list:
     return out
 
 
+# ── PACKAGE BLOCKERS SURVIVE AN ARTICLE-ONLY LOOP (owner-directed, 2026-09-10) ───────
+# WHY. `grounding_completion_loop` edits the ARTICLE and never the package -- it says so
+# itself -- but acceptance compares the length of the WHOLE bundle blocking set before and
+# after a fresh, non-deterministic Grounding read. A package blocker can therefore vanish
+# from a recheck of bytes the candidate cannot have touched, and its disappearance is
+# credited to the article edit as progress.
+#
+# Retained production proof, Finsbury attempt A iteration 5
+# (production-20260910T102814Z-ab65bb22/attempt-A): accepted on 4 -> 2, and the
+# SOCIAL_HOOK blocker present in `blockers_before` is simply absent from `blockers_after`
+# while the package bytes were never edited. The article repair got acceptance credit for
+# forgetting a live package defect. That is the dangerous direction: it both accepts on
+# false progress and drops a known blocker.
+#
+# THE FIX IS STRICTLY MORE CONSERVATIVE. While the package is byte-identical -- which,
+# inside this loop, it always is -- a package blocker already seen cannot have been
+# repaired, so it is carried forward and re-united with every fresh read. Strict shrink is
+# untouched and still applies to the whole set; Grounding's classifications, thresholds and
+# TRUE_UNCERTAIN behaviour are untouched. The only change is that the set can no longer
+# shrink by forgetting something nothing fixed.
+def _pkg_key(f) -> str:
+    return normalize_span(str((f or {}).get("quote") or (f or {}).get("claim") or "")).lower()
+
+
+def carry_forward_package_blockers(blocking, known_pkg: dict, package: dict | None):
+    """(augmented blocking list, updated known-package map).
+
+    `known_pkg` accumulates every package-surface blocker this loop has ever been shown.
+    Any that a fresh read omits is re-added: the package was not edited, so its absence is
+    a change in the report, not a repair.
+    """
+    out = list(blocking or [])
+    seen = {_pkg_key(f) for f in out}
+    for f in out:
+        if surface_of(str(f.get("quote") or ""), package) != ARTICLE_SURFACE:
+            k = _pkg_key(f)
+            if k:
+                known_pkg[k] = f
+    for k, f in known_pkg.items():
+        if k and k not in seen:
+            out.append(f)
+    return out, known_pkg
+
+
 def grounding_completion_loop(
         provider, article_text: str, package: dict | None, initial: dict, ledger: dict,
         packet: dict, arch: dict | None, pack: dict, source_text: str, source_sha: str,
@@ -4132,6 +4176,12 @@ def grounding_completion_loop(
     """
     accepted_text = article_text
     g = initial
+    # Every package blocker this loop has been shown, by normalised quote. Seeded from the
+    # caller's initial read so a package defect present at entry cannot be forgotten later.
+    known_pkg: dict = {}
+    g = dict(g)
+    g["blocking"], known_pkg = carry_forward_package_blockers(
+        g.get("blocking"), known_pkg, package)
     iterations = proposals = accepted = rejected = 0
     deterministic_attempts = deterministic_accepted = 0
     suggested_patch_attempts = suggested_patch_accepted = 0
@@ -4244,6 +4294,10 @@ def grounding_completion_loop(
             pack, arch, packet)
         model_calls += candidate_grounding.get("model_calls", 0)
 
+        # The candidate's own read, re-united with package blockers it cannot have fixed.
+        candidate_grounding = dict(candidate_grounding)
+        candidate_grounding["blocking"], known_pkg = carry_forward_package_blockers(
+            candidate_grounding.get("blocking"), known_pkg, package)
         before_count = len(g["blocking"])
         # Taken BEFORE `g` is replaced by an accepted candidate below.
         before_snapshot = blocker_snapshot(g["blocking"], package)
