@@ -3954,6 +3954,80 @@ def test_furniture_repackage_then_clean_grounding_continues_normally():
     check("and it publishes", out["publication_ready"] is True and bool(out["package"]))
 
 
+def test_the_completion_audit_reaches_disk_through_the_whole_pipeline():
+    """END-TO-END, ONTO DISK (owner-directed, 2026-09-10). The sibling of
+    test_furniture_repackage_then_clean_grounding_continues_normally, run with an
+    out_dir so the REAL persist() executes: G1 is repaired by the main loop, the
+    repackage's own recheck comes back clean and REPLACES st[GROUNDING] with a bare
+    grounding result, and the only surviving record of G1's repair is the carried
+    `pre_repackage_completion`. Before the persistence fix that record died at the
+    boundary and the artifact claimed an article nobody edited passed on the first read.
+    """
+    import tempfile
+    _, clean = run(full_script())
+    dek = (clean["package"] or {})["dek"]
+    ground_seq = [
+        {"status": "settled", "findings": [
+            dict(G1), {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],
+                       "why": "not in the sources"}]},   # 1: mixed, initial
+        {"status": "settled", "findings": [               # 2: main loop's recheck after
+            {"classification": "TRUE_UNSUPPORTED", "quote": dek[:80],           # G1 fix
+             "why": "not in the sources"}]},              #    -- package survives alone
+        dict(GROUND_CLEAN),                                # 3: repackage's own recheck
+    ]
+    import new_engine_v1.stages as S
+    real = S.ground
+    seq = list(ground_seq)
+
+    def fake(*a, **k):
+        return dict(seq.pop(0) if seq else GROUND_CLEAN)
+
+    S.ground = fake
+    try:
+        with tempfile.TemporaryDirectory() as d:
+            out_dir = pathlib.Path(d) / "run"
+            res = CP.run_story_architecture_composition(
+                Scripted(full_script()[:5] + [FIX_G1] + [READER_OK]),
+                pack=PACK, source_text=S0, source_sha="x", subject=PACK["subject"],
+                fact_check_fn=lambda a: dict(FC_CLEAN), out_dir=out_dir)
+            check("the run still reaches PASS", res["status"] == CP.PASS,
+                  res.get("failure_reason"))
+            names = sorted(f.name for f in out_dir.iterdir())
+            f = out_dir / "FACTUAL_COMPLETION.json"
+            check("the pipeline persists FACTUAL_COMPLETION.json", f.exists(), names)
+            if not f.exists():
+                return
+            on_disk = json.loads(f.read_text())
+    finally:
+        S.ground = real
+
+    # PHASE RETENTION, on disk. st[GROUNDING] at persist() time is the repackage's own
+    # clean recheck, which carries no history of its own -- so the entire audit for this
+    # run lives under the carried key, and that is exactly what has to survive.
+    pre = on_disk.get("pre_repackage_completion")
+    check("the pre-repackage phase's own completion record reached disk", bool(pre),
+          on_disk)
+    if not pre:
+        return
+    check("it is stamped as the pre-repackage phase",
+          pre.get("grounding_completion_phase") == "PRE_REPACKAGE", pre)
+    check("it names G1's own accepted edit",
+          any(e.get("finding_id") == "G1" for e in pre.get("accepted_edits") or []), pre)
+    hist = pre.get("grounding_completion_history") or []
+    acc = [h for h in hist if h.get("outcome") == "accepted"]
+    check("the accepted iteration reached disk with its origin", bool(acc)
+          and all(h.get("origin") for h in acc), hist)
+    check("and with the blocking set on both sides of it",
+          all(h.get("blockers_before") is not None
+              and h.get("blockers_after") is not None for h in acc), acc)
+    check("every snapshotted finding carries a surface, off disk",
+          all(b.get("surface") for h in acc
+              for b in (h.get("blockers_before") or []) + (h.get("blockers_after") or [])),
+          acc)
+    check("the persisted audit carries no article or source text",
+          DRAFT[:60] not in json.dumps(on_disk), "")
+
+
 def test_post_repackage_article_blocker_enters_the_completion_loop():
     """2/3. Repackage's recheck surfaces a brand-new ARTICLE finding (G2) -- it is fed
     into the SAME grounding_completion_loop(), repaired transactionally, and the run

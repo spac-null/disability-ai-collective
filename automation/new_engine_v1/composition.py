@@ -6816,11 +6816,39 @@ def persist(out_dir, result: dict) -> None:
     if det.get(GROUNDING, {}).get("repair"):
         # Auditable by construction: every edit, what authorised it, and what it removed.
         dump("FACTUAL_REPAIR.json", det[GROUNDING]["repair"])
-    if det.get(GROUNDING, {}).get("completion"):
-        # The completion pass gets its own file rather than being merged into the repair:
-        # they are two different calls answering two different finding sets, and a later
-        # auditor must be able to tell which pass removed what.
-        dump("FACTUAL_COMPLETION.json", det[GROUNDING]["completion"])
+    # THE COMPLETION AUDIT, ONTO DISK (owner-directed, 2026-09-10).
+    #
+    # The completion pass gets its own file rather than being merged into the repair:
+    # they are two different calls answering two different finding sets, and a later
+    # auditor must be able to tell which pass removed what.
+    #
+    # WHAT WAS BROKEN. This wrote `det[GROUNDING]["completion"]` -- a key nothing in the
+    # codebase has ever set (one reader, no writer). So the file appeared in 0 of 181
+    # retained production runs, and every completion history since the loop was
+    # introduced was computed and then dropped at the boundary. f13e719 added
+    # blockers_before/blockers_after to those entries and asserted their survival
+    # against `out["detail"][GROUNDING]` -- in memory, upstream of the loss, so it could
+    # not see it. COMPOSITION_RESULT.json cannot cover for it either: it is written
+    # `{k: v for k, v in result.items() if k != "detail"}`.
+    #
+    # The projection is grounding_completion_detail(), UNCHANGED and already the single
+    # owner of which completion fields are audit-bearing: it returns None for a plain
+    # grounding result that never entered the loop, and its whitelist carries no article
+    # text, source text, packet, prompt or transcript. `pre_repackage_completion` is
+    # added explicitly because it is a nested detail of that same shape and carrying a
+    # phase over a later record() is the whole reason it exists -- a run that repaired,
+    # repackaged and stopped keeps only that key, and it has to reach disk too.
+    #
+    # OBSERVATION ONLY. Nothing reads this file back: no gate, decision, safety check or
+    # publication path depends on it, and every decision in this module is already final
+    # by the time persist() runs.
+    _completion = grounding_completion_detail(det.get(GROUNDING))
+    _pre_completion = (det.get(GROUNDING) or {}).get("pre_repackage_completion")
+    if _completion or _pre_completion:
+        dump("FACTUAL_COMPLETION.json",
+             dict(_completion or {},
+                  **({"pre_repackage_completion": _pre_completion}
+                     if _pre_completion else {})))
     if det.get(FACT_CHECK, {}).get("status") not in (None, NOT_RUN, SKIPPED):
         dump("FACT_CHECK.json", det[FACT_CHECK])
     if det.get(PACKAGE, {}).get("package"):

@@ -1296,6 +1296,85 @@ def test_accepted_iterations_record_both_sides_too():
           (h["blocking_before"], h["blocking_after"]) == (1, 0), h)
 
 
+def test_the_completion_history_survives_the_real_persist_path_onto_disk():
+    """THE TEST f13e719 DID NOT HAVE, and the reason its retention never reached an
+    artifact. That commit asserted survival against `out["detail"][GROUNDING]` -- in
+    memory, UPSTREAM of the only place the evidence was ever lost -- so it passed while
+    persist() wrote FACTUAL_COMPLETION.json from `det[GROUNDING]["completion"]`, a key
+    nothing in the codebase sets. The file existed in 0 of 181 retained production runs.
+
+    This drives the REAL persist() into a temp directory and reads the artifact back off
+    disk. It fails on f13e719 (no file is written at all) and passes after the fix.
+    """
+    import json
+    import tempfile
+    result = _aud_run([F1, AUD_PKG_FINDING])
+    # The shape run_story_architecture_composition's own out() hands persist(): the stage
+    # payload map under "detail", which is where record(GROUNDING, gc) leaves the loop
+    # result. Nothing here is constructed for the test's convenience.
+    run_result = {"status": CP.HOLD, "failure_stage": CP.GROUNDING,
+                  "detail": {CP.GROUNDING: result}}
+    with tempfile.TemporaryDirectory() as d:
+        CP.persist(d, run_result)
+        written = sorted(f.name for f in pathlib.Path(d).iterdir())
+        f = pathlib.Path(d) / "FACTUAL_COMPLETION.json"
+        check("the REAL persist() writes FACTUAL_COMPLETION.json", f.exists(), written)
+        if not f.exists():
+            return
+        on_disk = json.loads(f.read_text())
+
+    check("the completion counters survive onto disk",
+          on_disk.get("grounding_completion_iterations") == 1
+          and on_disk.get("grounding_repair_proposals") == 1
+          and on_disk.get("grounding_repairs_rejected") == 1
+          and on_disk.get("grounding_repairs_accepted") == 0, on_disk)
+    hist = on_disk.get("grounding_completion_history") or []
+    check("the per-iteration history survives onto disk", len(hist) == 1, hist)
+    if not hist:
+        return
+    h = hist[0]
+    check("the iteration's outcome and candidate origin survive onto disk",
+          h.get("outcome") == "no_progress" and h.get("origin") == CP.ORIGIN_MODEL, h)
+    check("blockers_before survives onto disk", h.get("blockers_before") is not None, h)
+    check("blockers_after survives onto disk", h.get("blockers_after") is not None, h)
+    # The exact question the production artifact could not answer, now answerable from a
+    # file on disk with no model call: ARTICLE 1 -> 1, PACKAGE 0 -> 1.
+    def split(bs):
+        return (sum(1 for b in bs if b["surface"] == CP.ARTICLE_SURFACE),
+                sum(1 for b in bs if b["surface"] != CP.ARTICLE_SURFACE))
+    check("the article/package split is readable on both sides, off disk",
+          split(h["blockers_before"]) == (1, 0)
+          and split(h["blockers_after"]) == (1, 1),
+          (h["blockers_before"], h["blockers_after"]))
+    check("each snapshotted finding kept its id, classification, surface and quote",
+          all(set(b) <= {"id", "classification", "surface", "quote"} and b.get("surface")
+              for b in h["blockers_before"] + h["blockers_after"]), h)
+    # The retention budget is diagnostic fields only. A persisted audit that carried the
+    # article, the sources or a transcript would be a different and much worse artifact.
+    blob = json.dumps(on_disk)
+    for leak, what in ((LOOP_ARTICLE[:60], "the article text"),
+                       ("source text", "the source text"),
+                       ("system", "a prompt or transcript")):
+        check("no %s reached the persisted audit" % what, leak not in blob, what)
+
+
+def test_the_persisted_completion_audit_is_observation_only():
+    """The new file is evidence, never input. Nothing reads it back, so no gate,
+    decision, safety check or publication path can come to depend on it existing."""
+    src = (HERE / "new_engine_v1" / "composition.py").read_text()
+    check("composition.py only ever writes FACTUAL_COMPLETION.json, never reads it",
+          src.count("FACTUAL_COMPLETION.json") == 1
+          and 'dump("FACTUAL_COMPLETION.json"' in src, src.count("FACTUAL_COMPLETION"))
+    check("the persisted projection is the existing single owner, not a new one",
+          "grounding_completion_detail(det.get(GROUNDING))" in src, "")
+    # The dead key may still be NAMED in the comment explaining the defect; what must be
+    # gone is any code that reads it.
+    live = [ln for ln in src.splitlines()
+            if '["completion"]' in ln or 'get("completion")' in ln
+            if not ln.lstrip().startswith("#")]
+    check("the dead key that broke persistence has no code readers left", not live, live)
+
+
 def test_acceptance_semantics_are_structurally_unchanged():
     """7/8/9. The audit added no branch, no comparison and no constant. The acceptance
     test is the same single expression, Safety is still global, and the fuse is 5."""
@@ -1363,7 +1442,9 @@ def main():
                test_every_rejection_origin_records_the_snapshot,
                test_safety_rejection_records_the_before_set_and_no_after_set,
                test_accepted_iterations_record_both_sides_too,
-               test_acceptance_semantics_are_structurally_unchanged):
+               test_acceptance_semantics_are_structurally_unchanged,
+               test_the_completion_history_survives_the_real_persist_path_onto_disk,
+               test_the_persisted_completion_audit_is_observation_only):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)
