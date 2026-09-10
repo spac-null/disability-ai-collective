@@ -465,7 +465,11 @@ def _run_story_architecture(provider, A: dict, prov: dict, pack: dict, src: str,
                             mode: str, fact_check_fn=None) -> dict:
     """The story-architecture composition path, from the frozen research pack onwards."""
     out_dir = run_root / name
-    result = CP.run_story_architecture_composition(
+    # TWO COMPOSITIONS PER WORTH-PASS STORY (owner-directed, 2026-09-10). This returns a
+    # composition result of the SAME shape as before -- the WINNING attempt's own -- so
+    # everything below is unchanged and a held article or refused package from attempt A
+    # structurally cannot reach WRITER_OUTPUT, the decision or publication state.
+    result = CP.run_composition_with_fallback(
         provider, pack=pack, source_text=src, source_sha=sha,
         subject=pack.get("subject", ""), out_dir=out_dir,
         fact_check_fn=fact_check_fn)
@@ -514,6 +518,14 @@ def _run_story_architecture(provider, A: dict, prov: dict, pack: dict, src: str,
         reasons = ["story_architecture HOLD at %s (%s)"
                    % (result["failure_stage"], result["reason_code"]),
                    str(result["failure_reason"])[:400]]
+    if result.get("fallback_recomposition_triggered"):
+        reasons.append("attempt %s of %d decided this run; A was discarded as a "
+                       "composition surface (%s)"
+                       % (result.get("winning_attempt"), CP.MAX_COMPOSITION_ATTEMPTS,
+                          result.get("fallback_recomposition_reason")))
+    elif result.get("composition_attempts_count") == 1 and result["status"] != CP.PASS:
+        reasons.append("no fallback recomposition: %s"
+                       % result.get("fallback_recomposition_reason"))
 
     dec_inputs = {"research_pack": A[C.RESEARCH_PACK]}
     if C.WRITER_OUTPUT in A:
@@ -529,9 +541,35 @@ def _run_story_architecture(provider, A: dict, prov: dict, pack: dict, src: str,
         dec_inputs)
 
     _persist(A, run_root, name, mode, prov, decision, reasons)
+    _persist_attempts(run_root / name, result)
     return {"artifacts": A, "decision": decision, "reasons": reasons,
             "provider": prov, "composition": result,
             "reason_code": result.get("reason_code")}
+
+
+def _persist_attempts(out_dir: pathlib.Path, result: dict) -> None:
+    """The A/B audit row, beside the run's own artifacts. Diagnostic fields only: which
+    attempt produced which article and package, where each one's artifacts are, what each
+    one cost, and why the fallback did or did not run. No prose from either attempt."""
+    if not result.get("composition_attempts"):
+        return
+    try:
+        (out_dir / "COMPOSITION_ATTEMPTS.json").write_text(json.dumps({
+            "composition_attempts": result["composition_attempts"],
+            "composition_attempts_count": result.get("composition_attempts_count"),
+            "max_compositions_per_worth_pass_story": CP.MAX_COMPOSITION_ATTEMPTS,
+            "attempt_a_model_calls": result.get("attempt_a_model_calls"),
+            "attempt_b_model_calls": result.get("attempt_b_model_calls"),
+            "composition_model_calls_total": result.get(
+                "composition_model_calls_total"),
+            "fallback_recomposition_triggered": result.get(
+                "fallback_recomposition_triggered"),
+            "fallback_recomposition_reason": result.get(
+                "fallback_recomposition_reason"),
+            "winning_attempt": result.get("winning_attempt"),
+        }, indent=2, sort_keys=True, ensure_ascii=False), encoding="utf-8")
+    except Exception:
+        pass
 
 
 def _shadow_grounding_v2(provider, out_dir: pathlib.Path, wo: dict, src: str,

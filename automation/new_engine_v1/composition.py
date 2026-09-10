@@ -2108,6 +2108,76 @@ WRITER_SYSTEM = (
 WRITER_MIN_WORDS = 50
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# SAFE RECOMPOSE -- the second and last composition (owner-directed, 2026-09-10)
+# ══════════════════════════════════════════════════════════════════════════════
+# WHY. Worth-PASS stories were dying on their own prose: one causal escalation, one
+# status label the ledger never granted, one "separate experiment" that invented a second
+# experiment -- and the whole composition was terminal. The remedy is NOT a longer chain
+# of local repairs on that prose. A night batch spent five repair proposals on one draft,
+# accepted one, and still held; the retained evidence could not even say whether the
+# repairs were bad or the gate simply read differently the second time. Local repair had
+# reached its useful end, and the only remaining lever was the owner arbitrating wording
+# by hand, which is exactly what must never be required.
+#
+# So: throw the draft away and write the article ONCE more, from the SAME frozen
+# authority, with a conservative factual hand. Two compositions per Worth-PASS story, no
+# third.
+#
+# THIS LOWERS NO STANDARD. It is a WRITING contract, not a gate. Every downstream gate
+# runs on B exactly as it ran on A, and B has the identical Ledger authority A had -- it
+# may not create a fact, retrieve evidence, or widen a permission. House style is
+# untouched: PROSE_DOCTRINE and WRITER_CRAFT_DELTA are both still in force, because a
+# safe article is still a Crip Minds article and not a fact sheet.
+COMPOSE_NORMAL = "NORMAL"
+COMPOSE_SAFE_RECOMPOSE = "SAFE_RECOMPOSE"
+
+SAFE_RECOMPOSE_DELTA = (
+    "\n\nCONSERVATIVE FACTUAL HAND. This is the second and final composition of a story "
+    "whose first draft was refused by the factual gates. You are not repairing that "
+    "draft: you have not been shown it, and you are not meant to be. Write the article "
+    "again from the packet above.\n"
+    "  Everything above about HOW to write still holds, without exception. Difficult "
+    "ideas, very easy reading. Find the story carrying the idea. Concrete people, events "
+    "and objects carry the abstraction. One hard concept at a time. Calm, natural, "
+    "book-like prose. Do NOT write notes, a fact sheet, an abstract, an academic summary "
+    "or deliberately flattened prose -- a cautious article is not a dull one, and "
+    "caution is not an excuse for bad writing.\n"
+    "  What changes is the factual hand. Every assertion must be one the packet already "
+    "carries. Where the packet is thinner than the sentence you would like to write, "
+    "write the thinner sentence. Plain factual description beats interpretive flourish, "
+    "every time.\n"
+    "  Do not add factual strength for prose energy. Specifically, do not write any of "
+    "the following unless the packet states it outright:\n"
+    "    - a cause, or a stronger cause than the packet gives\n"
+    "    - proved, showed that, demonstrated, confirmed, established\n"
+    "    - first, only, leading, major, separate, unprecedented\n"
+    "    - an expertise, seniority or status label for a person\n"
+    "    - an institutional relationship, affiliation or group membership\n"
+    "    - an order of events, or one event happening because of another\n"
+    "    - a motive, an intention or a belief\n"
+    "    - a named classification or category the packet does not name\n"
+    "    - a comparison between two studies, measurements or cases\n"
+    "    - a universal claim (all, every, always, none, never)\n"
+    "    - a negative claim without its listed permission\n"
+    "  Three worked refusals, so the shape is unmistakable. \"researchers argued X\" does "
+    "not become \"researchers working on X argued\" -- that invents a research programme. "
+    "\"a bodily response\" does not become \"proof that it worked\" -- that invents a "
+    "conclusion. \"one experiment\" does not become \"a separate experiment\" -- that "
+    "invents a second experiment.\n"
+    "  If the packet cannot support a sentence, omit it or narrow it. An article that says "
+    "less and is true is finished. An article that says more than its evidence carries is "
+    "not an article yet."
+)
+
+# The same contract as the normal Writer, plus the conservative hand. Built by
+# concatenation rather than rewritten, so the two can never drift apart.
+WRITER_SYSTEM_SAFE_RECOMPOSE = WRITER_SYSTEM + SAFE_RECOMPOSE_DELTA
+
+COMPOSE_SYSTEMS = {COMPOSE_NORMAL: WRITER_SYSTEM,
+                   COMPOSE_SAFE_RECOMPOSE: WRITER_SYSTEM_SAFE_RECOMPOSE}
+
+
 def negative_permissions_block(perms: dict) -> str:
     """The only place a fact id is shown to the Writer, and only for negatives.
 
@@ -2156,14 +2226,25 @@ def _clean_article(text: str) -> str:
     return t.strip()
 
 
-def write_article(provider, arch: dict, ledger: dict, cut_prohibitions=None) -> dict:
-    """STAGE 5. ONE Writer call. A retry only when the output is mechanically unusable."""
+def write_article(provider, arch: dict, ledger: dict, cut_prohibitions=None,
+                  compose_mode: str = COMPOSE_NORMAL) -> dict:
+    """STAGE 5. ONE Writer call. A retry only when the output is mechanically unusable.
+
+    `compose_mode` selects the writing contract and NOTHING else: the packet, the
+    permissions, the validators and every downstream gate are identical in both modes.
+    An unknown mode is refused rather than silently written normally -- fail-closed, the
+    same as every other guard here.
+    """
+    if compose_mode not in COMPOSE_SYSTEMS:
+        raise CompositionHold(WRITER, WRITER_HOLD,
+                              ["unknown compose_mode %r" % compose_mode])
+    system = COMPOSE_SYSTEMS[compose_mode]
     packet, prompt = writer_packet(arch, ledger, cut_prohibitions)
     perms = negative_permissions(arch, ledger)
     last = ""
     for attempt in (1, 2):
         try:
-            comp = provider.complete(system=WRITER_SYSTEM, user=prompt,
+            comp = provider.complete(system=system, user=prompt,
                                      max_tokens=8_000)
         except Exception as e:
             if _is_subscription_limit(e):
@@ -2190,6 +2271,7 @@ def write_article(provider, arch: dict, ledger: dict, cut_prohibitions=None) -> 
             verified, rejected = verify_negative_lineage(
                 article, declared, ledger, packet, set(perms))
             return {"status": PASS, "article_text": article, "packet": packet,
+                    "compose_mode": compose_mode,
                     "prompt": prompt, "prompt_sha256": C.sha256_text(prompt),
                     "provider": _identity(comp, attempt),
                     "model_calls": attempt, "repairs": 0,
@@ -6075,7 +6157,8 @@ def run_story_architecture_composition(
         provider, *, pack: dict, source_text: str, source_sha: str,
         subject: str = "", fact_check: bool = True, reader: bool = True,
         package: bool = True, stop_after: str = "",
-        fact_check_fn=None, out_dir=None, frozen: dict | None = None) -> dict:
+        fact_check_fn=None, out_dir=None, frozen: dict | None = None,
+        compose_mode: str = COMPOSE_NORMAL) -> dict:
     """Approved research material in; a final article candidate out, or a HOLD.
 
     Ten stages, each one either PASS or the stage that stopped the run. There is no
@@ -6151,6 +6234,7 @@ def run_story_architecture_composition(
             "repairs_by_stage": {k: v for k, v in repairs.items() if v},
             "advisories": (st.get(SAFETY) or {}).get("advisories") or [],
             "runtime_by_stage": dict(elapsed),
+            "compose_mode": compose_mode,
             "replay": bool(replay),
             "replayed_stages": sorted(s for s in STAGES
                                       if st[s].get("status") == REPLAYED),
@@ -6222,7 +6306,8 @@ def run_story_architecture_composition(
             calls[WRITER] = repairs[WRITER] = 0
             draft = frozen_article
         else:
-            wr = record(WRITER, write_article(P, arch, ledger, cut.get("prohibitions")))
+            wr = record(WRITER, write_article(P, arch, ledger, cut.get("prohibitions"),
+                                              compose_mode=compose_mode))
             draft = wr["article_text"]
 
         if frozen_article:
@@ -6856,3 +6941,183 @@ def persist(out_dir, result: dict) -> None:
     if det.get(READER, {}).get("dimensions"):
         dump("READER_AUDIT.json", {k: det[READER].get(k)
                                    for k in ("dimensions", "held", "one_line", "status")})
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# TWO COMPOSITIONS PER WORTH-PASS STORY (owner-directed, 2026-09-10)
+# ══════════════════════════════════════════════════════════════════════════════
+# THE RULE. After Worth PASSes, a story gets at most TWO complete compositions:
+#
+#   A  the normal engine, with every bounded local completion it already has
+#   B  ONE fresh SAFE_RECOMPOSE from the SAME frozen upstream authority
+#
+# and then it is terminal. No third draft, no roulette, and no point at which the owner
+# is asked to arbitrate wording -- the system publishes autonomously or HOLDs
+# autonomously.
+#
+# WHY B IS NOT "REPAIR A". Local repair already exists and already runs inside each
+# attempt; B sits ABOVE those mechanisms, not beside them. The whole value of B is
+# INDEPENDENCE: a bad local wording choice in A must not contaminate B, so B is given no
+# article, no package, no repair prose, no Grounding rewrite and no Reader edit from A.
+# It shares exactly one thing with A -- the frozen upstream authority both were written
+# from. That is enforced structurally rather than by instruction: `_frozen_upstream_of()`
+# can only return ledger/worth/architecture, and the replay slot that would carry an
+# article (`frozen["article"]`) is never populated here.
+#
+# WHY THIS NEEDS NO NEW REPLAY CONCEPT. run_story_architecture_composition already
+# accepts `frozen=` to reuse LEDGER, WORTH and ARCHITECTURE instead of executing them,
+# and publication_safety_bridge already treats REPLAYED as equivalent to PASS for those
+# three stages and ONLY those three -- every later gate is re-run fresh, "`frozen=` or
+# not", in the bridge's own words. So B cannot bypass Safety, Grounding, Fact Check or
+# the Reader even by accident, and it costs nothing to reuse upstream: no Research call,
+# no Ledger call, no Worth call, no Architecture call.
+MAX_COMPOSITION_ATTEMPTS = 2
+
+# ELIGIBLE A TERMINALS. A fresh composition can only plausibly help where the defect is
+# in the COMPOSITION SURFACE -- the prose or the furniture written from a sound ledger.
+FALLBACK_ELIGIBLE = {SAFETY: SAFETY_HOLD, GROUNDING: GROUNDING_HOLD,
+                     FACT_CHECK: FACT_CHECK_HOLD, READER: READER_HOLD}
+# Upstream authority B would inherit. If any of these did not actually succeed in A,
+# there is nothing sound to recompose FROM.
+FALLBACK_REQUIRED_UPSTREAM = (LEDGER, WORTH, ARCHITECTURE)
+# Never a composition-surface defect: the remedy is different code, a different provider
+# or different evidence, and a second draft would only spend a second full composition
+# discovering that.
+FALLBACK_REFUSED_CODES = (CLAUDE_SUBSCRIPTION_LIMIT, PACKAGE_TECHNICAL_FAILURE,
+                          LEDGER_HOLD, WORTH_HOLD, ARCHITECTURE_HOLD, CUT_TERMS_HOLD,
+                          WRITER_HOLD, CONTINUITY_HOLD)
+
+
+def fallback_recomposition_eligible(result: dict | None) -> tuple:
+    """(eligible, reason) -- can a FRESH composition plausibly resolve this WITHOUT
+    changing Research, the Ledger, Worth or the Architecture?
+
+    Deterministic and fail-closed. It reads the stage/reason record the run already
+    produced and nothing else: no model opinion, no prose inspection, no guess about what
+    a gate "probably meant". Anything it does not positively recognise is refused, so a
+    new failure mode costs a HOLD rather than a silent second composition.
+    """
+    if not isinstance(result, dict):
+        return False, "no composition result"
+    if result.get("status") == PASS:
+        return False, "attempt passed; no fallback needed"
+    # A fallback that could itself trigger a fallback is the third draft this rule
+    # exists to forbid. Checked first, and by the attempt's own recorded mode.
+    mode = result.get("compose_mode")
+    if mode is None:
+        return False, "result records no compose_mode; refusing rather than assuming one"
+    if mode != COMPOSE_NORMAL:
+        return False, ("attempt was already %s; %d compositions is the maximum"
+                       % (mode, MAX_COMPOSITION_ATTEMPTS))
+    code = result.get("reason_code") or ""
+    if code in FALLBACK_REFUSED_CODES:
+        return False, "%s is not a composition-surface defect" % code
+    stage = result.get("failure_stage")
+    if stage not in FALLBACK_ELIGIBLE:
+        return False, "HOLD at %s is not an eligible composition terminal" % (stage or "?")
+    if code != FALLBACK_ELIGIBLE[stage]:
+        return False, "reason_code %r is not %s's own editorial HOLD" % (code, stage)
+    stages = result.get("stages") or {}
+    for s in FALLBACK_REQUIRED_UPSTREAM:
+        if stages.get(s) not in (PASS, REPLAYED):
+            return False, ("%s did not succeed (%s); there is no sound upstream to "
+                           "recompose from" % (s, stages.get(s)))
+    det = result.get("detail") or {}
+    if not (det.get(LEDGER) or {}).get("ledger"):
+        return False, "no frozen ledger to recompose from"
+    if not (det.get(ARCHITECTURE) or {}).get("architecture"):
+        return False, "no frozen architecture to recompose from"
+    if not str(result.get("article_text") or "").strip():
+        return False, "attempt produced no article; the defect is not in its prose"
+    return True, "%s at %s is composition-surface with sound frozen upstream" % (code,
+                                                                                 stage)
+
+
+def _frozen_upstream_of(result: dict) -> dict:
+    """The ONLY state that crosses from one attempt to the next.
+
+    Three keys, by construction: the frozen ledger, the Worth verdict and the frozen
+    architecture. There is deliberately no branch here that could add the article, the
+    package, an edit list, a finding or a repair history -- the isolation B depends on is
+    this function's return type, not a promise made in a prompt.
+    """
+    det = result.get("detail") or {}
+    return {"ledger": (det.get(LEDGER) or {}).get("ledger"),
+            "worth": det.get(WORTH),
+            "architecture": (det.get(ARCHITECTURE) or {}).get("architecture")}
+
+
+def _attempt_record(label: str, result: dict, out_dir) -> dict:
+    """One audit row per composition. Enough to tell which article, package and gate
+    verdicts belong to which attempt, without carrying either article's prose."""
+    return {"attempt": label,
+            "mode": result.get("compose_mode"),
+            "status": result.get("status"),
+            "terminal_stage": result.get("failure_stage"),
+            "reason_code": result.get("reason_code"),
+            "failure_reason": str(result.get("failure_reason") or "")[:400] or None,
+            "stages": dict(result.get("stages") or {}),
+            "article_sha256": result.get("article_sha256"),
+            "bundle_sha256": result.get("bundle_sha256"),
+            "words": result.get("words"),
+            "package_present": bool(result.get("package")),
+            "package_status": result.get("package_status"),
+            "publication_ready": bool(result.get("publication_ready")),
+            "model_calls_total": result.get("model_calls_total"),
+            "model_calls_by_stage": dict(result.get("model_calls_by_stage") or {}),
+            "repairs_by_stage": dict(result.get("repairs_by_stage") or {}),
+            "artifact_dir": str(out_dir) if out_dir is not None else None}
+
+
+def run_composition_with_fallback(
+        provider, *, pack: dict, source_text: str, source_sha: str, subject: str = "",
+        fact_check: bool = True, reader: bool = True, package: bool = True,
+        stop_after: str = "", fact_check_fn=None, out_dir=None,
+        frozen: dict | None = None) -> dict:
+    """Composition A, and -- only for an eligible composition-surface HOLD -- ONE fresh
+    SAFE_RECOMPOSE composition B. Returns the attempt that decides the run.
+
+    The returned dict IS a composition result, of exactly the shape
+    run_story_architecture_composition returns, so every existing consumer (the runner's
+    WRITER_OUTPUT emission, the decision, the safety bridge, publish_best) keeps working
+    unchanged -- and, because it is the WINNING attempt's own result, a held article or a
+    refused package from A structurally cannot reach publication state. A's artifacts are
+    never overwritten: B persists to its own subdirectory.
+    """
+    import pathlib
+    a = run_story_architecture_composition(
+        provider, pack=pack, source_text=source_text, source_sha=source_sha,
+        subject=subject, fact_check=fact_check, reader=reader, package=package,
+        stop_after=stop_after, fact_check_fn=fact_check_fn, out_dir=out_dir,
+        frozen=frozen, compose_mode=COMPOSE_NORMAL)
+    attempts = [_attempt_record("A", a, out_dir)]
+    eligible, why = fallback_recomposition_eligible(a)
+
+    def decorate(winner, triggered):
+        r = dict(winner)
+        r["composition_attempts"] = attempts
+        r["composition_attempts_count"] = len(attempts)
+        # Per attempt, never summed into either attempt's own count: A's calls are A's.
+        r["attempt_a_model_calls"] = a.get("model_calls_total")
+        r["attempt_b_model_calls"] = (attempts[1]["model_calls_total"]
+                                      if len(attempts) > 1 else None)
+        r["composition_model_calls_total"] = sum(
+            x["model_calls_total"] or 0 for x in attempts)
+        r["fallback_recomposition_triggered"] = triggered
+        r["fallback_recomposition_reason"] = why
+        r["winning_attempt"] = attempts[-1]["attempt"] if triggered else "A"
+        return r
+
+    if not eligible:
+        return decorate(a, False)
+
+    # B. Same frozen upstream, no article, no package, its own artifact directory. The
+    # gates it will meet are the ones A met, unmodified.
+    b_dir = (pathlib.Path(out_dir) / "attempt-B") if out_dir is not None else None
+    b = run_story_architecture_composition(
+        provider, pack=pack, source_text=source_text, source_sha=source_sha,
+        subject=subject, fact_check=fact_check, reader=reader, package=package,
+        stop_after=stop_after, fact_check_fn=fact_check_fn, out_dir=b_dir,
+        frozen=_frozen_upstream_of(a), compose_mode=COMPOSE_SAFE_RECOMPOSE)
+    attempts.append(_attempt_record("B", b, b_dir))
+    return decorate(b, True)
