@@ -402,19 +402,30 @@ def _persist_commission(evidence_root, commission: dict, lane: str) -> None:
         pass
 
 
-def _commission_knowledge_first(orch, model: str) -> tuple:
+def _commission_knowledge_first(orch, model: str, evidence_root: str | None = None) -> tuple:
     """The PRIMARY lane's seed, or (None, record) if it cannot honestly commission one.
 
     Returns the SAME seed shape `_select_seed` returns, so everything downstream of this
     function -- acquisition, Research, Ledger, Worth, composition, every gate and the
     publication bridge -- runs completely unchanged. This lane differs ONLY in how a
     candidate is chosen. It sets no fact and relaxes no standard.
+
+    Question and story identity are claimed in `orch.discovery_db` -- the same state
+    database the ordinary-world seed pool already uses -- so a question or a story already
+    attempted by an earlier, separate process (including one retained on disk from before
+    this claims table existed) is not attempted again. See knowledge_first.commission.
     """
     from new_engine_v1.research import search_urls
     provider = Provider(model=model)
-    rec = KF.commission(provider, search_fn=search_urls,
-                        fetch_fn=lambda u: orch.get_source_text(u) or "",
-                        api_key=KF.search_key())
+    run_id = datetime.datetime.now(datetime.timezone.utc).strftime("kf-%Y%m%dT%H%M%SZ")
+    conn = sqlite3.connect(str(orch.discovery_db))
+    try:
+        rec = KF.commission(provider, search_fn=search_urls,
+                            fetch_fn=lambda u: orch.get_source_text(u) or "",
+                            api_key=KF.search_key(), state_conn=conn, run_id=run_id,
+                            evidence_root=evidence_root or DEFAULT_EVIDENCE_ROOT)
+    finally:
+        conn.close()
     q = (rec.get("question") or {})
     orch.logger.info("KNOWLEDGE_FIRST %s: question=%s (%s) -> %s",
                      rec.get("status"), q.get("id"), q.get("title"),
@@ -443,7 +454,7 @@ def run_scheduled(orch, *, rehearsal: bool = False,
         # PRIMARY LANE. An approved intellectual question comes first and the story is
         # sought for it, instead of a general-news anchor arriving and a reading being
         # sought for that. The ordinary-world lane below is untouched and still available.
-        seed, commission = _commission_knowledge_first(orch, model)
+        seed, commission = _commission_knowledge_first(orch, model, evidence_root)
         selection = None
         if not seed:
             # A TECHNICAL failure is not editorial scarcity. A refused search, an expired

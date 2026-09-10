@@ -27,11 +27,13 @@ seed of the same shape the selector already returns.
 """
 from __future__ import annotations
 
+import datetime
 import json
 import os
 import pathlib
 import random
 import re
+import sqlite3
 
 HERE = pathlib.Path(__file__).resolve().parent
 PERSPECTIVE_DIR = HERE.parent / ".claude" / "perspective-research"
@@ -50,6 +52,43 @@ MIN_ANCHOR_CHARS = 1200
 _ENTRY = re.compile(r"^### (PR\d{3}-\d{2}) — (.+?)$", re.M)
 _QUESTION = re.compile(r"^\*\*QUESTION\.\*\*\s*(.+?)(?=\n\n|\n\*\*)", re.M | re.S)
 _SKIP = {"INDEX.md", "README.md"}
+
+# ══════════════════════════════════════════════════════════════════════════════
+# NO_ACCESS_ORIGIN. Owner doctrine, stronger than the prompt-level NO ACCESS-DEFICIT rule
+# above: accessibility may appear inside a commissioned story as EVIDENCE, but it may not
+# be what the QUESTION ITSELF is about -- not the central proposition, not the carrier, not
+# the reason the article exists. This is a judgement about each question's own proposition,
+# made once per question by reading it (never a runtime keyword scan of story text), so it
+# is recorded here as an explicit, reviewable set rather than inferred from wording.
+#
+# Reviewed against every question currently loadable from .claude/perspective-research/
+# (entries without their own **QUESTION.** field, e.g. PR004-07/08, are never loadable and
+# are not reviewed here):
+#
+#   PR004-04 -- "Did this remain an accommodation attached to one project, or did it change
+#   how the place ordinarily works?" The mechanism, carriers and evidence are ALL about an
+#   access practice/programme's institutional status (tours, staffing, a budget line staying
+#   or ending). Access provision is not evidence here, it is the subject. REJECTED.
+#
+#   PR004-06 -- "Did the access intervention only change who could encounter the work, or did
+#   it materially change what was installed, performed, interpreted or experienced?" The
+#   question is literally about an access intervention's effect. REJECTED.
+#
+# Every other currently loadable question (PR004-01, 02, 03, 05, 09) asks about mediation,
+# authorship, translation, historiographic method or a tool generating new artistic
+# vocabulary -- accessibility facts may appear inside their evidence without being what the
+# question is about, and none is rejected.
+#
+# A new question added to the Perspective Library must be read and, if its own proposition is
+# about access provision/intervention/accommodation rather than mediation, authorship,
+# translation or artistic material, added here. Defaulting an unreviewed id to allowed (rather
+# than rejecting the whole cluster) keeps a missing review from silently blocking every future
+# question; the prompt-level NO ACCESS-DEFICIT self-check downstream is the second line of
+# defense either way.
+ACCESS_ORIGIN_QUESTION_IDS = frozenset({
+    "PR004-04",
+    "PR004-06",
+})
 
 
 def load_questions(directory: pathlib.Path | None = None) -> list:
@@ -81,8 +120,13 @@ def load_questions(directory: pathlib.Path | None = None) -> list:
 
 
 def select_question(questions: list, *, exclude: set | None = None, rng=None) -> dict | None:
-    """One question, preferring the active cluster, excluding ones already commissioned."""
-    seen = set(exclude or ())
+    """One question, preferring the active cluster, excluding ones already commissioned.
+
+    ACCESS_ORIGIN_QUESTION_IDS is excluded unconditionally, not merely offered as a default:
+    a caller cannot accidentally re-admit an access-origin question by passing a narrower
+    `exclude` set.
+    """
+    seen = set(exclude or ()) | ACCESS_ORIGIN_QUESTION_IDS
     pool = [q for q in questions if q["id"] not in seen]
     if not pool:
         return None
@@ -220,17 +264,203 @@ def anchor_candidates(cand: dict, search_fn, *, api_key: str = "") -> list:
     return urls
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# PERSISTED COMMISSIONING STATE
+# ══════════════════════════════════════════════════════════════════════════════
+# WHY THIS EXISTS. Each knowledge_first commissioning attempt is a separate process (a cron
+# invocation of production_orchestrator.py). `select_question`'s `exclude` parameter has
+# always existed, but nothing before this persisted a value INTO it across processes, so
+# three separate runs the same day each started from an empty exclude set: two picked
+# PR004-02 (the second by accident when memory of the first process was already gone), and
+# all three, working from different questions, converged on naming the identical Whitney/Kim
+# exhibition as their story -- because nothing recorded that it had already been used either.
+#
+# This reuses the project's existing state database (disability_findings.db, the same file
+# production_orchestrator.py already opens for the ordinary-world seed pool) rather than a
+# parallel store, adding one small table to it. A caller that does not pass `state_conn` gets
+# exactly the previous in-memory behaviour -- this is additive, not a required dependency, so
+# every existing offline test of `commission()` is unaffected.
+STATE_TABLE = "kf_identity_claims"
+
+
+def ensure_state_schema(conn) -> None:
+    """Idempotent DDL for the claims table. Safe to call on every commissioning attempt."""
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS %s ("
+        " kind TEXT NOT NULL,"          # 'question' or 'story'
+        " key TEXT NOT NULL,"           # question id, or a normalized story-identity key
+        " question_id TEXT,"
+        " run_id TEXT,"
+        " status TEXT,"
+        " claimed_at TEXT NOT NULL,"
+        " PRIMARY KEY (kind, key))" % STATE_TABLE)
+    conn.commit()
+
+
+def _utcnow() -> str:
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+
+def load_claimed_question_ids(conn) -> set:
+    """Every question id already attempted (commissioned OR refused OR held) in a prior
+    process. A failed attempt claims its question exactly like a successful one -- see
+    `claim_question`."""
+    ensure_state_schema(conn)
+    rows = conn.execute(
+        "SELECT key FROM %s WHERE kind = 'question'" % STATE_TABLE).fetchall()
+    return {r[0] for r in rows}
+
+
+def claim_question(conn, question_id: str, run_id: str | None = None) -> None:
+    """Claim a question id BEFORE the model call that proposes stories for it -- the
+    expensive work this is meant to guard. INSERT OR IGNORE: a question already claimed
+    (by this run seeding itself, or a retained-artifact backfill) stays claimed under
+    whichever record came first, and re-claiming is not an error."""
+    ensure_state_schema(conn)
+    conn.execute(
+        "INSERT OR IGNORE INTO %s (kind, key, question_id, run_id, status, claimed_at) "
+        "VALUES ('question', ?, ?, ?, 'attempted', ?)" % STATE_TABLE,
+        (question_id, question_id, run_id, _utcnow()))
+    conn.commit()
+
+
+_URL_TRIM = re.compile(r"^www\.")
+# A possessive or contraction apostrophe ("artist's") is not a quote delimiter: the opening
+# delimiter must follow start-of-string, whitespace or an opening bracket, never a letter, or
+# "artist's retrospective 'Title'" would extract "s retrospective" instead of "Title".
+_QUOTED_TITLE = re.compile(
+    r"(?:^|(?<=[\s(]))['\"‘“]([^'\"‘’“”]{3,80}?)['\"’”](?=$|[\s.,;:!?)])")
+_WS = re.compile(r"\s+")
+
+
+def normalize_anchor_url(url: str) -> str:
+    """Scheme/host-case/www/query/fragment/trailing-slash differences are not different
+    stories. Deliberately simple: this is a dedupe key, not a URL parser with edge-case
+    ambitions."""
+    u = str(url or "").strip()
+    u = re.sub(r"^https?://", "", u, flags=re.I)
+    u = _URL_TRIM.sub("", u, count=1) if u.lower().startswith("www.") else u
+    u = u.split("?", 1)[0].split("#", 1)[0]
+    u = u.rstrip("/")
+    return u.lower()
+
+
+def _extract_quoted_titles(text: str) -> set:
+    """Quoted work/exhibition titles inside a candidate's own subject line, e.g. "'All Day
+    All Night'". A structural extraction, not a content judgement: two candidates that name
+    the same quoted title are the same story regardless of which URL or which question named
+    it, exactly the case observed across PR004-02 and PR004-06 both landing on Kim's 'All Day
+    All Night'."""
+    out = set()
+    for m in _QUOTED_TITLE.finditer(text or ""):
+        t = _WS.sub(" ", m.group(1)).strip().lower()
+        if len(t) >= 3:
+            out.add(t)
+    return out
+
+
+def story_identity_keys(subject: str, url: str) -> set:
+    """Every key under which this candidate's story identity should be checked/claimed: its
+    anchor URL, and any quoted title named in its own subject line. A collision on EITHER
+    key is the same story; claiming writes both."""
+    keys = {"url:%s" % normalize_anchor_url(url)}
+    keys |= {"title:%s" % t for t in _extract_quoted_titles(subject or "")}
+    return keys
+
+
+def is_story_claimed(conn, keys: set) -> bool:
+    if not keys:
+        return False
+    ensure_state_schema(conn)
+    qmarks = ",".join("?" for _ in keys)
+    row = conn.execute(
+        "SELECT 1 FROM %s WHERE kind = 'story' AND key IN (%s) LIMIT 1"
+        % (STATE_TABLE, qmarks), tuple(keys)).fetchone()
+    return row is not None
+
+
+def claim_story(conn, keys: set, question_id: str, run_id: str | None = None) -> None:
+    """Claim every identity key for a story BEFORE it is returned as a seed -- before the
+    expensive downstream engine (acquisition, Research, Ledger, Worth, Architecture, ...)
+    ever sees it. A run that is later HELD or fails has still claimed it: retrying the exact
+    same story until it happens to pass a gate is exactly the gate-shopping this prevents."""
+    if not keys:
+        return
+    ensure_state_schema(conn)
+    now = _utcnow()
+    conn.executemany(
+        "INSERT OR IGNORE INTO %s (kind, key, question_id, run_id, status, claimed_at) "
+        "VALUES ('story', ?, ?, ?, 'attempted', ?)" % STATE_TABLE,
+        [(k, question_id, run_id, now) for k in keys])
+    conn.commit()
+
+
+def seed_exclusions_from_retained(conn, evidence_root) -> int:
+    """Backfill claims from COMMISSION.json records this lane already wrote to disk before
+    this table existed (or from a process that crashed before it could persist). Idempotent
+    (INSERT OR IGNORE) and safe to call at the start of every commissioning attempt: existing
+    retained runs seed the exclusions exactly once, and re-reading them on a later run is a
+    no-op. Corrupt or partial records are skipped, never fatal -- this is a backfill, not the
+    source of truth for whether a run happened.
+
+    Returns the number of COMMISSION.json files it read (not the number of new claims, most
+    of which will already be present after the first call).
+    """
+    ensure_state_schema(conn)
+    root = pathlib.Path(evidence_root) if evidence_root else None
+    if not root or not root.is_dir():
+        return 0
+    seen = 0
+    for f in root.glob("**/COMMISSION.json"):
+        try:
+            rec = json.loads(f.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        seen += 1
+        q = rec.get("question") or {}
+        qid = q.get("id")
+        if qid:
+            claim_question(conn, qid, run_id="retained:%s" % f.parent.name)
+        chosen = rec.get("chosen") or {}
+        seed = rec.get("seed") or {}
+        subject = chosen.get("subject") or seed.get("title") or ""
+        url = chosen.get("anchor_url") or seed.get("url") or ""
+        if subject or url:
+            claim_story(conn, story_identity_keys(subject, url), qid,
+                        run_id="retained:%s" % f.parent.name)
+    return seen
+
+
 def commission(provider, *, search_fn, fetch_fn, questions=None, exclude=None,
-               api_key: str = "", rng=None) -> dict:
+               api_key: str = "", rng=None, state_conn=None, run_id: str | None = None,
+               evidence_root=None) -> dict:
     """(seed | None, record). The seed is the SAME shape the selector returns, so the
-    entire downstream engine is reached unchanged."""
+    entire downstream engine is reached unchanged.
+
+    `state_conn`, if given, is a sqlite3 connection used to persist question and story
+    identity claims across process invocations (see PERSISTED COMMISSIONING STATE above).
+    Omitting it reproduces the exact previous in-memory-only behaviour. `evidence_root`, if
+    given alongside `state_conn`, backfills claims from retained COMMISSION.json records
+    once per call -- cheap and idempotent, so callers need not manage a separate migration
+    step.
+    """
     qs = questions if questions is not None else load_questions()
-    q = select_question(qs, exclude=exclude, rng=rng)
+    persisted_exclude = set()
+    if state_conn is not None:
+        if evidence_root is not None:
+            seed_exclusions_from_retained(state_conn, evidence_root)
+        persisted_exclude = load_claimed_question_ids(state_conn)
+    q = select_question(qs, exclude=(set(exclude or ()) | persisted_exclude), rng=rng)
     rec = {"lane": LANE, "questions_available": len(qs), "question": q,
            "candidates": [], "tried": [], "seed": None, "model_calls": 0}
     if not q:
         rec["status"] = "NO_QUESTION_AVAILABLE"
         return rec
+    if state_conn is not None:
+        # Claimed BEFORE the model call below: the first expensive step this attempt takes.
+        # A commission call failure, a search failure or a downstream HOLD all still leave
+        # this question claimed, exactly as intended.
+        claim_question(state_conn, q["id"], run_id=run_id)
     try:
         proposed = propose_stories(provider, q)
     except Exception as e:
@@ -261,6 +491,11 @@ def commission(provider, *, search_fn, fetch_fn, questions=None, exclude=None,
             rec["error"] = str(e)[:300]
             return rec
         for url in urls:
+            if state_conn is not None and is_story_claimed(
+                    state_conn, story_identity_keys(cand.get("subject") or "", url)):
+                rec["tried"].append({"url": url,
+                                     "reason": "story identity already commissioned"})
+                continue
             try:
                 text = fetch_fn(url) or ""
             except Exception as e:
@@ -270,6 +505,12 @@ def commission(provider, *, search_fn, fetch_fn, questions=None, exclude=None,
                 rec["tried"].append({"url": url, "chars": len(text),
                                      "reason": "below anchor floor"})
                 continue
+            if state_conn is not None:
+                # Claimed BEFORE this is returned to the caller, who runs the real,
+                # expensive engine (acquisition, Research, Ledger, Worth, Architecture,
+                # Writer, ...) on it next.
+                claim_story(state_conn, story_identity_keys(cand.get("subject") or "", url),
+                           q["id"], run_id=run_id)
             rec["seed"] = {
                 "id": "kf-%s-%s" % (q["id"].lower(), abs(hash(url)) % 10_000_000),
                 "url": url,
