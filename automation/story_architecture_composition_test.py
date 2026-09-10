@@ -1404,6 +1404,44 @@ def test_the_architecture_repair_budget_is_two():
           out["stages"][CP.ARCHITECTURE] == CP.PASS)
 
 
+def test_an_unsupported_consequence_gets_a_subtractive_repair_contract():
+    """Two licensed facts do not license the consequence between them.
+
+    The validator already fails closed.  The repair call must also tell the architect,
+    mechanically, how to stop preserving that relation without minting a replacement.
+    """
+    bad = copy.deepcopy(ARCH)
+    bad["final_lens"]["evidence_basis"] = ["F04", "F06"]
+    bad["crip_turn"] = (
+        "The catalogue records the room, so the record determines the encounter.")
+
+    failures = CP.check_architecture(bad, LEDGER)
+    contract = CP.REPAIR_ARCH_SYSTEM
+
+    check("unsupported consequence survives neither repair nor validation",
+          any(ST.TURN_RELATION_NOT_SUPPORTED in failure
+              and "CONSEQUENCE" in failure for failure in failures), failures)
+    juxtaposed = ("The catalogue records eight rooms. A reviewer wrote that the "
+                  "catalogue keeps each room's intention and drops the encounter.")
+    check("the same licensed facts pass as non-relational juxtaposition",
+          ST.validate_turn_support(juxtaposed, ["F04", "F06"], LEDGER) == [],
+          ST.validate_turn_support(juxtaposed, ["F04", "F06"], LEDGER))
+    check("the repair contract names the validator finding",
+          ST.TURN_RELATION_NOT_SUPPORTED in contract, contract)
+    check("the repair contract requires removal rather than a connective swap",
+          "REMOVE THE UNSUPPORTED RELATION" in contract
+          and "Do not replace its trigger word with a synonym" in contract, contract)
+    check("the contract gives the three legal subtractive outcomes",
+          all(phrase in contract for phrase in (
+              "full-stop juxtaposition", "narrow to one licensed fact",
+              "delete the offending clause or restructure the turn")), contract)
+    check("the contract bars a different unlicensed relation",
+          all(kind in contract for kind in (
+              "CAUSE", "CONSEQUENCE", "EQUIVALENCE", "COMPARISON", "SUPERLATIVE",
+              "GENERALIZATION", "NEGATION", "ABSENCE", "TEMPORAL")), contract)
+    check("the repair budget remains two", CP.MAX_ARCHITECTURE_REPAIRS == 2)
+
+
 def test_packet_licensing_survives_the_stemmer_being_asymmetric():
     """Three canary runs died on this. story.py's `_stem` is a suffix stripper, not a
     canonicaliser, so two variants of ONE word can stem differently:
