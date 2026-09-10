@@ -6705,6 +6705,12 @@ def run_story_architecture_composition(
             # `final`; the artifact has to keep saying so.
             carried = grounding_completion_detail(gr)
             g_repairs = repairs.get(GROUNDING, 0)
+            # ACCOUNTING (2026-09-10). record() ASSIGNS calls[stage] from the payload, so
+            # re-recording GROUNDING here discarded everything the initial read and any
+            # completion pass had already accumulated -- and the `+ 1` below then counted
+            # this one recheck a second time. Jolly A reported GROUNDING=2 for at least six
+            # real reads. Capture the prior total and add this recheck's OWN count to it.
+            g_calls_before = calls.get(GROUNDING, 0)
             g_new = record(GROUNDING, ground_candidate(P, bundle_text(final, pkg_ref[0]),
                                                        source_text, source_sha, pack,
                                                        arch, wr["packet"]))
@@ -6713,7 +6719,7 @@ def run_story_architecture_composition(
             if carried:
                 g_new["pre_repackage_completion"] = carried
             repairs[GROUNDING] = g_repairs + g_new.get("repairs", 0)
-            calls[GROUNDING] = calls.get(GROUNDING, 0) + 1
+            calls[GROUNDING] = g_calls_before + g_new.get("model_calls", 1)
             repairs[PACKAGE] = repairs.get(PACKAGE, 0) + 1
             return g_new
 
@@ -6750,6 +6756,19 @@ def run_story_architecture_composition(
                 # itself already proved. See grounding_completion_loop's `final_safety`.
                 sa_gc = gc["final_safety"]
                 sa_gc["after_grounding_completion"] = True
+                # AUDIT IDENTITY (2026-09-10). This verdict was read but never RECORDED,
+                # so st[SAFETY] -- and therefore the persisted SAFETY_AUDIT.json and
+                # SAFETY_REPLAY.json -- kept describing the PRE-repair article while the
+                # run went on to publish or hold the repaired one. Measured on retained
+                # runs: the audited hash disagreed with the final article hash in 5 of 6
+                # checked artifact locations. The candidate WAS audited -- correctly, inside
+                # the loop, against its own bytes -- so nothing here re-audits anything;
+                # this only makes the audit that actually decided the article the one on
+                # record. Stage counters are preserved because record() assigns from the
+                # payload and this payload carries none of the run's accumulated Safety work.
+                _sa_calls, _sa_repairs = calls.get(SAFETY, 0), repairs.get(SAFETY, 0)
+                record(SAFETY, sa_gc)
+                calls[SAFETY], repairs[SAFETY] = _sa_calls, _sa_repairs
                 if sa_gc["status"] != PASS:
                     return out(SAFETY,
                                "an accepted grounding repair did not survive the safety "
@@ -6804,6 +6823,10 @@ def run_story_architecture_composition(
                     sa_gc2 = gc2["final_safety"]
                     sa_gc2["after_grounding_completion"] = True
                     sa_gc2["after_repackage"] = True
+                    # Same audit-identity fix as the pre-repackage phase above.
+                    _sa2_calls, _sa2_repairs = calls.get(SAFETY, 0), repairs.get(SAFETY, 0)
+                    record(SAFETY, sa_gc2)
+                    calls[SAFETY], repairs[SAFETY] = _sa2_calls, _sa2_repairs
                     if sa_gc2["status"] != PASS:
                         return out(SAFETY,
                                    "an accepted post-repackage grounding repair did not "
