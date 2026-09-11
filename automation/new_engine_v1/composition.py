@@ -2923,7 +2923,10 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
             "intent_causal": ST.intent_causal_scan(text),
             "prose_leaks": ST.prose_leaks(text),
             "scaffold": ST.scaffold_adherence(text),
-            "cut_adherence": ST.cut_adherence(text, arch, cut_terms),
+            # A CUT watch term is only a locator. The ledger is passed so Safety can
+            # require the cut fact's proposition identity, rather than holding on one
+            # generic value or entity fragment.
+            "cut_adherence": ST.cut_adherence(text, arch, cut_terms, ledger=ledger),
         }
 
     a = {"writer_draft": screens(draft_text), "continuity_final": screens(final_text)}
@@ -3068,7 +3071,8 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
     # claim rather than a string.
     viol = f["cut_adherence"]["violations"]
     hard = [v for v in viol if cut_term_confidence(v["term"]) == CUT_HIGH]
-    soft = [v for v in viol if cut_term_confidence(v["term"]) != CUT_HIGH]
+    soft = ([v for v in viol if cut_term_confidence(v["term"]) != CUT_HIGH]
+            + list(f["cut_adherence"].get("advisories") or []))
     if hard:
         blocking.append(
             "CUT_LEAKAGE: %s"

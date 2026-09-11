@@ -44,11 +44,11 @@ def check(label, ok, detail=""):
         FAILURES.append(label)
 
 
-def cut_violations(prose, terms_by_id, reasons=None):
+def cut_violations(prose, terms_by_id, reasons=None, ledger=None):
     reasons = reasons or {}
     arch = {"cut_evidence": [{"evidence_id": cid, "reason": reasons.get(cid, "REDUNDANT_PROOF")}
                              for cid in terms_by_id]}
-    return CP.ST.cut_adherence(prose, arch, terms_by_id)["violations"]
+    return CP.ST.cut_adherence(prose, arch, terms_by_id, ledger=ledger)["violations"]
 
 
 # ── FIX 1: the literal CUT branch is token-wise ─────────────────────────────────────
@@ -292,6 +292,71 @@ def test_the_cut_leakage_repair_locator_finds_the_matched_term_not_the_route_lab
           == "The event happened in 2020, a year everyone remembers.", result)
     check("the finding explains itself with the matched term",
           bool(result) and "'2020'" in result[0]["why"], result)
+def test_cut_leakage_requires_proposition_identity_not_one_shared_value():
+    """CUT_LEAKAGE is about reintroducing a cut proposition, not reusing one of its
+    values. These are the structural regressions for the 2026-09-11 cases: a number and
+    a named institution/title fragment can both be present in unrelated propositions,
+    while a cut proposition with its subject and two further anchors must still hold."""
+    ledger = {
+        "F_NUM": {
+            "fact_id": "F_NUM",
+            "proposition": "The 2023 survey found 20 participants received captions.",
+            "support_span": "The survey found 20 participants received captions.",
+            "entities": [],
+        },
+        "F_TITLE": {
+            "fact_id": "F_TITLE",
+            "proposition": "SFMOMA acquired Dan Miller's Untitled (2021) by exchange.",
+            "support_span": "SFMOMA acquired Dan Miller, Untitled, 2021, by exchange.",
+            "entities": ["SFMOMA", "Dan Miller", "Untitled"],
+        },
+        "F_TRUE": {
+            "fact_id": "F_TRUE",
+            "proposition": "SFMOMA acquired work from three Bay Area studios: Creativity "
+                            "Explored, Creative Growth, and NIAD.",
+            "support_span": "SFMOMA acquired work from three pioneering Bay Area studios: "
+                            "Creativity Explored, Creative Growth, and NIAD.",
+            "entities": ["SFMOMA", "Creativity Explored", "Creative Growth", "NIAD"],
+        },
+        "F_PARA": {
+            "fact_id": "F_PARA",
+            "proposition": "Sixteen of 31 participants were faster on sentence trials "
+                            "than on symbol trials.",
+            "support_span": "The faster-on-sentences pattern was shown by 16 of the 31 "
+                            "participants in the group data.",
+            "entities": [],
+        },
+    }
+
+    # A. Generic numeric overlap, different proposition.
+    v = cut_violations(
+        "The 2023 building opened after a 20-minute delay.",
+        {"F_NUM": ["2023"]}, ledger=ledger)
+    check("a shared number does not prove the cut proposition", v == [], v)
+
+    # B. Partial entity/title overlap, different proposition.
+    v = cut_violations(
+        "SFMOMA displayed modern art in a new gallery.",
+        {"F_TITLE": ["SFMOMA", "Untitled"]}, ledger=ledger)
+    check("a shared institution/title fragment does not prove the cut proposition",
+          v == [], v)
+
+    # C. The subject plus the proposition's concrete studio set is a real reintroduction.
+    v = cut_violations(
+        "SFMOMA acquired work from three Bay Area studios: Creativity Explored, "
+        "Creative Growth, and NIAD.",
+        {"F_TRUE": ["SFMOMA"]}, ledger=ledger)
+    check("a substantially reintroduced cut proposition still holds",
+          len(v) == 1 and v[0]["evidence_id"] == "F_TRUE", v)
+
+    # D. Existing stem/value identity is sufficient for this paraphrase: it changes the
+    # syntax, but preserves the proposition's distinctive count, subject and contrast.
+    v = cut_violations(
+        "The 16 of 31 participants responded faster when letters formed sentences than "
+        "when symbols did.",
+        {"F_PARA": ["participants"]}, ledger=ledger)
+    check("a paraphrased cut proposition still holds when identity is sufficient",
+          len(v) == 1 and v[0]["evidence_id"] == "F_PARA", v)
 
 
 # ── FIX 2: provenance frames are frames, not vocabulary ─────────────────────────────
@@ -474,6 +539,7 @@ def main():
                test_proper_noun_extraction_keeps_a_hyphenated_compound_whole,
                test_shaped_terms_lose_distinctiveness_when_they_recur_across_the_ledger,
                test_the_cut_leakage_repair_locator_finds_the_matched_term_not_the_route_label,
+               test_cut_leakage_requires_proposition_identity_not_one_shared_value,
                test_role_taxonomy_is_a_frame_not_a_word,
                test_other_provenance_frames_unchanged,
                test_title_cased_ordinary_vocabulary_is_not_an_entity,

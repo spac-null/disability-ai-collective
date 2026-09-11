@@ -1088,6 +1088,17 @@ _NUMERIC_TERM = re.compile(r"^[$£€]?\d[\d,.:/-]*%?$")
 # docket, a catalogue id), not the free-standing figure the cut term names.
 _JOINS_LONGER_NUMBER_AFTER = re.compile(r"^[.\-/]\d")
 _JOINS_LONGER_NUMBER_BEFORE = re.compile(r"\d[.\-/]$")
+_CUT_ALNUM_ID = re.compile(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9][A-Za-z0-9.\-/]*$")
+_CUT_PROPER_TERM = re.compile(
+    r"\b[A-Z][a-z]{2,}(?:-[a-z]+)*(?:\s+[A-Z][a-z]+(?:-[a-z]+)*)*\b")
+
+
+def _cut_term_is_high(term: str) -> bool:
+    """Mirror the existing CUT confidence shapes without importing composition."""
+    value = (term or "").strip()
+    return (" " in value or bool(_NUMERIC_TERM.match(value))
+            or bool(_CUT_ALNUM_ID.match(value))
+            or bool(_CUT_PROPER_TERM.fullmatch(value)))
 
 
 def _literal_cut_hit(term_lower: str, body_lower: str) -> bool:
@@ -1178,7 +1189,111 @@ def _body_stems(body_lower: str) -> set:
     return {_stem(w) for w in re.findall(r"[a-z0-9]+", body_lower)}
 
 
-def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None) -> dict:
+def _identity_normalize(text: str) -> str:
+    """Normalize proposition identity without deleting or reordering words."""
+    return " ".join((text or "").replace("’", "'").replace("–", "-")
+                    .replace("—", "-").lower().split())
+
+
+def _identity_phrase_hit(phrase: str, text: str) -> bool:
+    """Find one whole identity phrase, preserving punctuation as a boundary."""
+    phrase = _identity_normalize(phrase)
+    if not phrase:
+        return False
+    return re.search(r"(?<![a-z0-9])%s(?![a-z0-9])" % re.escape(phrase),
+                     _identity_normalize(text)) is not None
+
+
+def _identity_regions(article_text: str) -> list[str]:
+    """Article-sized regions in which a proposition may be stated over nearby sentences.
+
+    Paragraphs are the primary unit because a factual sentence and its qualification are
+    often split by a full stop. A three-sentence window covers the same proposition when
+    an article uses short sentences, without comparing every isolated token in the whole
+    article to every cut fact.
+    """
+    text = "\n".join(line.strip() for line in (article_text or "").splitlines())
+    paragraphs = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+    sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", " ".join(paragraphs))
+                 if s.strip()]
+    regions = list(paragraphs)
+    regions.extend(" ".join(sentences[i:i + 3])
+                   for i in range(max(0, len(sentences) - 2)))
+    return regions or [text]
+
+
+def _identity_content(text: str) -> set:
+    """Content stems available as proposition anchors, excluding grammatical words."""
+    return {_stem(w) for w in _content_words(text, fold=True)
+            if len(_stem(w)) >= 5}
+
+
+def _cut_proposition_identity(article_text: str, fact: dict, ledger: dict) -> dict | None:
+    """Return identity evidence only when a cut proposition is substantially present.
+
+    A watch term is a candidate locator, not a proposition. The old CUT gate treated any
+    one candidate as proof, so a free year, a museum name, or a title fragment could hold
+    an article. This check groups the fact's own subject, values, entities and distinctive
+    content, and requires a conjunction from one article region:
+
+      * with an explicit subject: the subject plus at least two further anchors, one of
+        which must not be a number;
+      * without one: at least three content/value anchors.
+
+    All comparisons are exact or use the existing suffix stemmer. There is no fuzzy score,
+    token whitelist, or subject-specific exception. The result is diagnostic so a safety
+    finding can show what made the proposition identity sufficient.
+    """
+    if not isinstance(fact, dict):
+        return None
+    source = "%s %s" % (fact.get("proposition") or "", fact.get("support_span") or "")
+    entities = []
+    for raw in fact.get("entities") or []:
+        value = _identity_normalize(str(raw))
+        if value and value not in entities:
+            entities.append(value)
+    numbers = sorted({_identity_normalize(n) for n in _numbers(source) if n},
+                     key=lambda x: (-len(x), x))
+
+    # Rarity makes the content part identity-bearing rather than a second generic-word
+    # list. A stem in more than two ledger propositions is contextual vocabulary, not a
+    # fact sentinel. Entity values remain explicit anchors even when reused by many facts.
+    df = {}
+    for other in (ledger or {}).values():
+        if not isinstance(other, dict):
+            continue
+        for stem in _identity_content("%s %s" % (other.get("proposition") or "",
+                                                  other.get("support_span") or "")):
+            df[stem] = df.get(stem, 0) + 1
+    entity_stems = {_stem(word) for entity in entities
+                    for word in re.findall(r"[a-z0-9]+", entity)}
+    content = sorted((stem for stem in _identity_content(source)
+                      if stem not in entity_stems and df.get(stem, 0) <= 2),
+                     key=lambda x: (-len(x), x))
+    subject = entities[0] if entities else None
+    additional_entities = entities[1:] if subject else entities
+    values = [x for x in numbers]
+
+    for region in _identity_regions(article_text):
+        if subject and not _identity_phrase_hit(subject, region):
+            continue
+        matched_entities = [e for e in additional_entities
+                            if _identity_phrase_hit(e, region)]
+        matched_values = [n for n in values if _identity_phrase_hit(n, region)]
+        region_content = _identity_content(region)
+        matched_content = [w for w in content if w in region_content]
+        anchors = matched_entities + matched_values + matched_content
+        if ((subject and len(anchors) >= 2 and (matched_entities or matched_content))
+                or (not subject and len(anchors) >= 3)):
+            return {"surface": region.strip(),
+                    "values": sorted(set(matched_values)),
+                    "anchors": anchors,
+                    "subject": subject}
+    return None
+
+
+def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None,
+                  ledger: dict | None = None) -> dict:
     """Which CUT items show up in the finished prose anyway?
 
     `cut_terms` maps a cut evidence_id to the concrete words that would betray it in
@@ -1188,12 +1303,14 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None) 
     """
     cut_terms = cut_terms or {}
     body = " ".join(article_text.split()).lower()
-    violations, skipped, unwatched = [], [], []
+    violations, lexical_advisories, skipped, unwatched = [], [], [], []
     for c in (arch.get("cut_evidence") or []):
         cid = c.get("evidence_id")
         terms = cut_terms.get(cid) or []
         if not terms:
             unwatched.append(cid)
+        identity = _cut_proposition_identity(article_text, (ledger or {}).get(cid), ledger) \
+            if ledger is not None else None
         for term in terms:
             t = term.strip().lower()
             if len(t) < CUT_SENTINEL_MIN:
@@ -1204,8 +1321,20 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None) 
                 skipped.append({"evidence_id": cid, "term": term})
                 continue
             if _literal_cut_hit(t, body):
-                violations.append({"evidence_id": cid, "reason": c.get("reason"),
-                                   "term": term, "match": "literal"})
+                if ledger is not None and identity is None:
+                    if not _cut_term_is_high(str(term)):
+                        lexical_advisories.append({
+                            "evidence_id": cid, "reason": c.get("reason"),
+                            "term": term, "match": "literal"})
+                    continue
+                finding = {"evidence_id": cid, "reason": c.get("reason"),
+                           "term": term, "match": "literal"}
+                if identity is not None:
+                    finding.update({"match": "proposition_identity",
+                                    "matched_surface": identity["surface"],
+                                    "normalized_values": identity["values"],
+                                    "identity_anchors": identity["anchors"]})
+                violations.append(finding)
                 continue
             # Inflection must not defeat a CUT. A watch term is written in one form and
             # the prose reaches for another: a term "subsidy" against "subsidised", a
@@ -1236,19 +1365,42 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None) 
             if " " not in t and not _NUMERIC_TERM.match(t):
                 st = _stem(t)
                 if len(st) >= CUT_SENTINEL_MIN and st in _body_stems(body):
-                    violations.append({"evidence_id": cid, "reason": c.get("reason"),
-                                       "term": term, "match": "inflected",
-                                       "stem": st})
+                    if ledger is not None and identity is None:
+                        if not _cut_term_is_high(str(term)):
+                            lexical_advisories.append({
+                                "evidence_id": cid, "reason": c.get("reason"),
+                                "term": term, "match": "inflected", "stem": st})
+                        continue
+                    finding = {"evidence_id": cid, "reason": c.get("reason"),
+                               "term": term, "match": "inflected", "stem": st}
+                    if identity is not None:
+                        finding.update({"match": "proposition_identity",
+                                        "matched_surface": identity["surface"],
+                                        "normalized_values": identity["values"],
+                                        "identity_anchors": identity["anchors"]})
+                    violations.append(finding)
                     continue
                 # The regular inflections `_stem` cannot pair up -- see
                 # _regular_inflections for the four shapes and the coverage this keeps.
                 hit = next((f for f in sorted(_regular_inflections(t) - {t})
                             if _literal_cut_hit(f, body)), None)
                 if hit:
-                    violations.append({"evidence_id": cid, "reason": c.get("reason"),
-                                       "term": term, "match": "inflected",
-                                       "stem": hit})
+                    if ledger is not None and identity is None:
+                        if not _cut_term_is_high(str(term)):
+                            lexical_advisories.append({
+                                "evidence_id": cid, "reason": c.get("reason"),
+                                "term": term, "match": "inflected", "stem": hit})
+                        continue
+                    finding = {"evidence_id": cid, "reason": c.get("reason"),
+                               "term": term, "match": "inflected", "stem": hit}
+                    if identity is not None:
+                        finding.update({"match": "proposition_identity",
+                                        "matched_surface": identity["surface"],
+                                        "normalized_values": identity["values"],
+                                        "identity_anchors": identity["anchors"]})
+                    violations.append(finding)
     return {"violations": violations,
+            "advisories": lexical_advisories,
             "ok": not violations and not skipped and not unwatched,
             "clean_prose": not violations,
             "skipped_too_short": skipped,
