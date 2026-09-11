@@ -955,12 +955,14 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict
     # Order preserved, an exactly repeated query dropped. Scope has never emitted one;
     # this costs nothing and means it cannot.
     queries = list(dict.fromkeys(scoped.get("queries", [])))[:MAX_QUERIES]
+    search_errors = []
     for q in queries:
         searched.add(_norm(q))
         try:
             found = search_urls(q, api_key=api_key)
         except ResearchError as e:
             failures.append({"query": q, "error": str(e)[:200]})
+            search_errors.append(str(e)[:200])
             continue
         for u in found:
             if len(candidates) >= MAX_CANDIDATE_URLS:
@@ -969,6 +971,17 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict
                 continue
             seen.add(canonical_url(u))
             candidates.append(u)
+
+    if queries and len(search_errors) == len(queries):
+        # Every scoped query failed at the transport/provider level -- the search never
+        # actually ran, which is a different fact from "it ran and this subject has
+        # little material". Left unraised, `candidates` stays empty exactly as it would
+        # on an ordinary thin day, and the sufficiency verdict below reports
+        # HOLD_INSUFFICIENT_RESEARCH for what was actually a search-provider outage. A
+        # single query failing while another succeeds is ordinary and is not escalated;
+        # what must never be silently absorbed is a search path that did not run at all.
+        raise ResearchError("every scoped search query failed technically: %s"
+                            % "; ".join(search_errors[:3]))
 
     fetched = []
     fallback_budget = FallbackBudget()
