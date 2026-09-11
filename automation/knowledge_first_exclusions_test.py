@@ -157,6 +157,49 @@ def test_the_same_quoted_title_is_excluded_even_via_a_different_url():
               rec2["status"] == "NO_FETCHABLE_ANCHOR" and rec2["seed"] is None, rec2)
 
 
+def test_a_markdown_emphasised_title_is_the_same_identity_as_a_quoted_one():
+    """A model proposing a candidate subject writes emphasis as readily as a literal
+    quote -- *All Day All Night* or **All Day All Night** name the same title as 'All Day
+    All Night'. Before this fix, _QUOTED_TITLE only recognised quote characters, so a
+    story reintroduced under Markdown emphasis evaded the exclusion this same title
+    already proves works for literal quotes, immediately above."""
+    with tempfile.TemporaryDirectory() as d:
+        dbpath = str(pathlib.Path(d) / "state.db")
+        qa, qb = _q("ZZ005-01"), _q("ZZ005-02")
+        subject_1 = ("An artist's retrospective 'All Day All Night' gathers two decades "
+                    "of work")
+        subject_2 = ("A touring survey *All Day All Night* reframes the same body "
+                    "of work")
+
+        conn1 = sqlite3.connect(dbpath)
+        rec1 = KF.commission(
+            FakeProvider({"candidates": [_cand(subject_1, ["q"])]}),
+            search_fn=lambda q, api_key="": ["https://whitney.example/show"],
+            fetch_fn=_fetch_ok, questions=[qa], state_conn=conn1, run_id="proc-1")
+        conn1.close()
+        check("the first commissioning succeeds", rec1["status"] == "COMMISSIONED", rec1)
+
+        conn2 = sqlite3.connect(dbpath)
+        rec2 = KF.commission(
+            FakeProvider({"candidates": [_cand(subject_2, ["q2"])]}),
+            search_fn=lambda q, api_key="": ["https://walker.example/different-url"],
+            fetch_fn=_fetch_ok, questions=[qb], state_conn=conn2, run_id="proc-2")
+        conn2.close()
+        check("the emphasised title is refused as the same story as the quoted one",
+              rec2["status"] == "NO_FETCHABLE_ANCHOR" and rec2["seed"] is None, rec2)
+
+
+def test_markdown_emphasis_extraction_does_not_collapse_different_stories():
+    check("a mismatched asterisk run is never a title",
+          KF._extract_quoted_titles("the artist's *a* mismatched **a case") == set())
+    check("bold and italic titles both extract, distinctly",
+          KF._extract_quoted_titles("**One Show** differs from *Another Show*")
+          == {"one show", "another show"})
+    check("double-asterisk and single-asterisk forms of the same title are one identity",
+          KF._extract_quoted_titles("*All Day All Night*")
+          == KF._extract_quoted_titles("**All Day All Night**"))
+
+
 def test_a_failed_commission_still_consumes_its_claimed_question():
     with tempfile.TemporaryDirectory() as d:
         dbpath = str(pathlib.Path(d) / "state.db")
@@ -267,6 +310,8 @@ def main() -> int:
     for fn in (test_a_claimed_question_is_excluded_by_a_later_process,
                test_a_claimed_anchor_is_not_recommissioned_by_a_different_question,
                test_the_same_quoted_title_is_excluded_even_via_a_different_url,
+               test_a_markdown_emphasised_title_is_the_same_identity_as_a_quoted_one,
+               test_markdown_emphasis_extraction_does_not_collapse_different_stories,
                test_a_failed_commission_still_consumes_its_claimed_question,
                test_a_fresh_question_and_a_fresh_story_remain_allowed,
                test_access_origin_question_is_never_selected,

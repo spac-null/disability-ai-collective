@@ -337,6 +337,15 @@ _URL_TRIM = re.compile(r"^www\.")
 # "artist's retrospective 'Title'" would extract "s retrospective" instead of "Title".
 _QUOTED_TITLE = re.compile(
     r"(?:^|(?<=[\s(]))['\"‘“]([^'\"‘’“”]{3,80}?)['\"’”](?=$|[\s.,;:!?)])")
+# Markdown emphasis names a title exactly as often as a literal quote does -- a model
+# proposing a candidate writes *All Day All Night* or **All Day All Night** as readily as
+# 'All Day All Night', and nothing before this normalized them to the same identity, which
+# is exactly the kind of repeat-story evasion story_identity_keys exists to close. The
+# backreference requires the SAME run length on both sides, so *a* mismatched **a is never a
+# title; asterisk-count is a delimiter, not part of the name, same treatment as the quote
+# characters above.
+_MD_EMPHASIS_TITLE = re.compile(
+    r"(?:^|(?<=[\s(]))(\*{1,2})([^*]{3,80}?)\1(?=$|[\s.,;:!?)])")
 _WS = re.compile(r"\s+")
 
 
@@ -353,16 +362,18 @@ def normalize_anchor_url(url: str) -> str:
 
 
 def _extract_quoted_titles(text: str) -> set:
-    """Quoted work/exhibition titles inside a candidate's own subject line, e.g. "'All Day
-    All Night'". A structural extraction, not a content judgement: two candidates that name
-    the same quoted title are the same story regardless of which URL or which question named
+    """Quoted or Markdown-emphasised work/exhibition titles inside a candidate's own
+    subject line, e.g. "'All Day All Night'" or "*All Day All Night*". A structural
+    extraction, not a content judgement: two candidates that name the same title -- however
+    it is delimited -- are the same story regardless of which URL or which question named
     it, exactly the case observed across PR004-02 and PR004-06 both landing on Kim's 'All Day
     All Night'."""
     out = set()
-    for m in _QUOTED_TITLE.finditer(text or ""):
-        t = _WS.sub(" ", m.group(1)).strip().lower()
-        if len(t) >= 3:
-            out.add(t)
+    for pattern in (_QUOTED_TITLE, _MD_EMPHASIS_TITLE):
+        for m in pattern.finditer(text or ""):
+            t = _WS.sub(" ", m.group(m.lastindex)).strip().lower()
+            if len(t) >= 3:
+                out.add(t)
     return out
 
 
