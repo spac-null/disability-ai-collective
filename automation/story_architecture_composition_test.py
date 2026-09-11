@@ -111,27 +111,43 @@ ARCH = {
     "beats": [
         {"beat_id": "B1", "happens": "The pavilion, and what it was made of.",
          "concrete_carrier": "the salt walls", "facts_allowed": ["F01", "F02"],
-         "concept_introduced": "",
+         "concept_introduced": "", "beat_function": ST.REVEAL,
          "why_reader_wants_next": "A room made of salt raises what was written down "
                                   "about it.",
          "must_not_say_yet": "anything about the catalogue"},
         {"beat_id": "B2", "happens": "What the catalogue records, and what it was for.",
          "concrete_carrier": "the eight catalogue entries",
          "facts_allowed": ["F04", "F08"], "concept_introduced": "",
+         "beat_function": ST.REVEAL,
          "why_reader_wants_next": "A record of eight rooms raises what each entry "
                                   "contains.",
          "must_not_say_yet": "what the entries leave out"},
         {"beat_id": "B3", "happens": "What no entry contains, and what a reviewer said.",
          "concrete_carrier": "the entries themselves", "facts_allowed": ["F05", "F06"],
-         "concept_introduced": "",
+         "concept_introduced": "", "beat_function": ST.COMPLICATE,
          "why_reader_wants_next": "An absent kind of description raises what the record "
                                   "could hold.",
          "must_not_say_yet": "the pallets and the masons"},
         {"beat_id": "B4", "happens": "What the record did keep about the making.",
          "concrete_carrier": "the nine tonne pallets and the eleven days",
-         "facts_allowed": ["F03"], "concept_introduced": "",
+         "facts_allowed": ["F03", "F04"], "concept_introduced": "",
+         "beat_function": ST.RESOLVE,
          "why_reader_wants_next": "", "must_not_say_yet": ""}],
     "use_facts": ["F01", "F02", "F03", "F04", "F05", "F06", "F08"],
+    # EVIDENCE HIERARCHY (2026-09-11). F04, the catalogue entries, is what the whole
+    # piece is about: it names the thing that both selects (B2) and, in the same
+    # selective character, is what the closing beat's kept detail (B4) illustrates. F05
+    # and F06 are load-bearing because the turn itself rests on them (see
+    # final_lens.evidence_basis below) -- what the catalogue omits, and a reviewer's own
+    # naming of that omission. F01/F02 open the piece on its concrete hook and are
+    # load-bearing to B1 alone. F08 and F03 are supporting detail admitted only to make
+    # F04's beats concrete.
+    "primary_carrier": "F04",
+    "evidence_roles": {"F01": ST.LOAD_BEARING, "F02": ST.LOAD_BEARING,
+                       "F03": ST.SUPPORTING, "F04": ST.LOAD_BEARING,
+                       "F05": ST.LOAD_BEARING, "F06": ST.LOAD_BEARING,
+                       "F08": ST.SUPPORTING},
+    "supports": {"F03": ["F04"], "F08": ["F04"]},
     "use_quotes": [],
     "definitions": {},
     "cut_evidence": [{"evidence_id": "F07", "reason": "BACKGROUND_NOT_NEEDED"}],

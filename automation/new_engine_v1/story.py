@@ -63,6 +63,40 @@ CUT_REASONS = ("REDUNDANT_PROOF", "BACKGROUND_NOT_NEEDED", "SECOND_EXAMPLE_SAME_
                "NAME_OVERLOAD", "CONCEPT_OVERLOAD", "BREAKS_STORY_MOMENTUM",
                "PROVENANCE_ONLY", "MACHINE_BOUNDARY_ONLY", "INTERESTING_BUT_WRONG_STORY")
 
+# ── EVIDENCE HIERARCHY (2026-09-11) ──────────────────────────────────────────────────
+# Selecting facts is not the same as ranking them. A plan that reaches Worth and Safety
+# clean can still select 23 facts with no declared load or support role, repeat rather
+# than advance its carrier, and hold on ENDING/MOMENTUM/RESEARCH_LOAD -- the plan
+# discarded nothing wholesale (cut_evidence already requires that), but nothing it KEPT
+# was ranked either, so the Writer had no way to tell the one fact the article turns on
+# from the fact that only explains it, from the fact that is merely true and available.
+#
+# LOAD_BEARING: a used fact the primary carrier's story cannot be told without -- the
+#   article returns to it, or a later beat means something different because of it.
+# SUPPORTING: a used fact admitted ONLY because it makes a load-bearing fact
+#   intelligible. It must name which load-bearing fact(s) it supports (`supports`) and
+#   it must actually appear alongside at least one of them in some beat -- a supporting
+#   fact that never shares a beat with what it claims to support is not supporting
+#   anything, it is merely present.
+#
+# OMITTED_RESEARCH is not a new field: it is the existing, already-required
+# `cut_evidence`. A Ledger fact being true and licensed is never itself a reason to use
+# it -- that is the whole of what cut_evidence already enforces, and duplicating it here
+# would be a second mechanism for one idea.
+LOAD_BEARING = "LOAD_BEARING"
+SUPPORTING = "SUPPORTING"
+EVIDENCE_ROLES = (LOAD_BEARING, SUPPORTING)
+
+# Every beat does narrative work of one of these five kinds. Not a fixed sequence --
+# nothing here orders them or requires all five -- only a closed vocabulary so a beat
+# cannot be silently ordinary the way an un-ranked fact used to be silently included.
+REVEAL = "REVEAL"
+COMPLICATE = "COMPLICATE"
+EXPLAIN = "EXPLAIN"
+REVERSE = "REVERSE"
+RESOLVE = "RESOLVE"
+BEAT_FUNCTIONS = (REVEAL, COMPLICATE, EXPLAIN, REVERSE, RESOLVE)
+
 # ── the enforced invariant ────────────────────────────────────────────────────
 # Constructions that describe the RESEARCH rather than the world. These may not appear
 # anywhere in a writer packet. The bare word "source" is NOT here: a newspaper's own
@@ -357,6 +391,114 @@ def validate_architecture(arch: dict, evidence_ids: set, ledger: dict | None = N
             for e in validate_turn_support(text, basis, ledger):
                 errs.append("%s: %s asserts %s (%r) -- %s"
                             % (e["code"], field, e["relation"], e["carried_by"], e["why"]))
+    return errs
+
+
+def validate_evidence_hierarchy(arch: dict, evidence_ids: set) -> list:
+    """Selection is not ranking (2026-09-11). `validate_architecture` already refuses a
+    plan that discards nothing (`cut_evidence` required) and an unbounded fact grab
+    (`use_facts` checked against the frozen evidence) -- but it never asked the plan to
+    say which of the facts it KEPT does the load-bearing work of carrying the article,
+    and which merely rode along because it was true and available. A plan can pass every
+    existing gate with 23 flatly-equal facts and still repeat rather than advance.
+
+    So this REQUIRES, and does not merely validate if present: one used fact declared
+    `primary_carrier`; every used fact assigned exactly one role in `evidence_roles`
+    (LOAD_BEARING or SUPPORTING); every SUPPORTING fact naming, in `supports`, which
+    LOAD_BEARING fact(s) it makes intelligible, and actually sharing a beat with one of
+    them; and every beat declaring one `beat_function` from the closed, unordered set.
+    Missing hierarchy fields are errors here, the same as a missing beat_id -- this is
+    the requirement the brief calls for, not an optional enrichment like the separate
+    `propositions` representation composition.check_architecture validates only when
+    present.
+
+    A hold needs no hierarchy, exactly as validate_architecture needs no beats for one.
+    """
+    if arch.get("article_type") in (HOLD_NO_STORY, HOLD_WRONG_PUBLICATION):
+        return []
+    errs = []
+    use = set(arch.get("use_facts") or [])
+    beats = arch.get("beats") or []
+
+    roles = arch.get("evidence_roles")
+    if not isinstance(roles, dict) or not roles:
+        errs.append("evidence_roles missing -- every used fact must be declared "
+                    "LOAD_BEARING or SUPPORTING")
+        roles = {}
+    else:
+        covered = set(roles)
+        missing_roles = use - covered
+        extra_roles = covered - use
+        if missing_roles:
+            errs.append("evidence_roles does not cover every used fact -- missing %s"
+                        % sorted(missing_roles))
+        if extra_roles:
+            errs.append("evidence_roles names facts that are not used -- %s"
+                        % sorted(extra_roles))
+        bad = {f: r for f, r in roles.items() if r not in EVIDENCE_ROLES}
+        if bad:
+            errs.append("evidence_roles has values outside %s -- %s"
+                        % (EVIDENCE_ROLES, bad))
+
+    carrier = arch.get("primary_carrier")
+    if not carrier or not isinstance(carrier, str):
+        errs.append("primary_carrier missing -- one used fact must carry the "
+                    "intellectual question through the whole article")
+        carrier = None
+    elif carrier not in use:
+        errs.append("primary_carrier %r is not a used fact" % carrier)
+        carrier = None
+    elif roles.get(carrier) != LOAD_BEARING:
+        errs.append("primary_carrier %r must itself be LOAD_BEARING" % carrier)
+
+    supports = arch.get("supports") or {}
+    for f, role in roles.items():
+        if role != SUPPORTING:
+            continue
+        backing = [b for b in (supports.get(f) or []) if isinstance(b, str)]
+        if not backing:
+            errs.append("%s is SUPPORTING but supports[%r] names no load-bearing fact "
+                        "it makes intelligible" % (f, f))
+            continue
+        not_load_bearing = [b for b in backing if roles.get(b) != LOAD_BEARING]
+        if not_load_bearing:
+            errs.append("%s claims to support %s, which is not LOAD_BEARING"
+                        % (f, sorted(not_load_bearing)))
+        f_beats = {b.get("beat_id") for b in beats if f in (b.get("facts_allowed") or [])}
+        backing_beats = {b.get("beat_id") for b in beats
+                         for bfact in backing if bfact in (b.get("facts_allowed") or [])}
+        if not (f_beats & backing_beats):
+            errs.append("%s does not co-occur in any beat with a fact it claims to "
+                        "support (%s) -- a support that never appears beside what it "
+                        "supposedly makes intelligible is not supporting it"
+                        % (f, sorted(backing)))
+
+    for i, b in enumerate(beats, 1):
+        bid = b.get("beat_id") or ("beat %d" % i)
+        fn = b.get("beat_function")
+        if fn not in BEAT_FUNCTIONS:
+            errs.append("%s has beat_function %r, not one of %s" % (bid, fn, BEAT_FUNCTIONS))
+
+    if carrier and beats:
+        carrier_beats = [b.get("beat_id") for b in beats
+                         if carrier in (b.get("facts_allowed") or [])]
+        # RECURRENCE, not a fixed position. Requiring the carrier in beat[0] literally
+        # was tried against ARCH, the retained-shape fixture this module's own tests are
+        # built from, and refuted immediately: a real good article opens on a concrete
+        # hook (the salt pavilion) and only later arrives at what it is actually about
+        # (the catalogue entries) -- exactly what ARCHITECT_SYSTEM's own "opening_
+        # object_or_event" field is for. What both the brief and the existing prompt
+        # ("LOAD-BEARING... the article RETURNS TO IT") actually require is recurrence
+        # and a landing, not a literal opening appearance.
+        if len(carrier_beats) < 2:
+            errs.append("primary_carrier %r appears in only %s -- a load-bearing "
+                        "carrier the article never returns to is not primary"
+                        % (carrier, carrier_beats))
+        last = beats[-1]
+        if carrier not in (last.get("facts_allowed") or []):
+            errs.append("primary_carrier %r is not present in the closing beat %s -- "
+                        "the ending must return to the carrier with changed "
+                        "understanding, not merely stop" % (carrier, last.get("beat_id")))
     return errs
 
 
@@ -761,13 +903,22 @@ def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None
                    "carrier": b.get("concrete_carrier", ""),
                    "facts": [facts[f] for f in (b.get("facts_allowed") or []) if f in facts],
                    "concept": b.get("concept_introduced", ""),
-                   "withhold": b.get("must_not_say_yet", "")}
+                   "withhold": b.get("must_not_say_yet", ""),
+                   # Not read by render() -- the Writer's prompt is unchanged. Carried
+                   # for the audit bundle and for validate_evidence_hierarchy's own
+                   # replay against the built packet, the same way _cut_count already is.
+                   "beat_function": b.get("beat_function", "")}
                   for b in (arch.get("beats") or [])],
         "turn": arch.get("turn", ""),
         "crip_turn": arch.get("crip_turn", ""),
         "lens": lens.get("lens_claim", "") if lens.get("verdict") in LENS_PUBLISHABLE else "",
         "ending_move": arch.get("ending_move", ""),
         "facts": [facts[f] for f in use if f in facts],
+        # Telemetry only, same reasoning as "beat_function" above: which used fact is
+        # the primary carrier and which role each used fact plays. Not consumed by
+        # render() and not a new instruction surface for the Writer.
+        "primary_carrier": arch.get("primary_carrier", ""),
+        "evidence_roles": dict(arch.get("evidence_roles") or {}),
         "quotes": [quotes[q] for q in (arch.get("use_quotes") or []) if q in quotes],
         "definitions": arch.get("definitions") or {},
         "prohibitions": list(arch.get("prohibitions") or []),

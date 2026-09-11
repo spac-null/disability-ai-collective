@@ -991,10 +991,22 @@ ARCHITECT_SYSTEM = (
     "from the source document rather than a step forward\". Menu structures, page "
     "contents, fee inclusions, an empty events calendar and five nested planting figures "
     "were all carried at the same weight as the story itself.\n"
-    "  So every fact you USE must be one of two things, and you must know which:\n"
+    "  So every fact you USE must be one of two things, and you must know which -- and "
+    "you must SAY which, in evidence_roles, not merely follow the rule silently:\n"
     "    LOAD-BEARING -- an event, person, object or mechanism the story cannot be told "
     "without. The article returns to it, or it changes what a later beat means.\n"
-    "    SUPPORTING   -- needed only to make a load-bearing beat intelligible.\n"
+    "    SUPPORTING   -- needed only to make a load-bearing beat intelligible. Name, in "
+    "`supports`, exactly which load-bearing fact(s) it makes intelligible, and place it "
+    "in a beat alongside at least one of them -- a fact that never appears beside what "
+    "it supposedly supports is not supporting anything.\n"
+    "  ONE of your load-bearing facts is the PRIMARY CARRIER (`primary_carrier`): the "
+    "single fact the article's whole question rides on. Not the first fact, not the "
+    "most impressive one -- the one every other load-bearing fact ultimately serves. "
+    "It does not need to open the piece; a concrete hook may open it and arrive at the "
+    "carrier later. But it must RECUR -- appear in more than one beat's facts_allowed, "
+    "never used once and dropped -- and it must be in your CLOSING beat's facts_allowed: "
+    "the ending returns to it with changed understanding, not merely stops or repeats "
+    "the opening's own wording.\n"
     "  THE RULE: if a fact does not advance the story, explain a mechanism a "
     "load-bearing beat needs, or carry the reading, LEAVE IT OUT. Cut it with the "
     "declared reason that fits -- BACKGROUND_NOT_NEEDED, PROVENANCE_ONLY, NAME_OVERLOAD, "
@@ -1011,6 +1023,14 @@ ARCHITECT_SYSTEM = (
     "whose claim_kind is OCCURRENCE behind it. Where the ledger holds only a rule (a "
     "DISPOSITION -- what the thing does under a condition), you may say what the thing "
     "does; you may not narrate an instance of it happening.\n"
+    "  Each beat also does exactly one kind of work on the primary carrier, and you "
+    "declare which: REVEAL (shows something about the carrier the reader did not have), "
+    "COMPLICATE (adds a difficulty or tension to it), EXPLAIN (supplies the mechanism a "
+    "load-bearing beat needs), REVERSE (overturns what the reader believed about it), "
+    "RESOLVE (settles the question it raised). This is not a five-step formula -- use as "
+    "many beats of one kind as the story earns, in whatever order it earns them -- it is "
+    "a discipline against the ordinary beat that does none of the five and is there only "
+    "because the source document had a section for it.\n"
     "\n"
     "TIME. Each beat says what the reader must NOT be told yet, and why they will want the "
     "next one.\n"
@@ -1087,8 +1107,15 @@ ARCHITECT_SCHEMA = (
     ' "beats": [{"beat_id": "B1", "happens": "...",\n'
     '            "concrete_carrier": "a noun phrase, no verb clause",\n'
     '            "facts_allowed": ["F.."], "concept_introduced": "",\n'
+    '            "beat_function": "REVEAL",         one of: %(beat_fns)s\n'
     '            "why_reader_wants_next": "...", "must_not_say_yet": "..."}],\n'
     ' "use_facts": ["F.."],                      every fact used in any beat\n'
+    ' "primary_carrier": "F..",                  ONE used fact; the whole article rides\n'
+    "                                            on it; must appear in the first AND\n"
+    "                                            last beat's facts_allowed\n"
+    ' "evidence_roles": {"F..": "LOAD_BEARING"},  every id in use_facts, one of: %(roles)s\n'
+    ' "supports": {"F..": ["F.."]},               for each SUPPORTING id only: the\n'
+    "                                            LOAD_BEARING id(s) it makes intelligible\n"
     ' "use_quotes": [],\n'
     ' "definitions": {"term": "plain-words gloss, explained at first use"},\n'
     ' "cut_evidence": [{"evidence_id": "F..", "reason": "REDUNDANT_PROOF"}],\n'
@@ -1105,7 +1132,8 @@ ARCHITECT_SCHEMA = (
     '                "crip_turn_carrier": "the concrete thing the turn lands on -- a\n'
     "                 noun phrase that appears in the story_beat_before beat\"}}\n"
     "No prose outside the JSON."
-    % {"types": ", ".join(ST.ARTICLE_TYPES), "cuts": ", ".join(ST.CUT_REASONS)}
+    % {"types": ", ".join(ST.ARTICLE_TYPES), "cuts": ", ".join(ST.CUT_REASONS),
+       "beat_fns": ", ".join(ST.BEAT_FUNCTIONS), "roles": ", ".join(ST.EVIDENCE_ROLES)}
 )
 
 
@@ -1146,6 +1174,12 @@ def check_architecture(arch: dict, ledger: dict) -> list:
     errs += ["MINTED_FACT: " + e for e in LG.architect_may_not_mint(arch, ledger)]
     # Shape, USE/CUT honesty, carrier-occurrence support and turn-relation support.
     errs += ST.validate_architecture(arch, set(ledger), ledger)
+    # REQUIRED, not optional: which used fact carries the article, which used facts are
+    # load-bearing versus merely supporting, and what narrative work each beat does. See
+    # ST.validate_evidence_hierarchy's own docstring for why this differs from the
+    # genuinely-optional `propositions` representation checked further down.
+    errs += ["EVIDENCE_HIERARCHY: " + e
+             for e in ST.validate_evidence_hierarchy(arch, set(ledger))]
     fl = arch.get("final_lens") or {}
     errs += ["FINAL_LENS: " + e for e in ST.validate_final_lens(fl, arch, ledger)]
     errs += ["LENS_EMBODIMENT: " + e for e in ST.validate_lens_embodiment(arch, fl)]
