@@ -1446,6 +1446,66 @@ def test_an_unsupported_consequence_gets_a_subtractive_repair_contract():
     check("the repair budget remains two", CP.MAX_ARCHITECTURE_REPAIRS == 2)
 
 
+def test_an_unsupported_negation_gets_a_trigger_word_repair_contract():
+    """A real production run (Kinetic Light / Wired) held twice on this exact class: the
+    repair kept removing the relation the failure NAMED while a different, unflagged
+    connective word survived the rewrite. The contract must give the trigger words
+    themselves, not only the relation names, so the model can self-check its own output."""
+    bad = copy.deepcopy(ARCH)
+    bad["final_lens"]["evidence_basis"] = ["F04", "F06"]
+    bad["crip_turn"] = (
+        "The catalogue records the room, but the archive does not confirm the encounter.")
+
+    failures = CP.check_architecture(bad, LEDGER)
+    contract = CP.REPAIR_ARCH_SYSTEM
+
+    check("unsupported negation survives neither repair nor validation",
+          any(ST.TURN_RELATION_NOT_SUPPORTED in failure
+              and "NEGATION" in failure for failure in failures), failures)
+    juxtaposed = ("The catalogue records eight rooms. A reviewer wrote that the "
+                  "catalogue keeps each room's intention and drops the encounter.")
+    check("the same licensed facts pass with the negation deleted, not reworded",
+          ST.validate_turn_support(juxtaposed, ["F04", "F06"], LEDGER) == [],
+          ST.validate_turn_support(juxtaposed, ["F04", "F06"], LEDGER))
+    check("the contract gives NEGATION's own trigger words, not just its name",
+          "no, not, nothing, none, without, cannot, can only, fails to" in contract,
+          contract)
+    check("the contract names the specific failure mode: the removed relation's word "
+          "surviving in a different clause",
+          "keeps 'not' by moving it to a different clause" in contract, contract)
+    check("the contract forbids rewriting the field around the problem",
+          "REWRITING THE FIELD AROUND THE PROBLEM" in contract
+          and "IS THE ONE MOVE THAT IS NEVER AVAILABLE" in contract, contract)
+    check("the repair budget remains two", CP.MAX_ARCHITECTURE_REPAIRS == 2)
+
+
+def test_an_unsupported_temporal_relation_gets_a_trigger_word_repair_contract():
+    """Same real run, same field, a second relation class at once: `after` (TEMPORAL)
+    survived alongside `not` (NEGATION) through two repair attempts. The contract must
+    cover every one of the nine classes with its actual words, not a subset."""
+    bad = copy.deepcopy(ARCH)
+    bad["final_lens"]["evidence_basis"] = ["F04", "F06"]
+    bad["crip_turn"] = (
+        "The catalogue recorded the room before the archive checked it.")
+
+    failures = CP.check_architecture(bad, LEDGER)
+    contract = CP.REPAIR_ARCH_SYSTEM
+
+    check("unsupported temporal relation survives neither repair nor validation",
+          any(ST.TURN_RELATION_NOT_SUPPORTED in failure
+              and "TEMPORAL" in failure for failure in failures), failures)
+    check("the contract gives TEMPORAL's own trigger words, not just its name",
+          "before, after, then, until, once, by the time" in contract, contract)
+    check("the contract names the specific failure mode: the removed relation's word "
+          "surviving anywhere else in the field",
+          "keeps 'after' or 'before' anywhere in the field" in contract, contract)
+    check("the contract instructs a word-by-word self-check against all nine classes, "
+          "not only the one the failure named",
+          "not only for the relation the failure named, any of the nine" in contract,
+          contract)
+    check("the repair budget remains two", CP.MAX_ARCHITECTURE_REPAIRS == 2)
+
+
 def test_packet_licensing_survives_the_stemmer_being_asymmetric():
     """Three canary runs died on this. story.py's `_stem` is a suffix stripper, not a
     canonicaliser, so two variants of ONE word can stem differently:
