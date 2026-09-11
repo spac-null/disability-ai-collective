@@ -50,6 +50,9 @@ MAX_URLS_PER_QUERY = 4
 MIN_ANCHOR_CHARS = 1200
 
 _ENTRY = re.compile(r"^### (PR\d{3}-\d{2}) — (.+?)$", re.M)
+_STATUS = re.compile(
+    r"^\*\*STATUS:\*\*\s*\**"
+    r"(APPROVED_DURABLE|CANDIDATE|NEEDS_RESEARCH|REJECTED|RETIRED)\b", re.M)
 _QUESTION = re.compile(r"^\*\*QUESTION\.\*\*\s*(.+?)(?=\n\n|\n\*\*)", re.M | re.S)
 _SKIP = {"INDEX.md", "README.md"}
 
@@ -109,13 +112,17 @@ def load_questions(directory: pathlib.Path | None = None) -> list:
         ents = list(_ENTRY.finditer(text))
         for i, m in enumerate(ents):
             end = ents[i + 1].start() if i + 1 < len(ents) else len(text)
-            q = _QUESTION.search(text[m.end():end])
+            entry = text[m.end():end]
+            status = _STATUS.search(entry)
+            if not status or status.group(1) != "APPROVED_DURABLE":
+                continue
+            q = _QUESTION.search(entry)
             if not q:
                 continue
             out.append({"id": m.group(1), "cluster": m.group(1).split("-")[0],
                         "title": m.group(2).strip(),
                         "question": re.sub(r"\s+", " ", q.group(1)).strip(),
-                        "doc": f.name})
+                        "doc": f.name, "status": status.group(1)})
     return out
 
 

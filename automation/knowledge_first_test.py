@@ -54,11 +54,24 @@ CAND = {"subject": "A named artist's 2025 retrospective reorganised its gallerie
                                      "whether the museum is accessible"}
 
 
+APPROVED_IDS = frozenset({
+    "PR001-02", "PR001-03", "PR001-05", "PR001-07", "PR001-09",
+    "PR002-01", "PR002-02", "PR002-03", "PR002-05", "PR002-07",
+    "PR003-03", "PR003-06", "PR003-08",
+    "PR004-01", "PR004-02", "PR004-05",
+})
+
+
 def test_questions_are_read_from_approved_material_never_authored():
     """The perspective boundary: this module may not mint a question. It reads entries the
     owner already reviewed, each of which states its own QUESTION."""
     qs = KF.load_questions()
-    check("questions load from perspective material", len(qs) >= 20, len(qs))
+    check("only owner-approved durable questions load",
+          {q["id"] for q in qs} == APPROVED_IDS, sorted({q["id"] for q in qs}))
+    check("all loaded questions carry the approved status",
+          all(q.get("status") == "APPROVED_DURABLE" for q in qs), "")
+    check("each approved question is selectable in isolation",
+          all(KF.select_question([q], rng=random.Random(0)) == q for q in qs), "")
     check("every question carries its provenance",
           all(q["id"] and q["doc"] and q["question"] for q in qs), "")
     check("all four approved clusters are present",

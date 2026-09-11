@@ -187,16 +187,17 @@ def test_a_fresh_question_and_a_fresh_story_remain_allowed():
 
 def test_access_origin_question_is_never_selected():
     real_qs = KF.load_questions()
-    ids = {q["id"] for q in real_qs}
-    if not {"PR004-04", "PR004-06"} & ids:
-        check("PR004-04/06 present in the loadable corpus to test against", False, ids)
-        return
-    pool = [q for q in real_qs if q["id"] in ("PR004-04", "PR004-06")]
+    # PR004-04/06 are held at candidate (never APPROVED_DURABLE), so load_questions() now
+    # filters them out on status alone. Keep this direct selector test against synthetic
+    # entries so the unconditional access-origin guard stays covered even though its own
+    # ids never reach the loadable pool anymore.
+    pool = [_q("PR004-04"), _q("PR004-06")]
     check("a pool of ONLY access-origin questions selects nothing",
           KF.select_question(pool, rng=random.Random(1)) is None, pool)
+    combined = pool + [q for q in real_qs if q["id"] == "PR004-01"]
     for qid in ("PR004-04", "PR004-06"):
         check("%s is never returned even alongside other questions" % qid,
-              all(KF.select_question(real_qs, rng=random.Random(n))["id"] != qid
+              all(KF.select_question(combined, rng=random.Random(n))["id"] != qid
                   for n in range(30)), qid)
 
 
