@@ -3617,6 +3617,126 @@ def test_a_reader_editorial_repair_can_rescue_the_article():
           and "did not report on" in out2["failure_reason"], out2.get("failure_reason"))
 
 
+# ── STALE FACT CHECK AFTER AN ACCEPTED READER REPAIR (2026-09-11) ───────────────────
+# Safety and Grounding were already re-verified against an accepted Reader repair's
+# mutated article (see the two `after_reader_repair` checks in the rescue test above).
+# FACT_CHECK's own record was not: it ran once, before Reader, and an accepted repair
+# afterward moved `final`/`pkg` without ever re-running fact_check_fn against them, so
+# a HOLD-worthy contradiction the repair introduced or exposed was invisible -- and
+# publication could rely on a Fact Check that never evaluated the article it was about
+# to publish. Fixed: an accepted Reader repair re-runs the SAME fact_check_fn call on
+# the SAME bundle_text(final, pkg) pattern the first call already uses, and a HOLD from
+# that second call terminates the run on the repaired text, exactly like the first.
+def _reader_repair_fixture():
+    held = _reader_momentum_hold()
+    repair_reply = {"edits": [{
+        "dimension": "MOMENTUM", "operation": "DELETE",
+        "original": "The pallets and the eleven days are in the record.",
+        "repaired": ""}]}
+    return held, repair_reply
+
+
+def test_an_accepted_reader_repair_reruns_fact_check_on_the_new_article():
+    held, repair_reply = _reader_repair_fixture()
+    seen = []
+
+    def fc(article):
+        seen.append(article)
+        return dict(FC_CLEAN)
+
+    prov, out = run(full_script(reader=held) + [repair_reply, READER_OK],
+                    fact_check_fn=fc)
+    check("the run still passes", out["status"] == CP.PASS, out.get("failure_reason"))
+    check("fact_check_fn was called twice -- once before Reader, once after the "
+          "accepted repair", len(seen) == 2, seen)
+    check("the FIRST call saw the pre-repair article (the restating sentence present)",
+          "The pallets and the eleven days are in the record." in seen[0], seen[0])
+    check("the SECOND call saw the REPAIRED article (the restating sentence gone)",
+          "The pallets and the eleven days are in the record." not in seen[1], seen[1])
+    # fact_check_fn receives bundle_text(article, package) -- the article plus the
+    # publication furniture -- not the bare article, so compare against that same
+    # bundling of what the run actually returned.
+    published_bundle = CP.bundle_text(out["article_text"], out["package"])
+    check("the second call's bundle is exactly the one the run actually returned",
+          seen[1] == published_bundle, (seen[1], published_bundle))
+    # THE HASH INVARIANT: the bundle the re-run Fact Check evaluated is provably the
+    # SAME bundle the run's own sha256 identifies as what it is about to publish --
+    # not copied, not re-stamped, the actual final bytes.
+    check("the re-run Fact Check's own input hashes identically to the published bundle",
+          CP.C.sha256_text(seen[1]) == CP.C.sha256_text(published_bundle))
+    check("Fact Check's own record is marked as the post-repair rerun",
+          out["detail"][CP.FACT_CHECK].get("after_reader_repair") is True,
+          out["detail"][CP.FACT_CHECK])
+
+
+def test_an_accepted_reader_repair_that_exposes_a_contradiction_holds_on_the_new_text():
+    """The rerun is not decoration: if the SECOND fact_check_fn call (the one that
+    actually evaluated the repaired article) finds a blocking contradiction, the run
+    must HOLD on that -- using the repaired text, not the pre-repair one a stale check
+    would have silently passed."""
+    held, repair_reply = _reader_repair_fixture()
+    seen = []
+
+    def fc(article):
+        seen.append(article)
+        if len(seen) == 1:
+            return dict(FC_CLEAN)
+        return {"status": CP.HOLD,
+               "blocking_contradictions": ["nine tonne, not eleven"],
+               "soft_findings": [], "claims_checked": 6, "completed": True,
+               "runtime_seconds": 1.0}
+
+    _, out = run(full_script(reader=held) + [repair_reply, READER_OK], fact_check_fn=fc)
+    check("fact_check_fn was called twice", len(seen) == 2, seen)
+    check("the run HOLDs at FACT_CHECK, not at READER or silently passing",
+          out["failure_stage"] == CP.FACT_CHECK, out)
+    check("the hold names the contradiction the post-repair check found",
+          "nine tonne, not eleven" in out["failure_reason"], out.get("failure_reason"))
+    check("the held article is the REPAIRED text (the restating sentence gone), not "
+          "the pre-repair one",
+          "The pallets and the eleven days are in the record." not in out["article_text"],
+          out["article_text"])
+
+
+def test_a_rejected_reader_repair_does_not_rerun_fact_check():
+    """No accepted mutation, no reason to invalidate the first Fact Check: exactly one
+    call, the same behaviour as before this fix."""
+    held = _reader_momentum_hold()
+    bad_repair = {"edits": [{
+        "dimension": "MOMENTUM", "operation": "REWRITE",
+        "original": "The pallets and the eleven days are in the record.",
+        "repaired": "Nine tonne pallets and eleven days of masonry are in the record, "
+                    "just as before."}]}
+    seen = []
+
+    def fc(article):
+        seen.append(article)
+        return dict(FC_CLEAN)
+
+    _, out = run(full_script(reader=held) + [bad_repair, held], fact_check_fn=fc)
+    check("nothing was accepted",
+          out["detail"][CP.READER]["reader_repairs_accepted"] == 0, out)
+    check("fact_check_fn was called exactly once -- no rerun without an accepted "
+          "mutation", len(seen) == 1, seen)
+
+
+def test_a_run_with_no_reader_repair_calls_fact_check_exactly_once():
+    """The ordinary, untouched path: Reader passes on the first read, so there is
+    nothing to invalidate and nothing to rerun."""
+    seen = []
+
+    def fc(article):
+        seen.append(article)
+        return dict(FC_CLEAN)
+
+    _, out = run(full_script(), fact_check_fn=fc)
+    check("the run passes", out["status"] == CP.PASS, out.get("failure_reason"))
+    check("fact_check_fn was called exactly once", len(seen) == 1, seen)
+    check("Fact Check's record carries no post-repair marker",
+          not out["detail"][CP.FACT_CHECK].get("after_reader_repair"),
+          out["detail"][CP.FACT_CHECK])
+
+
 class _ReaderPackageThenLeak:
     """Same double as _PackageThenLeak in test_package_only_safety_repair_after_
     regeneration, adapted for the READER path: every PACKAGE call is answered from

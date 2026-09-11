@@ -7139,6 +7139,31 @@ def run_story_architecture_composition(
                         g_r = record(GROUNDING, rc["final_grounding"])
                         g_r["after_reader_repair"] = True
                         calls[GROUNDING] = calls.get(GROUNDING, 0) + _loop_grounding_calls
+                    # STALE FACT CHECK (2026-09-11). Safety and Grounding are already
+                    # re-verified above against the ACCEPTED reader-repaired `final`/
+                    # `pkg` -- but before this, FACT_CHECK's own record (`fc`, above)
+                    # stayed bound to whatever bytes existed BEFORE this repair loop ever
+                    # ran, and nothing re-ran it here. An accepted Reader repair mutates
+                    # the article; the internal FACT_CHECK verdict a HOLD would otherwise
+                    # have used is for a version of the text that was never published.
+                    # ANY accepted prose mutation after Fact Check invalidates it for
+                    # publication purposes -- so it runs again, on the article that will
+                    # actually be returned, exactly like the first call above (same
+                    # function, same bundling, same HOLD contract), never by copying or
+                    # re-stamping the old record.
+                    if fact_check:
+                        fc = record(FACT_CHECK, (fact_check_fn or fact_check_unavailable)(
+                            bundle_text(final, pkg)))
+                        fc["after_reader_repair"] = True
+                        if fc.get("status") == HOLD:
+                            bad = fc.get("blocking_contradictions") or []
+                            fc["surfaces"] = sorted({surface_of(str(c), pkg) for c in bad})
+                            return out(FACT_CHECK,
+                                      "blocking contradiction(s) on %s (introduced or "
+                                      "exposed by an accepted Reader repair): %s"
+                                      % (", ".join(fc["surfaces"]) or ARTICLE_SURFACE,
+                                         bad[:4]),
+                                      FACT_CHECK_HOLD, final, pkg, surface)
                 reader_calls_so_far = calls[READER]
                 rg = record(READER, rc["gate"])
                 calls[READER] = reader_calls_so_far
