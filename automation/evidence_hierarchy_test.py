@@ -242,10 +242,21 @@ def test_the_carrier_must_recur_and_land_in_the_closing_beat():
                   for e in ST.validate_evidence_hierarchy(arch3, EVIDENCE)))
 
 
-def test_packet_serialization_preserves_roles_and_functions():
+def test_writer_packet_wires_hierarchy_without_omitted_material_or_new_permissions():
+    """The production Writer packet receives the Architecture hierarchy as structure.
+
+    Omitted facts remain absent, and the selected evidence text is unchanged: hierarchy
+    metadata only partitions/indexes the same selected propositions.
+    """
     arch = _good()
-    packet = ST.build_packet(arch, {}, {"F1": "fact one", "F2": "fact two",
-                                        "F3": "fact three"})
+    arch.update({"story_spine": "The carrier changes meaning as the path advances.",
+                 "opening_object_or_event": "The first concrete thing.",
+                 "ending_move": "Return to the carrier with changed understanding."})
+    ledger = {"F1": {"proposition": "primary selected proposition"},
+              "F2": {"proposition": "load-bearing selected proposition"},
+              "F3": {"proposition": "supporting selected proposition"},
+              "F9": {"proposition": "OMITTED PROPOSITION MUST NOT LEAK"}}
+    packet, rendered = CP.writer_packet(arch, ledger)
     check("primary_carrier survives into the packet",
           packet.get("primary_carrier") == "F1", packet.get("primary_carrier"))
     check("evidence_roles survives into the packet",
@@ -253,10 +264,47 @@ def test_packet_serialization_preserves_roles_and_functions():
     check("every beat's beat_function survives into the packet",
           [b["beat_function"] for b in packet["beats"]]
           == [b["beat_function"] for b in arch["beats"]], packet["beats"])
+    check("PRIMARY_CARRIER appears in the actual Writer prompt",
+          "PRIMARY_CARRIER" in rendered and "primary selected proposition" in rendered,
+          rendered)
+    check("each beat function appears in the actual Writer prompt",
+          all(("BEAT_FUNCTION: " + fn) in rendered
+              for fn in (ST.REVEAL, ST.EXPLAIN, ST.RESOLVE)), rendered)
+    check("load-bearing evidence appears under its structured label",
+          "LOAD_BEARING_EVIDENCE:\n       - primary selected proposition" in rendered
+          and "load-bearing selected proposition" in rendered, rendered)
+    check("supporting evidence appears under its structured label",
+          "SUPPORTING_EVIDENCE:\n       - supporting selected proposition" in rendered,
+          rendered)
+    check("hierarchy instructions give carrier priority and support intelligibility",
+          "has priority" in rendered and "only to make load-bearing evidence intelligible"
+          in rendered and "equal-weight inventory" in rendered, rendered)
+    check("omitted proposition text cannot enter the Writer prompt",
+          "OMITTED PROPOSITION MUST NOT LEAK" not in rendered, rendered)
+    check("selected factual material is unchanged by hierarchy wiring",
+          packet["facts"] == [ledger[f]["proposition"] for f in arch["use_facts"]],
+          packet["facts"])
+    malformed = dict(arch, primary_carrier="F9",
+                     evidence_roles=dict(arch["evidence_roles"], F9=ST.LOAD_BEARING))
+    malformed_packet = ST.build_packet(malformed, {},
+                                       {f: d["proposition"] for f, d in ledger.items()})
+    check("an omitted id cannot promote its proposition into hierarchy material",
+          "OMITTED PROPOSITION MUST NOT LEAK" not in ST.render(malformed_packet),
+          ST.render(malformed_packet))
+
+
+def test_legacy_writer_packet_without_hierarchy_still_renders():
+    """Older retained packets have no hierarchy and retain their flat replay path."""
+    packet = {"story_spine": "legacy spine", "opening": "legacy opening",
+              "reader_initial_state": "", "beats": [{"happens": "legacy beat",
+              "carrier": "legacy carrier", "facts": ["legacy fact"], "concept": "",
+              "withhold": ""}], "turn": "", "crip_turn": "", "lens": "",
+              "ending_move": "legacy ending", "prohibitions": [], "quotes": [],
+              "definitions": []}
     rendered = ST.render(packet)
-    check("beat_function is NOT injected into the Writer-facing prompt text -- Writer "
-          "is unchanged", ST.REVEAL not in rendered and ST.EXPLAIN not in rendered
-          and ST.RESOLVE not in rendered, rendered)
+    check("legacy packet remains renderable", "- legacy fact" in rendered, rendered)
+    check("legacy packet does not gain hierarchy labels", "PRIMARY_CARRIER" not in rendered,
+          rendered)
 
 
 def test_existing_architecture_validators_are_unaffected_by_missing_hierarchy():
@@ -284,7 +332,8 @@ def main() -> int:
                test_supporting_facts_must_name_and_cooccur_with_what_they_support,
                test_every_beat_declares_a_closed_vocabulary_beat_function,
                test_the_carrier_must_recur_and_land_in_the_closing_beat,
-               test_packet_serialization_preserves_roles_and_functions,
+               test_writer_packet_wires_hierarchy_without_omitted_material_or_new_permissions,
+               test_legacy_writer_packet_without_hierarchy_still_renders,
                test_existing_architecture_validators_are_unaffected_by_missing_hierarchy):
         print("\n" + fn.__name__)
         fn()

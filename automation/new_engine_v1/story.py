@@ -893,6 +893,18 @@ def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None
     """
     quotes = quotes or {}
     use = list(arch.get("use_facts") or [])
+    roles = dict(arch.get("evidence_roles") or {})
+
+    def evidence_for(ids, role):
+        """Return only selected evidence for one existing hierarchy role.
+
+        Fact ids stay machine metadata. The Writer sees the selected proposition text,
+        just as it did before this wiring, and never sees an id for a positive fact.
+        """
+        return [facts[fid]
+                for fid in (ids or [])
+                if fid in use and fid in facts and roles.get(fid) == role]
+
     return {
         "article_type": arch.get("article_type"),
         "story_spine": arch.get("story_spine", ""),
@@ -902,11 +914,14 @@ def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None
                    "happens": b.get("happens", ""),
                    "carrier": b.get("concrete_carrier", ""),
                    "facts": [facts[f] for f in (b.get("facts_allowed") or []) if f in facts],
+                   "load_bearing_evidence": evidence_for(
+                       b.get("facts_allowed"), LOAD_BEARING),
+                   "supporting_evidence": evidence_for(
+                       b.get("facts_allowed"), SUPPORTING),
                    "concept": b.get("concept_introduced", ""),
                    "withhold": b.get("must_not_say_yet", ""),
-                   # Not read by render() -- the Writer's prompt is unchanged. Carried
-                   # for the audit bundle and for validate_evidence_hierarchy's own
-                   # replay against the built packet, the same way _cut_count already is.
+                   # Existing Architecture function, surfaced by render() as the
+                   # Writer's per-beat structural instruction and retained for audit.
                    "beat_function": b.get("beat_function", "")}
                   for b in (arch.get("beats") or [])],
         "turn": arch.get("turn", ""),
@@ -914,11 +929,13 @@ def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None
         "lens": lens.get("lens_claim", "") if lens.get("verdict") in LENS_PUBLISHABLE else "",
         "ending_move": arch.get("ending_move", ""),
         "facts": [facts[f] for f in use if f in facts],
-        # Telemetry only, same reasoning as "beat_function" above: which used fact is
-        # the primary carrier and which role each used fact plays. Not consumed by
-        # render() and not a new instruction surface for the Writer.
+        "primary_carrier_evidence": (
+            facts.get(arch.get("primary_carrier"), "")
+            if arch.get("primary_carrier") in use else ""),
+        # Existing hierarchy metadata. Fact ids are an index into selected evidence;
+        # they do not grant factual permission.
         "primary_carrier": arch.get("primary_carrier", ""),
-        "evidence_roles": dict(arch.get("evidence_roles") or {}),
+        "evidence_roles": roles,
         "quotes": [quotes[q] for q in (arch.get("use_quotes") or []) if q in quotes],
         "definitions": arch.get("definitions") or {},
         "prohibitions": list(arch.get("prohibitions") or []),
@@ -971,14 +988,42 @@ def render(packet: dict) -> str:
         # for the audit bundle. It simply stops being a permission.
         L.append("  The reader begins knowing nothing beyond what this opening puts")
         L.append("  in front of them. Everything else arrives in the order below.")
+    # EVIDENCE HIERARCHY. These are existing Architecture fields and selected ledger
+    # material. Older retained packets lack them and use the legacy flat rendering.
+    structured_hierarchy = bool(
+        packet.get("primary_carrier") and packet.get("evidence_roles") and
+        all("beat_function" in b and
+            len((b.get("load_bearing_evidence") or [])) +
+            len((b.get("supporting_evidence") or [])) == len(b.get("facts") or [])
+            for b in (packet.get("beats") or [])))
+    if structured_hierarchy:
+        L.append("")
+        L.append("EVIDENCE HIERARCHY")
+        L.append("  PRIMARY_CARRIER")
+        if packet.get("primary_carrier_evidence"):
+            L.append("    %s" % packet["primary_carrier_evidence"])
+        L.append("  The primary carrier carries the article and has priority throughout.")
+        L.append("  LOAD_BEARING_EVIDENCE carries the argument and must be prioritized.")
+        L.append("  SUPPORTING_EVIDENCE is used only to make load-bearing evidence intelligible.")
+        L.append("  Each beat performs its BEAT_FUNCTION; do not treat the material as an")
+        L.append("  equal-weight inventory.")
     L.append("")
     L.append("THE PATH, IN ORDER")
     for i, b in enumerate(packet["beats"], 1):
         L.append("  %d. %s" % (i, b["happens"]))
         if b["carrier"]:
             L.append("     carried by: %s" % b["carrier"])
-        for f in b["facts"]:
-            L.append("     - %s" % f)
+        if structured_hierarchy:
+            L.append("     BEAT_FUNCTION: %s" % b.get("beat_function", ""))
+            L.append("     LOAD_BEARING_EVIDENCE:")
+            for f in b.get("load_bearing_evidence") or []:
+                L.append("       - %s" % f)
+            L.append("     SUPPORTING_EVIDENCE:")
+            for f in b.get("supporting_evidence") or []:
+                L.append("       - %s" % f)
+        else:
+            for f in b["facts"]:
+                L.append("     - %s" % f)
         if b["concept"]:
             L.append("     explain plainly, once, here: %s" % b["concept"])
         if b["withhold"]:
