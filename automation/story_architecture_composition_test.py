@@ -1586,8 +1586,14 @@ def test_packet_licensing_survives_the_stemmer_being_asymmetric():
     # name is exactly the thing a phrase rather than its parts identifies.
     arch = copy.deepcopy(ARCH)
     led = copy.deepcopy(LEDGER)
-    led["F07"]["proposition"] = ("The Kunsthalle Salt Room closed after the season, "
-                                 "and the room was full of brick.")
+    # "Salt"/"room" recur across this fixture's own pavilion-themed facts (2026-09-11:
+    # _is_distinctive now applies the same document-frequency ceiling to shaped terms
+    # that ordinary words already had -- see safety_matcher_precision_test.py's
+    # test_shaped_terms_lose_distinctiveness_when_they_recur_across_the_ledger for the
+    # real production case this closed), so words genuinely absent elsewhere in LEDGER
+    # keep this test about phrase-vs-word licensing, not about ledger-wide frequency.
+    led["F07"]["proposition"] = ("The Kunsthalle Brass Gallery closed after the "
+                                 "season, and the gallery was full of dust.")
     r = CP.derive_cut_watch_terms(arch, led)
     check("a multi-word name survives even when its words appear separately",
           any(" " in x for x in r["terms"]["F07"]), r["terms"]["F07"])

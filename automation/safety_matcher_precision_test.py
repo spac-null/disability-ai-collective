@@ -198,6 +198,61 @@ def test_proper_noun_extraction_keeps_a_hyphenated_compound_whole():
           len(v) == 1, v)
 
 
+def test_shaped_terms_lose_distinctiveness_when_they_recur_across_the_ledger():
+    """A third real production false positive, same class, different shape
+    (production-20260911T111356Z-669582be, PR001-07, SFMOMA/Creative Growth). Cut facts
+    F02 and F31 each carry "The San Francisco Museum of Modern Art" in their raw source
+    excerpt. The article never restates either cut PROPOSITION (that SFMOMA "acquired
+    from three studios", or that it is "one of the largest museums..."); it just spells
+    out SFMOMA's own name once, elsewhere, for an entirely different (included) fact.
+
+    The shared mechanism across this and the two prior CUT_LEAKAGE fixes: `_is_distinctive`
+    granted NUMBER-shaped and PROPER-noun-shaped candidates unconditional distinctiveness
+    on shape alone, never applying the document-frequency ceiling ordinary words already
+    get. Verified against the real ledgers: stem("2020") had document frequency 7 across
+    the Close Readings ledger, and every word of "The San Francisco Museum"/"Modern Art"/
+    "Modern" had frequency 3-58 across the SFMOMA ledger -- both far past CUT_TERM_MAX_DF
+    (2), and both would have been correctly refused as "not specific to this fact" had
+    shape not exempted them. No word is named here or in the fix: the ceiling is generic
+    and already existed for ordinary words; shape no longer bypasses it."""
+    # A bare year recurring across many ledger facts (mirrors Close Readings' df=7).
+    led_years = {"F%d" % i: {"proposition": "Something in 2020 involved case %d." % i}
+                for i in range(1, 4)}                                    # 3 facts: df=3
+    check("a year in 3+ ledger facts is NOT distinctive",
+          not CP._is_distinctive("2020", CP._document_frequency(led_years)))
+    led_two = {"F%d" % i: {"proposition": "Something in 2020 involved case %d." % i}
+              for i in range(1, 3)}                                     # 2 facts: df=2
+    check("a year in exactly 2 (the ceiling) IS still distinctive",
+          CP._is_distinctive("2020", CP._document_frequency(led_two)))
+    led_one_year = {"F1": {"proposition": "The exhibition opened in 2020."}}
+    check("a year that appears in only 1 fact IS distinctive",
+          CP._is_distinctive("2020", CP._document_frequency(led_one_year)))
+
+    # An institution's full name whose component words recur widely, mirroring SFMOMA
+    # (a modern-art museum's name recurring beside many unrelated "modern art" mentions).
+    led_museum = {}
+    for i in range(1, 4):
+        led_museum["M%d" % i] = {"proposition":
+            "The San Francisco museum received object %d for its permanent collection."
+            % i}
+    for i in range(1, 4):
+        led_museum["A%d" % i] = {"proposition":
+            "A modern piece of art %d was catalogued in the same accession year." % i}
+    df_museum = CP._document_frequency(led_museum)
+    for phrase in ("The San Francisco Museum", "Modern Art", "Modern"):
+        check("%r is NOT distinctive once its words recur across the ledger" % phrase,
+              not CP._is_distinctive(phrase, df_museum), df_museum)
+
+    # A genuinely rare multi-word name is unaffected -- the fix narrows an exemption,
+    # it does not add fuzziness that could cost a real sentinel.
+    led_rare = {"F1": {"proposition": "Idle Hands showed once at a small gallery."}}
+    check("a rare multi-word name IS still distinctive",
+          CP._is_distinctive("Idle Hands", CP._document_frequency(led_rare)))
+    led_rare_id = {"F1": {"proposition": "The board used an ESP32S3 microcontroller."}}
+    check("a rare alphanumeric part id IS still distinctive",
+          CP._is_distinctive("ESP32S3", CP._document_frequency(led_rare_id)))
+
+
 # ── FIX 2: provenance frames are frames, not vocabulary ─────────────────────────────
 def test_role_taxonomy_is_a_frame_not_a_word():
     clean = [
@@ -376,6 +431,7 @@ def main():
                test_multi_word_cut_terms,
                test_numeric_cut_term_does_not_fire_on_a_longer_identifier,
                test_proper_noun_extraction_keeps_a_hyphenated_compound_whole,
+               test_shaped_terms_lose_distinctiveness_when_they_recur_across_the_ledger,
                test_role_taxonomy_is_a_frame_not_a_word,
                test_other_provenance_frames_unchanged,
                test_title_cased_ordinary_vocabulary_is_not_an_entity,

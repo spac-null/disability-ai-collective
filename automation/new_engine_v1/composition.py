@@ -1802,11 +1802,30 @@ def _document_frequency(ledger: dict) -> dict:
 
 
 def _is_distinctive(term: str, df: dict) -> bool:
+    """A shape (a figure, a part name, a proper noun) is fact-bearing ONLY until it
+    recurs across the ledger (2026-09-11). Two real production runs, different shapes,
+    same mechanism: a bare year (2020/2025) and a museum's full institutional name (The
+    San Francisco Museum of Modern Art / Modern Art / Modern) both passed this function
+    unconditionally on shape alone, then CUT_LEAKAGE fired on prose that had reused
+    neither cut fact's actual claim -- only a token or phrase that recurred, at document
+    frequency 3-58, across many OTHER (mostly kept) ledger facts about the same
+    recurring subject or year. Shape decided HIGH-confidence matching correctly (a bare
+    token cannot hold an article alone, cut_term_confidence is unchanged); it should
+    never have decided DISTINCTIVENESS, which is exactly what df already measures for
+    ordinary words below. The same ceiling now applies uniformly."""
     t = term.strip()
+    # Stopwords excluded from the ceiling, not just from the single-word ordinary-
+    # English branch below: "the" alone has near-universal document frequency in any
+    # non-trivial ledger, so a raw max() over every stem would fail almost any multi-
+    # word phrase beginning with "The" on its stopword alone, regardless of how
+    # distinctive the phrase's actual content words are.
+    content_stems = _stems(t) - _COMMON_ENGLISH
+    over_common = max((df.get(s, 0) for s in content_stems), default=0) > CUT_TERM_MAX_DF
     if _PURE_NUMBER.match(t):
-        return True                                  # a figure belongs to its fact
+        return not over_common                       # a figure belongs to its fact --
+                                                     # unless it recurs across the ledger
     if _ALNUM_ID.match(t):
-        return True                                  # a part name belongs to its fact,
+        return not over_common                       # a part name belongs to its fact,
                                                      # and "ESP32" is five characters
     # ORDINARY ENGLISH FIRST, before the proper-noun shortcut. A capitalised word at the
     # start of a sentence looks exactly like a name to a regex: the canary watched
@@ -1815,10 +1834,11 @@ def _is_distinctive(term: str, df: dict) -> bool:
     if " " not in t and _stems(t) & _COMMON_ENGLISH:
         return False
     if _PROPER.fullmatch(t):
-        return True                                  # a name belongs to its fact
+        return not over_common                       # a name belongs to its fact --
+                                                     # unless its words recur too widely
     if " " not in t and len(t) < CUT_TERM_DISTINCTIVE_LEN:
         return False                                 # short and lowercase: ordinary
-    return max((df.get(s, 0) for s in _stems(t)), default=0) <= CUT_TERM_MAX_DF
+    return not over_common
 
 
 # ── CUT CONFIDENCE TIERS ─────────────────────────────────────────────────────
