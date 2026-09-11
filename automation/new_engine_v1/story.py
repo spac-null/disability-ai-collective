@@ -931,6 +931,14 @@ def validate_packet(packet: dict) -> list:
 CUT_SENTINEL_MIN = 4          # ignore very short tokens; they collide with ordinary words
 
 
+_NUMERIC_TERM = re.compile(r"^[$£€]?\d[\d,.:/-]*%?$")
+# A joiner immediately continuing into another digit means the matched span is a
+# fragment of a longer dotted/hyphenated/slashed identifier (an accession number, a
+# docket, a catalogue id), not the free-standing figure the cut term names.
+_JOINS_LONGER_NUMBER_AFTER = re.compile(r"^[.\-/]\d")
+_JOINS_LONGER_NUMBER_BEFORE = re.compile(r"\d[.\-/]$")
+
+
 def _literal_cut_hit(term_lower: str, body_lower: str) -> bool:
     """Does `term_lower` appear in `body_lower` AS A TOKEN, not as a substring?
 
@@ -958,9 +966,27 @@ def _literal_cut_hit(term_lower: str, body_lower: str) -> bool:
     The inflection branch is untouched and still catches what the literal one now
     misses by design: "scan" against "scans" arrives there and matches on the stem,
     while "scandal" stays "scandal" and does not.
+
+    A SECOND production case (2026-09-11) showed the alphanumeric lookaround alone is
+    still not enough for a bare number. A cut fact's year "2020" fired on the Smithsonian
+    accession number "2020.79.2" quoted from an entirely different, INCLUDED fact -- the
+    period after "2020" is not alphanumeric, so the lookahead closed the token there and
+    called it a hit. Six cut facts sharing nothing but a four-digit year (two Super Bowl
+    facts, two installation-photo facts, two artwork-label facts) all "leaked" the same
+    one occurrence of an unrelated catalogue number. For a numerically-shaped term only,
+    a match immediately continued by a joiner-then-digit on either side is a fragment of
+    a longer identifier, not the figure the cut fact names, and does not count.
     """
-    return re.search(r"(?<![a-z0-9])%s(?![a-z0-9])" % re.escape(term_lower),
-                     body_lower) is not None
+    for m in re.finditer(r"(?<![a-z0-9])%s(?![a-z0-9])" % re.escape(term_lower),
+                         body_lower):
+        if _NUMERIC_TERM.match(term_lower):
+            after = body_lower[m.end():m.end() + 2]
+            before = body_lower[max(0, m.start() - 2):m.start()]
+            if (_JOINS_LONGER_NUMBER_AFTER.match(after)
+                    or _JOINS_LONGER_NUMBER_BEFORE.search(before)):
+                continue
+        return True
+    return False
 
 
 def _regular_inflections(t: str) -> set:
@@ -1047,7 +1073,16 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None) 
             # _literal_cut_hit for the three production articles that were held by its
             # old substring behaviour. Single-word sensitivity is unchanged, because a
             # term whose token form is absent but whose stem is present arrives here.
-            if " " not in t:
+            #
+            # A bare number has no morphology to stem (2026-09-11): `_body_stems` tokenises
+            # the whole body on `[a-z0-9]+`, which already splits "2020.79.2" into "2020",
+            # "79", "2" with no record that they were ever joined -- exactly the adjacency
+            # information `_literal_cut_hit` uses to tell a free year from an identifier
+            # fragment. Routing a numeric term through the stem set re-opens the same
+            # false positive from underneath the literal branch's fix. Inflection is a
+            # word concept; the literal branch above is the whole and correct screen for
+            # a number.
+            if " " not in t and not _NUMERIC_TERM.match(t):
                 st = _stem(t)
                 if len(st) >= CUT_SENTINEL_MIN and st in _body_stems(body):
                     violations.append({"evidence_id": cid, "reason": c.get("reason"),

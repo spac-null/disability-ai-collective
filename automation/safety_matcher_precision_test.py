@@ -129,6 +129,75 @@ def test_multi_word_cut_terms():
     check("...and not two words that merely both occur", v == [], v)
 
 
+def test_numeric_cut_term_does_not_fire_on_a_longer_identifier():
+    """The real production false positive, 2026-09-11 (production-20260911T062145Z-
+    24071688, PR004-01, Christine Sun Kim / Close Readings). Six cut facts -- two Super
+    Bowl performance details, two installation-photo credits, two artwork-label captions
+    -- shared nothing but a bare year, 2020 or 2025. The published prose never restated
+    any of them: it quoted a Smithsonian/Whitney accession number ("2020.79.2",
+    "2025.56") from a wholly different, INCLUDED fact, and the alphanumeric token
+    boundary alone cannot tell a free year from the leading digits of an identifier,
+    because the joining period is not alphanumeric either."""
+    v = cut_violations(
+        "The Smithsonian American Art Museum's catalogue entry for object 2020.79.2 "
+        "reads: Christine Sun Kim, Close Readings, 2015.",
+        {"F19": ["2020"]})
+    check("cut term '2020' does NOT fire on the accession number '2020.79.2'", v == [], v)
+
+    v = cut_violations(
+        "The Whitney Museum's record, accession number 2025.56, describes it as a "
+        "four-channel video installation.",
+        {"F31": ["2025"]})
+    check("cut term '2025' does NOT fire on the accession number '2025.56'", v == [], v)
+
+    # A hyphenated or slashed identifier is the same shape and must be resisted too.
+    v = cut_violations("The docket is filed under case no. 2020-4471.", {"F1": ["2020"]})
+    check("cut term '2020' does NOT fire on a hyphenated docket number '2020-4471'",
+          v == [], v)
+
+    # And the screen still screens: a genuinely free-standing year still blocks.
+    v = cut_violations("She performed at the Super Bowl in 2020, alongside two others.",
+                       {"F19": ["2020"]})
+    check("cut term '2020' DOES fire when the year is free-standing", len(v) == 1, v)
+    v = cut_violations("The show ran through late 2025.", {"F31": ["2025"]})
+    check("cut term '2025' DOES fire when the year is free-standing", len(v) == 1, v)
+
+
+def test_proper_noun_extraction_keeps_a_hyphenated_compound_whole():
+    """A second real production false positive, same afternoon (production-20260911T
+    063633Z-c5a1e9c8, PR003-01, facilitated communication). A cut fact's own proposition,
+    "Twenty-nine of the 31 participants had received speech therapy...", is sentence-
+    initial and capitalised only on its first letter. `_PROPER` used to stop at the
+    hyphen, offering the bare word "Twenty" as the cut fact's watch term -- and "Twenty"
+    then matched an entirely different, INCLUDED fact's "Twenty-six" (targets on a
+    tapping-test screen). The two facts share no content; they share six letters."""
+    check("a sentence-initial spelled-out compound number stays one candidate",
+          CP._PROPER.findall("Twenty-nine of the 31 participants took part.")
+          == ["Twenty-nine"])
+    check("a true multi-word proper name is unaffected",
+          CP._PROPER.findall("Christine Sun Kim's retrospective opened.")
+          == ["Christine Sun Kim"])
+
+    fact = {"fact_id": "F98",
+            "proposition": "Twenty-nine of the 31 participants had received speech "
+                            "therapy focused on speech for an average of 15.72 years.",
+            "support_span": "", "entities": []}
+    terms = CP._candidate_terms(fact)
+    check("the extracted candidate is the whole compound, not the bare fragment",
+          "Twenty-nine" in terms and "Twenty" not in terms, terms)
+
+    v = cut_violations(
+        "Participants viewed twenty-six possible targets on the screen at once.",
+        {"F98": ["Twenty-nine"]})
+    check("cut term 'Twenty-nine' does NOT fire on the unrelated 'twenty-six'",
+          v == [], v)
+    v = cut_violations(
+        "Twenty-nine of the study's participants had years of prior speech therapy.",
+        {"F98": ["Twenty-nine"]})
+    check("cut term 'Twenty-nine' DOES fire when the actual compound is restated",
+          len(v) == 1, v)
+
+
 # ── FIX 2: provenance frames are frames, not vocabulary ─────────────────────────────
 def test_role_taxonomy_is_a_frame_not_a_word():
     clean = [
@@ -305,6 +374,8 @@ def main():
     for fn in (test_literal_cut_is_token_wise,
                test_inflection_branch_is_untouched,
                test_multi_word_cut_terms,
+               test_numeric_cut_term_does_not_fire_on_a_longer_identifier,
+               test_proper_noun_extraction_keeps_a_hyphenated_compound_whole,
                test_role_taxonomy_is_a_frame_not_a_word,
                test_other_provenance_frames_unchanged,
                test_title_cased_ordinary_vocabulary_is_not_an_entity,

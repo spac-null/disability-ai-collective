@@ -1691,7 +1691,15 @@ _NUMBERISH = re.compile(r"\d")
 # part name and belongs on the word path: sent down the number path it could never match,
 # because ST._numbers does not read it as a number either.
 _PURE_NUMBER = re.compile(r"^[$\u00a3\u20ac]?\d[\d,.:/-]*%?$")
-_PROPER = re.compile(r"\b[A-Z][a-z]{2,}(?:\s+[A-Z][a-z]+)*\b")
+# A hyphen-continued lowercase tail stays part of the same token (2026-09-11): a
+# sentence-initial spelled-out compound like "Twenty-nine" is capitalised only on its
+# first letter, so without the `(?:-[a-z]+)*` branch this cut off at the hyphen and
+# candidate-term extraction offered the bare, non-distinctive "Twenty" as a cut fact's
+# watch term. A real production run then held on CUT_LEAKAGE when "Twenty" matched an
+# entirely different, INCLUDED fact's "Twenty-six" (targets on a screen) -- two
+# unrelated numbers sharing nothing but their first six letters. The multi-CAPITALISED-
+# word branch (for "Christine Sun Kim") is unchanged and independent of this one.
+_PROPER = re.compile(r"\b[A-Z][a-z]{2,}(?:-[a-z]+)*(?:\s+[A-Z][a-z]+(?:-[a-z]+)*)*\b")
 
 
 def _stems(text: str) -> set:
