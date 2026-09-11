@@ -21,6 +21,17 @@ TWO JOBS, AND THEY ARE NOT THE SAME JOB (2026-09-07).
     not archived. Recovering the existing CURRENT_ENGINE backlog is a separate owner
     decision and this cron does not take it.
 
+    ITS CRON SCHEDULE WAS DISABLED 2026-09-11 (see trident's crontab): a periodic
+    selector that can publish something on a scoring/aging/rotation formula,
+    independent of whether anything passed today's actual production pipeline, is
+    exactly the shape of mechanism the owner does not want silently manufacturing a
+    publication. PUBLICATION OWNERSHIP BELONGS TO THE CURRENT PRODUCTION PIPELINE:
+    an article publishes when, and only when, a production run's own candidate
+    passes every gate and (1) above is called directly by that run. main() and its
+    legacy backlog are left on disk, unscheduled, for a separate owner decision
+    about recovering them -- this file's publication MECHANICS in (1) are unaffected
+    and are still called by new_engine_production.py exactly as before.
+
 Everything from here down describes (2).
 
 Candidate pool: legacy/manual drafts dated within the last AGE_WINDOW_DAYS days that
@@ -55,7 +66,8 @@ Selection weights (applied only to drafts that pass the promotion gate):
     being perpetually outcompeted by fresher entries and archived without
     ever really winning a fair fight.
 
-Cron (trident): 0 8 */2 * * python3 /srv/scripts/ops/publish_best.py
+Cron (trident): DISABLED 2026-09-11 -- was 0 8 */2 * * python3 automation/publish_best.py.
+See (2) above.
 
 Usage:
   publish_best.py            Run for real: publish the best draft, archive expired ones.
