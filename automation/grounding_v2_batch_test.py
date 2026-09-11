@@ -320,14 +320,16 @@ def test_a_deadline_reached_mid_run_is_recorded_never_a_verdict():
 
 # ── P / Q / R: authority, off-by-default, and the bound ─────────────────────
 def test_the_shadow_still_has_no_authority_and_no_calls_when_off():
+    """The runner-level integration this test used to exercise directly
+    (R._shadow_grounding_v2) was removed 2026-09-11 -- see
+    grounding_v2_removal_test.py. Astra's independent audit found zero semantic,
+    control-flow or telemetry consumer and zero proven production rescues across the
+    retained evidence. The grounding_v2 module itself (GV2.enabled(), its own tests)
+    is preserved as a research artifact and is unaffected."""
     import os
-    from new_engine_v1 import runner as R
     prev = os.environ.pop(GV2.SHADOW_ENV, None)
     try:
         check("OFF by default", GV2.enabled() is False)
-        p = Recorder()
-        R._shadow_grounding_v2(p, HERE, {"article_text": "x"}, "src", CONFLICT_PACK)
-        check("zero model calls when OFF", p.calls == [], p.calls)
     finally:
         if prev is not None:
             os.environ[GV2.SHADOW_ENV] = prev
@@ -336,9 +338,8 @@ def test_the_shadow_still_has_no_authority_and_no_calls_when_off():
     check("decision.py never sees the shadow artefact", "GROUNDING_V2" not in dec)
     check("the safety bridge never sees it", "GROUNDING_V2" not in brg)
     rsrc = (HERE / "new_engine_v1" / "runner.py").read_text()
-    check("the shadow runs after the decision is persisted",
-          rsrc.index("_persist(A, run_root") < rsrc.index("_shadow_grounding_v2(provider"))
-    check("its failures are swallowed", "never reaches the caller" in rsrc)
+    check("the runner no longer references grounding_v2 at all",
+          "grounding_v2" not in rsrc.lower() and "_shadow_grounding_v2" not in rsrc)
 
 
 def test_the_call_ceiling_is_structural():

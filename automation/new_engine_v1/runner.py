@@ -35,7 +35,6 @@ import pathlib
 from . import anchors as AN
 from . import contracts as C
 from . import invariants as INV
-from . import grounding_v2 as GV2
 from . import repair_identity as RI
 from . import research as RS
 from . import stages as S
@@ -456,7 +455,6 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
         dec_inputs)
 
     _persist(A, run_root, name, mode, prov, decision, reasons)
-    _shadow_grounding_v2(provider, run_root / name, wo, src, pack)
     return {"artifacts": A, "decision": decision, "reasons": reasons, "provider": prov}
 
 
@@ -568,33 +566,6 @@ def _persist_attempts(out_dir: pathlib.Path, result: dict) -> None:
                 "fallback_recomposition_reason"),
             "winning_attempt": result.get("winning_attempt"),
         }, indent=2, sort_keys=True, ensure_ascii=False), encoding="utf-8")
-    except Exception:
-        pass
-
-
-def _shadow_grounding_v2(provider, out_dir: pathlib.Path, wo: dict, src: str,
-                         pack: dict) -> None:
-    """GROUNDER V2, shadow only. OFF unless explicitly enabled.
-
-    Called AFTER the decision is made and persisted, and its result is written to its
-    own file -- never into the artifact map, so `decide()` and the safety bridge cannot
-    see it even by accident. It cannot set GROUNDING_FINDINGS, cannot trigger repair,
-    cannot reach the fact check, and cannot make a held article publishable. Any failure
-    inside it is swallowed and recorded: a comparison experiment must never be able to
-    change the outcome of a production run, including by raising.
-    """
-    if not GV2.enabled():
-        return
-    try:
-        payload = GV2.run_shadow(provider, article_text=wo.get("article_text", ""),
-                                 pack=pack)
-    except Exception as e:                                    # never reaches the caller
-        payload = {"shadow": True, "error": "%s: %s" % (type(e).__name__, str(e)[:300]),
-                   "authority": "NONE"}
-    try:
-        (out_dir / ("%s.json" % GV2.ARTIFACT)).write_text(
-            json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False),
-            encoding="utf-8")
     except Exception:
         pass
 

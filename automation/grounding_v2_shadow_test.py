@@ -248,60 +248,28 @@ def test_classifier_structure_is_validated_not_repaired():
 
 
 # ── no authority ──────────────────────────────────────────────────────────────
-def test_shadow_is_off_by_default_and_cannot_touch_the_decision():
-    os.environ.pop(GV2.SHADOW_ENV, None)
-    check("shadow is OFF when the variable is unset", GV2.enabled() is False)
-    for v in ("0", "off", "false", "", "no", "maybe"):
-        os.environ[GV2.SHADOW_ENV] = v
-        check("shadow stays OFF for %r" % v, GV2.enabled() is False)
-    os.environ.pop(GV2.SHADOW_ENV, None)
-
-    with tempfile.TemporaryDirectory() as d:
-        out = R.run(T._source_payload(), pathlib.Path(d), T.StubProvider(), "off", AT,
-                    mode=R.MODE_LIVE, research_fn=stub_pack)
-        files = {p.name for p in (pathlib.Path(d) / "off").glob("*")}
-        check("no shadow artifact is written when OFF",
-              "GROUNDING_V2_SHADOW.json" not in files, sorted(files))
-        check("the production decision is unaffected", out["decision"] == "ACCEPT",
-              out["reasons"])
-        baseline_stages = set(out["artifacts"])
-
+# The runner-level integration these two tests exercised end-to-end through R.run() --
+# an ON path that wrote GROUNDING_V2_SHADOW.json, and crash-swallowing around that call
+# -- was removed 2026-09-11 (see grounding_v2_removal_test.py and runner.py's history).
+# Astra's independent audit found zero semantic, control-flow or telemetry consumer and
+# zero proven production rescues across the retained evidence: the runner never calls
+# `_shadow_grounding_v2` now, so there is no ON path left to exercise this way. What
+# replaces both is the single fact that matters post-removal: the env var can no longer
+# make the runner do anything at all. grounding_v2.py's OWN behaviour (GV2.run_shadow
+# called directly, GV2.enabled()) is untouched and is exercised elsewhere in this file
+# and in grounding_v2_batch_test.py -- the module remains a research artifact.
+def test_the_env_var_can_no_longer_reach_the_runner():
     os.environ[GV2.SHADOW_ENV] = "1"
     try:
         with tempfile.TemporaryDirectory() as d:
-            out2 = R.run(T._source_payload(), pathlib.Path(d), T.StubProvider(), "on", AT,
-                         mode=R.MODE_LIVE, research_fn=stub_pack)
-            files = {p.name for p in (pathlib.Path(d) / "on").glob("*")}
-            check("shadow writes its own artifact when ON",
-                  "GROUNDING_V2_SHADOW.json" in files, sorted(files))
-            check("the artifact map is unchanged by the shadow",
-                  set(out2["artifacts"]) == baseline_stages)
-            check("the shadow artifact is not an engine stage",
-                  GV2.ARTIFACT not in C.STAGE_ORDER)
-            check("decision.py never sees it",
-                  GV2.ARTIFACT not in out2["artifacts"])
-            check("the decision is identical with the shadow running",
-                  out2["decision"] == "ACCEPT", out2["reasons"])
-            payload = json.loads((pathlib.Path(d) / "on" / "GROUNDING_V2_SHADOW.json").read_text())
-            check("the artifact declares it has no authority",
-                  payload.get("shadow") is True and "NONE" in payload.get("authority", ""))
-    finally:
-        os.environ.pop(GV2.SHADOW_ENV, None)
-
-
-def test_shadow_failure_cannot_break_a_production_run():
-    os.environ[GV2.SHADOW_ENV] = "1"
-    real = GV2.run_shadow
-    GV2.run_shadow = lambda *a, **k: (_ for _ in ()).throw(RuntimeError("shadow exploded"))
-    try:
-        with tempfile.TemporaryDirectory() as d:
-            out = R.run(T._source_payload(), pathlib.Path(d), T.StubProvider(), "boom", AT,
+            out = R.run(T._source_payload(), pathlib.Path(d), T.StubProvider(), "on", AT,
                         mode=R.MODE_LIVE, research_fn=stub_pack)
-            check("a shadow crash does not change the decision", out["decision"] == "ACCEPT")
-            payload = json.loads((pathlib.Path(d) / "boom" / "GROUNDING_V2_SHADOW.json").read_text())
-            check("the crash is recorded in the shadow artifact", "error" in payload)
+            files = {p.name for p in (pathlib.Path(d) / "on").glob("*")}
+            check("no shadow artifact is written, even with the shadow env var ON",
+                  "GROUNDING_V2_SHADOW.json" not in files, sorted(files))
+            check("the production decision is unaffected", out["decision"] == "ACCEPT",
+                  out["reasons"])
     finally:
-        GV2.run_shadow = real
         os.environ.pop(GV2.SHADOW_ENV, None)
 
 
@@ -502,8 +470,7 @@ def main():
                test_escalation_ladder_prefers_the_smallest_useful_step,
                test_required_regressions_are_named_and_run_outside_any_cap,
                test_classifier_structure_is_validated_not_repaired,
-               test_shadow_is_off_by_default_and_cannot_touch_the_decision,
-               test_shadow_failure_cannot_break_a_production_run,
+               test_the_env_var_can_no_longer_reach_the_runner,
                test_production_modules_are_untouched,
                test_bounds_are_declared_and_finite):
         print("\n" + fn.__name__)

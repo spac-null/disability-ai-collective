@@ -306,13 +306,15 @@ def test_atoms_stay_tied_to_their_parent_span():
 
 
 # ── shadow OFF means the provider is never touched ──────────────────────────
-def test_shadow_off_costs_zero_calls_and_reads_nothing():
-    from new_engine_v1 import runner as RUN
+def test_shadow_env_var_parsing():
+    """The runner-level integration (RUN._shadow_grounding_v2) this test used to also
+    exercise was removed 2026-09-11 -- see grounding_v2_removal_test.py and
+    runner.py's history. The runtime hook was a shadow-only, opt-in-by-env-var call
+    with zero semantic, control-flow or telemetry consumers proven against production
+    (0 rescues across the retained evidence). The grounding_v2 module and its own
+    behaviour (this function's remaining scope: GV2.SHADOW_ENV/GV2.enabled() parsing)
+    are unaffected and are preserved as a research artifact."""
     import os
-    import tempfile
-
-    class Counting(StubProvider):
-        pass
 
     saved = os.environ.pop(GV2.SHADOW_ENV, None)
     try:
@@ -323,16 +325,6 @@ def test_shadow_off_costs_zero_calls_and_reads_nothing():
                 continue
             check("  %r is OFF" % val, GV2.enabled() is False, val)
         os.environ.pop(GV2.SHADOW_ENV, None)
-        p = Counting()
-        with tempfile.TemporaryDirectory() as d:
-            RUN._shadow_grounding_v2(p, pathlib.Path(d), {"article_text": ARTICLE},
-                                     ARTICLE, {"sources": []})
-            check("shadow OFF makes zero provider calls",
-                  p.typing_calls == 0 and p.classify_calls == 0,
-                  (p.typing_calls, p.classify_calls))
-            check("and writes no artifact at all",
-                  list(pathlib.Path(d).iterdir()) == [],
-                  [x.name for x in pathlib.Path(d).iterdir()])
         for on in ("1", "true", "on", "yes", "YES", " On "):
             os.environ[GV2.SHADOW_ENV] = on
             check("  %r is ON (explicit opt-in still works)" % on, GV2.enabled() is True)
@@ -373,10 +365,12 @@ def test_v2_output_is_non_authoritative_by_structure():
         check("%s never references grounding_v2" % mod,
               not any("grounding_v2" in x or x in ("GV2",) for x in names),
               sorted(x for x in names if "ground" in x.lower()))
-    # the runner reaches it only after the decision is persisted
+    # The runner no longer calls it at all (removed 2026-09-11, 0 proven production
+    # rescues) -- see grounding_v2_removal_test.py. This is stronger than the retired
+    # "called only after the decision is persisted" ordering check.
     rsrc = (HERE / "new_engine_v1" / "runner.py").read_text()
-    check("the shadow is called after the decision is persisted",
-          rsrc.index("_persist(A, run_root") < rsrc.index("_shadow_grounding_v2(provider"))
+    check("the runner does not reference grounding_v2 at all",
+          "grounding_v2" not in rsrc.lower() and "_shadow_grounding_v2" not in rsrc)
 
 
 # ── deadline exhaustion stays a diagnostic ──────────────────────────────────
@@ -435,7 +429,7 @@ def main() -> None:
                test_the_deadline_still_reaches_identification,
                test_the_total_v2_call_bound_fell,
                test_atoms_stay_tied_to_their_parent_span,
-               test_shadow_off_costs_zero_calls_and_reads_nothing,
+               test_shadow_env_var_parsing,
                test_v2_output_is_non_authoritative_by_structure,
                test_deadline_exhaustion_is_a_diagnostic_not_a_verdict,
                test_the_typing_prompt_model_and_contracts_are_untouched):
