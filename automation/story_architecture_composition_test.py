@@ -389,10 +389,16 @@ def test_the_ten_stages_run_in_order_and_pass():
 
 
 def test_a_provider_parse_failure_is_a_hold_after_one_mechanical_retry():
+    """A reply that never became JSON is the model/transport failing its contract, not the
+    stage's own editorial verdict. It must not be reported as LEDGER_HOLD -- a code that
+    means "the ledger looked at real content and refused it" -- which is exactly what a
+    real production run did with a truncated Worth reply until this was INVALID_JSON_REPLY."""
     prov, out = run(["not json at all", "still not json"])
     check("the run holds", out["status"] == CP.HOLD)
     check("it holds at the ledger", out["failure_stage"] == CP.LEDGER)
-    check("the code is LEDGER_HOLD", out["reason_code"] == CP.LEDGER_HOLD)
+    check("the code is INVALID_JSON_REPLY, never the stage's own editorial hold code",
+          out["reason_code"] == CP.INVALID_JSON_REPLY
+          and out["reason_code"] != CP.LEDGER_HOLD, out["reason_code"])
     check("exactly two attempts, no third", len(prov.calls) == 2, len(prov.calls))
     check("the reason names the parse failure",
           "not one JSON object" in out["failure_reason"], out["failure_reason"])

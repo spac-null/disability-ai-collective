@@ -149,6 +149,16 @@ CLAUDE_SUBSCRIPTION_LIMIT = "CLAUDE_SUBSCRIPTION_LIMIT"
 def _is_subscription_limit(exc: BaseException) -> bool:
     return type(exc).__name__ == "SubscriptionLimit"
 
+
+# A reply that never became one JSON object after two mechanical attempts (see `_ask`).
+# This is an infrastructure/contract failure -- the model or the transport did not do
+# its job -- and must never be reported under a stage's own editorial hold code (e.g.
+# WORTH_HOLD), which means "the gate looked at a real answer and refused it". Observed
+# live: a truncated Worth reply held as WORTH_HOLD, indistinguishable in the log and in
+# every downstream classifier from Worth genuinely saying no. CLAUDE_SUBSCRIPTION_LIMIT
+# already gets this treatment for a provider-refused call; malformed output gets it too.
+INVALID_JSON_REPLY = "INVALID_JSON_REPLY"
+
 # Text budget per source inside a composition prompt. The evidence freeze must see the
 # source bytes it is quoting from, so this is far larger than stages.PACK_SOURCE_CHARS,
 # which exists to keep a source from crowding out an anchor in a reading prompt.
@@ -256,7 +266,10 @@ def _ask(provider, system: str, user: str, max_tokens: int, stage: str,
             return parse_json_object(comp.text), _identity(comp, attempt)
         except ProviderError as e:
             last = e
-    raise CompositionHold(stage, code,
+    # NOT `code`: a malformed reply is the model/transport failing to do its job, never
+    # the stage's own editorial verdict, so it must not be reported under the stage's
+    # hold code (WORTH_HOLD, LEDGER_HOLD, ...) -- see INVALID_JSON_REPLY above.
+    raise CompositionHold(stage, INVALID_JSON_REPLY,
                           ["reply was not one JSON object after two attempts: %s" % last])
 
 
