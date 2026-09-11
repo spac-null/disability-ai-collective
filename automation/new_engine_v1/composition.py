@@ -4761,9 +4761,15 @@ def _safety_locate_findings(sa: dict, allowed_prefixes=SAFETY_REPAIRABLE_PREFIXE
         for v in (audits.get("cut_adherence") or {}).get("violations") or []:
             if cut_term_confidence(v["term"]) != CUT_HIGH:
                 continue
-            sent = _sentence_containing(pkg_text if on_pkg else text, v["match"])
-            if not add(sent or v["match"],
-                       "cut term leaked into prose: %r" % v["match"], on_pkg):
+            # `v["match"]` is the matcher ROUTE ("literal" or "inflected"), not prose --
+            # locating THAT string in the article (2026-09-11 audit) finds nothing real
+            # CUT_LEAKAGE ever produces, so every CUT_LEAKAGE hold silently fell through
+            # to `return None` here and never reached repair. The actual matched text is
+            # `v["term"]`, exactly like every other loop in this function locates by its
+            # own matched value (`frame`, `name`, `tok`, `ent`), never by a type label.
+            term = str(v.get("term") or "")
+            sent = _sentence_containing(pkg_text if on_pkg else text, term)
+            if not add(sent or term, "cut term leaked into prose: %r" % term, on_pkg):
                 return None
         surf = (audits.get("factual_surface") or {})
         for tok in (list(surf.get("unapproved_sensory") or [])

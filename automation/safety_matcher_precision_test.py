@@ -253,6 +253,47 @@ def test_shaped_terms_lose_distinctiveness_when_they_recur_across_the_ledger():
           CP._is_distinctive("ESP32S3", CP._document_frequency(led_rare_id)))
 
 
+def test_the_cut_leakage_repair_locator_finds_the_matched_term_not_the_route_label():
+    """A CUT_LEAKAGE hold was structurally unrepairable (2026-09-11 audit, found while
+    reconciling an independent CUT_LEAKAGE branch). `_safety_locate_findings` located
+    every OTHER blocking category by its own matched value (`frame`, `name`, `tok`,
+    `ent`) -- but the CUT_LEAKAGE loop located by `v["match"]`, which is the matcher's
+    ROUTE label ("literal" or "inflected"), not prose. Searching an article for the
+    literal word "literal" finds nothing, so `add()` always failed and the whole
+    function returned None -- not just skipping the CUT finding, aborting repair
+    eligibility entirely, for every category in the same blocking set. Fixed to locate
+    by `v["term"]`, the actual matched text, exactly like every sibling loop already
+    does."""
+    sa = {
+        "blocking": ["CUT_LEAKAGE: [('F1', '2020', 'literal')]"],
+        "audited_text": "The event happened in 2020, a year everyone remembers.",
+        "audited_package_text": "",
+        "audits": {
+            "continuity_final": {
+                "cut_adherence": {"violations": [
+                    {"evidence_id": "F1", "reason": "REDUNDANT_PROOF", "term": "2020",
+                     "match": "literal"}]},
+                "prose_leaks": {"frames": []}, "scaffold": {"leaked": []},
+                "factual_surface": {},
+            },
+            "publication_package": {
+                "cut_adherence": {"violations": []},
+                "prose_leaks": {"frames": []}, "scaffold": {"leaked": []},
+                "factual_surface": {},
+            },
+        },
+    }
+    result = CP._safety_locate_findings(sa)
+    check("a locatable CUT_LEAKAGE finding is no longer refused outright",
+          result is not None, result)
+    check("the finding quotes the sentence the term actually appears in, not the "
+          "route label",
+          bool(result) and result[0]["quote"]
+          == "The event happened in 2020, a year everyone remembers.", result)
+    check("the finding explains itself with the matched term",
+          bool(result) and "'2020'" in result[0]["why"], result)
+
+
 # ── FIX 2: provenance frames are frames, not vocabulary ─────────────────────────────
 def test_role_taxonomy_is_a_frame_not_a_word():
     clean = [
@@ -432,6 +473,7 @@ def main():
                test_numeric_cut_term_does_not_fire_on_a_longer_identifier,
                test_proper_noun_extraction_keeps_a_hyphenated_compound_whole,
                test_shaped_terms_lose_distinctiveness_when_they_recur_across_the_ledger,
+               test_the_cut_leakage_repair_locator_finds_the_matched_term_not_the_route_label,
                test_role_taxonomy_is_a_frame_not_a_word,
                test_other_provenance_frames_unchanged,
                test_title_cased_ordinary_vocabulary_is_not_an_entity,
