@@ -28,6 +28,10 @@ publication_safety_version: 1
 translation_nl: "/nl/the-interpreter-and-the-presidents-image/"
 image: /assets/the-interpreter-and-the-presidents-image_setting_1.jpg
 image_alt: "The Interpreter and the President's Image — editorial illustration"
+dek: "The White House stopped using live ASL interpreters in January. When deaf plaintiffs sued, government attorneys answered that requiring interpreters \"would severely intrude on the President's prerogative to control the image he presents to the public.\""
+excerpt: "When the National Association of the Deaf and two deaf men sued over the end of live ASL interpretation at White House briefings, Justice Department attorneys replied that mandating interpreters \"would severely intrude on the President's prerogative to control the image he presents to the public.\" On Nov. 4, Judge Amir Ali ordered the interpretation provided, and visible."
+meta_description: "A judge ordered the White House to provide visible ASL interpretation at press briefings after government attorneys cited the president's image."
+social_hook: "In May, the National Association of the Deaf and two deaf men sued. In June, government attorneys wrote that mandating ASL interpreters \"would severely intrude on the President's prerogative to control the image he presents to the public.\""
 ---
 
 # The Interpreter and the President's Image
