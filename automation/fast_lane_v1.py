@@ -221,7 +221,16 @@ FAST_LANE_WRITER_SYSTEM = (
       "signing date, a sequence, a before/after relation, a motive or a belief that "
       "is not explicitly in a fact below -- a date attached to an EVENT is not the "
       "date of a DOCUMENT, and two separately dated facts do not by themselves create "
-      "a chronology between them. Literary force is never factual permission."
+      "a chronology between them. Literary force is never factual permission.\n"
+    + "\n\nEXCLUSIVITY_AND_SUFFICIENCY_REQUIRE_DIRECT_LICENSE. Do not introduce a "
+      "claim built on only, enough, sufficient, required, needed, alone, "
+      "regardless of, without needing, or no longer necessary when it implies that "
+      "another fact, person, account or action was irrelevant, unnecessary, "
+      "excluded, or causally sufficient by itself -- unless a fact below explicitly "
+      "licenses that relation. Two attributed accounts placed side by side may "
+      "disagree; the article may not then add a further sentence ranking them "
+      "('only one was needed', 'the other did not matter'). Let the reader hold the "
+      "disagreement -- do not resolve it for them."
 )
 
 
