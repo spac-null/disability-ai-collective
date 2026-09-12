@@ -221,40 +221,7 @@ FAST_LANE_WRITER_SYSTEM = (
       "signing date, a sequence, a before/after relation, a motive or a belief that "
       "is not explicitly in a fact below -- a date attached to an EVENT is not the "
       "date of a DOCUMENT, and two separately dated facts do not by themselves create "
-      "a chronology between them. Literary force is never factual permission.\n"
-    + "\n\nADDITIONALLY, return one more field in the same JSON object:\n"
-      '  "claim_map": [{"sentence_id": "S001", "fact_ids": ["F60"], '
-      '"entity_owner": "TD Snap", "claim_subject_label": "", "scope": "WORLD", '
-      '"qualifiers": "v1.40.2, 2026-08-17", "claim_status": "ESTABLISHED", '
-      '"attribution_to": null, "temporal_relation": "NONE"}]\n'
-      "For every factual sentence in the article (a sentence naming a specific "
-      "product, action, date, version or number), give its sentence_id (matching the "
-      "numbering you already assign for negative_lineage) and the fact_id(s) from the "
-      "packet it rests on.\n"
-      "  entity_owner is OPTIONAL. Give it ONLY when the cited fact names exactly one "
-      "entity and the sentence is about that one entity -- and then it must be that "
-      "entity's exact name, verbatim, not a paraphrase or a description of what the "
-      "fact is about. If the cited fact names no entity, or several, or the sentence "
-      "is relational, leave entity_owner null (do not invent a descriptive stand-in).\n"
-      "  claim_subject_label is OPTIONAL, freeform, and never checked against the "
-      "Ledger -- use it for a short descriptive label of what the sentence is about "
-      "when entity_owner does not apply (e.g. 'US interpreter certification "
-      "requirements'). It grants no factual permission.\n"
-      "  scope: the scope word from the cited fact, when there is exactly one cited "
-      "fact; omit it for a sentence resting on more than one fact.\n"
-      "  qualifiers: any exact date/version/number the sentence states, verbatim.\n"
-      "  claim_status: report the status this sentence actually carries in your "
-      "prose -- ESTABLISHED, ATTRIBUTED, DISPUTED or UNCERTAIN. Report it honestly: "
-      "if the cited fact's FACT STATUS says ATTRIBUTED/DISPUTED/UNCERTAIN, your "
-      "sentence must read that way and this field must say so too, never "
-      "ESTABLISHED.\n"
-      "  attribution_to: the speaker named in the sentence, when claim_status is "
-      "ATTRIBUTED or DISPUTED; null otherwise.\n"
-      "  temporal_relation: 'BEFORE', 'AFTER' or 'NONE'. Use BEFORE/AFTER only when "
-      "a fact below explicitly states that ordering; otherwise NONE, even if two "
-      "facts happen to carry different dates.\n"
-      "A purely transitional sentence asserting no fact-specific claim may be omitted "
-      "from claim_map. Use no fact_id that was not given to you above."
+      "a chronology between them. Literary force is never factual permission."
 )
 
 
@@ -317,11 +284,18 @@ def fast_lane_ask(provider, system: str, user: str, max_tokens: int, stage: str,
 
 def fast_lane_write(provider, arch: dict, ledger: dict,
                     fact_status: dict | None = None) -> tuple:
-    """Returns (article_text, claim_map, negative_lineage, packet, identity).
+    """ARTICLE ONLY (2026-09-12). Returns (article_text, negative_lineage, packet,
+    identity) -- no claim_map. Production evidence showed asking one call to both
+    write strong prose AND maintain sentence-level fact-id bookkeeping caused the
+    bookkeeping to drift even when the prose itself was correct (fact ids shifted
+    across several consecutive sentences while the article text stayed accurate).
+    Claim-mapping is now a SEPARATE, READ-ONLY pass over the frozen article -- see
+    claim_map_article() below -- so a bookkeeping retry never risks the prose, and a
+    prose retry is never needed to fix bookkeeping.
 
-    `fact_status` is the optional Fast-Lane-only {fact_id: {claim_status,
-    attribution_to}} annotation map, appended to the prompt as FACT STATUS and later
-    checked against the Writer's own claim_map by validate_claim_map().
+    `fact_status` is still passed to the Writer (via FACT STATUS) so attribution and
+    dispute status shape the prose itself; only the Writer's own self-reporting of
+    that status per sentence has moved to the Claim Mapper.
     """
     packet, rendered = CP.writer_packet(arch, ledger, cut_prohibitions=None)
     rendered = rendered + render_fact_status(fact_status or {})
@@ -331,8 +305,111 @@ def fast_lane_write(provider, arch: dict, ledger: dict,
     if len((article or "").split()) < CP.WRITER_MIN_WORDS:
         raise CP.CompositionHold("FAST_LANE_WRITER", "FAST_LANE_WRITER_HOLD",
                                  ["writer reply has no real article body"])
-    return article, obj.get("claim_map") or [], obj.get("negative_lineage") or [], \
-        packet, ident
+    return article, obj.get("negative_lineage") or [], packet, ident
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CLAIM MAPPER -- a separate, READ-ONLY pass over the FROZEN article. It cannot
+# rewrite, edit or judge prose; it only names which already-selected fact(s) each
+# already-numbered sentence rests on, and that sentence's status. Sentence identity
+# comes from composition.label_sentences() (the same S001.. numbering negative_
+# lineage already uses), not from the model's own count -- removing exactly the
+# self-numbering drift that caused the original defect.
+# ══════════════════════════════════════════════════════════════════════════════
+CLAIM_MAPPER_SYSTEM = (
+    "You are a metadata annotator, not a writer. The article below is FINISHED and "
+    "FROZEN -- you will never see it change, and nothing you say can change it. Your "
+    "only task is bookkeeping: for each numbered sentence that makes a factual claim "
+    "(names a product, person, action, date, version or number), report which "
+    "fact_id(s) from FACTS AVAILABLE it actually rests on, and that sentence's "
+    "status.\n"
+    "\n"
+    "You may not cite a fact_id that is not listed in FACTS AVAILABLE. You may not "
+    "invent a fact, infer one, or add anything the sentence does not already say. A "
+    "purely transitional sentence with no fact-specific claim may be omitted "
+    "entirely.\n"
+    "\n"
+    "Each fact in FACTS AVAILABLE is already marked ESTABLISHED, ATTRIBUTED, DISPUTED "
+    "or UNCERTAIN. Report the sentence's claim_status to MATCH its fact's status, "
+    "honestly, from what the sentence actually says -- never report ESTABLISHED for a "
+    "sentence whose fact is ATTRIBUTED, DISPUTED or UNCERTAIN, even if the sentence "
+    "happens to read that way; report the true status of the fact instead, and if the "
+    "sentence and the fact's status genuinely conflict, report the fact's status and "
+    "leave a note by simply choosing the more conservative one.\n"
+    "\n"
+    "Reply with ONE JSON object:\n"
+    '{"claim_map": [{"sentence_id": "S001", "fact_ids": ["F60"], '
+    '"entity_owner": null, "claim_subject_label": "", "scope": null, '
+    '"qualifiers": "", "claim_status": "ESTABLISHED", "attribution_to": null, '
+    '"temporal_relation": "NONE"}]}\n'
+    "  entity_owner: ONLY when the cited fact names exactly one entity and the "
+    "sentence is about that one entity -- its exact name, verbatim. Otherwise null.\n"
+    "  claim_subject_label: optional, freeform, ungraded description of the "
+    "sentence's subject when entity_owner does not apply.\n"
+    "  scope: the cited fact's own scope word, only when exactly one fact is cited.\n"
+    "  qualifiers: any exact date/version/number the sentence states, verbatim.\n"
+    "  attribution_to: the speaker actually named in the sentence, when claim_status "
+    "is ATTRIBUTED or DISPUTED; null otherwise.\n"
+    "  temporal_relation: 'BEFORE', 'AFTER' or 'NONE' -- BEFORE/AFTER only when a "
+    "fact below explicitly licenses that ordering.\n"
+    "No prose outside the JSON."
+)
+
+
+def render_claim_mapper_prompt(sentences: dict, ledger: dict, allowed_fact_ids,
+                               fact_status: dict) -> str:
+    fact_status = fact_status or {}
+
+    def _n(fid: str) -> int:
+        return int(fid[1:]) if fid[1:].isdigit() else 0
+
+    L = ["THE FROZEN ARTICLE, BY SENTENCE"]
+    for sid, s in sentences.items():
+        L.append("  %s: %s" % (sid, s))
+    L.append("")
+    L.append("FACTS AVAILABLE")
+    for fid in sorted(allowed_fact_ids, key=_n):
+        fact = ledger.get(fid) or {}
+        ann = fact_status.get(fid) or {}
+        status = ann.get("claim_status", ESTABLISHED)
+        who = ann.get("attribution_to")
+        header = "  %s [%s%s]" % (fid, status, (" - %s" % who) if who else "")
+        L.append("%s: %s" % (header, fact.get("proposition", "")))
+        if fact.get("entities"):
+            L.append("      entities: %s" % fact["entities"])
+        if fact.get("scope"):
+            L.append("      scope: %s" % fact["scope"])
+    return "\n".join(L)
+
+
+def claim_map_article(provider, article_text: str, ledger: dict, allowed_fact_ids,
+                      fact_status: dict | None = None) -> tuple:
+    """Returns (claim_map, errors, retries, identity). ONE normal call; if the
+    result is mechanically invalid (fails validate_claim_map, not just malformed
+    JSON -- fast_lane_ask already retries malformed JSON on its own), ONE further
+    metadata-only retry naming the exact validation errors. Never touches the
+    article, never calls the Writer."""
+    fact_status = fact_status or {}
+    sentences = CP.label_sentences(article_text)
+    prompt = render_claim_mapper_prompt(sentences, ledger, allowed_fact_ids,
+                                        fact_status)
+    obj, ident = fast_lane_ask(provider, CLAIM_MAPPER_SYSTEM, prompt, 4_000,
+                               "FAST_LANE_CLAIM_MAPPER", "FAST_LANE_CLAIM_MAPPER_HOLD")
+    claim_map = obj.get("claim_map") or []
+    errs = validate_claim_map(claim_map, allowed_fact_ids, ledger, fact_status)
+    if not errs:
+        return claim_map, errs, 0, ident
+
+    retry_prompt = (
+        prompt + "\n\nYOUR PREVIOUS ANSWER HAD THESE MECHANICAL ERRORS. Return a "
+        "corrected claim_map only -- same sentence_ids, no new ones, no article "
+        "change (you were never shown one to change):\n"
+        + "\n".join("  - %s" % e for e in errs))
+    obj2, ident2 = fast_lane_ask(provider, CLAIM_MAPPER_SYSTEM, retry_prompt, 4_000,
+                                 "FAST_LANE_CLAIM_MAPPER", "FAST_LANE_CLAIM_MAPPER_HOLD")
+    claim_map = obj2.get("claim_map") or []
+    errs = validate_claim_map(claim_map, allowed_fact_ids, ledger, fact_status)
+    return claim_map, errs, 1, ident2
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -498,21 +575,23 @@ def run_replay(run_dir: str, out_dir: str, model: str = DEFAULT_MODEL) -> dict:
 
     report = {"stage_reached": "WRITER", "status": "HOLD"}
 
-    article_text, claim_map, negative_lineage, writer_packet_obj, ident = \
+    article_text, negative_lineage, writer_packet_obj, ident = \
         fast_lane_write(provider, arch, ledger)
     (out_dir / "WRITER_OUTPUT.json").write_text(
-        json.dumps({"article_text": article_text, "claim_map": claim_map,
+        json.dumps({"article_text": article_text,
                    "negative_lineage": negative_lineage, "provider": ident},
                   indent=2, sort_keys=True), encoding="utf-8")
     (out_dir / "article.md").write_text(article_text, encoding="utf-8")
     report["word_count"] = len(article_text.split())
 
-    claim_errs = validate_claim_map(claim_map, allowed, ledger)
+    claim_map, claim_errs, claim_retries, claim_ident = claim_map_article(
+        provider, article_text, ledger, allowed)
     (out_dir / "CLAIM_MAP_VALIDATION.json").write_text(
-        json.dumps({"errors": claim_errs, "claim_map": claim_map}, indent=2),
-        encoding="utf-8")
+        json.dumps({"errors": claim_errs, "claim_map": claim_map,
+                   "retries": claim_retries}, indent=2), encoding="utf-8")
     if claim_errs:
-        report.update(stage_reached="CLAIM_MAP", status="HOLD", errors=claim_errs)
+        report.update(stage_reached="CLAIM_MAP", status="HOLD", errors=claim_errs,
+                      claim_mapper_retries=claim_retries)
         return report
 
     draft_text = final_text = article_text
