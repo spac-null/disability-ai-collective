@@ -204,15 +204,36 @@ FACT_STATUS = {
     "F21": {"claim_status": FL.ATTRIBUTED, "attribution_to": "the complaint"},
     "F22": {"claim_status": FL.ATTRIBUTED, "attribution_to": "the complaint"},
     # B3
+    # F41's compliance deadline: mechanically resolving "last Friday" against S1's
+    # own 2025-11-05 publication date gives 2025-10-31 -- but that PRECEDES the
+    # Nov. 4 injunction it supposedly reports compliance on, an impossible order.
+    # Verified instead directly against the primary court order (S4, Document 29,
+    # fetched from CourtListener/RECAP and read in full): "These defendants shall
+    # file a status report by November 7, 2025, that apprises the court of their
+    # compliance with this order." That is the actual, authoritative deadline;
+    # NPR's "last Friday" phrasing (S1) is not the source of resolution here --
+    # this is why RELATIVE_DATE_RESOLUTION's own weekday arithmetic is NOT used
+    # for this fact: the correct answer required primary-document verification,
+    # which is more authoritative than any relative-phrase computation.
     "F41": {"claim_status": FL.ESTABLISHED, "attribution_to": None,
            "event_id": "INJUNCTION_NOV2025", "event_date": "Nov. 4",
-           "temporal_permission": "NONE"},
+           "temporal_permission": "NONE",
+           "source_relative_phrase": "last Friday", "source_context_date": None,
+           "resolved_absolute_date": "2025-11-07", "resolution_status": "EXACT",
+           "resolution_method": "verified directly against primary court order "
+                                "S4 (Document 29), not NPR's relative phrasing"},
     "F53": {"claim_status": FL.ESTABLISHED, "attribution_to": None,
            "event_id": "INJUNCTION_NOV2025"},
+    # F55/F42/F43 corrected 2026-09-12 against the primary court order (S4,
+    # Document 29, verified in full): F55's first clause is "reasonable
+    # accommodations" (plural), not "accommodation" -- the second, "hardly be
+    # called an accommodation at all", is correctly singular in the primary text
+    # and unchanged. F42/F43 needed only a comma restored ("and, in recent
+    # years," not "and in recent years").
     "F55": {"claim_status": FL.ATTRIBUTED, "attribution_to": "Judge Amir Ali",
            "quote_permission": "DIRECT_VERBATIM",
            "quote_text": "The defendants correctly note that the plaintiffs are "
-                         "entitled only to reasonable accommodation. But it is "
+                         "entitled only to reasonable accommodations. But it is "
                          "not reasonable -- indeed it can hardly be called an "
                          "accommodation at all -- to transcribe press briefings "
                          "into a language that Ford and many NAD members do not "
@@ -223,7 +244,7 @@ FACT_STATUS = {
            "quote_text": "White House press briefings engage the American "
                          "people on important issues affecting their daily "
                          "lives -- in recent months, war, the economy, and "
-                         "healthcare, and in recent years, a global pandemic",
+                         "healthcare, and, in recent years, a global pandemic",
            "quote_attribution": "Judge Amir Ali"},
     "F43": {"claim_status": FL.ATTRIBUTED, "attribution_to": "Judge Amir Ali",
            "quote_permission": "DIRECT_VERBATIM",
