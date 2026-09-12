@@ -192,10 +192,15 @@ FACT_STATUS = {
     "F89": {"claim_status": FL.ESTABLISHED, "attribution_to": None},
     "F04": {"claim_status": FL.ESTABLISHED, "attribution_to": None},
     "F63": {"claim_status": FL.ATTRIBUTED, "attribution_to": "the plaintiffs"},
-    "F15": {"claim_status": FL.ATTRIBUTED, "attribution_to": "the complaint"},
+    # F15/F19 corrected 2026-09-12 (copy-desk pass): NPR (S0) states Ford's and
+    # Bonn's basic identity (age, residence) in its own narration, not as "the
+    # complaint says" -- ESTABLISHED matches the source's own framing, and the
+    # article already states these plainly with no attribution, which is
+    # therefore accurate rather than a dropped-attribution defect.
+    "F15": {"claim_status": FL.ESTABLISHED, "attribution_to": None},
     "F16": {"claim_status": FL.ATTRIBUTED, "attribution_to": "the complaint"},
     "F17": {"claim_status": FL.ATTRIBUTED, "attribution_to": "the complaint"},
-    "F19": {"claim_status": FL.ATTRIBUTED, "attribution_to": "the complaint"},
+    "F19": {"claim_status": FL.ESTABLISHED, "attribution_to": None},
     "F21": {"claim_status": FL.ATTRIBUTED, "attribution_to": "the complaint"},
     "F22": {"claim_status": FL.ATTRIBUTED, "attribution_to": "the complaint"},
     # B3
