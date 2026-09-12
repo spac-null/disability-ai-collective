@@ -33,6 +33,7 @@ mistaken for a legacy stamp.
 from __future__ import annotations
 
 import pathlib
+import json
 import re
 import sys
 
@@ -85,6 +86,17 @@ class BridgeResult:
             # Nothing extracted, nothing checked, and coverage therefore not proven.
             "coverage_complete": False, "claims_checked": 0, "claims_not_checked": 0,
         }
+        self.reader_materiality_evidence: dict = {
+            "reader_raw_pass": False,
+            "reader_materiality_adjudication": False,
+            "reader_effective_pass": False,
+            "raw_reader_status": None,
+            "publication_status": None,
+            "minor_finding_count": 0,
+            "material_finding_count": 0,
+            "article_sha256": None,
+            "reason": "not evaluated",
+        }
 
     def add(self, name: str, ok: bool, detail: str, blocking: bool = True):
         self.checks.append({"check": name, "ok": bool(ok), "blocking": blocking,
@@ -99,6 +111,12 @@ class BridgeResult:
         return {"eligible": self.eligible, "profile": SAFETY_PROFILE,
                 "safety_version": SAFETY_VERSION, "checks": self.checks,
                 "fact_check_evidence": self.fact_check_evidence,
+                "reader_raw_pass": self.reader_materiality_evidence["reader_raw_pass"],
+                "reader_materiality_adjudication":
+                    self.reader_materiality_evidence["reader_materiality_adjudication"],
+                "reader_effective_pass":
+                    self.reader_materiality_evidence["reader_effective_pass"],
+                "reader_materiality_evidence": self.reader_materiality_evidence,
                 "failures": [c["check"] for c in self.failures]}
 
 
@@ -192,7 +210,7 @@ def coverage_state(claims_extracted: int, claims_checked: int, not_checked) -> d
                                        for x in rows})}
 
 
-def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
+def evaluate(out: dict, *, fact_check_fn=None, run_dir=None) -> BridgeResult:
     """Run every required publication-safety check against a finished engine run, for
     WHICHEVER of the two legitimate engine contracts produced `out`.
 
@@ -211,7 +229,8 @@ def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
     """
     if (out.get("provider") or {}).get("composition_engine") == \
             CP.COMPOSITION_STORY_ARCHITECTURE:
-        return _evaluate_new_engine_v1(out, fact_check_fn=fact_check_fn)
+        return _evaluate_new_engine_v1(out, fact_check_fn=fact_check_fn,
+                                       run_dir=run_dir)
     return _evaluate_legacy(out, fact_check_fn=fact_check_fn)
 
 
@@ -494,7 +513,101 @@ def _check_world_relative_fact_check(r: BridgeResult, article: str,
                   "fact check errored (%s); fail-closed" % str(e)[:120])
 
 
-def _evaluate_new_engine_v1(out: dict, *, fact_check_fn=None) -> BridgeResult:
+def _check_reader_materiality_decision(*, raw_reader_status: str, article: str,
+                                       run_dir=None) -> dict:
+    """Validate the retained, additive adjudication of one raw Reader HOLD.
+
+    The run directory is explicit.  Ordinary production calls do not provide it and
+    therefore cannot discover or borrow a decision from another run.  The raw Reader
+    audit and publication decision remain separate files and must agree exactly on the
+    held dimensions; neither artifact is rewritten or reinterpreted as a raw PASS.
+    """
+    article_sha = C.sha256_text(article or "")
+    evidence = {
+        "reader_raw_pass": raw_reader_status == CP.PASS,
+        "reader_materiality_adjudication": False,
+        "reader_effective_pass": raw_reader_status == CP.PASS,
+        "raw_reader_status": raw_reader_status,
+        "publication_status": None,
+        "minor_finding_count": 0,
+        "material_finding_count": 0,
+        "article_sha256": article_sha,
+        "reason": "raw Reader PASS" if raw_reader_status == CP.PASS
+                  else "no valid Reader materiality adjudication",
+    }
+    if raw_reader_status != CP.HOLD:
+        return evidence
+    if run_dir is None:
+        evidence["reason"] = "run directory not supplied"
+        return evidence
+    root = pathlib.Path(run_dir).resolve()
+    decision_path = root / "PUBLICATION_DECISION.json"
+    reader_path = root / "READER_AUDIT.json"
+    if not decision_path.is_file() or not reader_path.is_file():
+        evidence["reason"] = "PUBLICATION_DECISION.json or READER_AUDIT.json missing"
+        return evidence
+    try:
+        decision = json.loads(decision_path.read_text(encoding="utf-8"))
+        reader = json.loads(reader_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        evidence["reason"] = "malformed Reader decision artifact: %s" % str(exc)[:120]
+        return evidence
+    if not isinstance(decision, dict) or not isinstance(reader, dict):
+        evidence["reason"] = "Reader decision artifacts must be JSON objects"
+        return evidence
+
+    decision_sha = decision.get("article_sha256")
+    publication_status = decision.get("publication_status")
+    raw_status = decision.get("raw_reader_status")
+    raw_audit_status = reader.get("status")
+    findings = decision.get("reader_findings")
+    classifications = decision.get("reader_materiality_classification")
+    held = reader.get("held")
+    evidence.update({
+        "publication_status": publication_status,
+        "article_sha256": decision_sha,
+        "raw_reader_status": raw_status,
+    })
+    if not isinstance(findings, dict) or not isinstance(classifications, dict) \
+            or not isinstance(held, dict) or not held:
+        evidence["reason"] = "Reader findings/classifications/held dimensions malformed"
+        return evidence
+    held_ids = set(held)
+    finding_ids = set(findings)
+    classification_ids = set(classifications)
+    material = [key for key, value in classifications.items()
+                if str(value).upper() == "MATERIAL"]
+    non_minor = [key for key, value in classifications.items()
+                 if str(value).upper() != "MINOR"]
+    evidence["minor_finding_count"] = sum(
+        str(value).upper() == "MINOR" for value in classifications.values())
+    evidence["material_finding_count"] = len(material)
+
+    checks = (
+        (decision_sha == article_sha, "decision article SHA does not match current bytes"),
+        (raw_status == CP.HOLD and raw_audit_status == CP.HOLD,
+         "decision and retained Reader audit must both preserve raw HOLD"),
+        (publication_status == "PASS_WITH_MINOR_FINDINGS",
+         "publication status is not PASS_WITH_MINOR_FINDINGS"),
+        (held_ids == finding_ids == classification_ids,
+         "decision does not classify every retained Reader HOLD dimension exactly once"),
+        (not non_minor and not material,
+         "one or more retained Reader findings is not MINOR"),
+    )
+    failed = [reason for ok, reason in checks if not ok]
+    if failed:
+        evidence["reason"] = "; ".join(failed)
+        return evidence
+    evidence["reader_materiality_adjudication"] = True
+    evidence["reader_effective_pass"] = True
+    evidence["reason"] = ("retained raw Reader HOLD adjudicated PASS_WITH_MINOR_FINDINGS; "
+                          "%d MINOR, 0 MATERIAL; article_sha256=%s"
+                          % (evidence["minor_finding_count"], article_sha))
+    return evidence
+
+
+def _evaluate_new_engine_v1(out: dict, *, fact_check_fn=None,
+                            run_dir=None) -> BridgeResult:
     """The new_engine_v1 / story_architecture publication-safety contract.
 
     Every check here reads a field composition.run_story_architecture_composition()
@@ -550,9 +663,24 @@ def _evaluate_new_engine_v1(out: dict, *, fact_check_fn=None) -> BridgeResult:
           "GROUNDING=%r" % stages.get(CP.GROUNDING))
     r.add("fact_check_pass", stages.get(CP.FACT_CHECK) == CP.PASS,
           "composition's own FACT_CHECK stage=%r" % stages.get(CP.FACT_CHECK))
-    r.add("reader_pass", stages.get(CP.READER) == CP.PASS,
-          "READER=%r" % stages.get(CP.READER))
     article = comp.get("article_text") or ""
+    reader_evidence = _check_reader_materiality_decision(
+        raw_reader_status=stages.get(CP.READER), article=article, run_dir=run_dir)
+    r.reader_materiality_evidence = reader_evidence
+    r.add("reader_raw_pass", reader_evidence["reader_raw_pass"],
+          "raw READER=%r" % stages.get(CP.READER), blocking=False)
+    r.add("reader_materiality_adjudication",
+          reader_evidence["reader_materiality_adjudication"],
+          reader_evidence["reason"], blocking=False)
+    r.add("reader_effective_pass", reader_evidence["reader_effective_pass"],
+          "raw=%r materiality=%r"
+          % (reader_evidence["reader_raw_pass"],
+             reader_evidence["reader_materiality_adjudication"]), blocking=False)
+    # Keep the long-standing blocking check name for downstream audit consumers.  Its
+    # value is now explicitly the OR of the two recorded routes above; raw history is
+    # never rewritten.
+    r.add("reader_pass", reader_evidence["reader_effective_pass"],
+          "effective Reader authorization: %s" % reader_evidence["reason"])
     r.add("final_article_artifact_exists",
           bool(comp.get("publication_ready")) and bool(article.strip()),
           "publication_ready=%r words=%s"
