@@ -25,6 +25,7 @@ fact_check_status: "verified"
 publication_eligible: true
 publication_safety_profile: "CURRENT_ENGINE_V1"
 publication_safety_version: 1
+translation_nl: "/nl/the-interpreter-and-the-presidents-image/"
 ---
 
 # The Interpreter and the President's Image
