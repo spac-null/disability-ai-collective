@@ -68,8 +68,12 @@ FACT_STATUS = {
     "F49": {"claim_status": FL.ATTRIBUTED, "attribution_to": "Eric Swalwell"},
     "F55": {"claim_status": FL.ATTRIBUTED,
            "attribution_to": "Nikolas De Bremaeker"},
-    "F35": {"claim_status": FL.ESTABLISHED, "attribution_to": None},
-    "F36": {"claim_status": FL.ATTRIBUTED, "attribution_to": "Tony Thurmond"},
+    "F35": {"claim_status": FL.ESTABLISHED, "attribution_to": None,
+           "event_id": "EVENT_LA_FRIDAY", "event_date": "Friday",
+           "event_location": "Los Angeles"},
+    "F36": {"claim_status": FL.ATTRIBUTED, "attribution_to": "Tony Thurmond",
+           "event_id": "EVENT_LA_FRIDAY", "event_date": "Friday",
+           "event_location": "Los Angeles"},
     "F04": {"claim_status": FL.ATTRIBUTED, "attribution_to": "Julia Métraux"},
     "F15": {"claim_status": FL.ATTRIBUTED, "attribution_to": "Hands United"},
     "F16": {"claim_status": FL.ATTRIBUTED, "attribution_to": "Julia Métraux",
@@ -91,7 +95,15 @@ FACT_STATUS = {
     "F17": {"claim_status": FL.ATTRIBUTED,
            "attribution_to": "the president of the National Hispanic Latino "
                              "Association of the Deaf"},
-    "F38": {"claim_status": FL.ATTRIBUTED, "attribution_to": "Eric Swalwell"},
+    "F38": {"claim_status": FL.ATTRIBUTED, "attribution_to": "Eric Swalwell",
+           "event_id": "EVENT_HAYWARD_MONDAY", "event_date": "Monday",
+           "event_location": "Hayward"},
+    "F37": {"claim_status": FL.ESTABLISHED, "attribution_to": None,
+           "event_id": "EVENT_HAYWARD_MONDAY", "event_date": "Monday",
+           "event_location": "Hayward"},
+    "F48": {"claim_status": FL.ESTABLISHED, "attribution_to": None,
+           "event_id": "EVENT_HAYWARD_MONDAY", "event_date": "Monday",
+           "event_location": "Hayward"},
 }
 for ann in FACT_STATUS.values():
     ann.setdefault("temporal_permission", NONE_TEMPORAL)
