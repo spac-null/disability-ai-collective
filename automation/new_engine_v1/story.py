@@ -1549,6 +1549,52 @@ def _entities(text: str, skip_sentence_initial: bool = True) -> set:
     return out
 
 
+_MONTH_NUMBER = {
+    "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
+    "july": 7, "august": 8, "september": 9, "october": 10, "november": 11,
+    "december": 12,
+    "jan": 1, "feb": 2, "mar": 3, "apr": 4, "jun": 6, "jul": 7, "aug": 8,
+    "sep": 9, "sept": 9, "oct": 10, "nov": 11, "dec": 12,
+}
+
+# ISO (packet form), "23 February 2024" / "23 Feb 2024", "February 23, 2024".
+_DATE_PATTERNS = (
+    re.compile(r"\b(?P<y>\d{4})-(?P<mo>\d{2})-(?P<d>\d{2})\b"),
+    re.compile(r"\b(?P<d>\d{1,2})\s+(?P<mname>[A-Za-z]{3,9})\s+(?P<y>\d{4})\b"),
+    re.compile(r"\b(?P<mname>[A-Za-z]{3,9})\s+(?P<d>\d{1,2}),?\s+(?P<y>\d{4})\b"),
+)
+
+
+def _calendar_dates(text: str) -> list:
+    """Every calendar date `text` actually names, as (parsed (y, m, d), month token or
+    None). A textual rendering with an unrecognised month name or an impossible calendar
+    date (32 April, month 13, ...) is simply not returned -- this is not a lenient parse,
+    it is the same date or nothing.
+
+    Deliberately no library dependency: the set of forms this project's Ledger and
+    Writer actually produce is small and closed (see the regressions in
+    fast_lane_v1_test.py / the story.py test suite), and a hand-rolled parser keeps the
+    failure mode visible instead of inheriting a general-purpose library's own leniency.
+    """
+    import datetime as _dt
+    out = []
+    for pat in _DATE_PATTERNS:
+        for m in pat.finditer(text):
+            g = m.groupdict()
+            month_tok = g.get("mname")
+            mo = int(g["mo"]) if "mo" in g else _MONTH_NUMBER.get(
+                (month_tok or "").lower())
+            if mo is None:
+                continue
+            try:
+                y, d = int(g["y"]), int(g["d"])
+                _dt.date(y, mo, d)                        # raises on an impossible date
+            except (ValueError, TypeError):
+                continue
+            out.append(((y, mo, d), month_tok))
+    return out
+
+
 def factual_surface_audit(article_text: str, packet: dict) -> dict:
     """What factual surface does the prose carry that the packet never granted?
 
@@ -1564,8 +1610,20 @@ def factual_surface_audit(article_text: str, packet: dict) -> dict:
     body = article_text.split("---", 2)[2] if article_text.startswith("---") else article_text
     body = re.sub(r"^#\s+.*\n", "", body.strip(), count=1)
 
+    # DATE-SURFACE NORMALIZATION (2026-09-12). A licensed ISO date ("2024-02-23") and its
+    # prose renderings ("23 February 2024", "February 23, 2024", "23 Feb 2024") name the
+    # SAME calendar date, but the month name is a token the ISO form never contains --
+    # so a Writer that spells the month out was flagged as inventing "February" even
+    # though the date itself is exactly the one the Ledger licenses. Excused ONLY when
+    # the parsed (year, month, day) is one `approved` itself names; a wrong day, month or
+    # year parses to a DIFFERENT tuple and is not in that set, so it is not excused and
+    # still blocks -- this is a same-date equivalence, not a month-name allowlist.
+    licensed_dates = {d for d, _ in _calendar_dates(approved)}
+    excused_month_tokens = {tok for d, tok in _calendar_dates(body)
+                            if tok and d in licensed_dates}
+
     nums = sorted(_numbers(body) - a_nums)
-    ents = sorted(_entities(body) - a_ents)
+    ents = sorted((_entities(body) - a_ents) - excused_month_tokens)
     terms = sorted(_content_words(body) - a_words)
     sensory = sorted(t for t in terms if t in SENSORY_RISK)
     scene = sorted(t for t in terms if t in SCENE_RISK)
