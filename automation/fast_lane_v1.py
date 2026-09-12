@@ -230,7 +230,17 @@ FAST_LANE_WRITER_SYSTEM = (
       "licenses that relation. Two attributed accounts placed side by side may "
       "disagree; the article may not then add a further sentence ranking them "
       "('only one was needed', 'the other did not matter'). Let the reader hold the "
-      "disagreement -- do not resolve it for them."
+      "disagreement -- do not resolve it for them.\n"
+    + "\n\nEPISTEMIC_STATUS_AND_QUALIFIERS_MUST_SURVIVE. You may simplify syntax; you "
+      "may not strengthen evidence. A fact marked with 'must keep' in FACT STATUS "
+      "carries a qualifier that is part of what makes the claim true -- keep it, in "
+      "substance, however you phrase the sentence. Forbidden transformations, "
+      "whatever the fact: 'sometimes X' -> 'X'; 'may X' -> 'X'; 'A or B' -> 'B' "
+      "alone; 'X says Y' -> narrator-owned 'Y'; 'according to X, Y' -> narrator-owned "
+      "'Y'; 'some' -> 'all'/no quantifier; 'approximately N' -> exact N; and "
+      "ATTRIBUTED, DISPUTED or UNCERTAIN written as if ESTABLISHED. Literary "
+      "smoothness is never permission to remove a meaningful hedge or narrow a "
+      "licensed either/or into one branch."
 )
 
 
@@ -248,6 +258,9 @@ def render_fact_status(fact_status: dict) -> str:
         bit = "  %s: %s" % (fid, status)
         if who:
             bit += " (%s)" % who
+        quals = ann.get("required_qualifiers")
+        if quals:
+            bit += " -- must keep: %s" % "; ".join(quals)
         lines.append(bit)
     return "\n".join(lines) + "\n"
 
@@ -360,11 +373,20 @@ CLAIM_MAPPER_SYSTEM = (
     "sentence and the fact's status genuinely conflict, report the fact's status and "
     "leave a note by simply choosing the more conservative one.\n"
     "\n"
+    "Some facts also carry 'must keep' qualifiers -- a hedge, a disjunction, an "
+    "approximation, or similar, that is part of what makes the claim true. Read the "
+    "actual sentence and report required_qualifiers_preserved: true only if the "
+    "sentence's wording still carries that qualifier in substance (need not be the "
+    "same words); false if the sentence states the claim as exact, unconditional, or "
+    "narrowed to one branch of a disjunction. Report this honestly even though you "
+    "cannot fix it -- you are reading the frozen sentence, not writing it.\n"
+    "\n"
     "Reply with ONE JSON object:\n"
     '{"claim_map": [{"sentence_id": "S001", "fact_ids": ["F60"], '
     '"entity_owner": null, "claim_subject_label": "", "scope": null, '
     '"qualifiers": "", "claim_status": "ESTABLISHED", "attribution_to": null, '
-    '"temporal_relation": "NONE"}]}\n'
+    '"temporal_relation": "NONE", "claim_shape": "EXACT", '
+    '"required_qualifiers_preserved": true}]}\n'
     "  entity_owner: ONLY when the cited fact names exactly one entity and the "
     "sentence is about that one entity -- its exact name, verbatim. Otherwise null.\n"
     "  claim_subject_label: optional, freeform, ungraded description of the "
@@ -375,6 +397,11 @@ CLAIM_MAPPER_SYSTEM = (
     "is ATTRIBUTED or DISPUTED; null otherwise.\n"
     "  temporal_relation: 'BEFORE', 'AFTER' or 'NONE' -- BEFORE/AFTER only when a "
     "fact below explicitly licenses that ordering.\n"
+    "  claim_shape: EXACT, DISJUNCTION, QUALIFIED, ATTRIBUTED or DISPUTED -- "
+    "whichever best describes the sentence's own shape, for a cited fact whose 'must "
+    "keep' names a disjunction or hedge; EXACT otherwise.\n"
+    "  required_qualifiers_preserved: true/false as described above; true when the "
+    "cited fact(s) carry no 'must keep' qualifier at all.\n"
     "No prose outside the JSON."
 )
 
@@ -402,6 +429,9 @@ def render_claim_mapper_prompt(sentences: dict, ledger: dict, allowed_fact_ids,
             L.append("      entities: %s" % fact["entities"])
         if fact.get("scope"):
             L.append("      scope: %s" % fact["scope"])
+        quals = ann.get("required_qualifiers")
+        if quals:
+            L.append("      must keep: %s" % "; ".join(quals))
     return "\n".join(L)
 
 
@@ -502,6 +532,21 @@ def validate_claim_map(claim_map: list, allowed_fact_ids: set, ledger: dict,
                         "temporal_permission for it, and two separately dated facts "
                         "do not by themselves create a chronology"
                         % (sid, temporal, no_permission))
+
+            # required_qualifiers: a metadata-vs-metadata check, same as claim_status
+            # above. Whether the SENTENCE actually preserved the qualifier is a
+            # semantic question the Claim Mapper (an LLM reading the frozen article)
+            # already answered in required_qualifiers_preserved; this only checks
+            # that self-report against what the packet requires, exactly as strict as
+            # the claim_status check and no more.
+            requiring = [fid for fid in fids
+                        if fact_status.get(fid, {}).get("required_qualifiers")]
+            if requiring and c.get("required_qualifiers_preserved") is False:
+                errs.append(
+                    "%s: packet requires qualifier preservation for %s (%s) but the "
+                    "claim mapper declares it dropped"
+                    % (sid, requiring,
+                       [fact_status[fid]["required_qualifiers"] for fid in requiring]))
 
         entities = set()
         for f in cited_facts:
