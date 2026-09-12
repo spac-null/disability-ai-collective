@@ -240,7 +240,19 @@ FAST_LANE_WRITER_SYSTEM = (
       "'Y'; 'some' -> 'all'/no quantifier; 'approximately N' -> exact N; and "
       "ATTRIBUTED, DISPUTED or UNCERTAIN written as if ESTABLISHED. Literary "
       "smoothness is never permission to remove a meaningful hedge or narrow a "
-      "licensed either/or into one branch."
+      "licensed either/or into one branch.\n"
+    + "\n\nDIRECT_QUOTE_REQUIRES_EXACT_PERMISSION. Use quotation marks around a "
+      "speaker's words ONLY when the fact below explicitly grants "
+      "quote_permission: DIRECT_VERBATIM and gives its quote_text -- and then "
+      "reproduce that quote_text exactly, nothing added, nothing joined from "
+      "elsewhere. You may NOT: reconstruct a quote from fragments; combine two "
+      "separated clauses into one quotation; treat a secondary source's own "
+      "editorial ellipsis ('X ... Y') as a verified verbatim sentence and quote "
+      "it as one; silently clean up or strengthen a quote's wording; or "
+      "paraphrase inside quotation marks. A fact with quote_permission: "
+      "ATTRIBUTED_PARAPHRASE_ONLY (or no quote_permission at all) may be "
+      "reported in your own words with the speaker named, but never inside "
+      "quotation marks."
 )
 
 
@@ -261,6 +273,12 @@ def render_fact_status(fact_status: dict) -> str:
         quals = ann.get("required_qualifiers")
         if quals:
             bit += " -- must keep: %s" % "; ".join(quals)
+        qp = ann.get("quote_permission")
+        if qp == "DIRECT_VERBATIM":
+            bit += ' -- quotable verbatim ONLY as: "%s" (%s)' % (
+                ann.get("quote_text", ""), ann.get("quote_attribution", ""))
+        elif qp == "ATTRIBUTED_PARAPHRASE_ONLY":
+            bit += " -- no direct quotation marks; attributed paraphrase only"
         lines.append(bit)
     return "\n".join(lines) + "\n"
 
@@ -381,12 +399,19 @@ CLAIM_MAPPER_SYSTEM = (
     "narrowed to one branch of a disjunction. Report this honestly even though you "
     "cannot fix it -- you are reading the frozen sentence, not writing it.\n"
     "\n"
+    "If the sentence puts words in quotation marks, report quote_permission_used: "
+    "'DIRECT_VERBATIM' and quoted_text: the exact quoted text as it appears in the "
+    "sentence. If it reports someone's words without quotation marks, report "
+    "'ATTRIBUTED_PARAPHRASE_ONLY' and leave quoted_text null. If there is no "
+    "quotation at all, report 'NONE'.\n"
+    "\n"
     "Reply with ONE JSON object:\n"
     '{"claim_map": [{"sentence_id": "S001", "fact_ids": ["F60"], '
     '"entity_owner": null, "claim_subject_label": "", "scope": null, '
     '"qualifiers": "", "claim_status": "ESTABLISHED", "attribution_to": null, '
     '"temporal_relation": "NONE", "claim_shape": "EXACT", '
-    '"required_qualifiers_preserved": true}]}\n'
+    '"required_qualifiers_preserved": true, "quote_permission_used": "NONE", '
+    '"quoted_text": null}]}\n'
     "  entity_owner: ONLY when the cited fact names exactly one entity and the "
     "sentence is about that one entity -- its exact name, verbatim. Otherwise null.\n"
     "  claim_subject_label: optional, freeform, ungraded description of the "
@@ -402,6 +427,7 @@ CLAIM_MAPPER_SYSTEM = (
     "keep' names a disjunction or hedge; EXACT otherwise.\n"
     "  required_qualifiers_preserved: true/false as described above; true when the "
     "cited fact(s) carry no 'must keep' qualifier at all.\n"
+    "  quote_permission_used / quoted_text: as described above.\n"
     "No prose outside the JSON."
 )
 
@@ -432,6 +458,13 @@ def render_claim_mapper_prompt(sentences: dict, ledger: dict, allowed_fact_ids,
         quals = ann.get("required_qualifiers")
         if quals:
             L.append("      must keep: %s" % "; ".join(quals))
+        qp = ann.get("quote_permission")
+        if qp == "DIRECT_VERBATIM":
+            L.append('      quotable verbatim ONLY as: "%s" (%s)'
+                     % (ann.get("quote_text", ""), ann.get("quote_attribution", "")))
+        elif qp == "ATTRIBUTED_PARAPHRASE_ONLY":
+            L.append("      no direct quotation permitted; attributed paraphrase "
+                     "only")
     return "\n".join(L)
 
 
@@ -487,6 +520,12 @@ def claim_map_article(provider, article_text: str, ledger: dict, allowed_fact_id
 # is what catches the sentence itself, exactly as it did on the real regression this
 # guards against (see fast_lane_v1_attribution_test.py).
 # ══════════════════════════════════════════════════════════════════════════════
+def _normalize_quote(s: str) -> str:
+    """Ordinary typographic normalization ONLY -- curly-to-straight quotes and
+    whitespace collapse. No fuzzy matching: any other difference still fails."""
+    s = s.replace("‘", "'").replace("’", "'")
+    s = s.replace("“", '"').replace("”", '"')
+    return " ".join(s.split()).strip(" \"'")
 def validate_claim_map(claim_map: list, allowed_fact_ids: set, ledger: dict,
                        fact_status: dict | None = None) -> list:
     fact_status = fact_status or {}
@@ -547,6 +586,30 @@ def validate_claim_map(claim_map: list, allowed_fact_ids: set, ledger: dict,
                     "claim mapper declares it dropped"
                     % (sid, requiring,
                        [fact_status[fid]["required_qualifiers"] for fid in requiring]))
+
+            # DIRECT_QUOTE_REQUIRES_EXACT_PERMISSION: again metadata-vs-metadata. The
+            # Claim Mapper already read the frozen sentence and self-reported whether
+            # it uses a direct quotation; this only checks that self-report against
+            # what the packet actually permits for the cited fact(s), and -- when
+            # permitted -- that the quoted text matches exactly (typographic quote
+            # marks and whitespace normalized, nothing else).
+            if c.get("quote_permission_used") == "DIRECT_VERBATIM":
+                permitting = [fid for fid in fids
+                             if fact_status.get(fid, {}).get("quote_permission")
+                             == "DIRECT_VERBATIM"]
+                if not permitting:
+                    errs.append(
+                        "%s: reports a DIRECT_VERBATIM quote, but none of %s carries "
+                        "quote_permission DIRECT_VERBATIM" % (sid, fids))
+                else:
+                    quoted = _normalize_quote(c.get("quoted_text") or "")
+                    permitted = {_normalize_quote(
+                        fact_status[fid].get("quote_text") or "") for fid in permitting}
+                    if quoted not in permitted:
+                        errs.append(
+                            "%s: quoted_text %r does not exactly match the permitted "
+                            "quote_text for %s" % (sid, c.get("quoted_text"),
+                                                   permitting))
 
         entities = set()
         for f in cited_facts:
