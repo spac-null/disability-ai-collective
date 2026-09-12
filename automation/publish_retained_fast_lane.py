@@ -19,9 +19,11 @@ beyond what each retained artifact itself states.
 from __future__ import annotations
 
 import argparse
+import datetime
 import hashlib
 import json
 import pathlib
+import re
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -191,6 +193,12 @@ def _title_of(article_text: str) -> str:
     return "Untitled"
 
 
+def _slug(text: str) -> str:
+    """Same pattern as new_engine_production._slug -- a readable, Jekyll-filename-safe
+    slug derived from the title, not the raw run directory name."""
+    return re.sub(r"[^a-z0-9]+", "-", (text or "candidate").lower()).strip("-")[:70]
+
+
 def resume(run_dir: str, *, drafts_dir: pathlib.Path | None = None,
           publish: bool = False) -> dict:
     run_dir = pathlib.Path(run_dir)
@@ -224,20 +232,21 @@ def resume(run_dir: str, *, drafts_dir: pathlib.Path | None = None,
 
     drafts_dir = drafts_dir or (HERE.parent / "_drafts")
     stamp = BRIDGE.stamp_fields(bridge)
+    generated_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
     meta = {
-        "run": run_dir.name, "generated_at": "", "decision": "ACCEPT",
+        "run": run_dir.name, "generated_at": generated_at, "decision": "ACCEPT",
         "source_url": "", "source_sha256": "",
         "discovery_hash": "", "article_form_hash": "",
         "grounding_status": validated["grounding_status"], "grounding_unsupported": 0,
         "provider_model": "",
     }
     path = CAND.persist_candidate(
-        drafts_dir=drafts_dir, slug=run_dir.name, body=validated["article_text"],
+        drafts_dir=drafts_dir, slug=_slug(title), body=validated["article_text"],
         title=title, author="Maya Flux", engine_meta=meta, rehearsal=False,
         safety=stamp, package=None, sources=[])
     result["candidate_path"] = str(path)
-    candidate_body = path.read_text(encoding="utf-8").split("---\n", 2)[-1].rstrip("\n")
-    if candidate_body != validated["article_text"].rstrip("\n"):
+    candidate_body = path.read_text(encoding="utf-8").split("---\n", 2)[-1].strip("\n")
+    if candidate_body != validated["article_text"].strip("\n"):
         result.update(status="BLOCKED",
                       blocker="candidate body diverged from frozen article text")
         return result
