@@ -97,6 +97,27 @@ class BridgeResult:
             "article_sha256": None,
             "reason": "not evaluated",
         }
+        # Fact Check adjudication evidence, from the fact_check_pass check (composition's
+        # own recorded stage). world_relative_fact_check_adjudication (below) is the
+        # SEPARATE evidence from the authoritative check 9, since the two consult
+        # different contradicted-claim sources -- see _check_fact_check_adjudication and
+        # _fact_check_adjudication_coverage.
+        self.fact_check_adjudication_evidence: dict = {
+            "fact_check_raw_pass": False,
+            "fact_check_adjudication": False,
+            "fact_check_effective_pass": False,
+            "raw_fact_check_status": None,
+            "adjudicated_finding_count": 0,
+            "unadjudicated_blocking_count": 0,
+            "article_sha256": None,
+            "reason": "not evaluated",
+        }
+        self.world_relative_fact_check_adjudication: dict = {
+            "fact_check_adjudication": False,
+            "adjudicated_finding_count": 0,
+            "unadjudicated_blocking_count": 0,
+            "reason": "not evaluated",
+        }
 
     def add(self, name: str, ok: bool, detail: str, blocking: bool = True):
         self.checks.append({"check": name, "ok": bool(ok), "blocking": blocking,
@@ -117,6 +138,15 @@ class BridgeResult:
                 "reader_effective_pass":
                     self.reader_materiality_evidence["reader_effective_pass"],
                 "reader_materiality_evidence": self.reader_materiality_evidence,
+                "fact_check_raw_pass":
+                    self.fact_check_adjudication_evidence["fact_check_raw_pass"],
+                "fact_check_adjudication":
+                    self.fact_check_adjudication_evidence["fact_check_adjudication"],
+                "fact_check_effective_pass":
+                    self.fact_check_adjudication_evidence["fact_check_effective_pass"],
+                "fact_check_adjudication_evidence": self.fact_check_adjudication_evidence,
+                "world_relative_fact_check_adjudication":
+                    self.world_relative_fact_check_adjudication,
                 "failures": [c["check"] for c in self.failures]}
 
 
@@ -388,7 +418,7 @@ def _evaluate_legacy(out: dict, *, fact_check_fn=None) -> BridgeResult:
 
 
 def _check_world_relative_fact_check(r: BridgeResult, article: str,
-                                     fact_check_fn) -> None:
+                                     fact_check_fn, *, run_dir=None) -> None:
     """Check 9, factored out so new_engine_v1 runs the identical, authoritative check
     rather than trusting composition's own internal FACT_CHECK stage verdict, which is
     real but deliberately less strict (see the comment on composition.py's FACT_CHECK
@@ -502,15 +532,189 @@ def _check_world_relative_fact_check(r: BridgeResult, article: str,
                           "extracted)" % (cov["claims_checked"],
                                           cov["claims_not_checked"], claims_n))))
             else:
-                r.add("world_relative_fact_check", not contradicted,
+                # Adjudication-aware, not adjudication-blind: a valid, retained
+                # FACT_CHECK_ADJUDICATION.json can cover specific contradicted claims
+                # (see _fact_check_adjudication_coverage) without this check ever
+                # inferring success from an absence it did not itself verify. Any
+                # contradiction NOT covered by a valid adjudication still blocks.
+                cov_adj = _fact_check_adjudication_coverage(
+                    contradicted=contradicted, run_dir=run_dir, article_sha=C.sha256_text(article))
+                r.world_relative_fact_check_adjudication = cov_adj
+                remaining = cov_adj["unadjudicated_blocking_count"]
+                r.add("world_relative_fact_check", remaining == 0,
                       "extraction=ok claims_extracted=%d claims_checked=%d "
-                      "coverage=complete contradicted=%d advisory=%d unverifiable=%d"
+                      "coverage=complete contradicted=%d (adjudicated=%d, "
+                      "unadjudicated=%d) advisory=%d unverifiable=%d"
                       % (claims_n, cov["claims_checked"], len(contradicted),
+                         cov_adj["adjudicated_finding_count"], remaining,
                          len(fc.get("advisory") or []),
                          fc.get("unverifiable_count", 0)))
         except Exception as e:
             r.add("world_relative_fact_check", False,
                   "fact check errored (%s); fail-closed" % str(e)[:120])
+
+
+# ── FACT CHECK ADJUDICATION (2026-09-12) ──────────────────────────────────────────
+# A narrow, additive mirror of the Reader materiality path (8b331d0): a raw Fact Check
+# HOLD may become an effective PASS ONLY when every raw blocking (CONTRADICTED) claim is
+# individually covered by a retained FACT_CHECK_ADJUDICATION.json, under the single
+# supported adjudication type VERIFIED_PRIMARY_SOURCE -- a byte-level, typography-
+# normalized exact match against a genuine primary document, never a paraphrase, a
+# wrong-attribution fix, or a materially altered quote. Neither FACT_CHECK.json nor the
+# world-relative check's own live result is ever rewritten; only the PASS/HOLD verdict
+# a caller sees is conditioned on this additive evidence.
+#
+# TWO CALL SITES, ONE COVERAGE RULE. fact_check_pass (composition's own recorded stage)
+# and world_relative_fact_check (check 9, the authoritative one) each see their OWN
+# contradicted-claim list -- the first from FACT_CHECK.json on disk, the second from
+# whatever fact_check_fn actually returned this call -- so _fact_check_adjudication_coverage
+# takes `contradicted` as a plain argument rather than reading it itself, and both call
+# sites apply the identical validity rule to whichever list is theirs. A contradiction
+# present in one list and absent from the other is never silently resolved by the other
+# side having been clean.
+_FACT_CHECK_ADJUDICATION_ALLOWED_TYPES = frozenset({"VERIFIED_PRIMARY_SOURCE"})
+# EXACT_MATCH_MODULO_TYPOGRAPHY is the only kind of "not byte-identical" this adjudication
+# type may certify -- curly vs. straight quotes, dash rendering, quote-nesting convention.
+# Anything else (a paraphrase, a close-but-different formulation, a different speaker) is
+# a real contradiction and must not be representable as a match result at all.
+_FACT_CHECK_ADJUDICATION_ALLOWED_MATCH_RESULTS = frozenset({
+    "EXACT_MATCH", "EXACT_MATCH_MODULO_TYPOGRAPHY"})
+_FACT_CHECK_ADJUDICATION_REQUIRED_FIELDS = (
+    "document_identity", "document_url", "source_evidence_sha256", "article_span",
+    "exact_primary_span_normalized", "match_result", "reason")
+
+
+def _fact_check_adjudication_coverage(*, contradicted: list, run_dir, article_sha: str) -> dict:
+    """Whether EVERY claim in `contradicted` (this call site's own list) is covered by a
+    valid, retained FACT_CHECK_ADJUDICATION.json. Reads no contradicted-claim list of its
+    own -- see the module comment above for why. Fails closed: any missing file, any SHA
+    mismatch, any unsupported adjudication type, any missing required evidence field, or
+    any claim left uncovered leaves EVERY claim in `contradicted` counted unadjudicated,
+    never a partial credit for an otherwise-sound-looking decision file.
+    """
+    blocking_claims = {c.get("claim") for c in (contradicted or []) if c.get("claim")}
+    evidence = {"fact_check_adjudication": False, "adjudicated_finding_count": 0,
+               "unadjudicated_blocking_count": len(blocking_claims),
+               "reason": "no valid Fact Check adjudication"}
+    if not blocking_claims:
+        evidence["reason"] = "no blocking findings to adjudicate"
+        return evidence
+    if run_dir is None:
+        evidence["reason"] = "run directory not supplied"
+        return evidence
+    decision_path = pathlib.Path(run_dir).resolve() / "FACT_CHECK_ADJUDICATION.json"
+    if not decision_path.is_file():
+        evidence["reason"] = "FACT_CHECK_ADJUDICATION.json missing"
+        return evidence
+    try:
+        decision = json.loads(decision_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        evidence["reason"] = "malformed Fact Check adjudication artifact: %s" % str(exc)[:120]
+        return evidence
+    if not isinstance(decision, dict):
+        evidence["reason"] = "Fact Check adjudication artifact must be a JSON object"
+        return evidence
+
+    findings = decision.get("findings")
+    if not isinstance(findings, list):
+        evidence["reason"] = "adjudication findings must be a list"
+        return evidence
+
+    bad, covered = [], set()
+    for f in findings:
+        if not isinstance(f, dict):
+            bad.append("a finding is not an object")
+            continue
+        a_type = f.get("adjudication")
+        if a_type not in _FACT_CHECK_ADJUDICATION_ALLOWED_TYPES:
+            bad.append("unsupported adjudication type %r" % (a_type,))
+            continue
+        missing = [k for k in _FACT_CHECK_ADJUDICATION_REQUIRED_FIELDS if not f.get(k)]
+        if missing:
+            bad.append("finding %r missing required field(s): %s"
+                      % (f.get("finding_id", "?"), missing))
+            continue
+        if f.get("match_result") not in _FACT_CHECK_ADJUDICATION_ALLOWED_MATCH_RESULTS:
+            bad.append("finding %r match_result %r is not an exact/normalized match"
+                      % (f.get("finding_id", "?"), f.get("match_result")))
+            continue
+        span = f.get("article_span")
+        if span:
+            covered.add(span)
+
+    checks = (
+        (decision.get("article_sha256") == article_sha,
+         "decision article SHA does not match current bytes"),
+        (decision.get("raw_fact_check_status") == CP.HOLD,
+         "decision raw_fact_check_status is not HOLD"),
+        (decision.get("effective_fact_check_status") == CP.PASS,
+         "decision effective_fact_check_status is not PASS"),
+        (bool(decision.get("all_blocking_findings_adjudicated")),
+         "decision does not claim all_blocking_findings_adjudicated"),
+        (not bad, "; ".join(bad[:3])),
+        (not (blocking_claims - covered),
+         "unadjudicated blocking finding(s) remain: %s"
+         % sorted(blocking_claims - covered)[:2]),
+    )
+    failed = [reason for ok, reason in checks if not ok]
+    if failed:
+        # Fail closed on the WHOLE set: an otherwise-sound decision file with one bad
+        # finding does not get partial credit for the findings it got right.
+        evidence["reason"] = "; ".join(failed)
+        return evidence
+
+    evidence["fact_check_adjudication"] = True
+    evidence["adjudicated_finding_count"] = len(blocking_claims & covered)
+    evidence["unadjudicated_blocking_count"] = 0
+    evidence["reason"] = ("%d blocking finding(s) adjudicated VERIFIED_PRIMARY_SOURCE, "
+                          "0 unadjudicated" % len(blocking_claims))
+    return evidence
+
+
+def _check_fact_check_adjudication(*, raw_fact_check_status: str, article: str,
+                                   run_dir=None) -> dict:
+    """The fact_check_pass call site: validates against FACT_CHECK.json's OWN recorded
+    contradicted list, read from `run_dir` -- mirrors _check_reader_materiality_decision's
+    pattern exactly. Neither FACT_CHECK.json nor this evaluation rewrites anything; only
+    consulted when the raw stage is HOLD.
+    """
+    article_sha = C.sha256_text(article or "")
+    evidence = {
+        "fact_check_raw_pass": raw_fact_check_status == CP.PASS,
+        "fact_check_adjudication": False,
+        "fact_check_effective_pass": raw_fact_check_status == CP.PASS,
+        "raw_fact_check_status": raw_fact_check_status,
+        "adjudicated_finding_count": 0, "unadjudicated_blocking_count": 0,
+        "article_sha256": article_sha,
+        "reason": "raw Fact Check PASS" if raw_fact_check_status == CP.PASS
+                  else "no valid Fact Check adjudication",
+    }
+    if raw_fact_check_status != CP.HOLD:
+        return evidence
+    if run_dir is None:
+        evidence["reason"] = "run directory not supplied"
+        return evidence
+    fc_path = pathlib.Path(run_dir).resolve() / "FACT_CHECK.json"
+    if not fc_path.is_file():
+        evidence["reason"] = "FACT_CHECK.json missing"
+        return evidence
+    try:
+        raw_fc = json.loads(fc_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        evidence["reason"] = "malformed FACT_CHECK.json: %s" % str(exc)[:120]
+        return evidence
+    cov = _fact_check_adjudication_coverage(
+        contradicted=raw_fc.get("contradicted") or [], run_dir=run_dir,
+        article_sha=article_sha)
+    evidence.update({
+        "fact_check_adjudication": cov["fact_check_adjudication"],
+        "adjudicated_finding_count": cov["adjudicated_finding_count"],
+        "unadjudicated_blocking_count": cov["unadjudicated_blocking_count"],
+        "reason": cov["reason"],
+    })
+    if cov["fact_check_adjudication"]:
+        evidence["fact_check_effective_pass"] = True
+    return evidence
 
 
 def _check_reader_materiality_decision(*, raw_reader_status: str, article: str,
@@ -661,9 +865,23 @@ def _evaluate_new_engine_v1(out: dict, *, fact_check_fn=None,
           "SAFETY=%r" % stages.get(CP.SAFETY))
     r.add("grounding_pass", stages.get(CP.GROUNDING) == CP.PASS,
           "GROUNDING=%r" % stages.get(CP.GROUNDING))
-    r.add("fact_check_pass", stages.get(CP.FACT_CHECK) == CP.PASS,
-          "composition's own FACT_CHECK stage=%r" % stages.get(CP.FACT_CHECK))
     article = comp.get("article_text") or ""
+    fact_check_evidence = _check_fact_check_adjudication(
+        raw_fact_check_status=stages.get(CP.FACT_CHECK), article=article, run_dir=run_dir)
+    r.fact_check_adjudication_evidence = fact_check_evidence
+    r.add("fact_check_raw_pass", fact_check_evidence["fact_check_raw_pass"],
+          "raw FACT_CHECK=%r" % stages.get(CP.FACT_CHECK), blocking=False)
+    r.add("fact_check_adjudication", fact_check_evidence["fact_check_adjudication"],
+          fact_check_evidence["reason"], blocking=False)
+    r.add("fact_check_effective_pass", fact_check_evidence["fact_check_effective_pass"],
+          "raw=%r adjudicated=%r"
+          % (fact_check_evidence["fact_check_raw_pass"],
+             fact_check_evidence["fact_check_adjudication"]), blocking=False)
+    # Keep the long-standing blocking check name for downstream audit consumers.  Its
+    # value is now explicitly the OR of the two recorded routes below; raw history is
+    # never rewritten (composition's own FACT_CHECK.json is untouched).
+    r.add("fact_check_pass", fact_check_evidence["fact_check_effective_pass"],
+          "effective Fact Check authorization: %s" % fact_check_evidence["reason"])
     reader_evidence = _check_reader_materiality_decision(
         raw_reader_status=stages.get(CP.READER), article=article, run_dir=run_dir)
     r.reader_materiality_evidence = reader_evidence
@@ -707,7 +925,7 @@ def _evaluate_new_engine_v1(out: dict, *, fact_check_fn=None,
     except Exception as e:
         r.add("human_detail_provenance", False, "check unavailable (%s)" % str(e)[:120])
 
-    _check_world_relative_fact_check(r, article, fact_check_fn)
+    _check_world_relative_fact_check(r, article, fact_check_fn, run_dir=run_dir)
 
     r.eligible = not r.failures
     return r
