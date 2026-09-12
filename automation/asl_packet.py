@@ -110,7 +110,8 @@ def build_synthetic_arch(packet: dict, article_type: str) -> dict:
                     "provide a qualified, visible ASL interpreter at every "
                     "publicly announced presidential or press-secretary "
                     "briefing, rejecting closed captioning as an adequate "
-                    "substitute",
+                    "substitute, and sets Nov. 7 as the deadline for a "
+                    "compliance status report",
          "concrete_carrier": "the judge's order that interpretation be visible",
          "facts_allowed": ["F41", "F53", "F55", "F42", "F43"],
          "concept_introduced": "", "why_reader_wants_next":
