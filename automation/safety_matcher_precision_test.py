@@ -326,6 +326,14 @@ def test_cut_leakage_requires_proposition_identity_not_one_shared_value():
                             "participants in the group data.",
             "entities": [],
         },
+        "F_PHRASE": {
+            "fact_id": "F_PHRASE",
+            "proposition": "The statement lists 'putting safety first' as meaning its "
+                           "solutions need to work reliably in real-world situations.",
+            "support_span": "Putting safety first: Our solutions need to work reliably "
+                            "in real-world situations.",
+            "entities": ["Tobii Dynavox"],
+        },
     }
 
     # A. Generic numeric overlap, different proposition.
@@ -357,6 +365,19 @@ def test_cut_leakage_requires_proposition_identity_not_one_shared_value():
         {"F_PARA": ["participants"]}, ledger=ledger)
     check("a paraphrased cut proposition still holds when identity is sufficient",
           len(v) == 1 and v[0]["evidence_id"] == "F_PARA", v)
+
+    # E. A generic verb is only a locator. Its surrounding exact predicate phrase is
+    # identity-bearing even when the prose omits the fact's named subject.
+    v = cut_violations(
+        "That is one person's way of putting words together.",
+        {"F_PHRASE": ["Putting"]}, ledger=ledger)
+    check("the ordinary word 'putting' does not prove 'putting safety first'",
+          v == [], v)
+    v = cut_violations(
+        "Putting safety first.",
+        {"F_PHRASE": ["Putting"]}, ledger=ledger)
+    check("the exact meaningful cut phrase still holds without its named subject",
+          len(v) == 1 and v[0]["evidence_id"] == "F_PHRASE", v)
 
 
 # ── FIX 2: provenance frames are frames, not vocabulary ─────────────────────────────

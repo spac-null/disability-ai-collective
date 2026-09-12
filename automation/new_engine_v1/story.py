@@ -1292,6 +1292,48 @@ def _cut_proposition_identity(article_text: str, fact: dict, ledger: dict) -> di
     return None
 
 
+def _cut_exact_surface_identity(article_text: str, fact: dict, ledger: dict,
+                                watch_term: str) -> dict | None:
+    """Recognise an exact predicate phrase without mistaking an entity fragment for it.
+
+    A cut proposition may have a named subject that the repeated predicate omits:
+    ``Putting safety first`` still repeats that cut surface even without the company
+    name.  Require a contiguous three-word source phrase containing the watch term and
+    at least two rare, non-entity content stems.  This keeps an isolated ``putting`` or
+    a partial institution name as a locator only, while preserving exact phrase identity.
+    """
+    if not isinstance(fact, dict):
+        return None
+    entities = [_identity_normalize(str(x)) for x in fact.get("entities") or [] if x]
+    entity_stems = {_stem(word) for entity in entities
+                    for word in re.findall(r"[a-z0-9]+", entity)}
+    df = {}
+    for other in (ledger or {}).values():
+        if not isinstance(other, dict):
+            continue
+        for stem in _identity_content("%s %s" % (other.get("proposition") or "",
+                                                  other.get("support_span") or "")):
+            df[stem] = df.get(stem, 0) + 1
+    watch_stems = {_stem(w) for w in re.findall(r"[a-z0-9]+", watch_term.lower())}
+    for source in (fact.get("proposition") or "", fact.get("support_span") or ""):
+        tokens = re.findall(r"[a-z0-9]+(?:-[a-z0-9]+)*", _identity_normalize(source))
+        for i in range(max(0, len(tokens) - 2)):
+            phrase_tokens = tokens[i:i + 3]
+            phrase_stems = {_stem(w) for w in phrase_tokens}
+            if not (watch_stems & phrase_stems):
+                continue
+            distinctive = {s for s in _identity_content(" ".join(phrase_tokens))
+                           if s not in entity_stems and df.get(s, 0) <= 2}
+            phrase = " ".join(phrase_tokens)
+            if len(distinctive) >= 2 and _identity_phrase_hit(phrase, article_text):
+                surface = next((r for r in _identity_regions(article_text)
+                                if _identity_phrase_hit(phrase, r)), article_text)
+                return {"surface": surface.strip(), "values": [],
+                        "anchors": sorted(distinctive), "subject": None,
+                        "matched_phrase": phrase}
+    return None
+
+
 def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None,
                   ledger: dict | None = None) -> dict:
     """Which CUT items show up in the finished prose anyway?
@@ -1313,6 +1355,10 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None,
             if ledger is not None else None
         for term in terms:
             t = term.strip().lower()
+            term_identity = identity
+            if ledger is not None and term_identity is None:
+                term_identity = _cut_exact_surface_identity(
+                    article_text, (ledger or {}).get(cid), ledger, str(term))
             if len(t) < CUT_SENTINEL_MIN:
                 # Reported, never silently dropped. In loop 1 the term "ear" was
                 # discarded by this very threshold and the check returned OK on an
@@ -1321,7 +1367,7 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None,
                 skipped.append({"evidence_id": cid, "term": term})
                 continue
             if _literal_cut_hit(t, body):
-                if ledger is not None and identity is None:
+                if ledger is not None and term_identity is None:
                     if not _cut_term_is_high(str(term)):
                         lexical_advisories.append({
                             "evidence_id": cid, "reason": c.get("reason"),
@@ -1329,11 +1375,11 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None,
                     continue
                 finding = {"evidence_id": cid, "reason": c.get("reason"),
                            "term": term, "match": "literal"}
-                if identity is not None:
+                if term_identity is not None:
                     finding.update({"match": "proposition_identity",
-                                    "matched_surface": identity["surface"],
-                                    "normalized_values": identity["values"],
-                                    "identity_anchors": identity["anchors"]})
+                                    "matched_surface": term_identity["surface"],
+                                    "normalized_values": term_identity["values"],
+                                    "identity_anchors": term_identity["anchors"]})
                 violations.append(finding)
                 continue
             # Inflection must not defeat a CUT. A watch term is written in one form and
@@ -1365,7 +1411,7 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None,
             if " " not in t and not _NUMERIC_TERM.match(t):
                 st = _stem(t)
                 if len(st) >= CUT_SENTINEL_MIN and st in _body_stems(body):
-                    if ledger is not None and identity is None:
+                    if ledger is not None and term_identity is None:
                         if not _cut_term_is_high(str(term)):
                             lexical_advisories.append({
                                 "evidence_id": cid, "reason": c.get("reason"),
@@ -1373,11 +1419,11 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None,
                         continue
                     finding = {"evidence_id": cid, "reason": c.get("reason"),
                                "term": term, "match": "inflected", "stem": st}
-                    if identity is not None:
+                    if term_identity is not None:
                         finding.update({"match": "proposition_identity",
-                                        "matched_surface": identity["surface"],
-                                        "normalized_values": identity["values"],
-                                        "identity_anchors": identity["anchors"]})
+                                        "matched_surface": term_identity["surface"],
+                                        "normalized_values": term_identity["values"],
+                                        "identity_anchors": term_identity["anchors"]})
                     violations.append(finding)
                     continue
                 # The regular inflections `_stem` cannot pair up -- see
@@ -1385,7 +1431,7 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None,
                 hit = next((f for f in sorted(_regular_inflections(t) - {t})
                             if _literal_cut_hit(f, body)), None)
                 if hit:
-                    if ledger is not None and identity is None:
+                    if ledger is not None and term_identity is None:
                         if not _cut_term_is_high(str(term)):
                             lexical_advisories.append({
                                 "evidence_id": cid, "reason": c.get("reason"),
@@ -1393,11 +1439,11 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None,
                         continue
                     finding = {"evidence_id": cid, "reason": c.get("reason"),
                                "term": term, "match": "inflected", "stem": hit}
-                    if identity is not None:
+                    if term_identity is not None:
                         finding.update({"match": "proposition_identity",
-                                        "matched_surface": identity["surface"],
-                                        "normalized_values": identity["values"],
-                                        "identity_anchors": identity["anchors"]})
+                                        "matched_surface": term_identity["surface"],
+                                        "normalized_values": term_identity["values"],
+                                        "identity_anchors": term_identity["anchors"]})
                     violations.append(finding)
     return {"violations": violations,
             "advisories": lexical_advisories,
