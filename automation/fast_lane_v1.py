@@ -305,7 +305,21 @@ def fast_lane_write(provider, arch: dict, ledger: dict,
     if len((article or "").split()) < CP.WRITER_MIN_WORDS:
         raise CP.CompositionHold("FAST_LANE_WRITER", "FAST_LANE_WRITER_HOLD",
                                  ["writer reply has no real article body"])
-    return article, obj.get("negative_lineage") or [], packet, ident
+    return article, negative_lineage_dict(obj.get("negative_lineage") or []), \
+        packet, ident
+
+
+def negative_lineage_dict(raw: list) -> dict:
+    """composition.safety_audit() expects negative_lineage as {sentence_id:
+    [fact_ids]} (it calls lineage.get(sid) directly) -- the Writer returns a list of
+    {"sentence_id":..., "fact_ids":...} objects, the same shape WRITER_SYSTEM has
+    always specified. TD Snap's list happened to be empty, so `[] or {}` silently
+    fell back to a dict and masked the mismatch; the immigration article's non-empty
+    list surfaced it. Fast Lane has no Continuity stage (draft text is always the
+    final text), so this is a direct conversion, not composition.carry_negative_
+    lineage()'s draft/final position remapping for an edited descendant."""
+    return {item["sentence_id"]: item.get("fact_ids", [])
+           for item in (raw or []) if item.get("sentence_id")}
 
 
 # ══════════════════════════════════════════════════════════════════════════════
