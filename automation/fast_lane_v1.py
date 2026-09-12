@@ -382,6 +382,67 @@ def negative_lineage_dict(raw: list) -> dict:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# RELATIVE_DATE_RESOLUTION -- at packet-compilation time, not left for Grounding to
+# adjudicate after the fact. A source's relative date phrase ("last Friday") only
+# resolves against ITS OWN publication/event date, never against the article's own
+# unrelated anchor date (the ASL run's Grounding hold oscillated between "Friday" and
+# "the following Friday" precisely because neither is anchored to anything -- the
+# Ledger froze the source's "last Friday" down to "Friday" with no date attached).
+# Deliberately narrow: today/yesterday/tomorrow and last/this/next <weekday>, exactly
+# the closed set of unambiguous cases named in the ticket. A bare weekday name with no
+# last/this/next, or a vaguer phrase like "earlier that week", is NOT guessed at --
+# resolution_status stays UNRESOLVED and the Writer may not turn it into a precise
+# date. No broad date-parsing subsystem.
+# ══════════════════════════════════════════════════════════════════════════════
+_WEEKDAY_NAMES = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3,
+                  "friday": 4, "saturday": 5, "sunday": 6}
+
+
+def resolve_relative_date(phrase: str, source_context_date: str) -> dict:
+    """`source_context_date` is an ISO date string (the source's own publication or
+    event date). Returns {"source_relative_phrase", "source_context_date",
+    "resolved_absolute_date", "resolution_status"} -- resolved_absolute_date is None
+    and resolution_status is "UNRESOLVED" for anything outside the narrow set this
+    resolves confidently."""
+    import datetime
+    out = {"source_relative_phrase": phrase, "source_context_date": source_context_date,
+          "resolved_absolute_date": None, "resolution_status": "UNRESOLVED"}
+    try:
+        ctx = datetime.date.fromisoformat(source_context_date)
+    except (TypeError, ValueError):
+        return out
+    p = (phrase or "").strip().lower()
+
+    def _exact(d):
+        out["resolved_absolute_date"] = d.isoformat()
+        out["resolution_status"] = "EXACT"
+        return out
+
+    if p == "today":
+        return _exact(ctx)
+    if p == "yesterday":
+        return _exact(ctx - datetime.timedelta(days=1))
+    if p == "tomorrow":
+        return _exact(ctx + datetime.timedelta(days=1))
+
+    parts = p.split()
+    if len(parts) == 2 and parts[0] in ("last", "next", "this") \
+            and parts[1] in _WEEKDAY_NAMES:
+        rel, day_name = parts
+        target = _WEEKDAY_NAMES[day_name]
+        if rel == "last":
+            delta = (ctx.weekday() - target) % 7 or 7
+            return _exact(ctx - datetime.timedelta(days=delta))
+        if rel == "next":
+            delta = (target - ctx.weekday()) % 7 or 7
+            return _exact(ctx + datetime.timedelta(days=delta))
+        delta = (target - ctx.weekday()) % 7
+        return _exact(ctx + datetime.timedelta(days=delta))
+
+    return out
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # CLAIM MAPPER -- a separate, READ-ONLY pass over the FROZEN article. It cannot
 # rewrite, edit or judge prose; it only names which already-selected fact(s) each
 # already-numbered sentence rests on, and that sentence's status. Sentence identity
