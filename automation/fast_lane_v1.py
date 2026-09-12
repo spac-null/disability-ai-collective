@@ -276,6 +276,45 @@ def render_fact_status(fact_status: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+FAST_LANE_WRITER_TIMEOUT = 400  # seconds; CP._ask()'s Provider.complete() default is
+# 180s, shared by every canonical stage. This one call is long (house doctrine +
+# FACT STATUS block, up to 6,000 output tokens) and hit that shared default twice in
+# a row on the real immigration run. Overridden HERE ONLY, for this one Fast-Lane
+# call -- provider.py's own default, and every canonical composition.py caller of
+# _ask(), are untouched.
+
+
+def fast_lane_ask(provider, system: str, user: str, max_tokens: int, stage: str,
+                  code: str, timeout: int = FAST_LANE_WRITER_TIMEOUT) -> tuple:
+    """Local equivalent of composition._ask(), differing ONLY in threading a longer
+    `timeout` through to provider.complete() -- _ask() itself has no timeout
+    parameter to override. Same parse-and-retry-ONCE-on-malformed-JSON behavior, and
+    a transport/provider exception is NOT retried, exactly as _ask() does not retry
+    one either: this changes how long one attempt may run, not how many attempts a
+    failure gets."""
+    last = None
+    for attempt in (1, 2):
+        try:
+            comp = provider.complete(system=system, user=user, max_tokens=max_tokens,
+                                     timeout=timeout)
+        except Exception as e:
+            if CP._is_subscription_limit(e):
+                raise CP.CompositionHold(
+                    stage, CP.CLAUDE_SUBSCRIPTION_LIMIT,
+                    ["the Claude subscription cannot serve this call: %s"
+                     % str(e)[:300], "stopping; no paid fallback was attempted"])
+            if not isinstance(e, CP.ProviderError) and type(e).__name__ != "ClaudeCLIError":
+                raise
+            raise CP.CompositionHold(stage, code, ["provider unavailable: %s" % e])
+        try:
+            return CP.parse_json_object(comp.text), CP._identity(comp, attempt)
+        except CP.ProviderError as e:
+            last = e
+    raise CP.CompositionHold(stage, CP.INVALID_JSON_REPLY,
+                             ["reply was not one JSON object after two attempts: %s"
+                              % last])
+
+
 def fast_lane_write(provider, arch: dict, ledger: dict,
                     fact_status: dict | None = None) -> tuple:
     """Returns (article_text, claim_map, negative_lineage, packet, identity).
@@ -286,8 +325,8 @@ def fast_lane_write(provider, arch: dict, ledger: dict,
     """
     packet, rendered = CP.writer_packet(arch, ledger, cut_prohibitions=None)
     rendered = rendered + render_fact_status(fact_status or {})
-    obj, ident = CP._ask(provider, FAST_LANE_WRITER_SYSTEM, rendered, 6_000,
-                         "FAST_LANE_WRITER", "FAST_LANE_WRITER_HOLD")
+    obj, ident = fast_lane_ask(provider, FAST_LANE_WRITER_SYSTEM, rendered, 6_000,
+                               "FAST_LANE_WRITER", "FAST_LANE_WRITER_HOLD")
     article = CP._clean_article(obj.get("article", ""))
     if len((article or "").split()) < CP.WRITER_MIN_WORDS:
         raise CP.CompositionHold("FAST_LANE_WRITER", "FAST_LANE_WRITER_HOLD",
