@@ -2423,8 +2423,120 @@ SAFE_RECOMPOSE_DELTA = (
 # concatenation rather than rewritten, so the two can never drift apart.
 WRITER_SYSTEM_SAFE_RECOMPOSE = WRITER_SYSTEM + SAFE_RECOMPOSE_DELTA
 
+# FAST LANE (2026-09-12/13). The isolated proof bypassed architect() and hand-authored
+# its own synthetic Architecture. That bypass was a development shortcut, never meant
+# to become the daily route: architect()/
+# writer_packet() already ARE the general, automatic, validated story machinery, already
+# running every night. What that isolated run actually proved -- and what is worth
+# keeping -- is this additional Writer doctrine (attribution/status survival, qualifier
+# preservation, quote-permission discipline, event-context binding, implementation-detail
+# licensing) layered on the UNCHANGED canonical packet. Nothing here creates a fact,
+# selects evidence, or touches architect()/writer_packet(): it only changes what the
+# Writer is told about facts it was already given.
+COMPOSE_FAST_LANE = "FAST_LANE"
+
+FAST_LANE_WRITER_DELTA = (
+    "\n\nIMPLEMENTATION_DETAILS_REQUIRE_DIRECT_LICENSE. A fact that grants a "
+    "capability (something a system does, or can do) does not grant its "
+    "implementation. Unless the specific fact you are using says so directly, do "
+    "not add: an interface location (a menu, a screen); a number of clicks, steps "
+    "or actions; a frequency or cadence (per message, continuously, immediately); "
+    "per-event update behavior for a learning process; a storage or data-flow "
+    "location; or an internal technical mechanism. Write the capability and its "
+    "stated effect, and stop there -- do not supply the natural-sounding detail of "
+    "how it would work.\n"
+    "\n\nATTRIBUTION_AND_STATUS_MUST_SURVIVE. Every fact below may be marked "
+    "ESTABLISHED, ATTRIBUTED, DISPUTED or UNCERTAIN in FACT STATUS, when that block "
+    "is present. You may make the prose natural, but the status must survive into "
+    "it exactly:\n"
+    "  ESTABLISHED -> write it as fact.\n"
+    "  ATTRIBUTED -> keep the speaker in the sentence ('her lawyer says...', "
+    "'a DHS spokesperson said...'). Do not convert \"X's lawyer said X did\" into "
+    "\"X did\".\n"
+    "  DISPUTED -> keep BOTH sides attributed to their own speaker. Do not silently "
+    "adopt one side as what happened.\n"
+    "  UNCERTAIN -> keep the hedge; do not resolve it.\n"
+    "None of the four may be written as a stronger one, ever, however natural the "
+    "stronger sentence would read. Do not merge two facts into a stronger claim "
+    "neither states alone. Do not invent a document, a file, a decision record, a "
+    "signing date, a sequence, a before/after relation, a motive or a belief that "
+    "is not explicitly in a fact below -- a date attached to an EVENT is not the "
+    "date of a DOCUMENT, and two separately dated facts do not by themselves create "
+    "a chronology between them. Literary force is never factual permission.\n"
+    "\n\nEXCLUSIVITY_AND_SUFFICIENCY_REQUIRE_DIRECT_LICENSE. Do not introduce a "
+    "claim built on only, enough, sufficient, required, needed, alone, "
+    "regardless of, without needing, or no longer necessary when it implies that "
+    "another fact, person, account or action was irrelevant, unnecessary, "
+    "excluded, or causally sufficient by itself -- unless a fact below explicitly "
+    "licenses that relation. Two attributed accounts placed side by side may "
+    "disagree; the article may not then add a further sentence ranking them "
+    "('only one was needed', 'the other did not matter'). Let the reader hold the "
+    "disagreement -- do not resolve it for them.\n"
+    "\n\nEPISTEMIC_STATUS_AND_QUALIFIERS_MUST_SURVIVE. You may simplify syntax; you "
+    "may not strengthen evidence. A fact marked with 'must keep' in FACT STATUS "
+    "carries a qualifier that is part of what makes the claim true -- keep it, in "
+    "substance, however you phrase the sentence. Forbidden transformations, "
+    "whatever the fact: 'sometimes X' -> 'X'; 'may X' -> 'X'; 'A or B' -> 'B' "
+    "alone; 'X says Y' -> narrator-owned 'Y'; 'according to X, Y' -> narrator-owned "
+    "'Y'; 'some' -> 'all'/no quantifier; 'approximately N' -> exact N; and "
+    "ATTRIBUTED, DISPUTED or UNCERTAIN written as if ESTABLISHED. Literary "
+    "smoothness is never permission to remove a meaningful hedge or narrow a "
+    "licensed either/or into one branch.\n"
+    "\n\nDIRECT_QUOTE_REQUIRES_EXACT_PERMISSION. Use quotation marks around a "
+    "speaker's words ONLY when a fact below explicitly grants quote_permission: "
+    "DIRECT_VERBATIM and gives its quote_text -- and then reproduce that quote_text "
+    "exactly, nothing added, nothing joined from elsewhere. You may NOT: "
+    "reconstruct a quote from fragments; combine two separated clauses into one "
+    "quotation; treat a secondary source's own editorial ellipsis ('X ... Y') as a "
+    "verified verbatim sentence and quote it as one; silently clean up or "
+    "strengthen a quote's wording; or paraphrase inside quotation marks. A fact "
+    "with quote_permission: ATTRIBUTED_PARAPHRASE_ONLY (or no quote_permission at "
+    "all) may be reported in your own words with the speaker named, but never "
+    "inside quotation marks.\n"
+    "\n\nEVENT_CONTEXT_BINDING. Some facts below may carry an event_id, date, "
+    "location or participant list. ADJACENCY DOES NOT LICENSE EVENT MERGER: "
+    "placing a fact from one event next to a fact from another in your prose "
+    "must never imply they are the same event, that a participant from one was "
+    "present at the other, or that one event's date or location belongs to the "
+    "other -- unless a fact below explicitly licenses that relation. When you "
+    "move from one event to a different one, disambiguate it using only the "
+    "licensed date/place/speaker identity already given ('At his own news "
+    "conference in Hayward on Monday, Swalwell said...'), not a mechanical "
+    "date/place stamp on every paragraph -- only where the transition could "
+    "otherwise be misread as continuous with what precedes it.\n"
+    "\n\nREFERENT_CLARITY. When a sentence involves more than one person or "
+    "entity, do not use a pronoun if its antecedent could reasonably be read "
+    "either way. Prefer the explicit name."
+)
+
+# The same contract as the normal Writer, plus the Fast Lane doctrine delta. Built by
+# concatenation, so the two can never drift apart -- exactly the SAFE_RECOMPOSE pattern
+# above.
+WRITER_SYSTEM_FAST_LANE = WRITER_SYSTEM + FAST_LANE_WRITER_DELTA
+
 COMPOSE_SYSTEMS = {COMPOSE_NORMAL: WRITER_SYSTEM,
-                   COMPOSE_SAFE_RECOMPOSE: WRITER_SYSTEM_SAFE_RECOMPOSE}
+                   COMPOSE_SAFE_RECOMPOSE: WRITER_SYSTEM_SAFE_RECOMPOSE,
+                   COMPOSE_FAST_LANE: WRITER_SYSTEM_FAST_LANE}
+
+
+def scheduled_compose_mode(env: dict | None = None) -> str:
+    """Attempt A's compose_mode for a scheduled run. Explicit opt-in only, read from the
+    cron line exactly like CRIPMINDS_SELECTOR_V2_SHADOW=1 -- unset or '0' changes nothing
+    (today's COMPOSE_NORMAL default); '1' selects COMPOSE_FAST_LANE. An unrecognised
+    value fails closed, the same rule engine_switch.resolve_engine() applies to
+    CRIPMINDS_ENGINE: a typo on the cron line must not silently pick a mode.
+    """
+    import os
+    raw = (env if env is not None else os.environ).get(
+        "CRIPMINDS_FAST_LANE_COMPOSE", "")
+    val = (raw or "").strip()
+    if val in ("", "0"):
+        return COMPOSE_NORMAL
+    if val == "1":
+        return COMPOSE_FAST_LANE
+    raise UnknownCompositionEngine(
+        "CRIPMINDS_FAST_LANE_COMPOSE=%r is not recognised. Known: '', '0', '1'. "
+        "Refusing to guess -- set it explicitly or unset it." % raw)
 
 
 def negative_permissions_block(perms: dict) -> str:
@@ -6505,6 +6617,346 @@ def _clean_package(pkg: dict) -> dict:
     return {f: str(pkg.get(f) or "").strip() for f in PACKAGE_FIELDS}
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# CLAIM MAPPER (FAST_LANE only) -- a separate, READ-ONLY pass over the FROZEN final
+# article, run once Continuity and Prose Finish have both already run and cannot run
+# again. Ported from the isolated fast_lane_v1.py proof (2026-09-12) into this module
+# unchanged in substance: it cannot rewrite, edit or judge prose, it only names which
+# already-selected fact(s) each already-numbered sentence rests on, and that sentence's
+# status. Sentence identity comes from label_sentences() (the same S001.. numbering
+# negative_lineage already uses), not from the model's own count.
+#
+# `fact_status` is an OPTIONAL per-fact annotation dict (claim_status, attribution_to,
+# required_qualifiers, quote_permission/quote_text, event_id/event_date/event_location,
+# temporal_permission) that the proven run never populated -- the Ledger carries none of
+# these fields today, and every check below that depends on it is skipped when it is
+# absent (`if fact_status:`). The parameter is kept, not removed, so this machinery does
+# not regress if a future upstream stage starts producing it; nothing here invents it.
+# ══════════════════════════════════════════════════════════════════════════════
+CM_ESTABLISHED, CM_ATTRIBUTED, CM_DISPUTED, CM_UNCERTAIN = (
+    "ESTABLISHED", "ATTRIBUTED", "DISPUTED", "UNCERTAIN")
+CM_QUALIFIED_STATUSES = (CM_ATTRIBUTED, CM_DISPUTED, CM_UNCERTAIN)
+
+CLAIM_MAPPER_SYSTEM = (
+    "You are a metadata annotator, not a writer. The article below is FINISHED and "
+    "FROZEN -- you will never see it change, and nothing you say can change it. Your "
+    "only task is bookkeeping: for each numbered sentence that makes a factual claim "
+    "(names a product, person, action, date, version or number), report which "
+    "fact_id(s) from FACTS AVAILABLE it actually rests on, and that sentence's "
+    "status.\n"
+    "\n"
+    "You may not cite a fact_id that is not listed in FACTS AVAILABLE. You may not "
+    "invent a fact, infer one, or add anything the sentence does not already say. A "
+    "purely transitional sentence with no fact-specific claim may be omitted "
+    "entirely.\n"
+    "\n"
+    "Each fact in FACTS AVAILABLE may be marked ESTABLISHED, ATTRIBUTED, DISPUTED "
+    "or UNCERTAIN. Report the sentence's claim_status to MATCH its fact's status, "
+    "honestly, from what the sentence actually says -- never report ESTABLISHED for a "
+    "sentence whose fact is ATTRIBUTED, DISPUTED or UNCERTAIN, even if the sentence "
+    "happens to read that way; report the true status of the fact instead, and if the "
+    "sentence and the fact's status genuinely conflict, report the fact's status and "
+    "leave a note by simply choosing the more conservative one. Where no status is "
+    "given for a fact, treat it as ESTABLISHED.\n"
+    "\n"
+    "Some facts also carry 'must keep' qualifiers -- a hedge, a disjunction, an "
+    "approximation, or similar, that is part of what makes the claim true. Read the "
+    "actual sentence and report required_qualifiers_preserved: true only if the "
+    "sentence's wording still carries that qualifier in substance (need not be the "
+    "same words); false if the sentence states the claim as exact, unconditional, or "
+    "narrowed to one branch of a disjunction. Report this honestly even though you "
+    "cannot fix it -- you are reading the frozen sentence, not writing it.\n"
+    "\n"
+    "If the sentence puts words in quotation marks, report quote_permission_used: "
+    "'DIRECT_VERBATIM' and quoted_text: the exact quoted text as it appears in the "
+    "sentence. If it reports someone's words without quotation marks, report "
+    "'ATTRIBUTED_PARAPHRASE_ONLY' and leave quoted_text null. If there is no "
+    "quotation at all, report 'NONE'.\n"
+    "\n"
+    "Some facts carry an event_id (with a date/location). If the sentence's cited "
+    "fact(s) carry one, report it as event_id. Report event_transition: true only "
+    "if this sentence is the FIRST in its stretch of the article to describe this "
+    "event after the immediately preceding sentence described a DIFFERENT event; "
+    "false otherwise (including when this is simply the continuation of the same "
+    "event, or the article's first event). context_anchor_fact_ids: when "
+    "event_transition is true, which of THIS sentence's own fact_ids supplied the "
+    "date/place/speaker context that disambiguates the new event -- empty if none "
+    "did (which is itself worth reporting honestly, not filled in to look "
+    "complete).\n"
+    "\n"
+    "Reply with ONE JSON object:\n"
+    '{"claim_map": [{"sentence_id": "S001", "fact_ids": ["F60"], '
+    '"entity_owner": null, "claim_subject_label": "", "scope": null, '
+    '"qualifiers": "", "claim_status": "ESTABLISHED", "attribution_to": null, '
+    '"temporal_relation": "NONE", "claim_shape": "EXACT", '
+    '"required_qualifiers_preserved": true, "quote_permission_used": "NONE", '
+    '"quoted_text": null, "event_id": null, "event_transition": false, '
+    '"context_anchor_fact_ids": []}]}\n'
+    "  entity_owner: ONLY when the cited fact names exactly one entity and the "
+    "sentence is about that one entity -- its exact name, verbatim. Otherwise null.\n"
+    "  claim_subject_label: optional, freeform, ungraded description of the "
+    "sentence's subject when entity_owner does not apply.\n"
+    "  scope: the cited fact's own scope word, only when exactly one fact is cited.\n"
+    "  qualifiers: any exact date/version/number the sentence states, verbatim.\n"
+    "  attribution_to: the speaker actually named in the sentence, when claim_status "
+    "is ATTRIBUTED or DISPUTED; null otherwise.\n"
+    "  temporal_relation: 'BEFORE', 'AFTER' or 'NONE' -- BEFORE/AFTER only when a "
+    "fact below explicitly licenses that ordering.\n"
+    "  claim_shape: EXACT, DISJUNCTION, QUALIFIED, ATTRIBUTED or DISPUTED -- "
+    "whichever best describes the sentence's own shape, for a cited fact whose 'must "
+    "keep' names a disjunction or hedge; EXACT otherwise.\n"
+    "  required_qualifiers_preserved: true/false as described above; true when the "
+    "cited fact(s) carry no 'must keep' qualifier at all.\n"
+    "  quote_permission_used / quoted_text: as described above.\n"
+    "  event_id / event_transition / context_anchor_fact_ids: as described above.\n"
+    "No prose outside the JSON."
+)
+
+
+def render_claim_mapper_prompt(sentences: dict, ledger: dict, allowed_fact_ids,
+                               fact_status: dict) -> str:
+    fact_status = fact_status or {}
+
+    def _n(fid: str) -> int:
+        return int(fid[1:]) if fid[1:].isdigit() else 0
+
+    L = ["THE FROZEN ARTICLE, BY SENTENCE"]
+    for sid, s in sentences.items():
+        L.append("  %s: %s" % (sid, s))
+    L.append("")
+    L.append("FACTS AVAILABLE")
+    for fid in sorted(allowed_fact_ids, key=_n):
+        fact = ledger.get(fid) or {}
+        ann = fact_status.get(fid) or {}
+        status = ann.get("claim_status", CM_ESTABLISHED)
+        who = ann.get("attribution_to")
+        header = "  %s [%s%s]" % (fid, status, (" - %s" % who) if who else "")
+        L.append("%s: %s" % (header, fact.get("proposition", "")))
+        if fact.get("entities"):
+            L.append("      entities: %s" % fact["entities"])
+        if fact.get("scope"):
+            L.append("      scope: %s" % fact["scope"])
+        quals = ann.get("required_qualifiers")
+        if quals:
+            L.append("      must keep: %s" % "; ".join(quals))
+        qp = ann.get("quote_permission")
+        if qp == "DIRECT_VERBATIM":
+            L.append('      quotable verbatim ONLY as: "%s" (%s)'
+                     % (ann.get("quote_text", ""), ann.get("quote_attribution", "")))
+        elif qp == "ATTRIBUTED_PARAPHRASE_ONLY":
+            L.append("      no direct quotation permitted; attributed paraphrase "
+                     "only")
+        event = ann.get("event_id")
+        if event:
+            where = " / ".join(x for x in (ann.get("event_date"),
+                                           ann.get("event_location")) if x)
+            L.append("      event: %s%s" % (event, (" (%s)" % where) if where else ""))
+    return "\n".join(L)
+
+
+def _normalize_quote(s: str) -> str:
+    """Ordinary typographic normalization ONLY -- curly-to-straight quotes and
+    whitespace collapse. No fuzzy matching: any other difference still fails."""
+    s = s.replace("‘", "'").replace("’", "'")
+    s = s.replace("“", '"').replace("”", '"')
+    return " ".join(s.split()).strip(" \"'")
+
+
+def validate_claim_map(claim_map: list, allowed_fact_ids: set, ledger: dict,
+                       fact_status: dict | None = None) -> list:
+    """CLAIM_MAP -- mechanical validation only, never a semantic judge (that is
+    Grounding's job). entity_owner is OPTIONAL: a fact with no named entities (a
+    general/absence-of-data fact) or with several (a relational/multi-party fact) has
+    no single canonical owner to check against, and the Writer is not required to
+    invent one. When entity_owner IS given, it is checked by EXACT set membership only.
+    claim_status/attribution_to/temporal_relation, when `fact_status` is supplied, add
+    ONE more deterministic check: the model's own SELF-REPORTED status for a sentence
+    may never be stronger than the packet declared for the fact(s) it cites. This is
+    still comparing metadata to metadata, not prose to evidence -- it catches a
+    disagreement with what the model was given, not whether the sentence text itself
+    honours that status. Grounding is what catches the sentence itself."""
+    fact_status = fact_status or {}
+    other_events = {}
+    for ann in fact_status.values():
+        eid = ann.get("event_id")
+        if eid and eid not in other_events:
+            other_events[eid] = {"date": ann.get("event_date"),
+                                 "location": ann.get("event_location")}
+    errs = []
+    for c in claim_map:
+        sid = c.get("sentence_id", "?")
+        fids = c.get("fact_ids") or []
+        if not fids:
+            errs.append("%s: claim_map entry names no fact_ids" % sid)
+            continue
+        cited_facts = []
+        for fid in fids:
+            if fid not in allowed_fact_ids:
+                errs.append("%s: fact_id %r is not among the Architecture's licensed "
+                            "evidence" % (sid, fid))
+                continue
+            fact = ledger.get(fid)
+            if not fact:
+                errs.append("%s: fact_id %r does not exist in the Ledger" % (sid, fid))
+                continue
+            cited_facts.append(fact)
+        if not cited_facts:
+            continue
+
+        if fact_status:
+            declared = [fact_status[fid]["claim_status"] for fid in fids
+                       if fid in fact_status and "claim_status" in fact_status[fid]]
+            reported = c.get("claim_status")
+            if declared and reported == CM_ESTABLISHED and any(
+                    d in CM_QUALIFIED_STATUSES for d in declared):
+                errs.append(
+                    "%s: claim_status ESTABLISHED is stronger than the packet's "
+                    "declared status %s for %s -- ATTRIBUTED/DISPUTED/UNCERTAIN may "
+                    "never self-report as ESTABLISHED" % (sid, declared, fids))
+            temporal = c.get("temporal_relation")
+            if temporal in ("BEFORE", "AFTER"):
+                no_permission = [fid for fid in fids
+                                 if fact_status.get(fid, {}).get(
+                                     "temporal_permission", "NONE") == "NONE"]
+                if no_permission:
+                    errs.append(
+                        "%s: temporal_relation %r is not licensed -- %s carry no "
+                        "temporal_permission for it, and two separately dated facts "
+                        "do not by themselves create a chronology"
+                        % (sid, temporal, no_permission))
+            requiring = [fid for fid in fids
+                        if fact_status.get(fid, {}).get("required_qualifiers")]
+            if requiring and c.get("required_qualifiers_preserved") is False:
+                errs.append(
+                    "%s: packet requires qualifier preservation for %s (%s) but the "
+                    "claim mapper declares it dropped"
+                    % (sid, requiring,
+                       [fact_status[fid]["required_qualifiers"] for fid in requiring]))
+            if c.get("quote_permission_used") == "DIRECT_VERBATIM":
+                permitting = [fid for fid in fids
+                             if fact_status.get(fid, {}).get("quote_permission")
+                             == "DIRECT_VERBATIM"]
+                if not permitting:
+                    errs.append(
+                        "%s: reports a DIRECT_VERBATIM quote, but none of %s carries "
+                        "quote_permission DIRECT_VERBATIM" % (sid, fids))
+                else:
+                    quoted = _normalize_quote(c.get("quoted_text") or "")
+                    permitted = {_normalize_quote(
+                        fact_status[fid].get("quote_text") or "") for fid in permitting}
+                    if quoted not in permitted:
+                        errs.append(
+                            "%s: quoted_text %r does not exactly match the permitted "
+                            "quote_text for %s" % (sid, c.get("quoted_text"),
+                                                   permitting))
+            declared_event = c.get("event_id")
+            if declared_event:
+                fact_events = {fact_status[fid]["event_id"] for fid in fids
+                              if fact_status.get(fid, {}).get("event_id")}
+                if fact_events and fact_events != {declared_event}:
+                    errs.append(
+                        "%s: declares event_id %r but its cited facts %s belong to "
+                        "event(s) %s -- a sentence may not mix facts from different "
+                        "events under one event label"
+                        % (sid, declared_event, fids, sorted(fact_events)))
+                quals_text = str(c.get("qualifiers") or "")
+                if quals_text:
+                    own = other_events.get(declared_event, {})
+                    for other_eid, other in other_events.items():
+                        if other_eid == declared_event:
+                            continue
+                        for field in ("date", "location"):
+                            val = other.get(field)
+                            if val and val in quals_text and val != own.get(field):
+                                errs.append(
+                                    "%s: qualifiers %r for event %r contains %r, "
+                                    "which is event %r's own %s, not this event's"
+                                    % (sid, quals_text, declared_event, val,
+                                       other_eid, field))
+            anchors = c.get("context_anchor_fact_ids") or []
+            unlicensed_anchors = [a for a in anchors if a not in fids]
+            if unlicensed_anchors:
+                errs.append(
+                    "%s: context_anchor_fact_ids %s are not among this sentence's "
+                    "own cited fact_ids %s" % (sid, unlicensed_anchors, fids))
+
+        entities = set()
+        for f in cited_facts:
+            entities |= set(f.get("entities") or [])
+
+        owner = c.get("entity_owner")
+        if owner:
+            if not entities:
+                errs.append(
+                    "%s: entity_owner %r given, but the cited fact(s) carry no "
+                    "canonical Ledger entities -- use null (a descriptive phrase "
+                    "belongs in claim_subject_label, not entity_owner)" % (sid, owner))
+            elif len(entities) == 1:
+                canonical = next(iter(entities))
+                if owner != canonical:
+                    errs.append(
+                        "%s: entity_owner %r is not the cited fact's exact canonical "
+                        "entity %r -- a descriptive phrase is never silently treated "
+                        "as a canonical entity_owner" % (sid, owner, canonical))
+            elif owner not in entities:
+                errs.append(
+                    "%s: entity_owner %r is not one of the cited facts' several "
+                    "canonical entities %s -- a multi-entity/relational claim must "
+                    "not invent a single synthetic owner (use null)"
+                    % (sid, owner, sorted(entities)))
+
+        scope = c.get("scope")
+        if scope and len(entities) == 1 and len(cited_facts) == 1:
+            fact_scope = cited_facts[0].get("scope")
+            if fact_scope and scope != fact_scope:
+                errs.append("%s: scope %r does not match the Ledger's %r for %s"
+                            % (sid, scope, fact_scope, fids[0]))
+
+        quals = str(c.get("qualifiers") or "")
+        if quals:
+            hay = " ".join(((f.get("proposition") or "") + " "
+                           + (f.get("support_span") or "")) for f in cited_facts).lower()
+            for token in quals.replace(",", " ").split():
+                t = token.strip(".:;()").lower()
+                if len(t) >= 3 and any(ch.isdigit() for ch in t) and t not in hay:
+                    errs.append(
+                        "%s: qualifier %r is not a verbatim date/version/number the "
+                        "cited fact(s) state" % (sid, token))
+    return errs
+
+
+def claim_map_article(provider, article_text: str, ledger: dict, allowed_fact_ids,
+                      fact_status: dict | None = None) -> tuple:
+    """Returns (claim_map, errors, retries, identity). ONE normal call; if the result
+    is mechanically invalid (fails validate_claim_map, not just malformed JSON -- _ask
+    already retries malformed JSON on its own), ONE further metadata-only retry naming
+    the exact validation errors. Never touches the article, never calls the Writer."""
+    fact_status = fact_status or {}
+    sentences = label_sentences(article_text)
+    prompt = render_claim_mapper_prompt(sentences, ledger, allowed_fact_ids,
+                                        fact_status)
+    obj, ident = _ask(provider, CLAIM_MAPPER_SYSTEM, prompt, 4_000,
+                      WRITER, WRITER_HOLD)
+    ident["claim_mapper_model_calls"] = ident.get("attempts", 1)
+    claim_map = obj.get("claim_map") or []
+    errs = validate_claim_map(claim_map, allowed_fact_ids, ledger, fact_status)
+    if not errs:
+        return claim_map, errs, 0, ident
+
+    retry_prompt = (
+        prompt + "\n\nYOUR PREVIOUS ANSWER HAD THESE MECHANICAL ERRORS. Return a "
+        "corrected claim_map only -- same sentence_ids, no new ones, no article "
+        "change (you were never shown one to change):\n"
+        + "\n".join("  - %s" % e for e in errs))
+    obj2, ident2 = _ask(provider, CLAIM_MAPPER_SYSTEM, retry_prompt, 4_000,
+                        WRITER, WRITER_HOLD)
+    ident2["claim_mapper_model_calls"] = (
+        ident["claim_mapper_model_calls"] + ident2.get("attempts", 1))
+    claim_map = obj2.get("claim_map") or []
+    errs = validate_claim_map(claim_map, allowed_fact_ids, ledger, fact_status)
+    return claim_map, errs, 1, ident2
+
+
 def run_story_architecture_composition(
         provider, *, pack: dict, source_text: str, source_sha: str,
         subject: str = "", fact_check: bool = True, reader: bool = True,
@@ -6769,6 +7221,35 @@ def run_story_architecture_composition(
             _carry_package_completion(sa_new, prep)
             return prep["package"], n, sa_new
 
+        # ── CLAIM MAPPER (FAST_LANE only), on the FINAL prose ────────────────────────
+        # Runs AFTER Continuity and Prose Finish -- `final` here is the exact text a
+        # HOLD would report and the exact text the package and every factual gate below
+        # are about to read -- and BEFORE the package or any gate. Nothing after this
+        # call may change `final` in FAST_LANE mode: the normal route's article-mutating
+        # Safety/Grounding/Reader completion paths are deliberately not entered below.
+        # Package-only completion remains available because it cannot alter mapped
+        # article prose. The final SHA assertion before return enforces that contract.
+        # Not a new gate: a mechanical failure returns through this stage's OWN existing
+        # WRITER hold, exactly as an unusable Writer reply already does.
+        if compose_mode == COMPOSE_FAST_LANE:
+            _cm_allowed = set(arch.get("use_facts") or [])
+            _cm_map, _cm_errs, _cm_retries, _cm_ident = claim_map_article(
+                P, final, ledger, _cm_allowed)
+            if _cm_errs:
+                wr["status"] = HOLD
+                wr["claim_map_errors"] = _cm_errs
+                return out(WRITER,
+                          "FAST_LANE claim-mapping did not validate after its retry: %s"
+                          % "; ".join(_cm_errs)[:500],
+                          WRITER_HOLD, final, None, surface)
+            wr["claim_map"] = _cm_map
+            wr["claim_map_retries"] = _cm_retries
+            wr["claim_map_provider"] = _cm_ident
+            wr["claim_map_article_sha256"] = C.sha256_text(final)
+            _cm_calls = _cm_ident.get("claim_mapper_model_calls", 1)
+            wr["model_calls"] = wr.get("model_calls", 0) + _cm_calls
+            calls[WRITER] = calls.get(WRITER, 0) + _cm_calls
+
         pkg = make_package(final)
         pkg_ref = [pkg]
         sa = record(SAFETY, audit(final, pkg))
@@ -6786,7 +7267,8 @@ def run_story_architecture_composition(
         # publish, and publishing the two together would be a mixed-version bundle. So the
         # package is discarded with the polish and rewritten from the surface that is
         # actually shipping, and the whole bundle is audited again.
-        if sa["status"] != PASS and pre_polish is not None:
+        if (compose_mode != COMPOSE_FAST_LANE and sa["status"] != PASS
+                and pre_polish is not None):
             probe = audit(pre_polish, None)
             if probe["status"] == PASS:
                 st[PROSE_FINISH]["discarded_at_safety"] = sa["blocking"][:6]
@@ -6803,7 +7285,7 @@ def run_story_architecture_composition(
         # rule and the mechanical guarantee (the SAME apply_grounding_repair() Stage 8b
         # uses). A category this stage does not recognise makes the whole attempt
         # ineligible, and the run falls straight through to the unchanged HOLD below.
-        if sa["status"] != PASS:
+        if sa["status"] != PASS and compose_mode != COMPOSE_FAST_LANE:
             sfindings = safety_repair_findings(sa, final, package_prose(pkg),
                                               draft_text=draft)
             if sfindings:
@@ -6954,7 +7436,7 @@ def run_story_architecture_composition(
         # Writer regeneration, no architecture rerun, no new research, at any point; the
         # package is untouched throughout (a Grounding factual repair changes only the
         # article, exactly as before).
-        if g["status"] != PASS:
+        if g["status"] != PASS and compose_mode != COMPOSE_FAST_LANE:
             gc = grounding_completion_loop(P, final, pkg, g, ledger, wr["packet"], arch,
                                            pack, source_text, source_sha, audit)
             # gc["model_calls"] is ONLY this call's own (proposals + rechecks) -- added to
@@ -7022,7 +7504,8 @@ def run_story_architecture_composition(
         # at. The one-repackage-per-run rule is untouched: this loop only ever edits
         # article text, so it cannot itself trigger a second repackage, and
         # `repackaged[0]` is already spent by the time this runs.
-        if repackaged[0] and not _repackaged_before and g["status"] != PASS:
+        if (compose_mode != COMPOSE_FAST_LANE and repackaged[0]
+                and not _repackaged_before and g["status"] != PASS):
             carried_pre = g.get("pre_repackage_completion")
             art_bad, _pkg_bad = split_by_surface(g["blocking"], pkg_ref[0])
             if art_bad:
@@ -7108,7 +7591,7 @@ def run_story_architecture_composition(
             # already uses are its ACCEPTANCE TESTS, not repair triggers. A proposal that
             # invents anything is refused whole -- with the package it regenerated -- and
             # the article that reached this stage factually clean stays exactly as it is.
-            if rg["status"] != PASS:
+            if rg["status"] != PASS and compose_mode != COMPOSE_FAST_LANE:
                 rc = reader_completion_loop(
                     P, final, pkg, rg, wr["packet"], ledger, draft, pack, arch,
                     source_text, source_sha,
@@ -7186,6 +7669,13 @@ def run_story_architecture_composition(
         else:
             st[READER] = {"status": SKIPPED}
 
+        if (compose_mode == COMPOSE_FAST_LANE
+                and wr.get("claim_map_article_sha256") != C.sha256_text(final)):
+            return out(
+                WRITER,
+                "FAST_LANE final prose no longer matches the prose Claim Mapper read",
+                WRITER_HOLD, final, pkg, surface)
+
         return out(article=final, package_out=pkg, article_surface=surface)
 
     except CompositionHold as e:
@@ -7228,6 +7718,14 @@ def persist(out_dir, result: dict) -> None:
         dump("CUT_WATCH_TERMS.json", det[CUT_TERMS]["terms"])
     if det.get(WRITER, {}).get("prompt"):
         (d / "WRITER_PACKET.txt").write_text(det[WRITER]["prompt"])
+    if det.get(WRITER, {}).get("claim_map") is not None:
+        dump("CLAIM_MAP.json", {
+            "article_sha256": det[WRITER].get("claim_map_article_sha256"),
+            "claim_map": det[WRITER]["claim_map"],
+            "provider": det[WRITER].get("claim_map_provider"),
+            "retries": det[WRITER].get("claim_map_retries", 0),
+            "validation_errors": [],
+        })
 
     # ── THE SAFETY STAGE'S OWN INPUTS, AS DATA (2026-09-06, issue #91) ──────────────
     # WRITER_PACKET.txt is the RENDERED PROMPT. It is the right thing to read and the
@@ -7525,11 +8023,17 @@ def run_composition_with_fallback(
     never overwritten: B persists to its own subdirectory.
     """
     import pathlib
+    # Attempt A's mode is the scheduled run's explicit choice (CRIPMINDS_FAST_LANE_COMPOSE
+    # on the cron line) -- unset or '0' is COMPOSE_NORMAL, today's unchanged behavior.
+    # Attempt B is untouched below: it stays COMPOSE_SAFE_RECOMPOSE regardless, and
+    # fallback_recomposition_eligible() already refuses a fallback for any attempt A
+    # whose own compose_mode was not COMPOSE_NORMAL -- so a HOLD under COMPOSE_FAST_LANE
+    # is one attempt, one HOLD, no second composition, by the existing rule, unchanged.
     a = run_story_architecture_composition(
         provider, pack=pack, source_text=source_text, source_sha=source_sha,
         subject=subject, fact_check=fact_check, reader=reader, package=package,
         stop_after=stop_after, fact_check_fn=fact_check_fn, out_dir=out_dir,
-        frozen=frozen, compose_mode=COMPOSE_NORMAL)
+        frozen=frozen, compose_mode=scheduled_compose_mode())
     attempts = [_attempt_record("A", a, out_dir)]
     eligible, why = fallback_recomposition_eligible(a)
 

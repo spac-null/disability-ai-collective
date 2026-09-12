@@ -595,7 +595,7 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     # not as an empty-and-therefore-clean result. Legacy callers keep strict=False.
     _fc = getattr(orch, "_run_web_fact_check", None)
     _strict_fc = (lambda text: _fc(text, strict=True)) if _fc else None
-    bridge = BRIDGE.evaluate(out, fact_check_fn=_strict_fc)
+    bridge = BRIDGE.evaluate(out, fact_check_fn=_strict_fc, run_dir=root / run)
     (root / run / "SAFETY_BRIDGE.json").write_text(
         json.dumps(bridge.summary(), indent=2, sort_keys=True, ensure_ascii=False),
         encoding="utf-8")
@@ -694,6 +694,22 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     _record_seed_attempt(orch, seed, run, out, result)
     orch.logger.info("CURRENT_ENGINE %s: ACCEPT — candidate %s (publication_eligible=%s)",
                      run, path.name, result["publication_eligible"])
+
+    # VALIDATED SOCIAL, STORED BEFORE PUBLICATION. `_pkg["social_hook"]` is
+    # editorial_package()'s own field -- screened by Safety/Grounding/Fact Check inside
+    # the same bundle as the article, before this candidate was ever accepted. Storing
+    # it now (the existing pending-social marker publish_best/--post-social already
+    # read) means the CURRENT_ENGINE path posts that exact text and never asks a model
+    # for fresh social copy after the gates. A write failure here must never turn a
+    # finished editorial ACCEPT into anything else, so it is caught and logged, not
+    # allowed to touch `result`.
+    if result["publication_eligible"] and _pkg.get("social_hook"):
+        try:
+            orch._store_pending_social(_slug(title), title, R.DEFAULT_BYLINE,
+                                       social_hook=_pkg["social_hook"])
+        except Exception as e:
+            orch.logger.warning("CURRENT_ENGINE %s: pending-social write failed "
+                                "(ignored): %s: %s", run, type(e).__name__, str(e)[:200])
 
     publish_if_eligible(orch, run, path, result)
     return result

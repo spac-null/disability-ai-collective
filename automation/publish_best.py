@@ -716,6 +716,49 @@ def _commit_and_push(mutated, msg_parts):
     print("Pushed to GitHub — site building now.")
 
 
+def _publish_dutch_translation(en_path: pathlib.Path) -> None:
+    """Best-effort, AFTER English is already committed and pushed. Calls the same
+    translate_publication functions the proven manual Dutch-edition workflow uses --
+    no new pipeline.
+
+    English has already shipped by the time this runs, so nothing here can roll it
+    back: a HOLD from fidelity_check(), a provider failure, or a git error is caught,
+    logged, and left as "no Dutch this cycle" -- never re-raised.
+    """
+    try:
+        import translate_publication as TP
+        import claude_cli_provider as CCP
+        # Tests and guarded callers may redirect this publisher's REPO as one unit.
+        # Translation is part of that same publication and must follow the active
+        # repository, not translate_publication.py's import-time checkout constant.
+        translation_repo = TP.REPO
+        TP.REPO = REPO
+        try:
+            provider = CCP.ClaudeCLIProvider()
+            en = TP.english_bundle(en_path)
+            tr = TP.translate_bundle(provider, en, "nl")
+            fid = TP.fidelity_check(provider, en, tr)
+            if fid["verdict"] == "HOLD":
+                # ONE correction pass, exactly as the CLI's own main() does.
+                tr = TP.translate_bundle(provider, en, "nl", corrections=fid["findings"],
+                                         previous=tr)
+                fid = TP.fidelity_check(provider, en, tr)
+            if fid["verdict"] != "PASS":
+                print("  Dutch translation HELD (English publication unaffected): %s"
+                      % fid.get("verdict"))
+                return
+            nl_path = TP.write_translation("nl", en_path, en, tr)
+            TP.link_english(en_path, "nl")
+            _commit_and_push([str(nl_path), str(en_path)],
+                             ["nl: Dutch edition of %s" % en_path.stem])
+            print("  Dutch translation published: %s" % nl_path)
+        finally:
+            TP.REPO = translation_repo
+    except Exception as e:
+        print("  Dutch translation failed (non-critical, English unaffected): %s: %s"
+              % (type(e).__name__, str(e)[:300]), file=sys.stderr)
+
+
 def publish_candidate(draft_path, now=None, roots=None):
     """Publish ONE exact accepted CURRENT_ENGINE candidate. Returns 0 on success.
 
@@ -795,7 +838,13 @@ def publish_candidate(draft_path, now=None, roots=None):
               "not a decision this path makes on its own.", file=sys.stderr)
         return 1
 
+    # English is now committed and pushed. Distribute its already-validated social
+    # hook first; Dutch is the final derivative-edition tail and remains best-effort.
     _fire_pending_social(dest.stem, dest)
+
+    # Its own separate commit. A HOLD or failure here changes nothing about the English
+    # publication that already happened above.
+    _publish_dutch_translation(dest)
     return 0
 
 

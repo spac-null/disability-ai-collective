@@ -185,15 +185,44 @@ if __name__ == "__main__":
         sep = [i for i, l in enumerate(lines) if l.strip() == '---']
         body = '\n'.join(lines[sep[1]+1:]) if len(sep) >= 2 else ''
         agent = next((l.split(':', 1)[1].strip().strip('"') for l in lines if l.startswith('author:')), None)
+        current_engine = any(
+            l.strip() in ("engine_generation: \"CURRENT_ENGINE\"",
+                          "engine_generation: CURRENT_ENGINE",
+                          "editorial_engine: \"NEW_ENGINE_V1\"",
+                          "editorial_engine: NEW_ENGINE_V1")
+            for l in lines)
         # Assets are written under the de-dated slug (generate_images(content, slug, ...)),
         # not the article filename's stem (which keeps the YYYY-MM-DD- prefix) — globbing
         # on af.stem matched nothing, so every social post has been going out with no
         # image attached since the publish queue landed (d75d362).
         slug = af.stem[11:] if re.match(r'\d{4}-\d{2}-\d{2}-', af.stem) else af.stem
         images = [f.name for f in orchestrator.repo_root.glob(f"assets/{slug}_*.jpg")]
-        bsky_uri = orchestrator.post_to_bluesky(title, body, af, image_filenames=images, agent_name=agent)
-        mastodon_url = orchestrator.post_to_mastodon(title, body, af, image_filenames=images, agent_name=agent)
-        tumblr_url = orchestrator.post_to_tumblr(title, body, af, image_filenames=images, agent_name=agent)
+        # A pre-validated hook (CURRENT_ENGINE's editorial_package().social_hook, stored
+        # by _store_pending_social before publish) is posted VERBATIM here instead of
+        # generating fresh copy after the factual gates. Absent for a legacy article --
+        # the posters fall back to their own generation exactly as before.
+        validated_hook = None
+        social_error = None
+        social_file = orchestrator.repo_root / "_social" / f"{slug}.json"
+        if social_file.exists():
+            try:
+                marker = json.loads(social_file.read_text())
+                validated_hook = marker.get("social_hook")
+                if not isinstance(validated_hook, str) or not validated_hook.strip():
+                    validated_hook = None
+            except Exception as e:
+                social_error = "%s: %s" % (type(e).__name__, str(e)[:160])
+        if current_engine and validated_hook is None:
+            print("CURRENT_ENGINE social refused: validated package social_hook is "
+                  "missing or malformed%s" % ((" (" + social_error + ")")
+                                               if social_error else ""))
+            sys.exit(1)
+        bsky_uri = orchestrator.post_to_bluesky(title, body, af, image_filenames=images,
+                                                agent_name=agent, validated_hook=validated_hook)
+        mastodon_url = orchestrator.post_to_mastodon(title, body, af, image_filenames=images,
+                                                     agent_name=agent, validated_hook=validated_hook)
+        tumblr_url = orchestrator.post_to_tumblr(title, body, af, image_filenames=images,
+                                                 agent_name=agent, validated_hook=validated_hook)
         orchestrator._store_social_uri(slug, bsky_uri or "", agent=agent,
                                         mastodon_url=mastodon_url or "", tumblr_url=tumblr_url or "")
         print(f"Social posts sent. Bluesky URI: {bsky_uri}")

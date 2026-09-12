@@ -122,6 +122,7 @@ class Env:
         self._ad_result = ad_result
         self._saved_env = dict(os.environ)
         self._saved_sp = PB.subprocess
+        self._saved_dutch = PB._publish_dutch_translation
 
     def __enter__(self):
         os.environ["NEW_ENGINE_EVIDENCE_ROOT"] = str(self.ev)
@@ -164,10 +165,15 @@ class Env:
                     return types.SimpleNamespace(returncode=0, stdout="", stderr="")
                 return real_run(args, **kw)
         PB.subprocess = _Rec()
+        # The daily Dutch tail has its own focused test. Publication mechanics tests
+        # record that handoff and never invoke a real translation provider.
+        self.dutch_calls = []
+        PB._publish_dutch_translation = lambda p: self.dutch_calls.append(p)
         return self
 
     def __exit__(self, *exc):
         PB.subprocess = self._saved_sp
+        PB._publish_dutch_translation = self._saved_dutch
         sys.modules.pop("gen_images", None)
         sys.modules.pop("art_director", None)
         os.environ.clear()
@@ -414,6 +420,8 @@ def test_direct_publication_uses_the_existing_mechanics():
         check("the destination was staged and committed",
               _git(root, "ls-files", "--error-unmatch", "--",
                    "_posts/%s" % dest.name).returncode == 0)
+        check("successful English publication invokes the Dutch tail exactly once",
+              env.dutch_calls == [dest], env.dutch_calls)
         check("the vanished untracked source was not handed to git",
               all(str(draft) not in c for c in env.calls if c[:2] == ["git", "add"]),
               env.calls)

@@ -81,8 +81,16 @@ class SocialMixin:
         except Exception:
             return body[:max_chars]
 
-    def post_to_bluesky(self, title, body, article_file, image_filenames=None, agent_name=None):
-        """Post article to Bluesky after successful commit. Non-blocking."""
+    def post_to_bluesky(self, title, body, article_file, image_filenames=None,
+                        agent_name=None, validated_hook=None):
+        """Post article to Bluesky after successful commit. Non-blocking.
+
+        `validated_hook`, when given, is posted VERBATIM in place of a freshly
+        generated hook -- no truncation, no rewriting. It exists for the CURRENT_ENGINE
+        path, where the hook is `editorial_package()`'s own `social_hook` field: text
+        already screened by Safety/Grounding/Fact Check inside the published bundle.
+        Generating new copy after those gates would post something the gates never saw.
+        Legacy callers that pass nothing keep today's behavior unchanged."""
         import os, json, mimetypes, urllib.request as ureq
         from datetime import datetime, timezone
 
@@ -115,7 +123,8 @@ class SocialMixin:
         subscribe_line = "\ncripminds.com/subscribe"
         overhead = len(f"\n\n{tags}{subscribe_line}")
         max_hook = 300 - overhead
-        hook = self._social_hook(agent_name, title, body, max_chars=max_hook)
+        hook = (validated_hook if validated_hook is not None else
+               self._social_hook(agent_name, title, body, max_chars=max_hook))
         text = f"{hook}\n\n{tags}{subscribe_line}"
 
         def byte_range(s, sub):
@@ -244,8 +253,13 @@ class SocialMixin:
                 return ""
 
 
-    def _store_pending_social(self, slug, title, agent):
-        """Write a pending-social marker so publish_best.py can fire social posts on promotion."""
+    def _store_pending_social(self, slug, title, agent, social_hook=None):
+        """Write a pending-social marker so publish_best.py can fire social posts on promotion.
+
+        `social_hook`, when given, is a pre-validated hook (CURRENT_ENGINE's
+        `editorial_package()` field, already screened inside the published bundle) that
+        --post-social must post VERBATIM instead of generating fresh copy. Absent for
+        legacy callers, exactly as before."""
         import json as _json
         social_dir = self.repo_root / "_social"
         social_dir.mkdir(exist_ok=True)
@@ -259,6 +273,8 @@ class SocialMixin:
         data["pending_social"] = True
         data["title"] = title
         data["agent"] = agent
+        if social_hook is not None:
+            data["social_hook"] = social_hook
         fpath.write_text(_json.dumps(data, indent=2))
 
     def _store_social_uri(self, slug, bsky_uri, agent=None, mastodon_url=None, tumblr_url=None):
@@ -424,8 +440,11 @@ class SocialMixin:
         return True
 
 
-    def post_to_mastodon(self, title, body, article_file, image_filenames=None, agent_name=None):
-        """Post article to Mastodon after successful commit. Non-blocking."""
+    def post_to_mastodon(self, title, body, article_file, image_filenames=None,
+                         agent_name=None, validated_hook=None):
+        """Post article to Mastodon after successful commit. Non-blocking.
+
+        `validated_hook`: see post_to_bluesky -- posted verbatim, no fresh generation."""
         import os, json, mimetypes, urllib.request as ureq, urllib.parse
 
         token    = os.environ.get("MASTODON_ACCESS_TOKEN", "")
@@ -450,7 +469,8 @@ class SocialMixin:
             # url(23) + newlines(2) + tags + newlines(2) = overhead
             overhead = 23 + 2 + len(tags) + 2
             max_hook = 500 - overhead
-            hook = self._social_hook(agent_name, title, body, max_chars=max_hook)
+            hook = (validated_hook if validated_hook is not None else
+                   self._social_hook(agent_name, title, body, max_chars=max_hook))
             status_text = f"{hook}\n\n{url}\n\n{tags}"
 
             headers = {"Authorization": f"Bearer {token}"}
@@ -542,8 +562,11 @@ class SocialMixin:
             for k, v in sorted(oauth.items())
         )
 
-    def post_to_tumblr(self, title, body, article_file, image_filenames=None, agent_name=None):
-        """Post article to Tumblr after successful commit. Non-blocking. OAuth 1.0a HMAC-SHA1."""
+    def post_to_tumblr(self, title, body, article_file, image_filenames=None,
+                       agent_name=None, validated_hook=None):
+        """Post article to Tumblr after successful commit. Non-blocking. OAuth 1.0a HMAC-SHA1.
+
+        `validated_hook`: see post_to_bluesky -- posted verbatim, no fresh generation."""
         import os, json, mimetypes, urllib.request as ureq, urllib.parse
 
         ck  = os.environ.get("TUMBLR_CONSUMER_KEY", "")
@@ -569,7 +592,8 @@ class SocialMixin:
             site_url = os.environ.get("SITE_URL", "https://cripminds.com")
             url      = f"{site_url.rstrip('/')}/{y}/{m}/{d}/{slug}/"
 
-            hook = self._bsky_hook(title, body, max_chars=250)
+            hook = (validated_hook if validated_hook is not None else
+                    self._bsky_hook(title, body, max_chars=250))
             tags = "disability justice,crip culture,disability arts,accessibility,creative technology,cripminds"
 
             api_url = f"https://api.tumblr.com/v2/blog/{blog}/post"
