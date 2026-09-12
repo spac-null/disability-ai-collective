@@ -199,16 +199,26 @@ FAST_LANE_WRITER_SYSTEM = (
       "how it would work.\n"
     + "\n\nADDITIONALLY, return one more field in the same JSON object:\n"
       '  "claim_map": [{"sentence_id": "S001", "fact_ids": ["F60"], '
-      '"entity_owner": "TD Snap", "scope": "WORLD", "qualifiers": "v1.40.2, '
-      '2026-08-17"}]\n'
+      '"entity_owner": "TD Snap", "claim_subject_label": "", "scope": "WORLD", '
+      '"qualifiers": "v1.40.2, 2026-08-17"}]\n'
       "For every factual sentence in the article (a sentence naming a specific "
       "product, action, date, version or number), give its sentence_id (matching the "
-      "numbering you already assign for negative_lineage), the fact_id(s) from the "
-      "packet it rests on, the entity/product the sentence is actually about, the "
-      "scope word from that fact, and any exact date/version/number the sentence "
-      "states, verbatim. A purely transitional or descriptive sentence asserting no "
-      "product-specific fact may be omitted from claim_map. Use no fact_id that was "
-      "not given to you above."
+      "numbering you already assign for negative_lineage) and the fact_id(s) from the "
+      "packet it rests on.\n"
+      "  entity_owner is OPTIONAL. Give it ONLY when the cited fact names exactly one "
+      "entity and the sentence is about that one entity -- and then it must be that "
+      "entity's exact name, verbatim, not a paraphrase or a description of what the "
+      "fact is about. If the cited fact names no entity, or several, or the sentence "
+      "is relational, leave entity_owner null (do not invent a descriptive stand-in).\n"
+      "  claim_subject_label is OPTIONAL, freeform, and never checked against the "
+      "Ledger -- use it for a short descriptive label of what the sentence is about "
+      "when entity_owner does not apply (e.g. 'US interpreter certification "
+      "requirements'). It grants no factual permission.\n"
+      "  scope: the scope word from the cited fact, when there is exactly one cited "
+      "fact; omit it for a sentence resting on more than one fact.\n"
+      "  qualifiers: any exact date/version/number the sentence states, verbatim.\n"
+      "A purely transitional sentence asserting no fact-specific claim may be omitted "
+      "from claim_map. Use no fact_id that was not given to you above."
 )
 
 
@@ -226,11 +236,15 @@ def fast_lane_write(provider, arch: dict, ledger: dict) -> tuple:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# CLAIM_MAP -- mechanical validation only. No fuzzy matcher: fact ids, entities,
-# scopes, dates/versions/numbers are checked against the Ledger by exact/set
-# membership, and a claim naming an entity outside its fact's own `entities` is a
-# cross-entity transfer, which requires that entity to already be one the cited
-# fact licenses.
+# CLAIM_MAP -- mechanical validation only, never a semantic judge (that is
+# Grounding's job). entity_owner is OPTIONAL: a fact with no named entities (a
+# general/absence-of-data fact) or with several (a relational/multi-party fact) has
+# no single canonical owner to check against, and the Writer is not required to
+# invent one. When entity_owner IS given, it is checked by EXACT set membership only
+# -- a descriptive phrase that is not itself one of the cited fact(s)' Ledger
+# `entities` is refused, never treated as a new canonical entity by fuzzy or partial
+# match. Descriptive labeling belongs in the separate, unvalidated
+# `claim_subject_label` field, which grants zero factual permission.
 # ══════════════════════════════════════════════════════════════════════════════
 def validate_claim_map(claim_map: list, allowed_fact_ids: set, ledger: dict) -> list:
     errs = []
@@ -240,6 +254,7 @@ def validate_claim_map(claim_map: list, allowed_fact_ids: set, ledger: dict) -> 
         if not fids:
             errs.append("%s: claim_map entry names no fact_ids" % sid)
             continue
+        cited_facts = []
         for fid in fids:
             if fid not in allowed_fact_ids:
                 errs.append("%s: fact_id %r is not in the ARTICLE_PACKET's selected "
@@ -249,26 +264,56 @@ def validate_claim_map(claim_map: list, allowed_fact_ids: set, ledger: dict) -> 
             if not fact:
                 errs.append("%s: fact_id %r does not exist in the Ledger" % (sid, fid))
                 continue
-            owner = c.get("entity_owner", "")
-            if owner and owner not in (fact.get("entities") or []):
+            cited_facts.append(fact)
+        if not cited_facts:
+            continue
+
+        entities = set()
+        for f in cited_facts:
+            entities |= set(f.get("entities") or [])
+
+        owner = c.get("entity_owner")
+        if owner:
+            if not entities:
                 errs.append(
-                    "%s: entity_owner %r for %s is not among that fact's Ledger "
-                    "entities %s -- cross-entity transfer with no Ledger permission"
-                    % (sid, owner, fid, fact.get("entities")))
-            scope = c.get("scope", "")
-            if scope and scope != fact.get("scope"):
-                errs.append("%s: scope %r for %s does not match the Ledger's %r"
-                            % (sid, scope, fid, fact.get("scope")))
-            quals = str(c.get("qualifiers") or "")
-            if quals:
-                hay = (fact.get("proposition", "") + " "
-                      + fact.get("support_span", "")).lower()
-                for token in quals.replace(",", " ").split():
-                    t = token.strip(".:;()").lower()
-                    if len(t) >= 3 and any(ch.isdigit() for ch in t) and t not in hay:
-                        errs.append(
-                            "%s: qualifier %r for %s is not a verbatim date/version/"
-                            "number the fact itself states" % (sid, token, fid))
+                    "%s: entity_owner %r given, but the cited fact(s) carry no "
+                    "canonical Ledger entities -- use null (a descriptive phrase "
+                    "belongs in claim_subject_label, not entity_owner)" % (sid, owner))
+            elif len(entities) == 1:
+                canonical = next(iter(entities))
+                if owner != canonical:
+                    errs.append(
+                        "%s: entity_owner %r is not the cited fact's exact canonical "
+                        "entity %r -- a descriptive phrase is never silently treated "
+                        "as a canonical entity_owner" % (sid, owner, canonical))
+            elif owner not in entities:
+                errs.append(
+                    "%s: entity_owner %r is not one of the cited facts' several "
+                    "canonical entities %s -- a multi-entity/relational claim must "
+                    "not invent a single synthetic owner (use null)"
+                    % (sid, owner, sorted(entities)))
+
+        # scope is checked by exact match only when the cited fact(s) name exactly one
+        # entity -- the same threshold as entity_owner above. A zero- or multi-entity
+        # claim may use a descriptive scope label ("general", "joint", "relational")
+        # that isn't the ledger's own WORLD/AUDITED_CORPUS word, so it is not checked.
+        scope = c.get("scope")
+        if scope and len(entities) == 1 and len(cited_facts) == 1:
+            fact_scope = cited_facts[0].get("scope")
+            if fact_scope and scope != fact_scope:
+                errs.append("%s: scope %r does not match the Ledger's %r for %s"
+                            % (sid, scope, fact_scope, fids[0]))
+
+        quals = str(c.get("qualifiers") or "")
+        if quals:
+            hay = " ".join(((f.get("proposition") or "") + " "
+                           + (f.get("support_span") or "")) for f in cited_facts).lower()
+            for token in quals.replace(",", " ").split():
+                t = token.strip(".:;()").lower()
+                if len(t) >= 3 and any(ch.isdigit() for ch in t) and t not in hay:
+                    errs.append(
+                        "%s: qualifier %r is not a verbatim date/version/number the "
+                        "cited fact(s) state" % (sid, token))
     return errs
 
 
