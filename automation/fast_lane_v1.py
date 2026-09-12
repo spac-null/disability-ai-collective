@@ -74,6 +74,42 @@ def build_article_packet() -> dict:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# GENERAL FAST LANE RULE (2026-09-12): IMPLEMENTATION_DETAILS_REQUIRE_DIRECT_LICENSE.
+#
+# The retained TD Snap replay's Grounding hold was one shape three times over: a
+# capability fact ("word prediction learns from spoken messages", "resetting restores
+# the default") got an invented IMPLEMENTATION wrapped around it -- an interface
+# location ("in the menus"), an action count ("one action"), an update cadence ("each
+# message"). None of those were in the cited fact; all three read as natural details a
+# capability like this "would" have. A capability does not license its implementation.
+#
+# This is a standing prohibition, not a matcher: no code here scans prose for these
+# words and blocks on a hit (Grounding already does that job, against the real
+# sources). It exists so future Article Packets don't hand the Writer language that
+# already asserts the detail (see beat B4's fixed "happens" text above, and
+# story_spine, both of which originally said "menu action" themselves) and so the
+# Writer is told the rule directly, not just left to infer it from what got held.
+# ══════════════════════════════════════════════════════════════════════════════
+GENERAL_CONTRACT_PROHIBITIONS = [
+    "Do not state or imply an interface location (a menu, a screen, a settings page) "
+    "for any action unless the cited fact names that location.",
+    "Do not state or imply a number of clicks, steps, taps or actions unless the "
+    "cited fact states that number.",
+    "Do not state or imply a frequency or cadence (per message, per session, "
+    "continuously, immediately) for any update or change unless the cited fact "
+    "states it.",
+    "Do not state or imply per-event or per-message update behavior for a learning "
+    "or adaptation process unless the cited fact describes events individually.",
+    "Do not state or imply where data is stored, transmitted or processed unless the "
+    "cited fact says so.",
+    "Do not state or imply an internal technical mechanism (how something is "
+    "computed, saved or triggered) beyond what the cited fact itself states.",
+    "Do not state or imply a device or data-flow implementation (which device, app "
+    "or system component performs an action) unless the cited fact names it.",
+]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # PACKET -> ARCH. Deterministic, no model call. Bypasses the Architect LLM stage and
 # check_architecture()/validate_evidence_hierarchy() entirely (Fast Lane does not run
 # a full Architecture stage) -- but the shape it produces is what
@@ -115,8 +151,7 @@ def build_synthetic_arch(packet: dict, article_type: str) -> dict:
          "must_not_say_yet": ""},
         {"beat_id": "B4",
          "happens": "The reset sits beside the model it can erase: a personal "
-                    "language pattern that exists nowhere else, held by one menu "
-                    "action",
+                    "language pattern that exists nowhere else",
          "concrete_carrier": "the reset to default",
          "facts_allowed": ["F60", "F45"],
          "concept_introduced": "", "why_reader_wants_next": "",
@@ -125,10 +160,11 @@ def build_synthetic_arch(packet: dict, article_type: str) -> dict:
     prohibitions = []
     for claim in packet["forbidden_claims"]:
         prohibitions.append("Do not " + claim + ".")
+    prohibitions += GENERAL_CONTRACT_PROHIBITIONS
     return {
         "article_type": article_type,
         "story_spine": "A communication system that learns one person's language "
-                       "still keeps a menu action that resets that model to default.",
+                       "still keeps a reset that returns that model to default.",
         "opening_object_or_event": "The personalized word-prediction model TD Snap "
                                    "builds from one person's own spoken messages.",
         "reader_initial_state": "",
@@ -152,6 +188,15 @@ def build_synthetic_arch(packet: dict, article_type: str) -> dict:
 # ══════════════════════════════════════════════════════════════════════════════
 FAST_LANE_WRITER_SYSTEM = (
     CP.WRITER_SYSTEM
+    + "\n\nIMPLEMENTATION_DETAILS_REQUIRE_DIRECT_LICENSE. A fact that grants a "
+      "capability (something a system does, or can do) does not grant its "
+      "implementation. Unless the specific fact you are using says so directly, do "
+      "not add: an interface location (a menu, a screen); a number of clicks, steps "
+      "or actions; a frequency or cadence (per message, continuously, immediately); "
+      "per-event update behavior for a learning process; a storage or data-flow "
+      "location; or an internal technical mechanism. Write the capability and its "
+      "stated effect, and stop there -- do not supply the natural-sounding detail of "
+      "how it would work.\n"
     + "\n\nADDITIONALLY, return one more field in the same JSON object:\n"
       '  "claim_map": [{"sentence_id": "S001", "fact_ids": ["F60"], '
       '"entity_owner": "TD Snap", "scope": "WORLD", "qualifiers": "v1.40.2, '
