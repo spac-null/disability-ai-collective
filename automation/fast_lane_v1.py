@@ -252,7 +252,18 @@ FAST_LANE_WRITER_SYSTEM = (
       "paraphrase inside quotation marks. A fact with quote_permission: "
       "ATTRIBUTED_PARAPHRASE_ONLY (or no quote_permission at all) may be "
       "reported in your own words with the speaker named, but never inside "
-      "quotation marks."
+      "quotation marks.\n"
+    + "\n\nEVENT_CONTEXT_BINDING. Some facts below carry an event_id, date, "
+      "location or participant list. ADJACENCY DOES NOT LICENSE EVENT MERGER: "
+      "placing a fact from one event next to a fact from another in your prose "
+      "must never imply they are the same event, that a participant from one was "
+      "present at the other, or that one event's date or location belongs to the "
+      "other -- unless a fact below explicitly licenses that relation. When you "
+      "move from one event to a different one, disambiguate it using only the "
+      "licensed date/place/speaker identity already given ('At his own news "
+      "conference in Hayward on Monday, Swalwell said...'), not a mechanical "
+      "date/place stamp on every paragraph -- only where the transition could "
+      "otherwise be misread as continuous with what precedes it."
 )
 
 
@@ -279,6 +290,11 @@ def render_fact_status(fact_status: dict) -> str:
                 ann.get("quote_text", ""), ann.get("quote_attribution", ""))
         elif qp == "ATTRIBUTED_PARAPHRASE_ONLY":
             bit += " -- no direct quotation marks; attributed paraphrase only"
+        event = ann.get("event_id")
+        if event:
+            where = " / ".join(x for x in (ann.get("event_date"),
+                                           ann.get("event_location")) if x)
+            bit += " -- event %s%s" % (event, (" (%s)" % where) if where else "")
         lines.append(bit)
     return "\n".join(lines) + "\n"
 
@@ -405,13 +421,25 @@ CLAIM_MAPPER_SYSTEM = (
     "'ATTRIBUTED_PARAPHRASE_ONLY' and leave quoted_text null. If there is no "
     "quotation at all, report 'NONE'.\n"
     "\n"
+    "Some facts carry an event_id (with a date/location). If the sentence's cited "
+    "fact(s) carry one, report it as event_id. Report event_transition: true only "
+    "if this sentence is the FIRST in its stretch of the article to describe this "
+    "event after the immediately preceding sentence described a DIFFERENT event; "
+    "false otherwise (including when this is simply the continuation of the same "
+    "event, or the article's first event). context_anchor_fact_ids: when "
+    "event_transition is true, which of THIS sentence's own fact_ids supplied the "
+    "date/place/speaker context that disambiguates the new event -- empty if none "
+    "did (which is itself worth reporting honestly, not filled in to look "
+    "complete).\n"
+    "\n"
     "Reply with ONE JSON object:\n"
     '{"claim_map": [{"sentence_id": "S001", "fact_ids": ["F60"], '
     '"entity_owner": null, "claim_subject_label": "", "scope": null, '
     '"qualifiers": "", "claim_status": "ESTABLISHED", "attribution_to": null, '
     '"temporal_relation": "NONE", "claim_shape": "EXACT", '
     '"required_qualifiers_preserved": true, "quote_permission_used": "NONE", '
-    '"quoted_text": null}]}\n'
+    '"quoted_text": null, "event_id": null, "event_transition": false, '
+    '"context_anchor_fact_ids": []}]}\n'
     "  entity_owner: ONLY when the cited fact names exactly one entity and the "
     "sentence is about that one entity -- its exact name, verbatim. Otherwise null.\n"
     "  claim_subject_label: optional, freeform, ungraded description of the "
@@ -428,6 +456,7 @@ CLAIM_MAPPER_SYSTEM = (
     "  required_qualifiers_preserved: true/false as described above; true when the "
     "cited fact(s) carry no 'must keep' qualifier at all.\n"
     "  quote_permission_used / quoted_text: as described above.\n"
+    "  event_id / event_transition / context_anchor_fact_ids: as described above.\n"
     "No prose outside the JSON."
 )
 
@@ -465,6 +494,11 @@ def render_claim_mapper_prompt(sentences: dict, ledger: dict, allowed_fact_ids,
         elif qp == "ATTRIBUTED_PARAPHRASE_ONLY":
             L.append("      no direct quotation permitted; attributed paraphrase "
                      "only")
+        event = ann.get("event_id")
+        if event:
+            where = " / ".join(x for x in (ann.get("event_date"),
+                                           ann.get("event_location")) if x)
+            L.append("      event: %s%s" % (event, (" (%s)" % where) if where else ""))
     return "\n".join(L)
 
 
@@ -529,6 +563,14 @@ def _normalize_quote(s: str) -> str:
 def validate_claim_map(claim_map: list, allowed_fact_ids: set, ledger: dict,
                        fact_status: dict | None = None) -> list:
     fact_status = fact_status or {}
+    # event_id -> {"date": ..., "location": ...}, derived from every fact carrying
+    # one, used only to catch a qualifier borrowing ANOTHER event's own date/place.
+    other_events = {}
+    for ann in fact_status.values():
+        eid = ann.get("event_id")
+        if eid and eid not in other_events:
+            other_events[eid] = {"date": ann.get("event_date"),
+                                 "location": ann.get("event_location")}
     errs = []
     for c in claim_map:
         sid = c.get("sentence_id", "?")
@@ -610,6 +652,43 @@ def validate_claim_map(claim_map: list, allowed_fact_ids: set, ledger: dict,
                             "%s: quoted_text %r does not exactly match the permitted "
                             "quote_text for %s" % (sid, c.get("quoted_text"),
                                                    permitting))
+
+            # EVENT_CONTEXT_BINDING: same metadata-vs-metadata class. Adjacency in
+            # the prose is not inspected (that is Grounding's job, exactly as it
+            # caught the real regression this guards against); this only checks
+            # that a sentence's own declared event_id agrees with what the packet
+            # says its cited fact(s) belong to, and that a claimed context anchor
+            # is actually among the sentence's own cited facts.
+            declared_event = c.get("event_id")
+            if declared_event:
+                fact_events = {fact_status[fid]["event_id"] for fid in fids
+                              if fact_status.get(fid, {}).get("event_id")}
+                if fact_events and fact_events != {declared_event}:
+                    errs.append(
+                        "%s: declares event_id %r but its cited facts %s belong to "
+                        "event(s) %s -- a sentence may not mix facts from different "
+                        "events under one event label"
+                        % (sid, declared_event, fids, sorted(fact_events)))
+                quals_text = str(c.get("qualifiers") or "")
+                if quals_text:
+                    own = other_events.get(declared_event, {})
+                    for other_eid, other in other_events.items():
+                        if other_eid == declared_event:
+                            continue
+                        for field in ("date", "location"):
+                            val = other.get(field)
+                            if val and val in quals_text and val != own.get(field):
+                                errs.append(
+                                    "%s: qualifiers %r for event %r contains %r, "
+                                    "which is event %r's own %s, not this event's"
+                                    % (sid, quals_text, declared_event, val,
+                                       other_eid, field))
+            anchors = c.get("context_anchor_fact_ids") or []
+            unlicensed_anchors = [a for a in anchors if a not in fids]
+            if unlicensed_anchors:
+                errs.append(
+                    "%s: context_anchor_fact_ids %s are not among this sentence's "
+                    "own cited fact_ids %s" % (sid, unlicensed_anchors, fids))
 
         entities = set()
         for f in cited_facts:
