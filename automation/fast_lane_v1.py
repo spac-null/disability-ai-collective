@@ -263,7 +263,10 @@ FAST_LANE_WRITER_SYSTEM = (
       "licensed date/place/speaker identity already given ('At his own news "
       "conference in Hayward on Monday, Swalwell said...'), not a mechanical "
       "date/place stamp on every paragraph -- only where the transition could "
-      "otherwise be misread as continuous with what precedes it."
+      "otherwise be misread as continuous with what precedes it.\n"
+    + "\n\nREFERENT_CLARITY. When a sentence involves more than one person or "
+      "entity, do not use a pronoun if its antecedent could reasonably be read "
+      "either way. Prefer the explicit name."
 )
 
 
