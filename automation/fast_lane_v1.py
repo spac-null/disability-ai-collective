@@ -186,6 +186,14 @@ def build_synthetic_arch(packet: dict, article_type: str) -> dict:
 # additional required output field, CLAIM_MAP. Uses the existing writer_packet()/
 # ST.build_packet()/ST.render() and the existing CP._ask() call-and-retry-once helper.
 # ══════════════════════════════════════════════════════════════════════════════
+ESTABLISHED, ATTRIBUTED, DISPUTED, UNCERTAIN = (
+    "ESTABLISHED", "ATTRIBUTED", "DISPUTED", "UNCERTAIN")
+CLAIM_STATUSES = (ESTABLISHED, ATTRIBUTED, DISPUTED, UNCERTAIN)
+# Only ESTABLISHED is "unqualified" -- the other three all mean "this still needs its
+# speaker or its uncertainty carried in the prose", so the one thing that must never
+# happen is one of them arriving at the Writer's own reported ESTABLISHED.
+QUALIFIED_STATUSES = (ATTRIBUTED, DISPUTED, UNCERTAIN)
+
 FAST_LANE_WRITER_SYSTEM = (
     CP.WRITER_SYSTEM
     + "\n\nIMPLEMENTATION_DETAILS_REQUIRE_DIRECT_LICENSE. A fact that grants a "
@@ -197,10 +205,28 @@ FAST_LANE_WRITER_SYSTEM = (
       "location; or an internal technical mechanism. Write the capability and its "
       "stated effect, and stop there -- do not supply the natural-sounding detail of "
       "how it would work.\n"
+    + "\n\nATTRIBUTION_AND_STATUS_MUST_SURVIVE. Every fact below is marked "
+      "ESTABLISHED, ATTRIBUTED, DISPUTED or UNCERTAIN in FACT STATUS. You may make "
+      "the prose natural, but the status must survive into it exactly:\n"
+      "  ESTABLISHED -> write it as fact.\n"
+      "  ATTRIBUTED -> keep the speaker in the sentence ('her lawyer says...', "
+      "'a DHS spokesperson said...'). Do not convert \"X's lawyer said X did\" into "
+      "\"X did\".\n"
+      "  DISPUTED -> keep BOTH sides attributed to their own speaker. Do not silently "
+      "adopt one side as what happened.\n"
+      "  UNCERTAIN -> keep the hedge; do not resolve it.\n"
+      "None of the four may be written as a stronger one, ever, however natural the "
+      "stronger sentence would read. Do not merge two facts into a stronger claim "
+      "neither states alone. Do not invent a document, a file, a decision record, a "
+      "signing date, a sequence, a before/after relation, a motive or a belief that "
+      "is not explicitly in a fact below -- a date attached to an EVENT is not the "
+      "date of a DOCUMENT, and two separately dated facts do not by themselves create "
+      "a chronology between them. Literary force is never factual permission.\n"
     + "\n\nADDITIONALLY, return one more field in the same JSON object:\n"
       '  "claim_map": [{"sentence_id": "S001", "fact_ids": ["F60"], '
       '"entity_owner": "TD Snap", "claim_subject_label": "", "scope": "WORLD", '
-      '"qualifiers": "v1.40.2, 2026-08-17"}]\n'
+      '"qualifiers": "v1.40.2, 2026-08-17", "claim_status": "ESTABLISHED", '
+      '"attribution_to": null, "temporal_relation": "NONE"}]\n'
       "For every factual sentence in the article (a sentence naming a specific "
       "product, action, date, version or number), give its sentence_id (matching the "
       "numbering you already assign for negative_lineage) and the fact_id(s) from the "
@@ -217,14 +243,49 @@ FAST_LANE_WRITER_SYSTEM = (
       "  scope: the scope word from the cited fact, when there is exactly one cited "
       "fact; omit it for a sentence resting on more than one fact.\n"
       "  qualifiers: any exact date/version/number the sentence states, verbatim.\n"
+      "  claim_status: report the status this sentence actually carries in your "
+      "prose -- ESTABLISHED, ATTRIBUTED, DISPUTED or UNCERTAIN. Report it honestly: "
+      "if the cited fact's FACT STATUS says ATTRIBUTED/DISPUTED/UNCERTAIN, your "
+      "sentence must read that way and this field must say so too, never "
+      "ESTABLISHED.\n"
+      "  attribution_to: the speaker named in the sentence, when claim_status is "
+      "ATTRIBUTED or DISPUTED; null otherwise.\n"
+      "  temporal_relation: 'BEFORE', 'AFTER' or 'NONE'. Use BEFORE/AFTER only when "
+      "a fact below explicitly states that ordering; otherwise NONE, even if two "
+      "facts happen to carry different dates.\n"
       "A purely transitional sentence asserting no fact-specific claim may be omitted "
       "from claim_map. Use no fact_id that was not given to you above."
 )
 
 
-def fast_lane_write(provider, arch: dict, ledger: dict) -> tuple:
-    """Returns (article_text, claim_map, negative_lineage, packet, identity)."""
+def render_fact_status(fact_status: dict) -> str:
+    """The supplementary block fast_lane_write() appends after the rendered packet,
+    naming each selected fact's status explicitly rather than leaving the Writer to
+    infer it only from proposition wording. Fast-Lane-only; story.render() itself is
+    untouched."""
+    if not fact_status:
+        return ""
+    lines = ["", "FACT STATUS (carry this into the prose exactly; never upgrade it)"]
+    for fid, ann in sorted(fact_status.items()):
+        status = ann.get("claim_status", ESTABLISHED)
+        who = ann.get("attribution_to")
+        bit = "  %s: %s" % (fid, status)
+        if who:
+            bit += " (%s)" % who
+        lines.append(bit)
+    return "\n".join(lines) + "\n"
+
+
+def fast_lane_write(provider, arch: dict, ledger: dict,
+                    fact_status: dict | None = None) -> tuple:
+    """Returns (article_text, claim_map, negative_lineage, packet, identity).
+
+    `fact_status` is the optional Fast-Lane-only {fact_id: {claim_status,
+    attribution_to}} annotation map, appended to the prompt as FACT STATUS and later
+    checked against the Writer's own claim_map by validate_claim_map().
+    """
     packet, rendered = CP.writer_packet(arch, ledger, cut_prohibitions=None)
+    rendered = rendered + render_fact_status(fact_status or {})
     obj, ident = CP._ask(provider, FAST_LANE_WRITER_SYSTEM, rendered, 6_000,
                          "FAST_LANE_WRITER", "FAST_LANE_WRITER_HOLD")
     article = CP._clean_article(obj.get("article", ""))
@@ -245,8 +306,21 @@ def fast_lane_write(provider, arch: dict, ledger: dict) -> tuple:
 # `entities` is refused, never treated as a new canonical entity by fuzzy or partial
 # match. Descriptive labeling belongs in the separate, unvalidated
 # `claim_subject_label` field, which grants zero factual permission.
+#
+# claim_status/attribution_to/temporal_relation, when `fact_status` is supplied,
+# add ONE more deterministic check: the Writer's own SELF-REPORTED status for a
+# sentence may never be stronger than the packet declared for the fact(s) it cites
+# (ATTRIBUTED/DISPUTED/UNCERTAIN may never self-report as ESTABLISHED), and an
+# explicit BEFORE/AFTER may never be self-reported for facts the packet marked
+# temporal_permission NONE. This is still comparing metadata to metadata, not prose
+# to evidence -- it catches the Writer's own declared status disagreeing with what
+# it was given, not whether the actual sentence text honours that status. Grounding
+# is what catches the sentence itself, exactly as it did on the real regression this
+# guards against (see fast_lane_v1_attribution_test.py).
 # ══════════════════════════════════════════════════════════════════════════════
-def validate_claim_map(claim_map: list, allowed_fact_ids: set, ledger: dict) -> list:
+def validate_claim_map(claim_map: list, allowed_fact_ids: set, ledger: dict,
+                       fact_status: dict | None = None) -> list:
+    fact_status = fact_status or {}
     errs = []
     for c in claim_map:
         sid = c.get("sentence_id", "?")
@@ -267,6 +341,28 @@ def validate_claim_map(claim_map: list, allowed_fact_ids: set, ledger: dict) -> 
             cited_facts.append(fact)
         if not cited_facts:
             continue
+
+        if fact_status:
+            declared = [fact_status[fid]["claim_status"] for fid in fids
+                       if fid in fact_status and "claim_status" in fact_status[fid]]
+            reported = c.get("claim_status")
+            if declared and reported == ESTABLISHED and any(
+                    d in QUALIFIED_STATUSES for d in declared):
+                errs.append(
+                    "%s: claim_status ESTABLISHED is stronger than the packet's "
+                    "declared status %s for %s -- ATTRIBUTED/DISPUTED/UNCERTAIN may "
+                    "never self-report as ESTABLISHED" % (sid, declared, fids))
+            temporal = c.get("temporal_relation")
+            if temporal in ("BEFORE", "AFTER"):
+                no_permission = [fid for fid in fids
+                                 if fact_status.get(fid, {}).get(
+                                     "temporal_permission", "NONE") == "NONE"]
+                if no_permission:
+                    errs.append(
+                        "%s: temporal_relation %r is not licensed -- %s carry no "
+                        "temporal_permission for it, and two separately dated facts "
+                        "do not by themselves create a chronology"
+                        % (sid, temporal, no_permission))
 
         entities = set()
         for f in cited_facts:
