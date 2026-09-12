@@ -1522,7 +1522,19 @@ def _entities(text: str, skip_sentence_initial: bool = True) -> set:
     """Capitalised tokens. Sentence-initial ones are skipped when reading PROSE, because
     every sentence starts with a capital; they are NOT skipped when building the approved
     set, or a name that happens to open a packet line looks unapproved in the article.
-    That false positive was real: "Jia" and "Jakarta" both open packet lines."""
+    That false positive was real: "Jia" and "Jakarta" both open packet lines.
+
+    ORDINARY LEADING WHITESPACE IS NOT EVIDENCE EITHER (2026-09-12). The title-stripping
+    step ahead of this call (factual_surface_audit's `re.sub(r"^#\\s+.*\\n", ...)`) removes
+    only the heading line, leaving the blank line that separates a Markdown heading from
+    its first paragraph -- so the article's own first word sits after a leading "\\n", not
+    at position 0. The old strip set had no newline in it, so that leading "\\n" survived
+    stripping, the "did anything precede this token" test came back non-empty, and the
+    very first word of the article -- capitalised by ordinary sentence-initial grammar,
+    exactly the case this function exists to exempt -- was scored as a new entity. "When
+    Trump began his second term..." flagged "When". Newline and carriage return are
+    ordinary layout, not a word, so they join the stripped set below.
+    """
     out = set()
     for s in re.split(r"(?<=[.!?])\s+", text):
         matches = list(re.finditer(r"\b[A-Z][A-Za-z'’.-]{2,}\b", s))
@@ -1538,7 +1550,7 @@ def _entities(text: str, skip_sentence_initial: bool = True) -> set:
             # a sentence is not evidence of a name -- and stops exempting names that merely
             # happen to be matched first. Verified against sentence starts, mid-sentence
             # names, lowercase-prefixed fragments and leading quotation/markdown punctuation.
-            if skip_sentence_initial and not s[:m.start()].strip(" \t'\"“‘([#*_-"):
+            if skip_sentence_initial and not s[:m.start()].strip("\n\r \t'\"“‘([#*_-"):
                 continue
             tok = m.group(0).rstrip(".,")
             out.add(tok)
