@@ -65,6 +65,7 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 import crip_minds_screen as SCREEN                          # noqa: E402
+import commissioning_diversity as CDV                       # noqa: E402
 import knowledge_first as KF                                # noqa: E402
 import news_fetcher as NF                                   # noqa: E402
 import selector_v2 as SV                                    # noqa: E402
@@ -85,6 +86,13 @@ MAX_DISTINCT_CANDIDATES = 3
 # 16 approved questions, permanent claims and two knowledge-first slots a day, it otherwise
 # does within the week. See knowledge_first.load_claimed_question_ids.
 QUESTION_COOLDOWN_DAYS = 21
+DIVERSITY_WINDOW = 20
+
+
+def _diversity_history() -> dict:
+    """Recent public metadata, read-only; absent/unknown fields are neutral."""
+    posts = pathlib.Path(__file__).resolve().parents[1] / "_posts"
+    return CDV.published_history(posts, DIVERSITY_WINDOW)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # WHERE A REJECTION HAPPENED, AND THEREFORE WHETHER ANOTHER PITCH MAY BE DRAWN
@@ -149,7 +157,8 @@ def commission_knowledge_first(orch, model: str, evidence_root, *,
                             api_key=KF.search_key(), state_conn=conn, run_id=run_id,
                             evidence_root=evidence_root,
                             exclude=set(exclude_question_ids or ()),
-                            question_cooldown_days=QUESTION_COOLDOWN_DAYS)
+                            question_cooldown_days=QUESTION_COOLDOWN_DAYS,
+                            diversity_history=_diversity_history())
     finally:
         conn.close()
     q = rec.get("question") or {}
@@ -276,6 +285,13 @@ def _attempt_record(n: int, lane: str, seed, commission, screen, result, termina
         "lane": lane,
         "seed_id": (seed or {}).get("id"),
         "source": (seed or {}).get("source_name"),
+        "country": (seed or {}).get("country"),
+        "world_region": (seed or {}).get("world_region"),
+        "source_language": (seed or {}).get("source_language"),
+        "source_script": (seed or {}).get("source_script"),
+        "translation_used": (seed or {}).get("translation_used"),
+        "cross_border_scope": (seed or {}).get("cross_border_scope"),
+        "diversity_prior": (seed or {}).get("diversity_prior", 0.0),
         "url": (seed or {}).get("url"),
         "subject": (seed or {}).get("title"),
         "question_id": q.get("id"),

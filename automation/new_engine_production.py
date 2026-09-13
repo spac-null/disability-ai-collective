@@ -178,7 +178,8 @@ def _seed_dict(orch, seed_id: str) -> dict | None:
     try:
         row = conn.execute(
             "SELECT id, url, title, summary, source_name, relevance_score, themes,"
-            " disability_angle, pub_date, underlying_article_url"
+            " disability_angle, pub_date, underlying_article_url, country, world_region,"
+            " source_language, source_script, translation_used, cross_border_scope"
             " FROM news_seeds WHERE id = ?", (seed_id,)).fetchone()
     finally:
         conn.close()
@@ -187,7 +188,10 @@ def _seed_dict(orch, seed_id: str) -> dict | None:
     return {"id": row[0], "url": row[1], "title": row[2], "summary": row[3],
             "source_name": row[4], "relevance_score": row[5],
             "themes": json.loads(row[6] or "[]"), "disability_angle": row[7],
-            "pub_date": row[8], "underlying_article_url": row[9]}
+            "pub_date": row[8], "underlying_article_url": row[9],
+            "country": row[10], "world_region": row[11],
+            "source_language": row[12], "source_script": row[13],
+            "translation_used": row[14], "cross_border_scope": row[15]}
 
 
 def _select_seed(orch, model: str) -> tuple:
@@ -670,7 +674,8 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     body = CAND.final_body(out)
     meta = CAND.engine_meta_from_run(out, run=run, generated_at=now.isoformat(),
                                      source_url=payload["provenance"]["url"],
-                                     provider_model=model)
+                                     provider_model=model,
+                                     commissioning_metadata=seed)
     _wo = out["artifacts"][C.WRITER_OUTPUT].payload if C.WRITER_OUTPUT in out["artifacts"] else {}
     _src_headline = payload["provenance"].get("title") or "Untitled"
     # The editorial package titles the article when the composition produced one: it is

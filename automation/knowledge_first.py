@@ -35,6 +35,8 @@ import random
 import re
 import sqlite3
 
+import commissioning_diversity as CDV
+
 HERE = pathlib.Path(__file__).resolve().parent
 PERSPECTIVE_DIR = HERE.parent / ".claude" / "perspective-research"
 
@@ -227,7 +229,10 @@ COMMISSION_SCHEMA = (
     '   "tests_the_question": "how this story could confirm OR fail the question",\n'
     '   "names_to_research": ["real proper names a researcher would look up"],\n'
     '   "search_queries": ["a query that would find primary material", "another"],\n'
-    '   "access_deficit_self_check": "why this is NOT an access-deficit story"}]}\n'
+    '   "access_deficit_self_check": "why this is NOT an access-deficit story",\n'
+    '   "country": "explicitly known country or null", "world_region": "known region or null",\n'
+    '   "source_language": "known source language or null", "source_script": "known script or null",\n'
+    '   "translation_used": "true/false only when known", "cross_border_scope": "known scope or null"}]}\n'
     "No prose outside the JSON."
 )
 
@@ -239,8 +244,16 @@ def _parse(text: str) -> dict:
     return json.loads(m.group(0))
 
 
-def propose_stories(provider, question: dict) -> dict:
+def propose_stories(provider, question: dict, diversity_history: dict | None = None) -> dict:
     """ONE model call. Names stories; licenses nothing."""
+    diversity_note = (
+        "\n\nRECENT PUBLICATION DIVERSITY (soft commissioning prior, never a quota or "
+        "exclusion): %s\nPrefer a less-repeated country, region, source language or "
+        "script when candidates are otherwise comparable. Do not assume the easiest "
+        "English-language or U.S. manifestation. Preserve original Unicode. Return "
+        "metadata only when explicitly known; unknown is valid.\n" %
+        json.dumps((diversity_history or {}).get("counts") or {}, ensure_ascii=False,
+                   sort_keys=True))
     user = "\n".join([
         "THE QUESTION (from approved perspective material -- it licenses this question and "
         "NO fact):",
@@ -248,6 +261,7 @@ def propose_stories(provider, question: dict) -> dict:
         "  (mechanism: %s)" % question["title"],
         "",
         COMMISSION_SCHEMA,
+        diversity_note,
     ])
     comp = provider.complete(system=COMMISSION_SYSTEM, user=user, max_tokens=2_000)
     obj = _parse(getattr(comp, "text", "") or "")
@@ -513,7 +527,8 @@ def seed_exclusions_from_retained(conn, evidence_root) -> int:
 
 def commission(provider, *, search_fn, fetch_fn, questions=None, exclude=None,
                api_key: str = "", rng=None, state_conn=None, run_id: str | None = None,
-               evidence_root=None, question_cooldown_days: int | None = None) -> dict:
+               evidence_root=None, question_cooldown_days: int | None = None,
+               diversity_history: dict | None = None) -> dict:
     """(seed | None, record). The seed is the SAME shape the selector returns, so the
     entire downstream engine is reached unchanged.
 
@@ -543,6 +558,7 @@ def commission(provider, *, search_fn, fetch_fn, questions=None, exclude=None,
                             claim_times=claim_times)
     rec = {"lane": LANE, "questions_available": len(qs), "question": q,
            "candidates": [], "tried": [], "seed": None, "model_calls": 0}
+    rec["diversity_window"] = diversity_history or {"window": 0, "counts": {}}
     if not q:
         rec["status"] = "NO_QUESTION_AVAILABLE"
         return rec
@@ -552,7 +568,7 @@ def commission(provider, *, search_fn, fetch_fn, questions=None, exclude=None,
         # this question claimed, exactly as intended.
         claim_question(state_conn, q["id"], run_id=run_id)
     try:
-        proposed = propose_stories(provider, q)
+        proposed = propose_stories(provider, q, diversity_history)
     except Exception as e:
         rec["status"] = "COMMISSION_CALL_FAILED"
         rec["technical_failure"] = True
@@ -562,12 +578,12 @@ def commission(provider, *, search_fn, fetch_fn, questions=None, exclude=None,
         return rec
     rec["model_calls"] = proposed.get("model_calls", 0)
     rec["provider"] = proposed.get("provider", {})
-    rec["candidates"] = proposed["candidates"]
+    rec["candidates"] = CDV.rank_candidates(proposed["candidates"], diversity_history)
     if not proposed["candidates"]:
         rec["status"] = "NO_STORY_FOR_QUESTION"
         return rec
 
-    for cand in proposed["candidates"]:
+    for cand in rec["candidates"]:
         try:
             urls = anchor_candidates(cand, search_fn, api_key=api_key)
         except SearchUnavailable as e:
@@ -608,7 +624,12 @@ def commission(provider, *, search_fn, fetch_fn, questions=None, exclude=None,
                 "summary": str(cand.get("subject") or "")[:600],
                 "source_name": "knowledge_first",
                 "underlying_article_url": None,
+                **CDV.normalize_metadata(cand),
+                "diversity_prior": cand.get("diversity_prior", 0.0),
+                "diversity_prior_effects": cand.get("diversity_prior_effects", {}),
             }
+            rec["diversity_prior"] = cand.get("diversity_prior", 0.0)
+            rec["diversity_prior_effects"] = cand.get("diversity_prior_effects", {})
             rec["chosen"] = {"subject": cand.get("subject"),
                              "why_now": cand.get("why_now"),
                              "carrier": cand.get("carrier"),

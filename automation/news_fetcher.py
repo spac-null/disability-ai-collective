@@ -17,6 +17,7 @@ from email.utils import parsedate_to_datetime
 sys.path.insert(0, str(Path(__file__).parent))
 import material_policy as MP                                        # noqa: E402
 import selector_v2 as SV                                            # noqa: E402
+import commissioning_diversity as CDV                                # noqa: E402
 
 # ── Env / paths ───────────────────────────────────────────────────────────────
 
@@ -500,6 +501,12 @@ def init_db(conn):
         # and retention can follow the material instead of one universal news clock.
         # Additive; a NULL here means OTHER, which is the legacy clock exactly.
         ("material_class", "TEXT"),
+        ("country", "TEXT"),
+        ("world_region", "TEXT"),
+        ("source_language", "TEXT"),
+        ("source_script", "TEXT"),
+        ("translation_used", "TEXT"),
+        ("cross_border_scope", "TEXT"),
     ):
         try:
             conn.execute(f"ALTER TABLE news_seeds ADD COLUMN {_col} {_def}")
@@ -522,6 +529,7 @@ def init_db(conn):
     except sqlite3.OperationalError:
         pass
     conn.commit()
+    backfill_source_scripts(conn)
 
 
 def url_id(url: str) -> str:
@@ -548,6 +556,19 @@ def backfill_material_class(conn) -> int:
     return updated
 
 
+def backfill_source_scripts(conn) -> int:
+    """Derive only script from the persisted source title; leave all other geography
+    and language fields unknown unless an upstream source explicitly supplied them."""
+    rows = conn.execute(
+        "SELECT id, title FROM news_seeds WHERE source_script IS NULL").fetchall()
+    updates = [(CDV.source_script(r[1] or ""), r[0]) for r in rows]
+    updates = [(script, seed_id) for script, seed_id in updates if script]
+    if updates:
+        conn.executemany("UPDATE news_seeds SET source_script = ? WHERE id = ?", updates)
+        conn.commit()
+    return len(updates)
+
+
 def store_seed(conn, item: dict) -> bool:
     """Store a scored item. Returns True if new, False if duplicate."""
     try:
@@ -555,8 +576,9 @@ def store_seed(conn, item: dict) -> bool:
             INSERT INTO news_seeds
               (id, url, title, summary, source_name, source_tier, pub_date,
                fetched_date, relevance_score, themes, disability_angle, used,
-               underlying_article_url, material_class)
-            VALUES (?,?,?,?,?,?,?,?,?,?,NULL,0,?,?)
+              underlying_article_url, material_class, country, world_region,
+              source_language, source_script, translation_used, cross_border_scope)
+            VALUES (?,?,?,?,?,?,?,?,?,?,NULL,0,?,?,?,?,?,?,?,?)
         """, (
             url_id(item["url"]),
             item["url"],
@@ -570,6 +592,11 @@ def store_seed(conn, item: dict) -> bool:
             json.dumps(item.get("themes", [])),
             item.get("underlying_url") or None,
             MP.normalise(item.get("material_class")),
+            item.get("country") or item.get("subject_country"),
+            item.get("world_region"), item.get("source_language") or item.get("language"),
+            item.get("source_script") or item.get("script") or
+            CDV.source_script(item.get("title", "")),
+            item.get("translation_used"), item.get("cross_border_scope"),
         ))
         conn.commit()
         return True

@@ -52,6 +52,7 @@ import time
 from datetime import datetime, timedelta
 
 import material_policy as MP
+import commissioning_diversity as CDV
 from new_engine_v1.provider import parse_json_object
 
 SHADOW_ENV = "CRIPMINDS_SELECTOR_V2_SHADOW"
@@ -623,17 +624,22 @@ _ORDER = {"assessment": {"STRONG_CANDIDATE": 0, "POSSIBLE_CANDIDATE": 1, "WEAK_C
           "researchability": {"HIGH": 0, "MEDIUM": 1, "LOW": 2}}
 
 
-def rank(records: list) -> list:
+def rank(records: list, diversity_history: dict | None = None) -> list:
     """Transparent and arithmetic. The model classifies; the ordering is a readable sort
     over named fields, so any position can be explained without rerunning anything.
     Only assessments that actually validated can rank at all."""
     ok = [r for r in records if r["assessment_status"] == OK]
+    for r in ok:
+        r["commissioning_metadata"] = CDV.normalize_metadata(r)
+        r["diversity_prior"], r["diversity_prior_effects"] = CDV.prior(
+            r["commissioning_metadata"], diversity_history)
     ok.sort(key=lambda r: (
         _ORDER["assessment"].get(r["assessment"], 9),
         _ORDER["material_richness"].get(r["material_richness"], 9),
         _ORDER["researchability"].get(r["researchability"], 9),
         r["publisher_penalty"],                       # small, decaying, never a ban
         -(r["theme_signal"] or 0),                    # booster excluded
+        -r["diversity_prior"],                         # soft, after editorial quality
         # freshness as the final deterministic tie-break: later pub_date first
         [-ord(ch) for ch in (r["pub_date"] or "")],
     ))
@@ -797,6 +803,9 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
                "legacy_disability_angle": bool(row["disability_angle"]),
                "cached": bool(c.get("cached")),
                "errors": _errors_json(a.get("errors"))}
+        for field in ("country", "world_region", "source_language", "source_script",
+                      "translation_used", "cross_border_scope"):
+            rec[field] = row[field] if field in row.keys() else None
         rec.update({k: a.get(k) for k in
                     ("concrete_subject", "subject_anchor_quote", "investigable_question",
                      "question_basis_quote", "material_richness", "researchability",
@@ -805,7 +814,8 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
         rec.update(c["features"])
         records.append(rec)
 
-    ranked = rank(records)
+    history = CDV.current_history(20)
+    ranked = rank(records, history)
     for rec in ranked:
         conn.execute(
             "INSERT OR REPLACE INTO %s (seed_id, source_url, source_sha256, assessed_at,"

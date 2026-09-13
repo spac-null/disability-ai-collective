@@ -174,6 +174,10 @@ def build_frontmatter(*, title: str, author: str, engine_meta: dict,
         ("writer_grounding_unsupported", engine_meta["grounding_unsupported"]),
         ("provider_model", engine_meta.get("provider_model", "")),
     ]
+    for key in ("country", "world_region", "source_language", "source_script",
+                "translation_used", "cross_border_scope"):
+        if engine_meta.get(key) not in (None, ""):
+            fields.append((key, engine_meta[key]))
     # THE EDITORIAL PACKAGE. Written by the composition's last stage from the exact bytes
     # that publish, and absent when that stage skipped -- in which case the site falls back
     # to Jekyll's automatic excerpt, which is the article's first paragraph. That fallback
@@ -232,13 +236,14 @@ def persist_candidate(*, drafts_dir: pathlib.Path, slug: str, body: str,
 
 
 def engine_meta_from_run(out: dict, *, run: str, generated_at: str,
-                         source_url: str = "", provider_model: str = "") -> dict:
+                         source_url: str = "", provider_model: str = "",
+                         commissioning_metadata: dict | None = None) -> dict:
     """Collect the engine-era metadata from a finished runner result."""
     A = out["artifacts"]
     gf = A["GROUNDING_FINDINGS"].payload if "GROUNDING_FINDINGS" in A else {}
     unsupported = len([f for f in gf.get("findings", [])
                        if f.get("classification") == "TRUE_UNSUPPORTED"])
-    return {
+    meta = {
         "run": run,
         "generated_at": generated_at,
         "decision": out["decision"],
@@ -250,6 +255,11 @@ def engine_meta_from_run(out: dict, *, run: str, generated_at: str,
         "grounding_unsupported": unsupported,
         "provider_model": provider_model,
     }
+    for key in ("country", "world_region", "source_language", "source_script",
+                "translation_used", "cross_border_scope"):
+        if (commissioning_metadata or {}).get(key) not in (None, ""):
+            meta[key] = commissioning_metadata[key]
+    return meta
 
 
 def final_body(out: dict) -> str:
