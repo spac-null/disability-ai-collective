@@ -1534,9 +1534,24 @@ def _entities(text: str, skip_sentence_initial: bool = True) -> set:
     exactly the case this function exists to exempt -- was scored as a new entity. "When
     Trump began his second term..." flagged "When". Newline and carriage return are
     ordinary layout, not a word, so they join the stripped set below.
+
+    A SENTENCE CAN END INSIDE A QUOTATION MARK (2026-09-13). The same failure, one
+    character further along, and the fix above could not reach it: the splitter's
+    lookbehind demanded that the character immediately before the whitespace be `.!?`,
+    so a sentence closing as `... happy "future families." Behind the text is ...` never
+    split at all -- the terminal `.` is followed by `"`, not by the space. The whole
+    remainder of the article stayed in one segment, every capital in it was mid-segment
+    by construction, and the ordinary preposition opening the next sentence was scored as
+    a name. Measured on production-20260913T083824Z-f83f4b8a, where the segment holding
+    "Behind" was 3,973 characters long and "Behind" sat 1,650 characters into it.
+
+    Closing punctuation after the stop is typography, not a sentence continuing, so the
+    closers are consumed as part of the separator. Straight and curly quotes, guillemets
+    and closing brackets all appear in ordinary prose; a stop with none of them behaves
+    exactly as before.
     """
     out = set()
-    for s in re.split(r"(?<=[.!?])\s+", text):
+    for s in re.split(r"(?<=[.!?])[\"'”’»)\]]*\s+", text):
         matches = list(re.finditer(r"\b[A-Z][A-Za-z'’.-]{2,}\b", s))
         for m in matches:
             # POSITION, NOT MATCH ORDER (2026-09-10). This dropped `toks[0]` -- the first
@@ -1607,16 +1622,47 @@ def _calendar_dates(text: str) -> list:
     return out
 
 
-def factual_surface_audit(article_text: str, packet: dict) -> dict:
-    """What factual surface does the prose carry that the packet never granted?
+def factual_surface_audit(article_text: str, packet: dict, ledger: dict | None = None) -> dict:
+    """What factual surface does the prose carry that the approved material never granted?
 
     Three channels, in descending order of how much a reader should trust them:
-      numbers   -- a figure not in the packet is almost always an addition
-      entities  -- a capitalised name not in the packet is almost always an addition
-      terms     -- content words absent from the packet; noisy, ranked as candidates
+      numbers   -- a figure not in the approved material is almost always an addition
+      entities  -- a capitalised name not in it is almost always an addition
+      terms     -- content words absent from it; noisy, ranked as candidates
       sensory   -- the subset of those that assert a perceivable property
+
+    THE LEDGER IS PART OF THE APPROVED MATERIAL (2026-09-13). It was not, and that was
+    the defect. This screen compared prose against `render(packet)` alone, but the packet
+    is a working SUBSET prepared for the Writer, while the frozen Ledger is the thing
+    doctrine actually names as the source of factual permission. A name the Ledger grants
+    verbatim, three times over, was therefore scored as an invention because the packet's
+    condensed rendering happened not to carry it.
+
+    Measured on production-20260913T083824Z-f83f4b8a: the article wrote "the San
+    Francisco Museum of Modern Art". Ledger facts F126, F127 and F61 each carry that
+    exact phrase in their own support spans -- one of them is the museum's own address
+    block -- while the packet render (15,559 chars against the Ledger's 42,773) contains
+    "SFMOMA", "San", "Francisco" and "Art" but never "Museum" or "Modern". Both tokens
+    blocked publication as unsupported facts about an institution the run had three
+    verbatim citations for.
+
+    This is not a widened net. It is the same net measured against the right surface, and
+    the sibling screen in composition.py already did it this way -- `_pkg_licensed` has
+    always folded `ledger_text` into what the package may say. The two screens disagreed
+    about what "approved" means, and the narrower one was wrong. Anything in neither the
+    packet nor the Ledger still blocks, which is every genuine invention.
+
+    `ledger` stays optional so every existing caller and offline test is unaffected;
+    omitting it reproduces the previous packet-only behaviour exactly.
     """
     approved = render(packet)
+    if ledger:
+        # Proposition and support span: what was granted, and the source bytes it was
+        # granted from. Same pair composition.py's package screen uses.
+        approved += " " + " ".join(
+            "%s %s" % (str((v or {}).get("proposition", "")),
+                       str((v or {}).get("support_span", "")))
+            for v in ledger.values() if isinstance(v, dict))
     a_words, a_nums, a_ents = (_content_words(approved, fold=True), _numbers(approved),
                                _entities(approved, skip_sentence_initial=False))
     body = article_text.split("---", 2)[2] if article_text.startswith("---") else article_text

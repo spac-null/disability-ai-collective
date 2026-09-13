@@ -2996,7 +2996,11 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
         return base != e and base in approved_entities
 
     def screens(text):
-        surface = ST.factual_surface_audit(text, packet)
+        # The Ledger travels with the packet: it is what actually grants the facts, and
+        # the packet is the condensed subset the Writer was handed. See
+        # story.factual_surface_audit -- a name the Ledger cites verbatim is not an
+        # invention because the packet's rendering left it out.
+        surface = ST.factual_surface_audit(text, packet, ledger)
         if repair_text:
             lic_n, lic_e = _numbers_of(repair_text), ST._entities(
                 repair_text, skip_sentence_initial=False)
