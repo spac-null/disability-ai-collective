@@ -123,6 +123,13 @@ CAND = {"story_id": "a-slug", "carrier_type": "object",
 
 
 def run(worth):
+    # Existing lens-particular regression fixtures predate the editorial-delta fields;
+    # the dedicated delta contract test below covers missing/insufficient values.
+    if worth.get("verdict") in ST.LENS_PUBLISHABLE:
+        worth = dict(worth,
+                     source_baseline=worth.get("source_baseline", "the source's explicit account"),
+                     crip_minds_delta=worth.get("crip_minds_delta", "a distinct subject-specific mechanism"),
+                     editorial_delta_status=worth.get("editorial_delta_status", "SUFFICIENT"))
     return CP.worth_gate(Scripted({"worth_gate": worth, "story_candidate": CAND}),
                          LEDGER, "a subject")
 

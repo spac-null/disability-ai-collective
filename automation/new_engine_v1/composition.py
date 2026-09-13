@@ -848,6 +848,15 @@ WORTH_SCHEMA = (
     '                                  the reading stands on",\n'
     '                 "can_carry_article": "YES|NO"   can it hold more than one\n'
     '                                     incidental sentence\n'
+    '                 "source_baseline": "what the strongest existing coverage already\n'
+    '                                     makes clear, in specific substantive terms",\n'
+    '                 "crip_minds_delta": "what this subject-specific Crip Minds article\n'
+    '                                     would make the reader understand that coverage\n'
+    '                                     does not already explain",\n'
+    '                 "editorial_delta_status": "SUFFICIENT|INSUFFICIENT"  whether the\n'
+    '                                     proposed delta is genuinely distinct rather than\n'
+    '                                     a paraphrase, summary, tone or disability-impact\n'
+    '                                     restatement\n'
     ' "story_candidate": {"story_id": "kebab-slug", "carrier_type": "object",\n'
     '                 "opening_possibility": "the concrete thing to open on",\n'
     '                 "real_event_or_change": "what happens or changes",\n'
@@ -861,6 +870,13 @@ WORTH_SCHEMA = (
     "GREAT_GENERAL_STORY_WRONG_PUBLICATION, give the verdict and a one-sentence "
     "lens_claim saying what you considered and why it does not hold, and omit "
     "story_candidate. A refusal needs no further proof.\n"
+    "Before a publishable verdict, state SOURCE_BASELINE: what the strongest existing "
+    "coverage already makes clear. Then state CRIP_MINDS_DELTA: the specific supported "
+    "mechanism, assumption, contradiction, classification, body/perception/communication "
+    "model, dependency, maintenance, authorship, measurement or legibility insight this "
+    "article adds. A paraphrase of the source headline, lede or thesis, an elegant summary, "
+    "different tone, or merely saying disabled people are affected is not a delta; mark "
+    "editorial_delta_status INSUFFICIENT.\n"
     "No prose outside the JSON." % ", ".join(ST.CARRIERS)
 )
 
@@ -952,6 +968,24 @@ def worth_gate(provider, ledger: dict, subject: str) -> dict:
              (lens.get("lens_claim") or "")[:300]],
             {"evidence_ids": lens.get("evidence_ids"),
              "lens_particulars": lens.get("lens_particulars")})
+
+    # This is the existing Worth call's originality contract, not a new gate or a
+    # similarity detector. The model has already seen the frozen, subject-specific
+    # research; it must now distinguish the strongest coverage's baseline from the
+    # supported Crip Minds contribution. Missing or explicitly insufficient delta is a
+    # cheap, first-class Worth HOLD.
+    baseline = str(lens.get("source_baseline") or "").strip()
+    delta = str(lens.get("crip_minds_delta") or "").strip()
+    delta_status = str(lens.get("editorial_delta_status") or "").strip().upper()
+    if not baseline or not delta or delta_status != "SUFFICIENT":
+        raise CompositionHold(
+            WORTH, WORTH_HOLD,
+            ["HOLD_INSUFFICIENT_EDITORIAL_DELTA -- the candidate's proposed Crip Minds "
+             "contribution is not distinct from the strongest existing coverage",
+             "source_baseline: %s" % (baseline[:260] if baseline else "missing"),
+             "crip_minds_delta: %s" % (delta[:260] if delta else "missing")],
+            {"source_baseline": baseline, "crip_minds_delta": delta,
+             "editorial_delta_status": delta_status or "missing"})
 
     unknown_lens = sorted(set(lens.get("evidence_ids") or []) - set(ledger))
     if unknown_lens:
