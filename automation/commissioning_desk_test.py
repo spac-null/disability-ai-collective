@@ -469,6 +469,43 @@ def test_o_every_rejected_pitch_is_retained():
 # ══════════════════════════════════════════════════════════════════════════════
 # doctrine that must not have moved
 # ══════════════════════════════════════════════════════════════════════════════
+def test_a_screen_rejection_does_not_come_back_tomorrow():
+    """Measured defect, 2026-09-13 three-day sample: the ordinary-world slot proposed the
+    SAME candidate on all three days, because a screen rejection never reached the seed
+    pool -- the write-back lives in run_scheduled, which a screen-rejected candidate never
+    reaches."""
+    print("\nScreen rejections are written back to the pool")
+    orch = _Orch()
+    marks = []
+    orch.CE_REVIEWABLE = "NONDETERMINISTIC_OR_REVIEWABLE_HOLD"
+    orch.mark_news_seed_current_engine_attempt = (
+        lambda seed_id, **kw: marks.append((seed_id, kw)))
+    seed = _seed("ow1", "The Conversation")
+    rec = {"verdict": SCREEN.REJECT, "reject_reason": SCREEN.NO_QUESTION}
+    CD.record_screen_rejection(orch, seed, rec, "day-1")
+    check("the pool was told", len(marks) == 1, marks)
+    check("on the right seed", marks[0][0] == seed["id"], marks)
+    check("rested, not retired -- the screen is one cheap call, not Worth",
+          marks[0][1]["klass"] == orch.CE_REVIEWABLE, marks[0][1])
+    check("the reason survives in the outcome",
+          SCREEN.NO_QUESTION in marks[0][1]["outcome"], marks[0][1])
+
+    # It is wired into the rejection path, not merely available.
+    src = (HERE / "commissioning_desk.py").read_text()
+    body = src.split("def run_day(")[1]
+    check("run_day calls it exactly once", body.count("record_screen_rejection(") == 1,
+          body.count("record_screen_rejection("))
+    check("and only where the screen rejected",
+          body.index("record_screen_rejection(") > body.index("== SCREEN.REJECT"))
+
+    # A pool write-back failure must never cost the day.
+    boom = _Orch()
+    boom.mark_news_seed_current_engine_attempt = lambda *a, **k: (_ for _ in ()).throw(
+        RuntimeError("db locked"))
+    CD.record_screen_rejection(boom, seed, rec, "day-1")
+    check("a write-back failure is contained, not raised", True)
+
+
 def test_worth_and_fast_lane_are_untouched():
     print("\nDoctrine: Worth semantics and the Fast Lane route are unchanged")
     comp = (HERE / "new_engine_v1" / "composition.py").read_text()
@@ -519,6 +556,7 @@ def main():
               test_m_a_post_worth_hold_ends_the_day,
               test_n_a_candidate_is_never_rerun,
               test_o_every_rejected_pitch_is_retained,
+              test_a_screen_rejection_does_not_come_back_tomorrow,
               test_worth_and_fast_lane_are_untouched):
         t()
     print()

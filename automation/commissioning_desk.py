@@ -228,6 +228,39 @@ def screen_ordinary_world(orch, seed: dict, model: str) -> dict:
 # ══════════════════════════════════════════════════════════════════════════════
 # ATTEMPT PROVENANCE
 # ══════════════════════════════════════════════════════════════════════════════
+def record_screen_rejection(orch, seed: dict, screen: dict, run: str) -> None:
+    """Tell the seed pool that the commissioning screen refused this candidate.
+
+    WHY THIS EXISTS. Measured on the 2026-09-13 three-day sample: the ordinary-world slot
+    proposed the SAME candidate on all three days. Within a day the desk excludes a spent
+    seed, but that set is per-day, and a screen rejection never reached the pool at all --
+    the write-back lives in run_scheduled, which a screen-rejected candidate never gets to.
+    So the selector re-ranked the identical pool each morning, picked the identical winner,
+    and paid for the identical screen call to reach the identical refusal. A rejected pitch
+    that comes back tomorrow is the reconsideration the desk's own doctrine forbids.
+
+    RESTED, NOT RETIRED, and deliberately so. `classify_current_engine_attempt` states the
+    rule this follows: a named code not yet proven deterministic is rested rather than
+    retired, because "wrongly retrying a seed costs one run; wrongly consuming one loses a
+    story permanently". The screen is ONE cheap model call and much weaker evidence than
+    Worth; retiring a story forever on it would be exactly the over-consumption that
+    classifier was written to prevent. The cooldown is enough to stop the daily repeat,
+    which is the actual defect.
+
+    Never allowed to affect the day: a pool write-back failure is logged, not raised.
+    """
+    try:
+        klass = getattr(orch, "CE_REVIEWABLE", "NONDETERMINISTIC_OR_REVIEWABLE_HOLD")
+        orch.mark_news_seed_current_engine_attempt(
+            seed["id"], run=run, klass=klass,
+            outcome="%s:%s:%s" % (klass, SCREEN_REJECTED,
+                                  screen.get("reject_reason") or "unspecified"))
+    except Exception as e:                                    # never reaches the caller
+        orch.logger.warning("DESK: screen-rejection write-back failed on seed %s "
+                            "(ignored): %s: %s", seed.get("id"), type(e).__name__,
+                            str(e)[:200])
+
+
 def _attempt_record(n: int, lane: str, seed, commission, screen, result, terminal) -> dict:
     """One pitch, whatever became of it. NO DISAPPEARING REJECTED PITCHES: a candidate the
     desk refused before Research leaves exactly as much record as one that reached Worth.
@@ -396,6 +429,10 @@ def run_day(orch, *, rehearsal: bool = False, evidence_root=None,
                     # REJECTED BEFORE RESEARCH. This is the saving: no targeted research
                     # pass, no Ledger, no Worth call spent on a story this publication was
                     # never going to commission.
+                    #
+                    # The refusal is written back to the pool so tomorrow does not
+                    # rediscover it -- see record_screen_rejection.
+                    record_screen_rejection(orch, seed, screen, day_id)
                     attempts.append(_attempt_record(n, lane, seed, None, screen, None,
                                                     SCREEN_REJECTED))
                     continue
