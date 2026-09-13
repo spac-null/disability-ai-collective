@@ -22,28 +22,30 @@ def check(label, condition):
 
 def main():
     history = D.profile([
-        {"country": "US", "world_region": "North America", "source_language": "en",
+        {"subject_country": "US", "subject_world_region": "North America", "source_language": "en",
          "source_script": "LATIN"},
-        {"country": "US", "world_region": "North America", "source_language": "en",
+        {"subject_country": "US", "subject_world_region": "North America", "source_language": "en",
          "source_script": "LATIN"},
-        {"country": "US", "world_region": "North America", "source_language": "en",
+        {"subject_country": "US", "subject_world_region": "North America", "source_language": "en",
          "source_script": "LATIN"},
     ])
-    us, _ = D.prior({"country": "US", "world_region": "North America",
+    us, _ = D.prior({"subject_country": "US", "subject_world_region": "North America",
                      "source_language": "en", "source_script": "LATIN"}, history)
-    jp, _ = D.prior({"country": "Japan", "world_region": "East Asia",
+    jp, _ = D.prior({"subject_country": "Japan", "subject_world_region": "East Asia",
                      "source_language": "ja", "source_script": "HIRAGANA"}, history)
     check("US-heavy history lowers US candidate", us < 0)
     check("underrepresented region/language/script gets advantage", jp > us)
     check("unknown metadata is neutral", D.prior({}, history)[0] == 0)
     check("non-Latin Unicode script survives", D.source_script("日本語の展示") in ("HIRAGANA", "CJK"))
+    check("Arabic script survives", D.source_script("معرض فني") == "ARABIC")
+    check("Cyrillic script survives", D.source_script("Выставка художников") == "CYRILLIC")
 
     ranked = D.rank_candidates([
-        {"subject": "US story", "country": "US"},
-        {"subject": "日本語の物語", "country": "Japan", "source_language": "ja",
+        {"subject": "US story", "subject_country": "US"},
+        {"subject": "日本語の物語", "subject_country": "Japan", "source_language": "ja",
          "source_script": "CJK"},
     ], history)
-    check("knowledge-first candidate metadata is retained", ranked[0]["country"] == "Japan")
+    check("knowledge-first candidate metadata is retained", ranked[0]["subject_country"] == "Japan")
 
     # Existing selector quality remains ahead of the prior: a strong US story beats a weak
     # underrepresented one, while comparable records can use the prior as a tie-break.
@@ -54,7 +56,7 @@ def main():
                 "publisher_penalty": 0, "legacy_relevance_score": 0,
                 "legacy_disability_angle": False, "errors": "[]",
                 "assessment": assessment, "material_richness": "RICH",
-                "researchability": "HIGH", "country": country}
+                "researchability": "HIGH", "subject_country": country}
     from selector_v2 import rank
     out = rank([rec("strong US", "STRONG_CANDIDATE", "US"),
                 rec("weak Japan", "WEAK_CANDIDATE", "Japan")], history)
@@ -78,11 +80,19 @@ def main():
     # Existing DB state gains additive metadata and preserves the original script.
     conn = sqlite3.connect(":memory:")
     NF.init_db(conn)
+    check("subject and source geography/language remain separate", D.normalize_metadata({
+        "subject_country": "France", "source_country": "Japan",
+        "source_language": "ja"}) == {"subject_country": "France",
+        "source_country": "Japan", "source_language": "ja"})
     check("Unicode seed metadata roundtrip", NF.store_seed(conn, {
         "url": "https://例子.cn/展示", "title": "日本語の展示", "summary": "x",
         "source_name": "fixture", "source_tier": 2, "relevance_score": .5,
+        "subject_country": "Japan", "subject_world_region": "East Asia",
+        "source_country": "Japan", "source_language": "ja",
         "themes": [], "material_class": "OTHER"}) and
-          conn.execute("select source_script from news_seeds").fetchone()[0] == "CJK")
+          conn.execute("select subject_country, source_country, source_language, source_script "
+                       "from news_seeds").fetchone() ==
+          ("Japan", "Japan", "ja", "CJK"))
     print("ALL PASS")
 
 

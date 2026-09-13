@@ -49,6 +49,7 @@ import news_fetcher as NF                                # noqa: E402
 import selector_v2 as SV                                 # noqa: E402
 import knowledge_first as KF                             # noqa: E402
 import commissioning_desk as CD                          # noqa: E402
+import commissioning_diversity as CDV                    # noqa: E402
 
 # WHICH LANE COMMISSIONS a single injected-seed run. The DAY's lane plan is the desk's
 # (commissioning_desk.LANE_PLAN: knowledge-first, knowledge-first, ordinary world). This
@@ -179,7 +180,8 @@ def _seed_dict(orch, seed_id: str) -> dict | None:
         row = conn.execute(
             "SELECT id, url, title, summary, source_name, relevance_score, themes,"
             " disability_angle, pub_date, underlying_article_url, country, world_region,"
-            " source_language, source_script, translation_used, cross_border_scope"
+            " source_language, source_script, translation_used, cross_border_scope,"
+            " subject_country, subject_world_region, source_country"
             " FROM news_seeds WHERE id = ?", (seed_id,)).fetchone()
     finally:
         conn.close()
@@ -191,7 +193,9 @@ def _seed_dict(orch, seed_id: str) -> dict | None:
             "pub_date": row[8], "underlying_article_url": row[9],
             "country": row[10], "world_region": row[11],
             "source_language": row[12], "source_script": row[13],
-            "translation_used": row[14], "cross_border_scope": row[15]}
+            "translation_used": row[14], "cross_border_scope": row[15],
+            "subject_country": row[16], "subject_world_region": row[17],
+            "source_country": row[18]}
 
 
 def _select_seed(orch, model: str) -> tuple:
@@ -429,7 +433,8 @@ def _commission_knowledge_first(orch, model: str, evidence_root: str | None = No
         rec = KF.commission(provider, search_fn=search_urls,
                             fetch_fn=lambda u: orch.get_source_text(u) or "",
                             api_key=KF.search_key(), state_conn=conn, run_id=run_id,
-                            evidence_root=evidence_root or DEFAULT_EVIDENCE_ROOT)
+                            evidence_root=evidence_root or DEFAULT_EVIDENCE_ROOT,
+                            diversity_history=CDV.current_history())
     finally:
         conn.close()
     q = (rec.get("question") or {})

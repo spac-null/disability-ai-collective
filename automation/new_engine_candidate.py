@@ -174,7 +174,8 @@ def build_frontmatter(*, title: str, author: str, engine_meta: dict,
         ("writer_grounding_unsupported", engine_meta["grounding_unsupported"]),
         ("provider_model", engine_meta.get("provider_model", "")),
     ]
-    for key in ("country", "world_region", "source_language", "source_script",
+    for key in ("subject_country", "subject_world_region", "source_country",
+                "country", "world_region", "source_language", "source_script",
                 "translation_used", "cross_border_scope"):
         if engine_meta.get(key) not in (None, ""):
             fields.append((key, engine_meta[key]))
@@ -255,7 +256,8 @@ def engine_meta_from_run(out: dict, *, run: str, generated_at: str,
         "grounding_unsupported": unsupported,
         "provider_model": provider_model,
     }
-    for key in ("country", "world_region", "source_language", "source_script",
+    for key in ("subject_country", "subject_world_region", "source_country",
+                "country", "world_region", "source_language", "source_script",
                 "translation_used", "cross_border_scope"):
         if (commissioning_metadata or {}).get(key) not in (None, ""):
             meta[key] = commissioning_metadata[key]

@@ -12,7 +12,8 @@ import pathlib
 import re
 import unicodedata
 
-FIELDS = ("country", "world_region", "source_language", "source_script")
+FIELDS = ("subject_country", "subject_world_region", "source_country",
+          "source_language", "source_script")
 OPTIONAL_FIELDS = FIELDS + ("translation_used", "cross_border_scope")
 WINDOW = 20
 
@@ -38,8 +39,9 @@ def source_script(text: str) -> str | None:
 def normalize_metadata(item: dict | None) -> dict:
     item = item or {}
     out = {}
-    aliases = {"country": ("country", "subject_country", "origin_source_country"),
-               "world_region": ("world_region",),
+    aliases = {"subject_country": ("subject_country", "country"),
+               "subject_world_region": ("subject_world_region", "world_region"),
+               "source_country": ("source_country", "origin_source_country"),
                "source_language": ("source_language", "language"),
                "source_script": ("source_script", "script"),
                "translation_used": ("translation_used",),

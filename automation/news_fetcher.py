@@ -507,6 +507,9 @@ def init_db(conn):
         ("source_script", "TEXT"),
         ("translation_used", "TEXT"),
         ("cross_border_scope", "TEXT"),
+        ("subject_country", "TEXT"),
+        ("subject_world_region", "TEXT"),
+        ("source_country", "TEXT"),
     ):
         try:
             conn.execute(f"ALTER TABLE news_seeds ADD COLUMN {_col} {_def}")
@@ -577,8 +580,9 @@ def store_seed(conn, item: dict) -> bool:
               (id, url, title, summary, source_name, source_tier, pub_date,
                fetched_date, relevance_score, themes, disability_angle, used,
               underlying_article_url, material_class, country, world_region,
-              source_language, source_script, translation_used, cross_border_scope)
-            VALUES (?,?,?,?,?,?,?,?,?,?,NULL,0,?,?,?,?,?,?,?,?)
+              source_language, source_script, translation_used, cross_border_scope,
+              subject_country, subject_world_region, source_country)
+            VALUES (?,?,?,?,?,?,?,?,?,?,NULL,0,?,?,?,?,?,?,?,?,?,?,?)
         """, (
             url_id(item["url"]),
             item["url"],
@@ -597,6 +601,9 @@ def store_seed(conn, item: dict) -> bool:
             item.get("source_script") or item.get("script") or
             CDV.source_script(item.get("title", "")),
             item.get("translation_used"), item.get("cross_border_scope"),
+            item.get("subject_country") or item.get("country"),
+            item.get("subject_world_region") or item.get("world_region"),
+            item.get("source_country"),
         ))
         conn.commit()
         return True

@@ -59,6 +59,7 @@ import os
 import pathlib
 import sqlite3
 import sys
+from urllib.parse import urlparse
 
 HERE = pathlib.Path(__file__).parent
 if str(HERE) not in sys.path:
@@ -183,6 +184,7 @@ def select_ordinary_world(orch, model: str, *, exclude_seed_ids=None) -> tuple:
     import new_engine_production as NEP
     conn = sqlite3.connect(str(orch.discovery_db))
     try:
+        _multilingual_supplement(orch, conn, model)
         report = SV.run_selection(
             conn, Provider(model=model), acquire=NEP._acquire_for_selector(orch),
             score_item=NF.score_item, boosters=NF.DISABILITY_BOOSTERS,
@@ -208,6 +210,55 @@ def select_ordinary_world(orch, model: str, *, exclude_seed_ids=None) -> tuple:
         raise SV.SelectorFailure("selected seed %s vanished from news_seeds"
                                  % winner["seed_id"])
     return seed, report
+
+
+def _multilingual_supplement(orch, conn, model: str) -> dict:
+    """Add a small, bounded discovery supplement to the EXISTING seed pool.
+
+    One commissioning call proposes names and local-language search handles; the normal
+    V2 selector, acquisition classifier and ordinary Crip Minds screen then judge the
+    resulting seeds. This is not a second article lane and it grants no facts. Failures
+    are reported and leave the RSS pool untouched.
+    """
+    try:
+        NF.init_db(conn)
+        questions = [q for q in KF.load_questions()
+                     if q["id"] not in KF.ACCESS_ORIGIN_QUESTION_IDS]
+        if not questions:
+            return {"status": "NO_QUESTION"}
+        history = _diversity_history()
+        q = questions[0]
+        proposed = KF.propose_stories(Provider(model=model), q, history)
+        added = []
+        for cand in proposed.get("candidates", [])[:KF.MAX_STORIES]:
+            for url in KF.anchor_candidates(cand, RS.search_urls, api_key=KF.search_key()):
+                # The existing research fetcher supplies the original page title. If a
+                # page cannot be read, it is not inserted merely because its URL looked
+                # promising; no fabricated title enters the seed pool.
+                fetched = RS.fetch_source(url)
+                if fetched.get("status") != "ok":
+                    continue
+                title = (fetched.get("title") or "").strip()
+                text = fetched.get("text") or ""
+                if not title or len(text) < KF.MIN_ANCHOR_CHARS:
+                    continue
+                seed = {"url": url, "title": title, "summary": cand.get("subject") or title,
+                        "source_name": "multilingual_discovery:%s" %
+                                       (urlparse(url).netloc or "unknown"),
+                        "source_tier": 2, "relevance_score": 0.0, "themes": [],
+                        "material_class": "OTHER", **CDV.normalize_metadata(cand),
+                        "source_script": CDV.source_script(title)}
+                if NF.store_seed(conn, seed):
+                    added.append({"title": title, "url": url,
+                                  "source_script": seed.get("source_script"),
+                                  "discovery_method": "knowledge_first_local_query"})
+                break
+        return {"status": "ADDED", "question_id": q["id"], "added": added,
+                "model_calls": 1}
+    except Exception as e:
+        orch.logger.warning("multilingual discovery supplement unavailable: %s: %s",
+                            type(e).__name__, str(e)[:200])
+        return {"status": "FAILED", "error": "%s: %s" % (type(e).__name__, str(e)[:200])}
 
 
 def screen_ordinary_world(orch, seed: dict, model: str) -> dict:
@@ -285,8 +336,10 @@ def _attempt_record(n: int, lane: str, seed, commission, screen, result, termina
         "lane": lane,
         "seed_id": (seed or {}).get("id"),
         "source": (seed or {}).get("source_name"),
-        "country": (seed or {}).get("country"),
-        "world_region": (seed or {}).get("world_region"),
+        "subject_country": (seed or {}).get("subject_country") or (seed or {}).get("country"),
+        "subject_world_region": ((seed or {}).get("subject_world_region")
+                                  or (seed or {}).get("world_region")),
+        "source_country": (seed or {}).get("source_country"),
         "source_language": (seed or {}).get("source_language"),
         "source_script": (seed or {}).get("source_script"),
         "translation_used": (seed or {}).get("translation_used"),

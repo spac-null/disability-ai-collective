@@ -47,7 +47,7 @@ LANE_SECONDARY = "ORDINARY_WORLD_COLLISION"
 # art / disability / aesthetic knowledge / institutions, which is PR004.
 PREFERRED_CLUSTER = "PR004"
 MAX_STORIES = 4
-MAX_QUERIES_PER_STORY = 2
+MAX_QUERIES_PER_STORY = 4
 MAX_URLS_PER_QUERY = 4
 MIN_ANCHOR_CHARS = 1200
 
@@ -197,6 +197,11 @@ COMMISSION_SYSTEM = (
     "conversation, an institutional decision, several practices showing a real emerging "
     "pattern, or an older work made newly relevant by a current shift. It does NOT need a "
     "breaking-news peg.\n"
+    "DISCOVERY GEOGRAPHY. When a question plausibly travels across borders, include two "
+    "to four genuinely local discovery queries in the relevant language or script among "
+    "the search_queries. Do not merely translate an English headline and call that local "
+    "reporting; seek the local institution, publication, archive or subject. Keep the "
+    "original title and script returned by any source.\n"
     "\n"
     "THE ABSOLUTE EDITORIAL RULE -- NO ACCESS-DEFICIT STORIES. Crip Minds does not publish "
     "an article whose central proposition is that something is inaccessible, that disabled "

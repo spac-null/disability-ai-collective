@@ -803,7 +803,8 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
                "legacy_disability_angle": bool(row["disability_angle"]),
                "cached": bool(c.get("cached")),
                "errors": _errors_json(a.get("errors"))}
-        for field in ("country", "world_region", "source_language", "source_script",
+        for field in ("subject_country", "subject_world_region", "source_country",
+                      "country", "world_region", "source_language", "source_script",
                       "translation_used", "cross_border_scope"):
             rec[field] = row[field] if field in row.keys() else None
         rec.update({k: a.get(k) for k in
