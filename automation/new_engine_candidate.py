@@ -90,14 +90,45 @@ def _tidy_title(title: str, publisher: str) -> str:
     return title
 
 
-def public_sources(pack_payload: dict | None) -> list:
-    """The publishable source list from a frozen RESEARCH_PACK payload, in pack order."""
+def public_sources(pack_payload: dict | None, ledger: dict | None = None,
+                   claim_map: dict | list | None = None) -> list:
+    """Return only sources supporting facts used by the final Claim Map.
+
+    The old implementation projected the whole research pack.  That made the public
+    list a research bibliography rather than the evidence actually used in the prose.
+    ``ledger`` and ``claim_map`` are optional for compatibility with older callers; a
+    caller that has final-prose provenance must provide both.  Missing provenance is
+    fail-closed and produces no public list -- it never guesses.
+    """
+    if ledger is not None or claim_map is not None:
+        if not isinstance(ledger, dict) or not isinstance(claim_map, (dict, list)):
+            return []
+        claims = claim_map.get("claim_map", []) if isinstance(claim_map, dict) else claim_map
+        led = ledger.get("ledger", ledger)
+        if not isinstance(led, dict) or not isinstance(claims, list):
+            return []
+        fact_ids = {fid for c in claims if isinstance(c, dict)
+                    for fid in (c.get("fact_ids") or []) if isinstance(fid, str)}
+        evidence_ids = {sid for fid in fact_ids
+                        for sid in (led.get(fid, {}).get("evidence_ids") or [])
+                        if isinstance(sid, str)}
+    else:
+        # Legacy compatibility: callers without Claim Map provenance retain the former
+        # pack projection. New-engine callers below always pass the final map + Ledger.
+        evidence_ids = None
     out, seen = [], set()
     for src in ((pack_payload or {}).get("sources") or []):
         if not isinstance(src, dict):
             continue
+        if evidence_ids is not None and src.get("source_id") not in evidence_ids:
+            continue
         url = str(src.get("url") or "").strip()
         title = " ".join(str(src.get("title") or "").split())
+        # Fast Lane v1 packs predate the title field. The retained outlet is still
+        # authoritative public metadata and is a truthful link label; do not derive a
+        # title from a URL or source body.
+        if not title:
+            title = " ".join(str(src.get("outlet") or src.get("publisher") or "").split())
         if not title or not (url.startswith("http://") or url.startswith("https://")):
             continue
         if url in seen:

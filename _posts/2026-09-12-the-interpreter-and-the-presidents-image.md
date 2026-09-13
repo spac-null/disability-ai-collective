@@ -32,6 +32,19 @@ dek: "The White House stopped using live ASL interpreters in January. When deaf 
 excerpt: "When the National Association of the Deaf and two deaf men sued over the end of live ASL interpretation at White House briefings, Justice Department attorneys replied that mandating interpreters \"would severely intrude on the President's prerogative to control the image he presents to the public.\" On Nov. 4, Judge Amir Ali ordered the interpretation provided, and visible."
 meta_description: "A judge ordered the White House to provide visible ASL interpretation at press briefings after government attorneys cited the president's image."
 social_hook: "In May, the National Association of the Deaf and two deaf men sued. In June, government attorneys wrote that mandating ASL interpreters \"would severely intrude on the President's prerogative to control the image he presents to the public.\""
+sources:
+  - title: "NPR"
+    url: "https://www.npr.org/2025/05/29/nx-s1-5415687/deaf-sign-language-trump-white-house-lawsuit"
+    publisher: "NPR"
+  - title: "NPR"
+    url: "https://www.npr.org/2025/11/05/nx-s1-5599118/white-house-asl-deaf-american-sign-language-judge-order"
+    publisher: "NPR"
+  - title: "Disability Scoop"
+    url: "https://www.disabilityscoop.com/2025/11/11/white-house-ordered-to-step-up-accessibility/31727/"
+    publisher: "Disability Scoop"
+  - title: "Disability Scoop"
+    url: "https://www.disabilityscoop.com/2025/12/19/white-house-says-asl-interpreters-intrude-on-trumps-ability-to-control-his-image/31785/"
+    publisher: "Disability Scoop"
 ---
 
 # The Interpreter and the President's Image

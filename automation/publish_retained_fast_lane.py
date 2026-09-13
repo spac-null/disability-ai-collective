@@ -150,6 +150,9 @@ def validate_retained_run(run_dir: pathlib.Path) -> dict:
         "fact_check_note": fc_note,
         "reader": reader, "reader_effective_pass": rd_effective_pass,
         "reader_note": rd_note,
+        "claim_map": claim_map,
+        "ledger": _load(run_dir, "LEDGER.json"),
+        "research_pack": _load(run_dir, "RESEARCH_PACK.json"),
     }
 
 
@@ -240,10 +243,15 @@ def resume(run_dir: str, *, drafts_dir: pathlib.Path | None = None,
         "grounding_status": validated["grounding_status"], "grounding_unsupported": 0,
         "provider_model": "",
     }
+    import new_engine_candidate as CANDIDATE
+    pack = validated.get("research_pack") or {}
+    pack = pack.get("payload", pack)
+    sources = CANDIDATE.public_sources(pack, validated.get("ledger"),
+                                       validated.get("claim_map"))
     path = CAND.persist_candidate(
         drafts_dir=drafts_dir, slug=_slug(title), body=validated["article_text"],
         title=title, author="Maya Flux", engine_meta=meta, rehearsal=False,
-        safety=stamp, package=None, sources=[])
+        safety=stamp, package=None, sources=sources)
     result["candidate_path"] = str(path)
     candidate_body = path.read_text(encoding="utf-8").split("---\n", 2)[-1].strip("\n")
     if candidate_body != validated["article_text"].strip("\n"):

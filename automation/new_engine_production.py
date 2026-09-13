@@ -707,13 +707,17 @@ def run_scheduled(orch, *, rehearsal: bool = False,
             "CURRENT_ENGINE %s: article passed every gate but has no editorial package "
             "(%s) -- candidate written, publication withheld for owner review",
             run, _pkg_status or "MISSING")
-    # The public source list, taken from the run's own frozen RESEARCH_PACK. Reading it
-    # is not allowed to cost a run that is already decided: a pack that is missing or
-    # malformed yields no list, and the article publishes with no public source block --
-    # the site renders one only from this list. Nothing here searches, ranks or re-fetches.
+    # The public source list is a deterministic projection of the final Claim Map ->
+    # Ledger -> frozen RESEARCH_PACK source metadata. It is presentation data only and
+    # costs no model or network call after the run is decided.
     try:
         _pack = (out.get("artifacts") or {}).get(C.RESEARCH_PACK)
-        _sources = CAND.public_sources(_pack.payload if _pack is not None else {})
+        _ledger_art = (out.get("artifacts") or {}).get(C.LEDGER)
+        _wr = ((_comp.get("detail") or {}).get(CP.WRITER) or {})
+        _sources = CAND.public_sources(
+            _pack.payload if _pack is not None else {},
+            _ledger_art.payload if _ledger_art is not None else None,
+            {"claim_map": _wr.get("claim_map")} if _wr.get("claim_map") is not None else None)
     except Exception as e:
         orch.logger.warning("CURRENT_ENGINE %s: public source list unavailable "
                             "(ignored): %s: %s", run, type(e).__name__, str(e)[:200])

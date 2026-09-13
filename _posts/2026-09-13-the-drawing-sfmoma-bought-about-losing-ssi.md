@@ -31,6 +31,19 @@ publication_safety_profile: "CURRENT_ENGINE_V1"
 publication_safety_version: 1
 image: /assets/the-drawing-sfmoma-bought-about-losing-ssi_setting_1.jpg
 image_alt: "The Drawing SFMOMA Bought About Losing SSI — editorial illustration"
+sources:
+  - title: "In 2024 SFMOMA acquired roughly 100 works from Creative Growth Art Center and mounted 'Creative Growth: The House That Art Built', moving objects made inside a 50-year-old Oakland disability service agency into a museum collection — a transfer in which the artworks, titles and prices crossed but the"
+    url: "https://www.sfmoma.org/press-release/sfmoma-presents-exhibition-highlighting-historic-acquisitions-from-creative-growth-art-center/"
+    publisher: "sfmoma.org"
+  - title: "SFMOMA Show of Creative Growth Artists Adds to Art History | KQED"
+    url: "https://www.kqed.org/arts/13955533/creative-growth-sfmoma-the-house-that-art-built-review"
+    publisher: "kqed.org"
+  - title: "Creative Growth: The House that Art Built - Squarecylinder.com – Art Reviews | Art Museums | Art Gallery Listings Northern California"
+    url: "https://squarecylinder.com/2024/04/creative-time-the-house-that-art-built/"
+    publisher: "squarecylinder.com"
+  - title: "BOMB Magazine | William Scott by Max Blue"
+    url: "https://bombmagazine.org/articles/2024/08/21/william-scott-by-max-blue/"
+    publisher: "bombmagazine.org"
 ---
 
 # The Drawing SFMOMA Bought About Losing SSI
