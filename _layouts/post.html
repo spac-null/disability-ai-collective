@@ -142,9 +142,33 @@ layout: default
         {% endif %}
       </header>
 
-      <!-- Article Body -->
+      {% comment %} ARTICLE BODY, with a redundant opening title suppressed.
+
+         The engine writes the article's own title as an H1 at the top of the markdown
+         body, and this layout renders `page.title` as the page H1 above. Both are correct
+         on their own; together the reader sees the title twice. The article text is not
+         edited to fix that -- the published bytes stay exactly as they were checked and
+         frozen -- so the duplicate is dropped here, at render time.
+
+         NARROW BY CONSTRUCTION. The heading is removed only when it is the FIRST element
+         of the body AND its text matches this page's title once smart quotes and dashes
+         are normalised (the body is smart-quoted by kramdown, `page.title` is not). Any
+         other H1, a first H1 that says something different, and every later heading are
+         left alone -- so this can never swallow a real section heading. {% endcomment %}
+      {% assign _body = content | lstrip %}
+      {% if _body contains '</h1>' %}
+        {% assign _h1_open = _body | split: '</h1>' | first %}
+        {% assign _lead = _h1_open | slice: 0, 3 %}
+        {% if _lead == '<h1' %}
+          {% assign _h1_text = _h1_open | strip_html | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '“', '"' | replace: '”', '"' | replace: '—', '-' | replace: '–', '-' %}
+          {% assign _page_title = page.title | strip_html | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '“', '"' | replace: '”', '"' | replace: '—', '-' | replace: '–', '-' %}
+          {% if _h1_text == _page_title %}
+            {% assign _body = _body | remove_first: _h1_open | remove_first: '</h1>' | lstrip %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
       <div class="prose prose--large post-content">
-        {{ content }}
+        {{ _body }}
       </div>
 
       <!-- Thread signal -->
@@ -195,25 +219,13 @@ layout: default
       <!-- Article Footer -->
       <footer class="post-footer">
 
-        <!-- Author Bio -->
-        <div class="card p-6 mb-8 post-author-card">
-          <p class="post-author-eyebrow">Editorial</p>
-          <div class="post-author-head">
-            <div class="post-author-meta">
-              <h3 class="text-h4 mb-1 post-author-name">
-                <a href="/jascha/" class="text-primary">Jascha Blume</a>
-              </h3>
-              <p class="text-small text-muted mb-0">
-                <span class="post-author-role">Editor</span>
-                <span class="post-author-collective">Crip Minds</span>
-              </p>
-            </div>
-          </div>
-          <p class="text-body text-secondary mb-0 post-author-bio">
-            Deaf artist and builder, Amsterdam / Bologna. Editor of Crip Minds.
-            <a href="/notes/" class="text-primary" style="margin-left: 0.5rem;">All notes &rarr;</a>
-          </p>
-        </div>
+        {% comment %} The meta bar at the top of the article already gives the author, the
+           date and the reading time. Repeating the name, the role, the publication and a
+           biography in a full-width card below said nothing new and cost a screenful on a
+           phone. One quiet link to the page that actually holds the biography. {% endcomment %}
+        <p class="post-author-line">
+          <a href="{{ '/jascha/' | relative_url }}">About {{ site.public_author }} &rarr;</a>
+        </p>
 
         {% if page.pipeline_version %}
         <p class="text-small text-muted post-pipeline-version">

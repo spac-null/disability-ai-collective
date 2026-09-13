@@ -156,23 +156,17 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
     </div>
   </section>
 
-  <!-- ── About, kept to a single line; the explanation lives on /about/ ── -->
-  <section id="what-this-is" class="section section--secondary">
-    <div class="container container--md">
-      <p class="text-body text-secondary mb-6" style="max-width: 640px;">Written and edited by {{ site.public_author }}.</p>
-      <nav class="home-intro__nav" aria-label="About this publication">
-        <a href="{{ '/about/' | relative_url }}" class="home-intro__link">About Crip Minds &rarr;</a>
-        <span class="home-intro__sep" aria-hidden="true">&middot;</span>
-        <a href="{{ '/jascha/' | relative_url }}" class="home-intro__link">About Jascha &rarr;</a>
-      </nav>
-    </div>
-  </section>
+  {% comment %} No closing about block. The footer directly below already says Crip Minds
+     is an experimental editorial publication by Jascha Blume and carries the About and
+     creator links, so a second statement of the same thing was the last piece of
+     explanatory furniture on the homepage. The proposition, the essays and the footer
+     are the whole page. {% endcomment %}
 
 </main>
 
 <script>
 (function() {
-  var sections = ['articles', 'what-this-is'];
+  var sections = ['articles'];
   var seen = new Set();
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {

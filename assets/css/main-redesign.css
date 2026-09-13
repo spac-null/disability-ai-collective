@@ -4091,33 +4091,62 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   padding: 0;
 }
 
+/* Sources read as references, not as paragraphs. A long title used to wrap into a
+   three-line underlined slab with the domain pinned to the end of it; title and domain
+   are now stacked, so each entry scans as one reference. Same links, same titles, same
+   order -- typography only. */
 .post-sources__item {
-  margin: 0 0 0.6rem;
-  line-height: 1.5;
+  padding: 0.5rem 0;
+  line-height: 1.4;
+  border-bottom: 1px solid var(--color-border-primary);
 }
 
+.post-sources__item:first-child { padding-top: 0; }
+
 .post-sources__item:last-child {
-  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
 }
 
 .post-sources__link {
-  font-size: 0.95rem;
+  display: block;              /* the whole title line is the touch target */
+  font-size: 0.875rem;
+  line-height: 1.4;
   color: var(--color-text-primary);
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
+  text-decoration: underline;  /* affordance never carried by colour alone */
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
+  text-decoration-color: var(--color-border-primary);
 }
 
-.post-sources__link:hover {
+.post-sources__link:hover,
+.post-sources__link:focus-visible {
   color: var(--color-accent);
+  text-decoration-color: currentColor;
 }
 
 .post-sources__publisher {
-  display: inline-block;
-  margin-left: 0.5rem;
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-  white-space: nowrap;
+  display: block;              /* muted second line, wraps instead of overflowing */
+  margin: 0.15rem 0 0;
+  font-family: var(--font-family-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
 }
+
+/* The author line that replaced the old editorial card. */
+.post-author-line {
+  margin: 0 0 var(--space-8);
+  font-size: 0.875rem;
+}
+.post-author-line a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-border-primary);
+  padding-bottom: 1px;
+}
+.post-author-line a:hover,
+.post-author-line a:focus-visible { color: var(--color-accent); border-bottom-color: currentColor; }
 
 /* Prev/Next article nav */
 .post-nav {
