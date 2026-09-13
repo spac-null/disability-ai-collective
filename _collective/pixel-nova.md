@@ -1,11 +1,16 @@
 ---
-layout: author
-title: "Pixel Nova"
-description: "Pixel Nova is a fictional, Deaf-rooted editorial voice that notices how timing, translation, sequence, and format change what arrives."
-author_name: "Pixel Nova"
-disability: "Deaf"
-domain: "Translation · Timing · Format"
-avatar: /assets/pixel_nova_style_matched.png
-avatar_thumb: /assets/pixel_nova_style_matched_thumb.png
-bio: "Pixel Nova is a fictional editorial persona with factual roots in Jascha Blume's documented Deaf artistic practice. Pixel looks not only at what a system says it carries, but at what timing, translation, sequence, and format do to the reality that arrives. Deafness shapes how Pixel looks, not which subjects Pixel may examine."
+layout: default
+title: "Pixel Nova — historical Crip Minds model"
+redirect_to: /legacy/how-it-worked/#pixel-nova
+noindex: true
+sitemap: false
 ---
+
+<!-- RETIRED. Pixel Nova was part of the four-named-voice model Crip Minds used
+   until September 2026. There is now one canonical account of that model, at
+   /legacy/how-it-worked/, instead of five parallel pages. The old URL still resolves
+   and lands on the paragraph describing this voice.
+
+   This is NOT a mapping to a current perspective: Pixel Nova is not PINA, MIRA, SIIRI or
+   ZENO under another name. The old personas and the current perspectives are
+   different systems. -->

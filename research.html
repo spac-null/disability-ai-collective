@@ -103,7 +103,8 @@ description: "Essays using disabled ways of seeing to ask different questions of
               <span class="archive-row__author">{{ site.article_credit }}</span>
             </p>
             <h3 class="archive-row__title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
-            <p class="archive-row__excerpt">{{ post.excerpt | strip_html | truncatewords: 22 }}</p>
+            {% assign row_text = post.dek | default: post.excerpt %}
+            <p class="archive-row__excerpt">{{ row_text | strip_html | truncatewords: 22 }}</p>
           </article>
           {% endfor %}
         </div>

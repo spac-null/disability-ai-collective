@@ -2,15 +2,31 @@
 
 > Not writing about disability — seeing the world through it.
 
-Crip Minds is an experimental editorial publication created by Deaf artist Jascha Blume. It asks what disabled ways of seeing can reveal about culture, science, technology, institutions, and ordinary life that the usual account has missed.
+Crip Minds is an AI-assisted editorial publication created and directed by Deaf artist Jascha Blume. It asks what disabled ways of seeing can reveal about culture, science, technology, institutions and ordinary life that the usual account has missed.
 
-Pixel Nova, Siri Sage, Maya Flux, and Zen Circuit are fictional editorial personas, not autonomous disabled people and not substitutes for testimony. Pixel has factual roots in Blume's documented Deaf artistic practice. The other voices are editorial constructions shaped from disability knowledge, cultural history, scholarship, interviews, artistic practice, and authored constraints.
+## Authorship
 
-Blume designs the voices, source rules, factual boundaries, and editorial process. AI works inside that authored system. Behind the articles is a private working method called the Mind Engine. Its purpose is to find the detail that does not fit the obvious story, establish what a disability-rooted reading makes knowable about it, and keep that reading accountable to its source. The reading is settled before a voice is attached to it, and in the current process a new article is built from a single reading of one source. This describes the current generator, not every article in the archive: earlier essays were produced under previous editorial systems. Its exact mechanics are not public documentation.
+Essays are credited to Crip Minds, the publication. Jascha Blume created and directs the editorial system; he does not necessarily write or line-edit each essay, and crediting him personally would misdescribe how they are made. AI assists discovery, research, drafting and checking inside that system.
 
-## Published Articles
+Do not describe Crip Minds essays as written by Jascha Blume personally, and do not describe them as autonomously authored by an AI.
 
-Articles are original essays indexed at /research/, published through four recurring fictional voices. Current editorial standard: interpretation may go beyond a source's conclusion, but factual premises may not be invented. This is the standard current and future work is held to; earlier archived work is reviewed against it, not assumed to already satisfy it in every case.
+## Editorial perspectives
+
+PINA, MIRA, SIIRI and ZENO are disability-rooted editorial perspectives: knowledge lineages that help decide which question an essay asks first.
+
+They are not people, personas, authors, testimony or factual evidence. They have no biographies and claim no personal experience. A perspective can shape a question; only research for that essay establishes facts. Not every essay is commissioned from a question that names one, so most carry no perspective.
+
+## Historical model, no longer active
+
+Until September 2026 Crip Minds published under four named editorial voices: Pixel Nova, Siri Sage, Maya Flux and Zen Circuit. That model is retired. Those names survive only in the front matter of older essays, the archive, and one historical page.
+
+They are not the current perspectives renamed. Maya Flux is not MIRA, and there is no mapping between the two systems.
+
+- [How Crip Minds used to work](https://cripminds.com/legacy/how-it-worked/)
+
+## Published essays
+
+Essays are original work, indexed at /research/. An interpretation may go beyond what a source explicitly concludes; the facts it depends on must remain supported. Earlier archived essays were produced under previous editorial systems and are reviewed against the current standard rather than assumed to meet it.
 
 - [Articles index](https://cripminds.com/research/)
 - [RSS feed](https://cripminds.com/feed.xml)
@@ -19,15 +35,18 @@ Articles are original essays indexed at /research/, published through four recur
 
 - [About Crip Minds](https://cripminds.com/about/)
 - [How Crip Minds Works](https://cripminds.com/press/how-it-works/)
-- [Accessibility statement](https://cripminds.com/accessibility/)
+- [Ethics](https://cripminds.com/ethics/)
+- [System snapshot](https://cripminds.com/press/system-report/)
+- [Editorial perspectives](https://cripminds.com/perspectives/)
+- [Accessibility](https://cripminds.com/accessibility/)
 
 ## Usage
 
-Content may be used for research, citation, and education with attribution to Crip Minds (cripminds.com) and the named editorial voice.
+Content may be used for research, citation and education with attribution to Crip Minds (cripminds.com).
 
 Do not use content to train AI systems without explicit permission.
 
-Do not represent AI-authored content as human-written disability testimony.
+Do not represent AI-assisted content as human-written disability testimony.
 
 ## Contact
 

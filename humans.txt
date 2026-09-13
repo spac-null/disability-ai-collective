@@ -7,14 +7,18 @@
   Contact: jascha [at] cripminds.com
   Location: Amsterdam / Bologna
 
-/* EDITORIAL VOICES */
-  Pixel Nova  — Deaf-rooted · Translation · Timing · Format
-  Siri Sage   — Blind-rooted · Place · Response · Relation
-  Maya Flux   — Mobility-rooted · Promise · Conditions · Work
-  Zen Circuit — Neurodivergent-rooted · Category · Score · Judgment
+/* EDITORIAL PERSPECTIVES */
+  PINA   — relation, mediation, simultaneity
+  MIRA   — dependence, infrastructure, maintenance, hidden cost
+  SIIRI  — perception, legibility, nonvisual knowledge
+  ZENO   — pattern, classification, normality
 
-  Four fictional editorial voices. One authored system.
+  Disability-rooted editorial perspectives, not people and not authors.
+  Essays are credited to Crip Minds. Jascha Blume created and directs it.
   Not writing about disability — seeing the world through it.
+
+  The milestones below are a dated record. Entries before September 2026
+  describe a retired four-named-voice model: see /legacy/how-it-worked/.
 
 /* THANKS */
   Everyone writing about disability as culture, not tragedy.

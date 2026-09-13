@@ -81,6 +81,13 @@ exclude:
   - MANIFESTO.md
   - PIPELINE.md
   - SCRAPING_ETHICS.md
+  # Internal editorial working notes. KIM_CARRIER.md says "Internal only" in its own
+  # first line and cites Ledger fact IDs; it was published at /KIM_CARRIER/ and listed
+  # in the sitemap because it was never added here.
+  - KIM_CARRIER.md
+  - editorial-lens.md
+  - prose_audit_report.md
+  - rss_disability_findings_report.md
   - accessibility/
   - reader-lab-worker/
   - requirements.txt

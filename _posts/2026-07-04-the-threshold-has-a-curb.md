@@ -4,7 +4,7 @@ title: "The Threshold Has a Curb"
 date: 2026-07-04
 author: "Maya Flux"
 category: culture
-excerpt: "Jitske Kramer's concept of permanent liminality is about organizations that can't find the path forward. Maya Flux has been at the threshold her whole life. The threshold has a curb."
+excerpt: "Jitske Kramer's concept of permanent liminality is about organizations that can't find the path forward. The threshold has a curb."
 keywords: [Jitske Kramer, permanent liminality, Tricky tijden, corporate anthropology, wheelchair access, built environment, campfire metaphor, retrofit, disability urbanism, adaptive systems, threshold state]
 image: /assets/the-threshold-has-a-curb_setting_1.jpg
 image_alt: "The Threshold Has a Curb — screen-print protest poster illustration"
