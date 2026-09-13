@@ -12,9 +12,11 @@ document.addEventListener('DOMContentLoaded', function() {
       if (isOpen) {
         menu.classList.remove('is-open');
         toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open menu');
       } else {
         menu.classList.add('is-open');
         toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', 'Close menu');
       }
     });
     
@@ -23,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!toggle.contains(e.target) && !menu.contains(e.target)) {
         menu.classList.remove('is-open');
         toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open menu');
       }
     });
     
@@ -31,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (e.key === 'Escape' && menu.classList.contains('is-open')) {
         menu.classList.remove('is-open');
         toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open menu');
         toggle.focus();
       }
     });

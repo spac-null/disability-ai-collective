@@ -200,17 +200,29 @@
             
             <!-- Main navigation -->
             <nav id="navigation" class="site-nav">
-                <button class="site-nav__toggle" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Toggle navigation menu">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {% comment %} Same understated three-line icon. What changes is that the
+                   button now says which way it goes -- "Open menu" / "Close menu" -- and shows
+                   a cross while the menu is open, so the control is not ambiguous once it has
+                   acted. Both marks are in the DOM; CSS shows one. {% endcomment %}
+                <button class="site-nav__toggle" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
+                    <svg class="site-nav__icon site-nav__icon--open" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <svg class="site-nav__icon site-nav__icon--close" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M18 6L6 18"/>
                     </svg>
                 </button>
                 
+                {% comment %} Primary reader navigation, not a second footer. Home is not
+                   listed because the wordmark beside this button already goes there.
+                   Everything else -- Collections, Works, the archive, Ethics, Accessibility --
+                   stays reachable from the footer, which is the surface for breadth. {% endcomment %}
                 <ul id="site-nav-menu" class="site-nav__menu">
-                    <li><a href="{{ '/' | relative_url }}" {% if page.url == '/' %}aria-current="page"{% endif %}>Home</a></li>
                     <li><a href="{{ '/research/' | relative_url }}" {% if page.url contains '/research' or page.layout == 'post' %}aria-current="page"{% endif %}>Articles</a></li>
-                    <li><a href="{{ '/press/' | relative_url }}" {% if page.url contains '/press' %}aria-current="page"{% endif %}>Press</a></li>
-                    <li><a href="{{ '/about/' | relative_url }}" {% if page.url contains '/about' or page.url contains '/collective' %}aria-current="page"{% endif %}>About</a></li>
+                    <li><a href="{{ '/about/' | relative_url }}" {% if page.url contains '/about' %}aria-current="page"{% endif %}>About</a></li>
+                    <li><a href="{{ '/perspectives/' | relative_url }}" {% if page.url contains '/perspectives' %}aria-current="page"{% endif %}>Perspectives</a></li>
+                    <li><a href="{{ '/notes/' | relative_url }}" {% if page.url contains '/notes' %}aria-current="page"{% endif %}>Editor&rsquo;s notes</a></li>
+                    <li class="site-nav__item--secondary"><a href="{{ '/press/' | relative_url }}" {% if page.url contains '/press' %}aria-current="page"{% endif %}>Press</a></li>
                 </ul>
             </nav>
         </div>
@@ -240,41 +252,62 @@
     <!-- Footer -->
     <footer id="footer" class="site-footer">
         <div class="container">
+            {% comment %} The footer is not the sitemap. It used to list ten routes at one
+               weight, which made a reader scan everything to find anything. Three groups now
+               say what each link is for: what to read, what explains the publication, and what
+               is history. Collections and Works keep their routes and their place in the
+               sitemap; they are secondary discovery and reachable from Articles. {% endcomment %}
             <div class="site-footer__content">
-                <div class="site-footer__section">
+                <div class="site-footer__section site-footer__section--about">
                     <h3>{{ site.title }}</h3>
                     <p>
-                        Crip Minds is an AI-assisted editorial publication created and directed by {{ site.creator }}.
+                        Crip Minds is an AI-assisted editorial publication created and directed by
+                        <a href="{{ '/jascha/' | relative_url }}">{{ site.creator }}</a>.
                         &ldquo;Crip&rdquo; is a reclaimed disability-justice term &mdash;
                         <a href="{{ '/about/#language-note' | relative_url }}">language note</a>.
                     </p>
                 </div>
-                
-                <div class="site-footer__section">
-                    <h3>Explore</h3>
-                    <ul class="site-footer__links">
-                        <li><a href="{{ '/research/' | relative_url }}" {% if page.url contains '/research' or page.layout == 'post' %}aria-current="page"{% endif %}>Articles</a></li>
-                        <li><a href="{{ '/collections/' | relative_url }}" {% if page.url contains '/collections' %}aria-current="page"{% endif %}>Collections</a></li>
-                        <li><a href="{{ '/works/' | relative_url }}" {% if page.url contains '/works' %}aria-current="page"{% endif %}>Works</a></li>
-                        <li><a href="{{ '/archive/' | relative_url }}" {% if page.url contains '/archive' %}aria-current="page"{% endif %}>Legacy archive</a></li>
-                        <li><a href="{{ '/notes/' | relative_url }}" {% if page.url contains '/notes' %}aria-current="page"{% endif %}>Editor's notes</a></li>
-                        <li><a href="{{ '/perspectives/' | relative_url }}" {% if page.url contains '/perspectives' %}aria-current="page"{% endif %}>Editorial perspectives</a></li>
-                        <li><a href="{{ '/ethics/' | relative_url }}" {% if page.url contains '/ethics' %}aria-current="page"{% endif %}>Ethics</a></li>
-                        <li><a href="{{ '/press/' | relative_url }}" {% if page.url contains '/press' %}aria-current="page"{% endif %}>Press &amp; Background</a></li>
-                        <li><a href="{{ '/accessibility/' | relative_url }}" {% if page.url contains '/accessibility' %}aria-current="page"{% endif %}>Accessibility</a></li>
-                        <li><a href="{{ '/jascha/' | relative_url }}">About the Creator</a></li>
-                    </ul>
-                </div>
-                
-                <div class="site-footer__section">
+
+                <nav class="site-footer__nav" aria-label="Footer">
+                    <div class="site-footer__section">
+                        <h3>Read</h3>
+                        <ul class="site-footer__links">
+                            <li><a href="{{ '/research/' | relative_url }}" {% if page.url contains '/research' or page.layout == 'post' %}aria-current="page"{% endif %}>Articles</a></li>
+                            <li><a href="{{ '/notes/' | relative_url }}" {% if page.url contains '/notes' %}aria-current="page"{% endif %}>Editor&rsquo;s notes</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="site-footer__section">
+                        <h3>About</h3>
+                        <ul class="site-footer__links">
+                            <li><a href="{{ '/about/' | relative_url }}" {% if page.url contains '/about' %}aria-current="page"{% endif %}>About Crip Minds</a></li>
+                            <li><a href="{{ '/perspectives/' | relative_url }}" {% if page.url contains '/perspectives' %}aria-current="page"{% endif %}>Editorial perspectives</a></li>
+                            <li><a href="{{ '/ethics/' | relative_url }}" {% if page.url contains '/ethics' %}aria-current="page"{% endif %}>Ethics</a></li>
+                            <li><a href="{{ '/accessibility/' | relative_url }}" {% if page.url contains '/accessibility' %}aria-current="page"{% endif %}>Accessibility</a></li>
+                            <li><a href="{{ '/press/' | relative_url }}" {% if page.url contains '/press' %}aria-current="page"{% endif %}>Press</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="site-footer__section">
+                        <h3>History</h3>
+                        <ul class="site-footer__links">
+                            <li><a href="{{ '/archive/' | relative_url }}" {% if page.url contains '/archive' %}aria-current="page"{% endif %}>Legacy archive</a></li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <div class="site-footer__section site-footer__section--connect">
                     <h3>Connect</h3>
-                    <ul class="site-footer__links">
+                    {% comment %} Text only. The site has no social icon assets, and hand-drawing
+                       three brand marks would add a logo wall and a maintenance burden for no
+                       reader gain. {% endcomment %}
+                    <ul class="site-footer__links site-footer__links--inline">
                         <li><a href="https://bsky.app/profile/cripminds.bsky.social" target="_blank" rel="noopener">Bluesky</a></li>
                         <li><a href="https://www.tumblr.com/cripminds" target="_blank" rel="noopener">Tumblr</a></li>
-                        <li><a href="https://ko-fi.com/T8K7Z04KYU" target="_blank" rel="noopener">Support Crip Minds</a></li>
+                        <li><a href="https://ko-fi.com/T8K7Z04KYU" target="_blank" rel="noopener">Support</a></li>
                     </ul>
                 </div>
-                
+
                 <div class="site-footer__section">
                     <h3>Subscribe</h3>
                     <p class="newsletter-desc">New essays, delivered to your inbox.</p>
@@ -313,7 +346,7 @@
                     </script>
                 </div>
             </div>
-            
+
             <div class="site-footer__bottom">
                 <p class="site-footer__copyright">&copy; {{ 'now' | date: "%Y" }} {{ site.title }} &nbsp;&middot;&nbsp; v{{ site.version }} &mdash; {{ site.codename }}</p>
                 <p class="site-footer__version"><a href="{{ '/accessibility/' | relative_url }}">WCAG 2.1 AA target</a></p>
