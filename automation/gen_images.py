@@ -23,6 +23,7 @@ import json
 import os
 import pathlib
 import re
+import subprocess
 import sys
 import time
 import urllib.request
@@ -40,9 +41,35 @@ except ImportError:                                       # pragma: no cover
 REPO_ROOT = pathlib.Path(__file__).parent.parent
 POSTS_DIR  = REPO_ROOT / "_posts"
 ASSETS_DIR = REPO_ROOT / "assets"
+OPENCLAW_ENV_FILE = pathlib.Path("/srv/secrets/openclaw.env")
 
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 DEFAULT_MODEL = "recraft/recraft-v4.1"
+
+
+def _openrouter_api_key() -> str:
+    """Use the process environment, then the canonical host env file.
+
+    The daily wrapper exports this file before launching the article route.  The
+    manual/resume image path can enter here without that wrapper, so it resolves
+    the same file at the shared image boundary rather than maintaining a second
+    secret source.  The value is captured in memory only; it is never logged.
+    """
+    key = os.environ.get("OPENROUTER_API_KEY", "")
+    if key:
+        return key
+    if not OPENCLAW_ENV_FILE.is_file():
+        return ""
+    try:
+        result = subprocess.run(
+            ["bash", "-c",
+             "set -a; . \"$1\"; printf '%s' \"${OPENROUTER_API_KEY:-}\"",
+             "gen_images", str(OPENCLAW_ENV_FILE)],
+            capture_output=True, text=True, check=False,
+        )
+    except OSError:
+        return ""
+    return result.stdout if result.returncode == 0 else ""
 
 # image type → (filename_suffix, aspect_ratio, style_key)
 IMAGE_TYPES = [
@@ -690,7 +717,7 @@ def illustrate_post(post_path: pathlib.Path, model: str = DEFAULT_MODEL,
     Returns {"ok", "assets", "figures", "reason"}. Never raises for an image failure: the
     caller decides what a missing illustration means, and must not be silent about it.
     """
-    api_key = api_key or os.environ.get("OPENROUTER_API_KEY", "")
+    api_key = api_key or _openrouter_api_key()
     if not api_key:
         return {"ok": False, "assets": [], "figures": 0,
                 "reason": "OPENROUTER_API_KEY is not set"}

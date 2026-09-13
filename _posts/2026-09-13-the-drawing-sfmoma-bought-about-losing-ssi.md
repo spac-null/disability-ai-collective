@@ -29,6 +29,8 @@ fact_check_status: "verified"
 publication_eligible: true
 publication_safety_profile: "CURRENT_ENGINE_V1"
 publication_safety_version: 1
+image: /assets/the-drawing-sfmoma-bought-about-losing-ssi_setting_1.jpg
+image_alt: "The Drawing SFMOMA Bought About Losing SSI — editorial illustration"
 ---
 
 # The Drawing SFMOMA Bought About Losing SSI
@@ -39,11 +41,21 @@ It hung at the San Francisco Museum of Modern Art, among more than 80 works from
 
 The show opens with a 32-foot-wide mural by William Scott, installed in the entryway to those second-floor galleries, inside the museum's free art-filled public space. The San Francisco it depicts is semi-familiar and semi-fantastical. Text throughout the mural refers to a future city, still with London Breed as mayor, transformed into a "gospel Disney" paradise in the 2030s and 2040s and occupied by happy "future families." The background of the painting reveals the Alice Griffith public housing development near San Francisco's Bayview–Hunters Point neighborhood. Scott, a self-taught painter, was born in the Bayview-Hunters Point neighborhood in 1964 and was raised there.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-drawing-sfmoma-bought-about-losing-ssi_moment_2.jpg" alt="The Drawing SFMOMA Bought About Losing SSI — editorial illustration" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Drawing SFMOMA Bought About Losing SSI — editorial illustration</figcaption>
+</figure>
+
 Creative Growth exists because of decisions made when Ronald Reagan was governor of California. A reviewer traced the organization's origins to that period, when progressives argued that warehousing developmentally disabled and mentally ill people in large state-run institutions was morally indefensible, and Republicans saw a chance to cut government spending by shutting down places like Napa State Hospital. Closing the big institutions — deinstitutionalization — returned residents to their home communities and, the same reviewer wrote, eliminated ongoing care for them.
 
 In 1974 Florence and Elias Katz, an East Bay couple, started Creative Growth as an art education program in their own home. The Oakland nonprofit advances the inclusion of artists with developmental disabilities in contemporary art, providing a supportive studio environment and gallery representation. SFMOMA's press release describes it as the first U.S. organization dedicated to supporting artists with developmental disabilities.
 
 Selling work produces income, and from inside the galleries Holvoet's drawing states the concern that attends it: taxation, and the threat to her SSI support.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-drawing-sfmoma-bought-about-losing-ssi_symbol_3.jpg" alt="The Drawing SFMOMA Bought About Losing SSI — editorial illustration" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Drawing SFMOMA Bought About Losing SSI — editorial illustration</figcaption>
+</figure>
 
 After announcing acquisitions in the fall, SFMOMA became home to one of the largest holdings of art by artists with disabilities in the world. KQED reported that the idea is to spread the acquired work throughout the collection, placing it not in the context of a group show of artists with disabilities but in the context of art history. A KQED reviewer characterized art history as having long been a very Western, male and ableist version of art history. Art of this sort, another reviewer wrote, is too often relegated to specialty art fairs, dedicated museums, or isolated group shows. The museum thus has two filings for the same purchase: the category it holds a world-scale share of, and the collection a reviewer reported the work will be spread into.
 
