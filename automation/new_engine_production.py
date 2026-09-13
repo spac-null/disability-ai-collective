@@ -48,10 +48,12 @@ import new_engine_candidate as CAND                      # noqa: E402
 import news_fetcher as NF                                # noqa: E402
 import selector_v2 as SV                                 # noqa: E402
 import knowledge_first as KF                             # noqa: E402
+import commissioning_desk as CD                          # noqa: E402
 
-# WHICH LANE COMMISSIONS. The ordinary-world collision lane remains the default so
-# nothing about the scheduled cron changes; the knowledge-first lane is requested
-# explicitly, per run, and is the PRIMARY lane for the proof it was built for.
+# WHICH LANE COMMISSIONS a single injected-seed run. The DAY's lane plan is the desk's
+# (commissioning_desk.LANE_PLAN: knowledge-first, knowledge-first, ordinary world). This
+# remains the ordinary-world lane so that a direct call with no seed and the desk disabled
+# behaves exactly as it did before the desk existed.
 LANE_DEFAULT = KF.LANE_SECONDARY
 import publication_safety_bridge as BRIDGE               # noqa: E402
 import composition_factual_bridge as FCB                # noqa: E402
@@ -436,12 +438,30 @@ def _commission_knowledge_first(orch, model: str, evidence_root: str | None = No
 def run_scheduled(orch, *, rehearsal: bool = False,
                   evidence_root: str | None = None,
                   model: str = DEFAULT_MODEL, research_fn=None,
-                  lane: str = LANE_DEFAULT) -> dict:
-    """One scheduled CURRENT_ENGINE run. `orch` is the production orchestrator.
+                  lane: str = LANE_DEFAULT, seed: dict | None = None,
+                  selection: dict | None = None, commission: dict | None = None,
+                  screen: dict | None = None) -> dict:
+    """ONE CANDIDATE, end to end. `orch` is the production orchestrator.
 
     Source acquisition reuses the stabilised upstream path; no legacy commission or Fable
     interpretation is produced or consumed. NEW_ENGINE_V1 owns everything after the
     source.
+
+    WHO CHOOSES THE CANDIDATE (2026-09-13). This function used to choose its own and was
+    therefore the whole day. It is now the executor for ONE pitch, and the commissioning
+    desk above it decides which pitches to send and when to stop -- see
+    commissioning_desk.py. Nothing between the source and publication changed: the same
+    acquisition, the same engine call, the same bridge, the same publisher.
+
+      * called with `seed` -- the desk has already chosen. Run it.
+      * called without one, desk enabled -- hand the morning to the desk, which will call
+        back here once per pitch, each time with a seed.
+      * called without one, desk disabled -- the exact previous behaviour: choose a single
+        candidate here and live with it.
+
+    `screen` is commissioning provenance and NOTHING ELSE. It is written to the run
+    directory beside COMMISSION.json and is read by no stage. It licenses no fact, and the
+    Writer never sees it.
     """
     if R.current_mode() != R.MODE_LIVE:
         # The engine's own switch must be on too. Two explicit switches, no implicit run.
@@ -449,8 +469,14 @@ def run_scheduled(orch, *, rehearsal: bool = False,
                 "message": "CRIPMINDS_ENGINE=new_engine_v1 but NEW_ENGINE_V1_MODE=%r; "
                            "refusing to run implicitly" % R.current_mode()}
 
-    commission = None
-    if lane == KF.LANE:
+    if seed is None and CD.desk_enabled():
+        # The desk always calls back with a seed, so this cannot recurse.
+        return CD.run_day(orch, rehearsal=rehearsal, evidence_root=evidence_root,
+                          model=model, research_fn=research_fn)
+
+    if seed is not None:
+        pass
+    elif lane == KF.LANE:
         # PRIMARY LANE. An approved intellectual question comes first and the story is
         # sought for it, instead of a general-news anchor arriving and a reading being
         # sought for that. The ordinary-world lane below is untouched and still available.
@@ -571,6 +597,13 @@ def run_scheduled(orch, *, rehearsal: bool = False,
         (root / run / "COMMISSION.json").write_text(
             json.dumps(commission, indent=2, sort_keys=True, default=str),
             encoding="utf-8")
+    if screen is not None:
+        # The pre-research Crip Minds screen, on the same terms: a QUESTION and why this
+        # candidate was allowed to cost a research pass. It is NOT a Ledger, it grants no
+        # factual permission, and -- like COMMISSION.json -- no stage reads it back. It is
+        # written here so a morning's reasoning survives next to its run.
+        (root / run / "CRIP_MINDS_SCREEN.json").write_text(
+            json.dumps(screen, indent=2, sort_keys=True, default=str), encoding="utf-8")
 
     result = {"status": "hold" if out["decision"] != "ACCEPT" else "accept",
               "engine": "new_engine_v1", "engine_generation": CAND.ENGINE_GENERATION,
@@ -582,7 +615,14 @@ def run_scheduled(orch, *, rehearsal: bool = False,
               # signal. Absent (None) for an ordinary editorial HOLD.
               "run_status": out.get("run_status"),
               "evidence": str(root / run), "commit_success": False,
-              "source_url": payload["provenance"]["url"]}
+              "source_url": payload["provenance"]["url"], "lane": lane,
+              # Stage verdicts only -- names and statuses, no prose, no payloads. The
+              # commissioning desk needs to record WHERE a pitch stopped (Ledger? Worth?
+              # a gate after the publication had committed?) and that decision must not
+              # depend on re-reading the run directory it just wrote.
+              "composition": {"stages": dict(
+                  ((out.get("composition") or {}).get("stages") or {})),
+                  "failure_stage": (out.get("composition") or {}).get("failure_stage")}}
 
     if out["decision"] != "ACCEPT":
         orch.logger.warning("CURRENT_ENGINE %s: HOLD — %s", run, "; ".join(out["reasons"])[:300])

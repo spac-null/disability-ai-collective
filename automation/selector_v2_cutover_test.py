@@ -214,6 +214,15 @@ def _run(selector=None, *, assessor=None, engine_kwargs=None, seeds=SEEDS, db=No
         finally:
             NEP._in_selector = False
     NEP._select_seed = selecting
+    # THE SELECTOR CUTOVER IS A SINGLE-CANDIDATE INVARIANT, and this suite asserts it at
+    # that granularity: whatever the selector chose is what run_scheduled hands to the
+    # engine and the bridge. Since 2026-09-13 a plain run_scheduled(orch) with no seed
+    # hands the whole morning to the commissioning desk instead -- up to three pitches,
+    # of which two are knowledge-first and never reach _select_seed at all. Asserting
+    # this file's invariant through a desk day would be asserting a different thing.
+    # CRIPMINDS_COMMISSIONING_DESK=0 is the documented rollback, and it selects exactly
+    # the path under test here.
+    os.environ["CRIPMINDS_COMMISSIONING_DESK"] = "0"
     try:
         result = NEP.run_scheduled(orch, evidence_root=tempfile.mkdtemp(),
                                    research_fn=stub_pack)
@@ -221,6 +230,7 @@ def _run(selector=None, *, assessor=None, engine_kwargs=None, seeds=SEEDS, db=No
         NEP.Provider = real_provider
         NEP._select_seed = real_select
         NEP._in_selector = False
+        os.environ.pop("CRIPMINDS_COMMISSIONING_DESK", None)
         os.environ.pop(SV.SELECTOR_ENV, None)
         os.environ.pop("NEW_ENGINE_V1_MODE", None)
     return result, orch, db, assessor

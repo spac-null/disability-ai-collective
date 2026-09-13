@@ -126,17 +126,42 @@ def load_questions(directory: pathlib.Path | None = None) -> list:
     return out
 
 
-def select_question(questions: list, *, exclude: set | None = None, rng=None) -> dict | None:
+def select_question(questions: list, *, exclude: set | None = None, rng=None,
+                    claim_times: dict | None = None,
+                    cooldown_exclude: set | None = None) -> dict | None:
     """One question, preferring the active cluster, excluding ones already commissioned.
 
     ACCESS_ORIGIN_QUESTION_IDS is excluded unconditionally, not merely offered as a default:
     a caller cannot accidentally re-admit an access-origin question by passing a narrower
     `exclude` set.
+
+    TWO KINDS OF EXCLUSION, and the difference is the whole of the rotation logic.
+      * `exclude` is HARD -- a question this caller must not be given under any
+        circumstance, e.g. one already used by an earlier attempt the same morning.
+      * `cooldown_exclude` is SOFT -- recently commissioned, therefore not preferred. It
+        yields when there is nothing else.
+
+    `claim_times` (id -> ISO claim timestamp) turns exhaustion into ROTATION. When the
+    cooldown has excluded everything -- which, on a lane that commissions daily, is a
+    matter of days, not a hypothetical -- the LEAST RECENTLY USED admissible question is
+    returned instead of None. See load_claimed_question_ids for why that is not gate
+    shopping. Hard exclusions and access-origin questions are never rotated back in.
     """
-    seen = set(exclude or ()) | ACCESS_ORIGIN_QUESTION_IDS
+    hard = set(exclude or ()) | ACCESS_ORIGIN_QUESTION_IDS
+    seen = hard | set(cooldown_exclude or ())
     pool = [q for q in questions if q["id"] not in seen]
     if not pool:
-        return None
+        if claim_times is None:
+            return None
+        # ROTATION, not a relaxed standard. Nothing about the article's gates moves: the
+        # question is reused only against a DIFFERENT story, because story identity is
+        # claimed permanently and separately (claim_story). Returning None here instead
+        # would end the lane, and with 16 approved questions and 14 already claimed on
+        # 2026-09-13, "instead" meant within the week.
+        admissible = [q for q in questions if q["id"] not in hard]
+        if not admissible:
+            return None
+        return min(admissible, key=lambda q: (claim_times.get(q["id"]) or "", q["id"]))
     preferred = [q for q in pool if q["cluster"] == PREFERRED_CLUSTER]
     r = rng or random
     return r.choice(preferred or pool)
@@ -308,26 +333,63 @@ def _utcnow() -> str:
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
 
 
-def load_claimed_question_ids(conn) -> set:
-    """Every question id already attempted (commissioned OR refused OR held) in a prior
-    process. A failed attempt claims its question exactly like a successful one -- see
-    `claim_question`."""
+def load_claimed_question_ids(conn, *, cooldown_days: int | None = None) -> set:
+    """Question ids that may not be commissioned again yet.
+
+    `cooldown_days=None` is the original behaviour: EVERY question ever attempted, i.e. a
+    permanent burn. That was right while this lane ran occasionally and by hand. It is
+    wrong for a daily lane, and the arithmetic says so plainly -- on 2026-09-13, 14 of the
+    16 loadable APPROVED_DURABLE questions were already claimed, so a desk attempting
+    knowledge-first twice a day would have exhausted the pool inside a week and silently
+    degraded to ordinary-world news, which is the exact failure this rebuild exists to fix.
+
+    WHY REUSE IS NOT GATE SHOPPING. The doctrine forbids re-running the same STORY until it
+    happens to pass a gate, and that protection is untouched: `claim_story` is permanent,
+    keyed on anchor URL and quoted title, and is what actually stops a rejected pitch
+    coming back. A question is not a pitch. Asking "which channel is treated as the
+    original" of a different subject, months later, is a new commission with a new story,
+    a new Research pass and a new Worth decision. `cooldown_days` keeps the same question
+    from recurring while it is still fresh; it does not retire it forever.
+    """
+    ensure_state_schema(conn)
+    if cooldown_days is None:
+        rows = conn.execute(
+            "SELECT key FROM %s WHERE kind = 'question'" % STATE_TABLE).fetchall()
+        return {r[0] for r in rows}
+    cut = (datetime.datetime.now(datetime.timezone.utc)
+           - datetime.timedelta(days=cooldown_days)).isoformat()
+    rows = conn.execute(
+        "SELECT key FROM %s WHERE kind = 'question' AND claimed_at >= ?"
+        % STATE_TABLE, (cut,)).fetchall()
+    return {r[0] for r in rows}
+
+
+def load_question_claim_times(conn) -> dict:
+    """id -> most recent claim timestamp, for least-recently-used rotation."""
     ensure_state_schema(conn)
     rows = conn.execute(
-        "SELECT key FROM %s WHERE kind = 'question'" % STATE_TABLE).fetchall()
-    return {r[0] for r in rows}
+        "SELECT key, claimed_at FROM %s WHERE kind = 'question'" % STATE_TABLE).fetchall()
+    return {r[0]: r[1] for r in rows}
 
 
 def claim_question(conn, question_id: str, run_id: str | None = None) -> None:
     """Claim a question id BEFORE the model call that proposes stories for it -- the
-    expensive work this is meant to guard. INSERT OR IGNORE: a question already claimed
-    (by this run seeding itself, or a retained-artifact backfill) stays claimed under
-    whichever record came first, and re-claiming is not an error."""
+    expensive work this is meant to guard.
+
+    The row is created once and then REFRESHED on every later claim, so `claimed_at` means
+    "last commissioned", which is what both the cooldown and the least-recently-used
+    rotation in select_question need. Before rotation existed the distinction was invisible
+    -- a question was claimed exactly once, ever -- so this does not change any outcome the
+    old behaviour produced, it only makes a second claim recordable."""
     ensure_state_schema(conn)
+    now = _utcnow()
     conn.execute(
         "INSERT OR IGNORE INTO %s (kind, key, question_id, run_id, status, claimed_at) "
         "VALUES ('question', ?, ?, ?, 'attempted', ?)" % STATE_TABLE,
-        (question_id, question_id, run_id, _utcnow()))
+        (question_id, question_id, run_id, now))
+    conn.execute(
+        "UPDATE %s SET claimed_at = ?, run_id = ? WHERE kind = 'question' AND key = ?"
+        % STATE_TABLE, (now, run_id, question_id))
     conn.commit()
 
 
@@ -451,7 +513,7 @@ def seed_exclusions_from_retained(conn, evidence_root) -> int:
 
 def commission(provider, *, search_fn, fetch_fn, questions=None, exclude=None,
                api_key: str = "", rng=None, state_conn=None, run_id: str | None = None,
-               evidence_root=None) -> dict:
+               evidence_root=None, question_cooldown_days: int | None = None) -> dict:
     """(seed | None, record). The seed is the SAME shape the selector returns, so the
     entire downstream engine is reached unchanged.
 
@@ -464,11 +526,21 @@ def commission(provider, *, search_fn, fetch_fn, questions=None, exclude=None,
     """
     qs = questions if questions is not None else load_questions()
     persisted_exclude = set()
+    claim_times = None
     if state_conn is not None:
         if evidence_root is not None:
             seed_exclusions_from_retained(state_conn, evidence_root)
-        persisted_exclude = load_claimed_question_ids(state_conn)
-    q = select_question(qs, exclude=(set(exclude or ()) | persisted_exclude), rng=rng)
+        persisted_exclude = load_claimed_question_ids(
+            state_conn, cooldown_days=question_cooldown_days)
+        if question_cooldown_days is not None:
+            claim_times = load_question_claim_times(state_conn)
+    if question_cooldown_days is None:
+        # Unchanged: a claimed question is excluded outright, no rotation.
+        q = select_question(qs, exclude=(set(exclude or ()) | persisted_exclude), rng=rng)
+    else:
+        q = select_question(qs, exclude=set(exclude or ()),
+                            cooldown_exclude=persisted_exclude, rng=rng,
+                            claim_times=claim_times)
     rec = {"lane": LANE, "questions_available": len(qs), "question": q,
            "candidates": [], "tried": [], "seed": None, "model_calls": 0}
     if not q:

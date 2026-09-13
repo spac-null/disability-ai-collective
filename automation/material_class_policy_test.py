@@ -176,15 +176,27 @@ def test_ingest_lookback_follows_the_feed_class():
         NF.fetch_all_feeds()
     finally:
         NF.fetch_feed = real
-    news = [n for n, f in ((f["name"], f) for f in NF.QUALITY_FEEDS)
-            if f.get("class") == MP.CURRENT_NEWS]
-    research = [f["name"] for f in NF.QUALITY_FEEDS if f.get("class") == MP.RESEARCH_REPORT]
-    evergreen = [f["name"] for f in NF.QUALITY_FEEDS if f.get("class") == MP.EVERGREEN]
+    # SAMPLED FROM THE ORIGIN FEEDS, not from every configured feed. Since 2026-09-13 a
+    # feed can be trusted to READ without being allowed to ORIGINATE a day's article
+    # (news_fetcher.SECONDARY_ONLY_ORIGIN), and fetch_all_feeds walks the origin set. The
+    # invariant under test is unchanged and is about CLASS, not membership: whichever
+    # feeds are fetched, each is asked for its own class's lookback.
+    origin = NF.origin_feeds()
+    news = [f["name"] for f in origin if f.get("class") == MP.CURRENT_NEWS]
+    research = [f["name"] for f in origin if f.get("class") == MP.RESEARCH_REPORT]
+    evergreen = [f["name"] for f in origin if f.get("class") == MP.EVERGREEN]
     check("a news feed still looks back 7 days", seen.get(news[0]) == 7, seen.get(news[0]))
     check("a research feed looks back 90", seen.get(research[0]) == 90, seen.get(research[0]))
     check("an evergreen feed looks back 180", seen.get(evergreen[0]) == 180,
           seen.get(evergreen[0]))
-    check("every configured feed was asked", len(seen) == len(NF.QUALITY_FEEDS))
+    check("every origin feed was asked", len(seen) == len(origin),
+          (len(seen), len(origin)))
+    check("and no secondary-only feed was fetched as an origin",
+          not (set(seen) & set(NF.SECONDARY_ONLY_ORIGIN)),
+          sorted(set(seen) & set(NF.SECONDARY_ONLY_ORIGIN)))
+    check("every secondary-only name is a real configured feed",
+          set(NF.SECONDARY_ONLY_ORIGIN) <= {f["name"] for f in NF.QUALITY_FEEDS},
+          sorted(set(NF.SECONDARY_ONLY_ORIGIN) - {f["name"] for f in NF.QUALITY_FEEDS}))
 
 
 def test_historical_ingestion_stays_bounded():

@@ -259,6 +259,13 @@ def _run(flag: str | None, *, assessor=None, hook_raises=False, engine_kwargs=No
     if hook_raises:
         SV.run_shadow = lambda *a, **kw: (_ for _ in ()).throw(
             RuntimeError("shadow exploded"))
+    # The shadow hook fires once per CANDIDATE, at the one moment both selectors can see
+    # the same pool. That is a property of a single candidate's run, so this suite drives
+    # the single-candidate executor directly -- see the same note in
+    # selector_v2_cutover_test. Through the commissioning desk a morning may run up to
+    # three candidates and would shadow once per candidate, which is correct behaviour and
+    # a different assertion.
+    os.environ["CRIPMINDS_COMMISSIONING_DESK"] = "0"
     try:
         result = NEP.run_scheduled(orch, evidence_root=tempfile.mkdtemp(),
                                    research_fn=research)
@@ -267,6 +274,7 @@ def _run(flag: str | None, *, assessor=None, hook_raises=False, engine_kwargs=No
         SV.run_shadow = real_run_shadow
         NEP._selector_v2_shadow = real_hook
         NEP._in_shadow = False
+        os.environ.pop("CRIPMINDS_COMMISSIONING_DESK", None)
         os.environ.pop(SV.SHADOW_ENV, None)
         os.environ.pop("NEW_ENGINE_V1_MODE", None)
         os.environ.pop("CRIPMINDS_SELECTOR", None)

@@ -220,6 +220,86 @@ QUALITY_FEEDS = [
     {"url": "https://www.theguardian.com/environment/rss",              "name": "Guardian Environment",      "class": "CURRENT_NEWS", "tier": 1},
 ]
 
+# ══════════════════════════════════════════════════════════════════════════════
+# ORIGIN DISCOVERY vs SOURCE ELIGIBILITY -- two different questions
+# ══════════════════════════════════════════════════════════════════════════════
+# QUALITY_FEEDS above answers "is this a publisher we trust to read". This set answers a
+# NARROWER question that nothing used to ask: "should a day's article ORIGINATE here?"
+#
+# WHY THIS DISTINCTION NOW. On 2026-09-13 the 09:00 run commissioned a Verge story about
+# schools and Big Tech. Selector V2 ranked it top on concrete subject, narrative material,
+# source depth and researchability -- all correctly. Research passed. The Ledger granted 92
+# facts. Worth then said GREAT_GENERAL_STORY_WRONG_PUBLICATION, which is the right verdict
+# about a real story that belongs in a general publication. The front door, not the gates,
+# was what needed fixing: the pool is full of feeds that reliably produce excellent general
+# journalism and almost never produce a Crip Minds commissioning question.
+#
+# THIS IS NOT A BLACKLIST, and the difference matters. A SECONDARY_ONLY feed's publisher
+# remains fully available to Research: targeted research searches and fetches the open web,
+# consults no list, and is deliberately unchanged here. The Verge can still be cited as
+# evidence in tomorrow's article. It simply may no longer be what STARTS one.
+#
+# HOW EACH WAS DECIDED. Editorial behaviour first, then the pool's own retained outcome
+# history (news_seeds.ce_attempt_outcome), not domain prestige:
+#
+#   * general tech / platform policy / product and vendor announcements -- the territory
+#     the brief names explicitly. The Verge (owner-directed), Techmeme and Hacker News
+#     (link aggregators whose items are product and platform news by construction), Wired,
+#     MIT Tech Review, 404 Media, Rest of World.
+#
+#   * built environment, infrastructure and transit. Built-environment access is to become
+#     RARE as an ORIGIN, and Dezeen is the single largest origin producer in the pool (165
+#     unused seeds, 23 attempts -- more than any other feed). Also Guardian Cities, and the
+#     two regulatory-record feeds (Rail Accident Investigation Branch, Health and Safety
+#     Executive) whose material is infrastructure incident reporting.
+#
+#   * the access / compliance / benefits beat. Disability News Service, Rooted in Rights
+#     and Disability Debrief are disability-led and valuable, but their beat is provision,
+#     rights and policy administration -- which NO_ACCESS_ORIGIN says may be evidence
+#     inside a story and may not be the origin of one. The disability-led ARTISTIC and
+#     INTELLECTUAL feeds (Disability Arts Online, Crip News, The Limping Chicken,
+#     Disability Visibility Project) are kept as origins for exactly that reason.
+#
+#   * preprint servers. arXiv cs.HC: 9 attempts, 9 HOLD_INSUFFICIENT_RESEARCH, 0 accepts.
+#     arXiv q-bio.NC and bioRxiv Neuroscience: 4 attempts between them, 0 accepts. A
+#     preprint is a result, not a carrier -- there is no person, event, change or
+#     consequence for research to find. Secondary, where a paper is genuinely useful.
+#
+#   * general world/politics/business news beats, which produce great general stories.
+#
+# KEPT DESPITE WEAK EVIDENCE (reported UNCLEAR rather than acted on): Daily Nous (17
+# attempts, 0 accepts) and The Conversation (15 attempts, 0 accepts) both underperform, but
+# philosophy and academic explanatory writing are squarely inside the territory the brief
+# asks for MORE of, and their failures are spread across gates rather than concentrated at
+# Worth. Changing them would be a guess; they are left alone deliberately.
+SECONDARY_ONLY_ORIGIN = frozenset({
+    # general tech, platform policy, product/vendor
+    "The Verge", "Techmeme", "Hacker News", "Wired", "MIT Tech Review", "404 Media",
+    "Rest of World",
+    # built environment, infrastructure, transit, regulatory incident records
+    "Dezeen", "Guardian Cities", "Rail Accident Investigation Branch",
+    "Health and Safety Executive",
+    # access / compliance / benefits / rights-administration beat
+    "Disability News Service", "Rooted in Rights", "Disability Debrief",
+    # preprints: results, not carriers
+    "arXiv cs.HC", "arXiv q-bio.NC", "bioRxiv Neuroscience",
+    # general world / politics / business / mission news
+    "Guardian World", "Guardian Society", "Guardian Environment", "Jacobin",
+    "Le Monde English", "Le Monde Europe", "NRC Handelsblad", "DutchNews",
+    "ANSA English", "ANSA Emilia-Romagna", "Hackney Citizen",
+    "Economist Finance", "Economist Sci-Tech", "Vox Future Perfect", "Space.com",
+})
+
+
+def origin_feeds() -> list[dict]:
+    """The feeds a day's article may ORIGINATE from. Everything else stays readable."""
+    return [f for f in QUALITY_FEEDS if f["name"] not in SECONDARY_ONLY_ORIGIN]
+
+
+def is_origin_feed(name: str) -> bool:
+    return str(name or "") not in SECONDARY_ONLY_ORIGIN
+
+
 # ── Relevance scoring ─────────────────────────────────────────────────────────
 
 # Added 2026-08-09 continuation, explicit request: exclude the mental-health-
@@ -722,19 +802,24 @@ def fetch_feed(feed: dict, days: int | None = None) -> list[dict]:
 
 
 def fetch_all_feeds(days: int | None = None) -> list[dict]:
-    """Fetch all QUALITY_FEEDS, deduplicate by URL, return flat list.
+    """Fetch the ORIGIN feeds, deduplicate by URL, return flat list.
 
     `days=None` (production) lets each feed use its own material-class lookback.
+
+    Origin feeds, not all of QUALITY_FEEDS -- see SECONDARY_ONLY_ORIGIN. A feed that is
+    not an origin feed is still a perfectly good SOURCE; it just no longer starts a day.
     """
     seen_urls = set()
     all_items = []
-    for feed in QUALITY_FEEDS:
+    feeds = origin_feeds()
+    for feed in feeds:
         items = fetch_feed(feed, days=days)
         for item in items:
             if item["url"] not in seen_urls:
                 seen_urls.add(item["url"])
                 all_items.append(item)
-    log(f"Fetched {len(all_items)} unique items from {len(QUALITY_FEEDS)} feeds")
+    log(f"Fetched {len(all_items)} unique items from {len(feeds)} origin feeds "
+        f"({len(SECONDARY_ONLY_ORIGIN)} of {len(QUALITY_FEEDS)} are secondary-only)")
     return all_items
 
 

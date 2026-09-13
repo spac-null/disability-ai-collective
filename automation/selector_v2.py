@@ -643,14 +643,30 @@ def rank(records: list) -> list:
 
 
 # ── orchestration ─────────────────────────────────────────────────────────────
-def eligible_pool(conn, now) -> list:
+def eligible_pool(conn, now, *, secondary_only=None, exclude_seed_ids=None) -> list:
     """The PR #48 eligible pool, read-only, with the same attempt filters production
-    uses. disability_angle and angle_checked are deliberately NOT consulted."""
+    uses. disability_angle and angle_checked are deliberately NOT consulted.
+
+    `secondary_only` -- publisher names that may no longer ORIGINATE a day's article.
+    INJECTED, never imported, exactly as score_item, boosters and keyword_matches are: the
+    origin policy belongs to the caller and this module stays free of it.
+
+    Applied HERE, in Python, and not only by dropping a feed from the fetcher, because the
+    fetcher governs what ENTERS the pool while this governs what LEAVES it. On 2026-09-13
+    there were already 2,136 persisted seeds, 44 of them from the publisher the owner
+    named and 165 from the largest built-environment source. Retiring the feeds alone
+    would have left every one of those rows selectable for weeks, and the change would
+    have looked like it had worked.
+
+    `exclude_seed_ids` -- candidates this DAY has already attempted. A rejected pitch is
+    not re-ranked against the pitches that follow it: the commissioning desk may consider
+    three DISTINCT candidates, and a seed whose verdict is already recorded is spent.
+    """
     cut = MP.eligibility_cutoffs(now)
     args = tuple(cut[k] for k in (MP.CURRENT_NEWS, MP.ESSAY_OPINION, MP.RESEARCH_REPORT,
                                   MP.CULTURE, MP.EVERGREEN, MP.OTHER))
     conn.row_factory = sqlite3.Row
-    return conn.execute("""
+    rows = conn.execute("""
         SELECT * FROM news_seeds
         WHERE used = 0 AND ce_attempt_terminal IS NOT 1
           AND (ce_retry_after IS NULL OR ce_retry_after <= ?)
@@ -659,6 +675,13 @@ def eligible_pool(conn, now) -> list:
                             WHEN 'RESEARCH_REPORT' THEN ? WHEN 'CULTURE' THEN ?
                             WHEN 'EVERGREEN' THEN ? ELSE ? END
     """, (now.strftime("%Y-%m-%dT%H:%M:%S"), *args)).fetchall()
+    secondary = set(secondary_only or ())
+    spent = set(exclude_seed_ids or ())
+    if secondary:
+        rows = [r for r in rows if r["source_name"] not in secondary]
+    if spent:
+        rows = [r for r in rows if r["id"] not in spent]
+    return rows
 
 
 def recent_selections(conn, limit: int = 12) -> list:
@@ -672,7 +695,8 @@ def recent_selections(conn, limit: int = 12) -> list:
 
 
 def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches,
-               now=None, old_winner=None) -> dict:
+               now=None, old_winner=None, secondary_only=None,
+               exclude_seed_ids=None) -> dict:
     """One shadow run. `acquire(url) -> (text, status)` MUST be the production
     acquisition path -- a second, weaker fetcher would mark whole publishers unreadable
     (the probe's stdlib fetch got HTTP 403 from Dezeen, NYT Arts and the Economist while
@@ -683,7 +707,8 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
     """
     now = now or datetime.now()
     ensure_schema(conn)
-    pool = eligible_pool(conn, now)
+    pool = eligible_pool(conn, now, secondary_only=secondary_only,
+                         exclude_seed_ids=exclude_seed_ids)
     recent = recent_selections(conn)
     candidates = select_candidates(pool, now=now, score_item=score_item,
                                    boosters=boosters, keyword_matches=keyword_matches)
