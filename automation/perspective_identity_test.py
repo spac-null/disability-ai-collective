@@ -165,25 +165,39 @@ check("H4 one frontmatter builder, not two",
 
 # ── I/J. public author, and perspective is never schema.org author ───────────
 print("\nI-J. public authorship")
-check("I1 PUBLIC_AUTHOR is Jascha Blume", CAND.PUBLIC_AUTHOR == "Jascha Blume")
+check("I1 article credit is the publication, not a person",
+      CAND.PUBLIC_AUTHOR == "Crip Minds")
 cfg = read(ROOT / "_config.yml")
-check("I2 site.public_author is Jascha Blume", 'public_author: "Jascha Blume"' in cfg)
+check("I2 site.article_credit is Crip Minds", 'article_credit: "Crip Minds"' in cfg)
+check("I2b site.creator is Jascha Blume", 'creator: "Jascha Blume"' in cfg)
+check("I2c no personal-authorship claim in current chrome",
+      not any("written and edited by" in read(ROOT / f).lower()
+              for f in ("index.html", "about.html", "research.html", "perspectives.html",
+                        "press/index.html", "press/how-it-works/index.html")))
 default_layout = read(ROOT / "_layouts" / "default.html")
 post_layout = read(ROOT / "_layouts" / "post.html")
 feed = read(ROOT / "feed.xml")
-check("I3 RSS dc:creator uses public_author", "site.public_author" in feed)
-check("I4 meta author uses public_author",
-      'name="author" content="{{ site.public_author }}"' in default_layout)
+check("I3 RSS dc:creator is the publication", "site.article_credit" in feed)
+check("I4 meta author is the publication",
+      'name="author" content="{{ site.article_credit }}"' in default_layout)
 
 for name, txt in (("default.html", default_layout), ("post.html", post_layout)):
     # every JSON-LD "author" block must name public_author, never a perspective
     for block in re.findall(r'"author"\s*:\s*\{.*?\}', txt, re.S):
-        check("J1 %s JSON-LD author is public_author" % name,
-              "site.public_author" in block, block[:120])
+        check("J1 %s JSON-LD author is the publication as Organization" % name,
+              "site.article_credit" in block and "Organization" in block, block[:140])
+        check("J1b %s JSON-LD author is not a Person" % name,
+              "Person" not in block, block[:140])
         check("J2 %s JSON-LD author has no perspective" % name,
               "perspective" not in block, block[:120])
 check("J3 perspective never assigned to an author field in templates",
       not re.search(r'author[^\n]{0,40}page\.perspective', default_layout + post_layout))
+for name, txt in (("default.html", default_layout), ("post.html", post_layout)):
+    for block in re.findall(r'"creator"\s*:\s*\{.*?\}', txt, re.S):
+        check("J4 %s JSON-LD creator is the person" % name,
+              "site.creator" in block and "Person" in block, block[:140])
+check("J5 article byline names no person",
+      "site.creator" not in post_layout.split("post-meta")[1].split("</div>")[0])
 
 # ── K/L/M. templates ─────────────────────────────────────────────────────────
 print("\nK-M. templates")

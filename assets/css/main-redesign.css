@@ -4091,6 +4091,26 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   padding: 0;
 }
 
+/* One quiet row of routes out of the reading flow: Collections, Works, the legacy
+   archive. They each have their own page; this is the door, not the room. */
+.research-more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.75rem;
+  margin: var(--space-16) 0 0;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-primary);
+}
+.research-more a {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-border-primary);
+  padding-bottom: 1px;
+}
+.research-more a:hover,
+.research-more a:focus-visible { color: var(--color-accent); border-bottom-color: currentColor; }
+
 /* Sources read as references, not as paragraphs. A long title used to wrap into a
    three-line underlined slab with the domain pinned to the end of it; title and domain
    are now stacked, so each entry scans as one reference. Same links, same titles, same

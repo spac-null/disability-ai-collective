@@ -1,0 +1,41 @@
+---
+layout: default
+title: "Works — Crip Minds"
+description: "Crip Minds pieces built as interactions rather than essays."
+permalink: /works/
+---
+
+<main id="main-content">
+  <section class="section section--secondary">
+    <div class="container container--md">
+
+      <header class="page-header">
+        <h1 class="text-h1 mb-4">Works</h1>
+        <p class="text-lead text-secondary">
+          Some Crip Minds pieces are built as interactions rather than essays &mdash; used only when
+          the comparison, sequence, or experience itself is the argument an essay would flatten.
+        </p>
+      </header>
+
+      {% if site.works.size > 0 %}
+      <div class="works-list">
+        {% for work in site.works %}
+        <a href="{{ work.url | relative_url }}" class="work-card">
+          <span class="work-card__badge">{{ work.work_form | default: "Interactive work" }}</span>
+          <span class="work-card__title">{{ work.title }}</span>
+          <span class="work-card__cta">Open &rarr;</span>
+        </a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-body text-secondary">No works are published yet.</p>
+      {% endif %}
+
+      <nav class="research-more" aria-label="More from Crip Minds">
+        <a href="{{ '/research/' | relative_url }}">All essays &rarr;</a>
+        <a href="{{ '/collections/' | relative_url }}">Collections &rarr;</a>
+      </nav>
+
+    </div>
+  </section>
+</main>

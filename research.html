@@ -62,12 +62,8 @@ description: "Essays using disabled ways of seeing to ask different questions of
                 </time>
                 <span class="article-card__sep" aria-hidden="true">&middot;</span>
                 <span class="article-card__author">
-                  <span class="article-card__author-name">{{ site.public_author }}</span>
+                  <span class="article-card__author-name">{{ site.article_credit }}</span>
                 </span>
-                {% if post.categories.size > 0 %}
-                  <span class="article-card__sep" aria-hidden="true">&middot;</span>
-                  <span class="article-card__topic">{{ post.categories | first | capitalize }}</span>
-                {% endif %}
               </div>
 
               <h3 class="text-h4 mb-4">
@@ -90,32 +86,6 @@ description: "Essays using disabled ways of seeing to ask different questions of
              competing with either. Counts derived from _data/threads.yml
              against the readable population (PR #25); a withdrawal drops out
              of the number automatically. -->
-        <div id="threads" class="thread-strip-wrap">
-          <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.35rem;"><span class="marker marker--pink">Collections</span></p>
-          <p class="text-small text-secondary" style="margin: 0 0 0.5rem;">Curated routes through recurring subjects.</p>
-          <div class="thread-strip">
-            {% comment %} Counts are of the members this publication actively carries, so a
-                 collection cannot present archived pieces as current recommendations. Membership
-                 itself is unchanged: every member is still listed on the collection's own page,
-                 and a collection whose members are all archived is still linked, labelled as
-                 such rather than shown with a count of zero. {% endcomment %}
-            {% for thread in site.data.threads %}
-              {% assign thread_active = 0 %}
-              {% for s in thread.slugs %}
-                {% assign tp = readable_posts | where: "slug", s | first %}
-                {% if tp %}
-                  {% capture bk %}|{{ tp.slug }}|{% endcapture %}
-                  {% if backlist_active_slugs contains bk %}{% unless backlist_note_slugs contains bk %}{% assign thread_active = thread_active | plus: 1 %}{% endunless %}{% endif %}
-                {% endif %}
-              {% endfor %}
-            <a href="{{ thread.url }}" class="thread-strip__item">
-              <span class="thread-strip__title">{{ thread.title }}</span>
-              <span class="thread-strip__count">{% if thread_active == 0 %}Archive collection{% else %}{{ thread_active }} essay{% unless thread_active == 1 %}s{% endunless %}{% endif %}</span>
-            </a>
-            {% endfor %}
-          </div>
-        </div>
-
         {% if backlist_article_count > 3 %}
         <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.75rem;">All essays</p>
         <div class="archive-list">
@@ -130,11 +100,7 @@ description: "Essays using disabled ways of seeing to ask different questions of
             <p class="archive-row__meta">
               <time class="archive-row__date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
               <span aria-hidden="true">&middot;</span>
-              <span class="archive-row__author">{{ site.public_author }}</span>
-              {% if post.categories.size > 0 %}
-                <span aria-hidden="true">&middot;</span>
-                <span class="archive-row__topic">{{ post.categories | first | capitalize }}</span>
-              {% endif %}
+              <span class="archive-row__author">{{ site.article_credit }}</span>
             </p>
             <h3 class="archive-row__title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
             <p class="archive-row__excerpt">{{ post.excerpt | strip_html | truncatewords: 22 }}</p>
@@ -143,13 +109,14 @@ description: "Essays using disabled ways of seeing to ask different questions of
         </div>
         {% endif %}
 
-        <aside class="legacy-archive-route">
-          <p class="legacy-archive-route__label">Legacy archive</p>
-          <p class="legacy-archive-route__body">
-            Earlier published work, retained with its correction history.
-          </p>
-          <a href="{{ '/archive/' | relative_url }}" class="legacy-archive-route__link">Browse the {{ backlist_archive_count }} archived essays &rarr;</a>
-        </aside>
+        {% comment %} Everything that is not the main reading flow leaves as one line each.
+           Collections, Works and the legacy archive all keep their own pages and all of their
+           content; what they no longer do is sit inside the list of essays. {% endcomment %}
+        <nav class="research-more" aria-label="More from Crip Minds">
+          <a href="{{ '/collections/' | relative_url }}">Collections &rarr;</a>
+          {% if site.works.size > 0 %}<a href="{{ '/works/' | relative_url }}">Works &rarr;</a>{% endif %}
+          <a href="{{ '/archive/' | relative_url }}">Legacy archive &mdash; {{ backlist_archive_count }} essays &rarr;</a>
+        </nav>
       {% else %}
         <div class="card text-center p-16">
           <h3 class="text-h3 mb-4">New Articles in Progress</h3>
@@ -160,27 +127,4 @@ description: "Essays using disabled ways of seeing to ask different questions of
     </div>
   </section>
 
-  <!-- Works: interactions rather than essays — deliberately not card-grid styled
-       like the archive or the threads above, so it reads as an object, not a
-       fourth row of identical rectangles. -->
-  {% if site.works.size > 0 %}
-  <section id="works" class="section section--primary">
-    <div class="container">
-      <p class="research-threads__eyebrow">Works</p>
-      <p class="text-body text-secondary" style="max-width: 42rem; margin: 0 0 1.5rem;">
-        Some Crip Minds pieces are built as interactions rather than essays &mdash; used only when
-        the comparison, sequence, or experience itself is the argument an essay would flatten.
-      </p>
-      <div class="works-list">
-        {% for work in site.works %}
-        <a href="{{ work.url | relative_url }}" class="work-card">
-          <span class="work-card__badge">{{ work.work_form | default: "Interactive work" }}</span>
-          <span class="work-card__title">{{ work.title }}</span>
-          <span class="work-card__cta">Open &rarr;</span>
-        </a>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
-  {% endif %}
 </main>

@@ -9,7 +9,7 @@
     <!-- SEO and accessibility meta -->
     <title>{% if page.title and page.title != site.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
     <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% elsif page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
-    <meta name="author" content="{{ site.public_author }}">
+    <meta name="author" content="{{ site.article_credit }}">
     {% if page.withdrawn %}<meta name="robots" content="noindex, follow">{% elsif page.noindex %}<meta name="robots" content="noindex, nofollow">{% else %}<meta name="robots" content="index, follow">{% endif %}
     {% if page.keywords %}<meta name="keywords" content="{{ page.keywords | join: ', ' }}">{% endif %}
     <link rel="canonical" href="{{ site.url }}{{ site.baseurl }}{{ page.url }}">
@@ -44,7 +44,7 @@
     {% endif %}
     {% if page.layout == 'post' %}
     <meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">
-    <meta property="article:author" content="{{ site.public_author }}">
+    <meta property="article:author" content="{{ site.article_credit }}">
     {% if page.categories %}<meta property="article:section" content="{{ page.categories | first }}">{% endif %}
     {% endif %}
     <!-- Twitter Card -->
@@ -108,10 +108,15 @@
       "datePublished": "{{ page.date | date_to_xmlschema }}",
       "dateModified": "{% if page.last_modified_at %}{{ page.last_modified_at | date_to_xmlschema }}{% else %}{{ page.date | date_to_xmlschema }}{% endif %}",
       "author": {
-        "@type": "Person",
-        "name": "{{ site.public_author }}",
-        "url": "{{ site.url }}/jascha/",
+        "@type": "Organization",
+        "name": "{{ site.article_credit }}",
+        "url": "{{ site.url }}",
         "sameAs": "{{ site.url }}/press/how-it-works/"
+      },
+      "creator": {
+        "@type": "Person",
+        "name": "{{ site.creator }}",
+        "url": "{{ site.url }}/jascha/"
       },
       "publisher": {
         "@type": "Organization",
@@ -239,7 +244,7 @@
                 <div class="site-footer__section">
                     <h3>{{ site.title }}</h3>
                     <p>
-                        Crip Minds is an experimental editorial publication by {{ site.public_author }}.
+                        Crip Minds is an AI-assisted editorial publication created and directed by {{ site.creator }}.
                         &ldquo;Crip&rdquo; is a reclaimed disability-justice term &mdash;
                         <a href="{{ '/about/#language-note' | relative_url }}">language note</a>.
                     </p>
@@ -249,7 +254,8 @@
                     <h3>Explore</h3>
                     <ul class="site-footer__links">
                         <li><a href="{{ '/research/' | relative_url }}" {% if page.url contains '/research' or page.layout == 'post' %}aria-current="page"{% endif %}>Articles</a></li>
-                        <li><a href="{{ '/research/#threads' | relative_url }}">Collections</a></li>
+                        <li><a href="{{ '/collections/' | relative_url }}" {% if page.url contains '/collections' %}aria-current="page"{% endif %}>Collections</a></li>
+                        <li><a href="{{ '/works/' | relative_url }}" {% if page.url contains '/works' %}aria-current="page"{% endif %}>Works</a></li>
                         <li><a href="{{ '/archive/' | relative_url }}" {% if page.url contains '/archive' %}aria-current="page"{% endif %}>Legacy archive</a></li>
                         <li><a href="{{ '/notes/' | relative_url }}" {% if page.url contains '/notes' %}aria-current="page"{% endif %}>Editor's notes</a></li>
                         <li><a href="{{ '/perspectives/' | relative_url }}" {% if page.url contains '/perspectives' %}aria-current="page"{% endif %}>Editorial perspectives</a></li>

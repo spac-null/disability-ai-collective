@@ -144,10 +144,10 @@ check("3b no EDITOR badge", "post-author-role" not in POST_LAYOUT)
 check("3c no biography paragraph", "post-author-bio" not in POST_LAYOUT)
 check("3d no avatar", "post-author-avatar" not in POST_LAYOUT)
 check("3e one quiet author link", "post-author-line" in POST_LAYOUT)
-check("3f author link uses public_author",
-      re.search(r'post-author-line.*?site\.public_author', POST_LAYOUT, re.S) is not None)
-check("3g top meta bar still carries the byline",
-      "post-meta__item--agent" in POST_LAYOUT and "site.public_author" in POST_LAYOUT)
+check("3f author line gives the creator credit, not a byline",
+      re.search(r'post-author-line.*?site\.creator', POST_LAYOUT, re.S) is not None)
+check("3g top meta bar credits the publication",
+      "post-meta__item--agent" in POST_LAYOUT and "site.article_credit" in POST_LAYOUT)
 check("3h author-line styled", ".post-author-line" in CSS)
 
 # ── 4. source footer ─────────────────────────────────────────────────────────

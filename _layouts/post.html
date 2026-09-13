@@ -8,10 +8,10 @@ layout: default
 {% assign _is_nl = false %}
 {% if page.lang == 'nl' %}{% assign _is_nl = true %}{% endif %}
 
-{% comment %} Public authorship. Everything Crip Minds publishes is by Jascha Blume; the
-   per-article `author` string in front matter is retained legacy provenance from an earlier
-   editorial system and is deliberately not presented to readers as an author. See
-   `public_author` in _config.yml. {% endcomment %}
+{% comment %} Public authorship. The reader-facing credit is the publication itself --
+   see `article_credit` in _config.yml and the note there on why a person is not named
+   here. The per-article `author` string in front matter is retained legacy provenance from
+   an earlier editorial system and is never presented to readers. {% endcomment %}
 
 <script type="application/ld+json">
 {
@@ -33,8 +33,13 @@ layout: default
   "datePublished": "{{ page.date | date_to_xmlschema }}",
   "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
   "author": {
+    "@type": "Organization",
+    "name": {{ site.article_credit | jsonify }},
+    "url": "{{ site.url }}"
+  },
+  "creator": {
     "@type": "Person",
-    "name": {{ site.public_author | jsonify }},
+    "name": {{ site.creator | jsonify }},
     "url": "{{ site.url }}/jascha/"
   },
   "publisher": {
@@ -111,7 +116,7 @@ layout: default
         <!-- Meta bar: date | author | reading time -->
         <div class="post-meta">
           <span class="post-meta__item post-meta__item--agent">
-            <a href="{{ '/jascha/' | relative_url }}" class="font-weight-semibold">{{ site.public_author }}</a>
+            <span class="font-weight-semibold">{{ site.article_credit }}</span>
           </span>
           <span class="post-meta__item">
             <time datetime="{{ page.date | date_to_xmlschema }}">
@@ -224,7 +229,8 @@ layout: default
            biography in a full-width card below said nothing new and cost a screenful on a
            phone. One quiet link to the page that actually holds the biography. {% endcomment %}
         <p class="post-author-line">
-          <a href="{{ '/jascha/' | relative_url }}">About {{ site.public_author }} &rarr;</a>
+          Crip Minds is created and directed by
+          <a href="{{ '/jascha/' | relative_url }}">{{ site.creator }} &rarr;</a>
         </p>
 
         {% if page.pipeline_version %}
@@ -316,7 +322,7 @@ layout: default
                 <h3 class="related-articles__title">{{ item.title | truncate: 80 }}</h3>
                 {% if item_post.excerpt %}<p class="related-articles__excerpt">{{ item_post.excerpt | strip_html | truncatewords: 18 }}</p>{% endif %}
                 <div class="related-articles__author">
-                  <span>{{ site.public_author }}</span>
+                  <span>{{ site.article_credit }}</span>
                 </div>
               </div>
             </a>
@@ -379,7 +385,7 @@ layout: default
                 <h3 class="related-articles__title">{{ post.title | truncate: 80 }}</h3>
                 {% if post.excerpt %}<p class="related-articles__excerpt">{{ post.excerpt | strip_html | truncatewords: 18 }}</p>{% endif %}
                 <div class="related-articles__author">
-                  <span>{{ site.public_author }}</span>
+                  <span>{{ site.article_credit }}</span>
                 </div>
               </div>
             </a>

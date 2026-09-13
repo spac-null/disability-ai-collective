@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "Crip Minds"
-description: "An experimental editorial publication by Deaf artist Jascha Blume. Not writing about disability — seeing the world through it."
+description: "An AI-assisted editorial publication created and directed by Deaf artist Jascha Blume. Not writing about disability — seeing the world through it."
 ---
 
 {% comment %} Readable population: posts that are not withdrawal notices. Single source of truth is the post's own `withdrawn` frontmatter. {% endcomment %}
@@ -38,7 +38,7 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
         <span class="home-intro__eyebrow">What this is</span>
         <h1 class="home-intro__headline">Not writing about disability &mdash; <span class="marker marker--hero marker--lime">seeing the world through it.</span></h1>
         <div class="home-intro__body">
-          <p>Crip Minds is an experimental editorial publication by Deaf artist Jascha Blume. It takes subjects from culture, science, technology, and ordinary life, and asks what a disabled way of seeing reveals about how they work.</p>
+          <p>Crip Minds is an AI-assisted editorial publication created and directed by Deaf artist Jascha Blume. It takes subjects from culture, science, technology, and ordinary life, and asks what a disabled way of seeing reveals about how they work.</p>
         </div>
       </div>
     </div>
@@ -57,7 +57,7 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
         {% endif %}
         <div class="home-hero__body">
           <div class="home-hero__meta">
-            <span class="home-hero__author">{{ site.public_author }}</span>
+            <span class="home-hero__author">{{ site.article_credit }}</span>
             <span aria-hidden="true" class="home-hero__dot">&middot;</span>
             <time class="home-hero__date" datetime="{{ featured.date | date_to_xmlschema }}">{{ featured.date | date: "%B %-d, %Y" }}</time>
           </div>
@@ -110,12 +110,8 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
                 </time>
                 <span class="article-card__sep" aria-hidden="true">&middot;</span>
                 <span class="article-card__author">
-                  <span class="article-card__author-name">{{ site.public_author }}</span>
+                  <span class="article-card__author-name">{{ site.article_credit }}</span>
                 </span>
-                {% if post.categories.size > 0 %}
-                  <span class="article-card__sep" aria-hidden="true">&middot;</span>
-                  <span class="article-card__topic">{{ post.categories | first | capitalize }}</span>
-                {% endif %}
               </div>
 
               <h3 class="text-h4 mb-4">
@@ -157,7 +153,7 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
   </section>
 
   {% comment %} No closing about block. The footer directly below already says Crip Minds
-     is an experimental editorial publication by Jascha Blume and carries the About and
+     is an AI-assisted editorial publication created and directed by Jascha Blume, and carries the About and
      creator links, so a second statement of the same thing was the last piece of
      explanatory furniture on the homepage. The proposition, the essays and the footer
      are the whole page. {% endcomment %}

@@ -144,18 +144,23 @@ def public_sources(pack_payload: dict | None, ledger: dict | None = None,
     return out
 
 
-# THE PUBLICATION'S REAL AUTHOR, written into every new post's front matter.
+# THE READER-FACING CREDIT, written into every new post's front matter.
 #
-# This is public authorship and nothing else. It is NOT
-# `new_engine_v1.runner.DEFAULT_BYLINE`, which is a register instruction inside the
-# Writer's prompt ("write in this voice; it is not a person") and is a separate,
-# untouched concern. Conflating the two is what put a legacy fictional persona name in
-# the author field of new articles.
+# The PUBLICATION is the author of record. Crip Minds is AI-assisted: articles are
+# produced by the editorial system rather than written and line-edited personally by an
+# individual, so crediting a person here would claim authorship that did not happen.
+# Jascha Blume created and directs the publication -- a creator/director credit, carried
+# in `creator` in _config.yml, never used as an article byline.
+#
+# This is NOT `new_engine_v1.runner.DEFAULT_BYLINE`, which is a register instruction
+# inside the Writer's prompt ("write in this voice; it is not a person") and is a
+# separate, untouched concern. Conflating the two is what put a legacy fictional persona
+# name in the author field of new articles.
 #
 # The editorial perspective (PINA / MIRA / SIIRI / ZENO) NEVER appears here. A
 # perspective is a knowledge lineage that licenses a question; it is not an author, and
 # it is carried in its own `perspective` field.
-PUBLIC_AUTHOR = "Jascha Blume"
+PUBLIC_AUTHOR = "Crip Minds"
 
 
 def build_frontmatter(*, title: str, author: str, engine_meta: dict,

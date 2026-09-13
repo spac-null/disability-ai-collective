@@ -5,12 +5,21 @@ title: "Crip Minds"
 description: "Experimental editorial publication asking what disabled ways of seeing can reveal about culture, science, technology, and ordinary life."
 author: "Crip Minds"
 
-# Public authorship for current site chrome. Articles still carry the per-article `author`
-# strings from an earlier editorial system (Pixel Nova / Siri Sage / Maya Flux / Zen Circuit)
-# as retained provenance in front matter; that system is no longer the publication's public
-# editorial model and those names are not presented to readers as authors. Templates that
-# show a byline read this value.
-public_author: "Jascha Blume"
+# TWO DIFFERENT CREDITS, AND THEY ARE NOT INTERCHANGEABLE.
+#
+# `article_credit` is what a reader sees on an article. Crip Minds is an AI-assisted
+# editorial publication: articles are produced by the editorial system rather than written
+# and line-edited personally by an individual, so the publication is the author of record.
+# Naming a person there would claim a kind of authorship that did not happen.
+#
+# `creator` is the person who created and directs the publication and designs the system it
+# runs on. It is a creator/director credit and must never be used as an article byline.
+#
+# Articles also still carry the per-article `author` strings from an earlier editorial
+# system (Pixel Nova / Siri Sage / Maya Flux / Zen Circuit) as retained provenance in front
+# matter. That system is not the current model and those names are never shown to readers.
+article_credit: "Crip Minds"
+creator: "Jascha Blume"
 og_image: /assets/og-card.png
 url: "https://cripminds.com"
 baseurl: ""

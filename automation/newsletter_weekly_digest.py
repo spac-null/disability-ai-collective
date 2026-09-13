@@ -39,10 +39,12 @@ SUBSCRIBE_URL = "https://subscribe.cripminds.com"
 NOTE_PATH    = "/srv/data/newsletter/editors-note.txt"
 KOFI_URL     = "https://ko-fi.com/T8K7Z04KYU"
 
-# Public authorship. Articles still carry per-article `author` strings from an earlier
-# editorial system; those are retained provenance in front matter and are never shown to
-# readers. Mirrors `public_author` in the site's _config.yml.
-PUBLIC_AUTHOR = "Jascha Blume"
+# Reader-facing credit on a digest item. The publication is the author of record: Crip
+# Minds is AI-assisted, so naming a person here would claim personal authorship that did
+# not happen. Mirrors `article_credit` in the site's _config.yml. Articles still carry
+# per-article `author` strings from an earlier editorial system; those are retained
+# provenance in front matter and are never shown to readers.
+PUBLIC_AUTHOR = "Crip Minds"
 
 # The four canonical editorial perspectives, owner-approved 2026-09-13. Knowledge
 # lineages, not authors. A value outside this set is ignored rather than printed, so a
