@@ -269,11 +269,20 @@ def _attempt_record(n: int, lane: str, seed, commission, screen, result, termina
 
 
 def _research_status(result) -> str:
+    """PASS is only claimed when the run demonstrably got past Research.
+
+    Inferring it from "decision is set and the reason code is not research's" would
+    report PASS for a run that never reached Research at all -- a selector failure, a
+    stubbed pipeline -- which is the record quietly asserting something it does not know.
+    Reaching the composition ladder is the observable that actually means it.
+    """
     if not result:
         return ""
-    if (result or {}).get("reason_code") == RS.HOLD:
+    if result.get("reason_code") == RS.HOLD:
         return RS.HOLD
-    return "PASS" if result.get("decision") else ""
+    if ((result.get("composition") or {}).get("stages")):
+        return "PASS"
+    return ""
 
 
 def _stage_status(result, stage: str) -> str:
