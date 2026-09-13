@@ -16,27 +16,69 @@ permalink: /collections/
         <p class="text-lead text-secondary">Curated routes through recurring subjects.</p>
       </header>
 
-      {% comment %} Counts are of the members this publication actively carries, so a collection
-         cannot present archived pieces as current recommendations. Membership itself is
-         unchanged: every member is still listed on the collection's own page, and a collection
-         whose members are all archived is still linked, labelled as such rather than shown with
-         a count of zero. {% endcomment %}
+      {% comment %} WHAT GETS PROMOTED, AND WHY.
+
+         A "collection" that currently carries one essay is not yet a route through a
+         subject, and one whose members have all been archived is not a current
+         recommendation at all. Giving either the same prominence as a nine-essay
+         collection told the reader something untrue about the shape of the archive.
+
+         So the primary list below is collections carrying TWO OR MORE currently-carried
+         essays. Everything else stays reachable, correctly labelled, in a quiet line
+         underneath -- nothing is deleted, no membership changes, and a grouping that grows
+         to two carried essays appears in the main list automatically. Counts are of
+         carried essays only, so an archived member is never presented as current.
+
+         Counted twice rather than stored, because Liquid has no hash literal to attach a
+         count to a thread; the arithmetic is identical in both passes.
+      {% endcomment %}
+
+      {% assign promoted_count = 0 %}
+      {% for thread in site.data.threads %}
+        {% assign n = 0 %}
+        {% for s in thread.slugs %}
+          {% assign tp = readable_posts | where: "slug", s | first %}
+          {% if tp %}{% capture bk %}|{{ tp.slug }}|{% endcapture %}{% if backlist_active_slugs contains bk %}{% unless backlist_note_slugs contains bk %}{% assign n = n | plus: 1 %}{% endunless %}{% endif %}{% endif %}
+        {% endfor %}
+        {% if n > 1 %}{% assign promoted_count = promoted_count | plus: 1 %}{% endif %}
+      {% endfor %}
+
+      {% if promoted_count > 0 %}
       <div class="thread-strip">
         {% for thread in site.data.threads %}
-          {% assign thread_active = 0 %}
+          {% assign n = 0 %}
           {% for s in thread.slugs %}
             {% assign tp = readable_posts | where: "slug", s | first %}
-            {% if tp %}
-              {% capture bk %}|{{ tp.slug }}|{% endcapture %}
-              {% if backlist_active_slugs contains bk %}{% unless backlist_note_slugs contains bk %}{% assign thread_active = thread_active | plus: 1 %}{% endunless %}{% endif %}
-            {% endif %}
+            {% if tp %}{% capture bk %}|{{ tp.slug }}|{% endcapture %}{% if backlist_active_slugs contains bk %}{% unless backlist_note_slugs contains bk %}{% assign n = n | plus: 1 %}{% endunless %}{% endif %}{% endif %}
           {% endfor %}
+          {% if n > 1 %}
         <a href="{{ thread.url }}" class="thread-strip__item">
           <span class="thread-strip__title">{{ thread.title }}</span>
-          <span class="thread-strip__count">{% if thread_active == 0 %}Archive collection{% else %}{{ thread_active }} essay{% unless thread_active == 1 %}s{% endunless %}{% endif %}</span>
+          <span class="thread-strip__count">{{ n }} essays</span>
         </a>
+          {% endif %}
         {% endfor %}
       </div>
+      {% endif %}
+
+      {% if promoted_count < site.data.threads.size %}
+      <p class="collections-minor__label">Smaller and archived groupings</p>
+      <ul class="collections-minor">
+        {% for thread in site.data.threads %}
+          {% assign n = 0 %}
+          {% for s in thread.slugs %}
+            {% assign tp = readable_posts | where: "slug", s | first %}
+            {% if tp %}{% capture bk %}|{{ tp.slug }}|{% endcapture %}{% if backlist_active_slugs contains bk %}{% unless backlist_note_slugs contains bk %}{% assign n = n | plus: 1 %}{% endunless %}{% endif %}{% endif %}
+          {% endfor %}
+          {% if n < 2 %}
+        <li>
+          <a href="{{ thread.url }}">{{ thread.title }}</a>
+          <span class="collections-minor__count">{% if n == 0 %}archive only{% else %}1 essay{% endif %}</span>
+        </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+      {% endif %}
 
       <nav class="research-more" aria-label="More from Crip Minds">
         <a href="{{ '/research/' | relative_url }}">All essays &rarr;</a>

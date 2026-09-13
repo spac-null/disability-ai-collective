@@ -4091,6 +4091,40 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   padding: 0;
 }
 
+/* Collections that are not yet collections. A single-essay grouping, or one whose
+   members are all archived, is listed plainly rather than given a promoted card -- the
+   data is intact and the link works; only the prominence differs. */
+.collections-minor__label {
+  margin: var(--space-10) 0 0.5rem;
+  font-family: var(--font-family-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.collections-minor { list-style: none; margin: 0; padding: 0; }
+.collections-minor li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+  padding: 0.45rem 0;
+}
+.collections-minor a {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-border-primary);
+  padding-bottom: 1px;
+}
+.collections-minor a:hover,
+.collections-minor a:focus-visible { color: var(--color-accent); border-bottom-color: currentColor; }
+.collections-minor__count {
+  font-family: var(--font-family-mono);
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+}
+
 /* One quiet row of routes out of the reading flow: Collections, Works, the legacy
    archive. They each have their own page; this is the door, not the room. */
 .research-more {
@@ -4484,29 +4518,34 @@ article[data-categories].hidden {
   }
 }
 
-/* Mobile: reposition fixed toggles to top-right below nav, away from CTAs */
-@media (max-width: 640px) {
-  .theme-toggle {
-    right: var(--space-3) !important;
-    left: auto !important;
+/* MOBILE ACCESSIBILITY CONTROLS.
+   These used to be pinned to the top-right of the viewport on a phone, floating over the
+   article -- so the reading aids sat on top of the reading. They now move into the header
+   menu (see placeAccessibilityControls in accessibility.js) and are laid out as ordinary
+   menu items: in normal flow, obstructing nothing, with full-width touch targets. */
+@media (max-width: 768px) {
+  .site-nav__a11y {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-page-gutter);
+    margin-top: var(--space-2);
+    border-top: 1px solid var(--color-border-primary);
+  }
+
+  .site-nav__a11y .theme-toggle,
+  .site-nav__a11y .accessibility-toggle {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
     bottom: auto !important;
-    top: 56px !important;
-    min-height: 36px !important;
+    left: auto !important;
+    z-index: auto !important;
+    flex: 1 1 0;
+    justify-content: center;
+    min-height: 44px !important;
     padding: var(--space-2) var(--space-3) !important;
     font-size: var(--font-size-xs) !important;
-  }
-  .accessibility-toggle {
-    right: var(--space-3) !important;
-    left: auto !important;
-    bottom: auto !important;
-    top: 98px !important;
-    min-height: 36px !important;
-    padding: var(--space-2) var(--space-3) !important;
-    font-size: var(--font-size-xs) !important;
-  }
-  .dark-theme-toggle {
-    top: 140px !important;
-    bottom: auto !important;
+    box-shadow: none;
   }
 }
 
