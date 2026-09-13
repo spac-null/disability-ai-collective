@@ -250,7 +250,7 @@ def resume(run_dir: str, *, drafts_dir: pathlib.Path | None = None,
                                        validated.get("claim_map"))
     path = CAND.persist_candidate(
         drafts_dir=drafts_dir, slug=_slug(title), body=validated["article_text"],
-        title=title, author="Maya Flux", engine_meta=meta, rehearsal=False,
+        title=title, author=CAND.PUBLIC_AUTHOR, engine_meta=meta, rehearsal=False,
         safety=stamp, package=None, sources=sources)
     result["candidate_path"] = str(path)
     candidate_body = path.read_text(encoding="utf-8").split("---\n", 2)[-1].strip("\n")

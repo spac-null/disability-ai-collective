@@ -438,10 +438,20 @@ def _commission_knowledge_first(orch, model: str, evidence_root: str | None = No
     finally:
         conn.close()
     q = (rec.get("question") or {})
-    orch.logger.info("KNOWLEDGE_FIRST %s: question=%s (%s) -> %s",
+    seed = rec.get("seed")
+    # THE PERSPECTIVE COMES FROM THE APPROVED QUESTION AND NOWHERE ELSE. The question the
+    # owner approved names the perspective it sharpens; that is the only authority this
+    # lane has for one. A question that declares no single primary leaves the seed without
+    # a perspective, and the article then publishes without the field -- which is correct,
+    # not a gap to be filled. Nothing infers a perspective from the subject or from any
+    # legacy author name.
+    if seed is not None and q.get("perspective"):
+        seed["perspective"] = q["perspective"]
+    orch.logger.info("KNOWLEDGE_FIRST %s: question=%s (%s) perspective=%s -> %s",
                      rec.get("status"), q.get("id"), q.get("title"),
+                     q.get("perspective") or "none",
                      (rec.get("chosen") or {}).get("subject", "no story")[:110])
-    return rec.get("seed"), rec
+    return seed, rec
 
 
 def run_scheduled(orch, *, rehearsal: bool = False,
@@ -734,7 +744,7 @@ def run_scheduled(orch, *, rehearsal: bool = False,
         _sources = []
     path = CAND.persist_candidate(
         drafts_dir=orch.drafts_dir, slug=_slug(title), body=body, title=title,
-        author=R.DEFAULT_BYLINE, engine_meta=meta, rehearsal=rehearsal,
+        author=CAND.PUBLIC_AUTHOR, engine_meta=meta, rehearsal=rehearsal,
         safety=_stamp, package=_pkg, sources=_sources)
     result["candidate"] = str(path)
     result["publication_eligible"] = bool(bridge.eligible and not rehearsal
@@ -759,7 +769,7 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     # allowed to touch `result`.
     if result["publication_eligible"] and _pkg.get("social_hook"):
         try:
-            orch._store_pending_social(_slug(title), title, R.DEFAULT_BYLINE,
+            orch._store_pending_social(_slug(title), title, CAND.PUBLIC_AUTHOR,
                                        social_hook=_pkg["social_hook"])
         except Exception as e:
             orch.logger.warning("CURRENT_ENGINE %s: pending-social write failed "

@@ -250,7 +250,7 @@ in advance.
 **EXISTING AXIS.** Axis 10 (who authored the conditions); Axis 4 (sequence and timing).
 Reaches Axis 14.
 
-**MINDS SHARPENED.** Shared — MAYA on who authored conditions others were admitted to, PINA
+**MINDS SHARPENED.** Shared — MIRA on who authored conditions others were admitted to, PINA
 on sequence and who selected it.
 
 **WHAT THIS ADDS.** PR003-08 asks who defined the option set. This asks **when** — a

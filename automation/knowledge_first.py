@@ -56,7 +56,54 @@ _STATUS = re.compile(
     r"^\*\*STATUS:\*\*\s*\**"
     r"(APPROVED_DURABLE|CANDIDATE|NEEDS_RESEARCH|REJECTED|RETIRED)\b", re.M)
 _QUESTION = re.compile(r"^\*\*QUESTION\.\*\*\s*(.+?)(?=\n\n|\n\*\*)", re.M | re.S)
+_MINDS = re.compile(r"^\*\*MINDS SHARPENED\.\*\*\s*(.+?)(?=\n\n|\n\*\*)", re.M | re.S)
 _SKIP = {"INDEX.md", "README.md"}
+
+# The four canonical editorial perspectives, owner-approved 2026-09-13.
+#
+# These are knowledge lineages -- forms of attention that decide which question gets asked
+# first. They are never authors, never people, never representatives of any disability
+# community, and they never appear as an author in public metadata.
+#
+# MIRA is a rename of the provisional label MAYA inside the CURRENT system. It is NOT the
+# legacy fictional persona "Maya Flux" under a new name, and nothing anywhere maps one to
+# the other: the legacy four were candidate source material, never this design.
+PERSPECTIVES = ("PINA", "MIRA", "SIIRI", "ZENO")
+_PERSPECTIVE_ALT = "|".join(PERSPECTIVES)
+_PRIMARILY = re.compile(r"^(%s)\b[^.]{0,40}?\bprimarily\b" % _PERSPECTIVE_ALT)
+_SHARED_OPENER = re.compile(r"^\s*shared\b", re.I)
+_PERSPECTIVE_NAME = re.compile(r"\b(%s)\b" % _PERSPECTIVE_ALT)
+
+
+def primary_perspective(minds_sharpened):
+    """The ONE perspective an approved question declares, or None.
+
+    The entry's own MINDS SHARPENED line is the only authority. Nothing is inferred from
+    the question text, the cluster, the article's subject, or -- ever -- from a legacy
+    author name.
+
+    A single perspective is returned in exactly two shapes:
+      * "<NAME> primarily -- ..."   the entry names a primary outright.
+      * "<NAME>."                   the entry names one perspective and no other.
+
+    Everything else is genuinely shared between two or more perspectives and therefore
+    declares NO single primary. That returns None, and None must stay ABSENT downstream
+    rather than being filled with a guess: an article with no trustworthy perspective
+    carries no perspective field at all.
+
+    Checked against the library's own independent tally on 2026-09-13:
+    PINA 10 - MIRA 11 - SIIRI 8 - ZENO 10 - shared 9, total 48.
+    """
+    raw = re.sub(r"\s+", " ", minds_sharpened or "").strip()
+    if not raw:
+        return None
+    m = _PRIMARILY.match(raw)
+    if m:
+        return m.group(1)
+    if _SHARED_OPENER.match(raw):
+        return None
+    names = list(dict.fromkeys(_PERSPECTIVE_NAME.findall(raw)))
+    return names[0] if len(names) == 1 else None
 
 # ══════════════════════════════════════════════════════════════════════════════
 # NO_ACCESS_ORIGIN. Owner doctrine, stronger than the prompt-level NO ACCESS-DEFICIT rule
@@ -121,10 +168,17 @@ def load_questions(directory: pathlib.Path | None = None) -> list:
             q = _QUESTION.search(entry)
             if not q:
                 continue
-            out.append({"id": m.group(1), "cluster": m.group(1).split("-")[0],
-                        "title": m.group(2).strip(),
-                        "question": re.sub(r"\s+", " ", q.group(1)).strip(),
-                        "doc": f.name, "status": status.group(1)})
+            minds = _MINDS.search(entry)
+            row = {"id": m.group(1), "cluster": m.group(1).split("-")[0],
+                   "title": m.group(2).strip(),
+                   "question": re.sub(r"\s+", " ", q.group(1)).strip(),
+                   "doc": f.name, "status": status.group(1)}
+            # Identity metadata only. Absent when the entry declares no single primary --
+            # never defaulted, never guessed.
+            persp = primary_perspective(minds.group(1) if minds else None)
+            if persp:
+                row["perspective"] = persp
+            out.append(row)
     return out
 
 

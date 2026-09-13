@@ -144,6 +144,20 @@ def public_sources(pack_payload: dict | None, ledger: dict | None = None,
     return out
 
 
+# THE PUBLICATION'S REAL AUTHOR, written into every new post's front matter.
+#
+# This is public authorship and nothing else. It is NOT
+# `new_engine_v1.runner.DEFAULT_BYLINE`, which is a register instruction inside the
+# Writer's prompt ("write in this voice; it is not a person") and is a separate,
+# untouched concern. Conflating the two is what put a legacy fictional persona name in
+# the author field of new articles.
+#
+# The editorial perspective (PINA / MIRA / SIIRI / ZENO) NEVER appears here. A
+# perspective is a knowledge lineage that licenses a question; it is not an author, and
+# it is carried in its own `perspective` field.
+PUBLIC_AUTHOR = "Jascha Blume"
+
+
 def build_frontmatter(*, title: str, author: str, engine_meta: dict,
                       rehearsal: bool = True, safety: dict | None = None,
                       package: dict | None = None, sources: list | None = None) -> str:
@@ -174,7 +188,13 @@ def build_frontmatter(*, title: str, author: str, engine_meta: dict,
         ("writer_grounding_unsupported", engine_meta["grounding_unsupported"]),
         ("provider_model", engine_meta.get("provider_model", "")),
     ]
-    for key in ("subject_country", "subject_world_region", "source_country",
+    # EDITORIAL PERSPECTIVE. Identity metadata, written only when the commissioning
+    # artifact actually declared one -- see knowledge_first.primary_perspective. It is a
+    # knowledge lineage, not an author: `author` above stays the publication's real
+    # author, and nothing here ever reads the legacy persona name in an old post's
+    # front matter. A run with no trustworthy perspective emits no field at all.
+    for key in ("perspective",
+                "subject_country", "subject_world_region", "source_country",
                 "country", "world_region", "source_language", "source_script",
                 "translation_used", "cross_border_scope"):
         if engine_meta.get(key) not in (None, ""):
@@ -256,7 +276,8 @@ def engine_meta_from_run(out: dict, *, run: str, generated_at: str,
         "grounding_unsupported": unsupported,
         "provider_model": provider_model,
     }
-    for key in ("subject_country", "subject_world_region", "source_country",
+    for key in ("perspective",
+                "subject_country", "subject_world_region", "source_country",
                 "country", "world_region", "source_language", "source_script",
                 "translation_used", "cross_border_scope"):
         if (commissioning_metadata or {}).get(key) not in (None, ""):

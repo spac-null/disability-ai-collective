@@ -24,7 +24,7 @@ cluster does not drift there merely because the literature is easier to find the
 remains shared house knowledge under Axis 6.
 
 **NO DEVICE TERRITORY.** No mechanism below belongs to a mind because of its device.
-Hearing aids are not PINA's, wheelchairs not MAYA's, screen readers not SIIRI's, adaptive
+Hearing aids are not PINA's, wheelchairs not MIRA's, screen readers not SIIRI's, adaptive
 software not ZENO's. MINDS SHARPENED records which *mechanism* sharpens which instrument,
 never which product.
 
@@ -137,7 +137,7 @@ arrangement, and yet experiences no corresponding loss of agency in the action u
 **EXISTING AXIS.** Axis 5 (independence & assistance); reaches Axis 10 (authorship) and Axis
 6 (care).
 
-**MINDS SHARPENED.** MAYA on the arrangement and its economics; SHARED — every mind meets
+**MINDS SHARPENED.** MIRA on the arrangement and its economics; SHARED — every mind meets
 this wherever a system provides something on someone's behalf.
 
 **WHAT THIS ADDS.** Axis 5 asks what assistance was hidden inside an independent action.
@@ -261,7 +261,7 @@ drawer, a five-minute fix, a substitutable part.
 PR002-05 (the wait changes the state it waits on — a repair queue is that mechanism with a
 device in it).
 
-**MINDS SHARPENED.** MAYA primarily — infrastructure, procurement, and the unbooked cost.
+**MINDS SHARPENED.** MIRA primarily — infrastructure, procurement, and the unbooked cost.
 
 **WHAT THIS ADDS.** Axis 14 asks whether access is a certified state or a performed process.
 This names **whose process it is** and what it is made of, with a measurable failure surface.
@@ -417,7 +417,7 @@ in user participation.
 
 **EXISTING AXIS.** Axis 10 (participation & authorship) and Axis 5; reaches Axis 14.
 
-**MINDS SHARPENED.** MAYA on procurement and provision; ZENO on what a fit is measured
+**MINDS SHARPENED.** MIRA on procurement and provision; ZENO on what a fit is measured
 against; SHARED.
 
 **WHAT THIS ADDS.** Axis 10 asks who authored the conditions. This adds the **measurable
@@ -590,7 +590,7 @@ assistance is hidden inside an action *now*. This asks what **moved**, and requi
 and an after. The condition is the two-sided gate above; without it the entry collapses into
 Axis 5 and should be merged.
 
-**MINDS SHARPENED.** MAYA on supply chains and procurement; ZENO on lock-in as a
+**MINDS SHARPENED.** MIRA on supply chains and procurement; ZENO on lock-in as a
 classification of who may act.
 
 **WHAT THIS ADDS.** Axis 5 asks what assistance is hidden. This asks about **movement** —
@@ -659,7 +659,7 @@ Then it is choice, not bounded choice.
 **EXISTING AXIS.** Axis 10 (participation & authorship) and Axis 11 (classification); reaches
 Axis 5.
 
-**MINDS SHARPENED.** ZENO on the boundary and what it forecloses; MAYA on authorship of
+**MINDS SHARPENED.** ZENO on the boundary and what it forecloses; MIRA on authorship of
 conditions.
 
 **WHAT THIS ADDS.** Axis 10 distinguishes being admitted to conditions from authoring them.
@@ -1113,13 +1113,13 @@ WHY:                "Can" rather than "changes". The primary study is N=28, pseu
 DATE:               2026-09-08
 ENTRY:              Perspective gains, recorded by mechanism
 DECISION:           PINA gains PR003-06 (the configuration route and what reaches daily use).
-                    MAYA gains PR003-03 (the maintenance organisation beneath ordinary
+                    MIRA gains PR003-03 (the maintenance organisation beneath ordinary
                     agency). ZENO gains PR003-06 (technical correctness against lived uptake)
                     and PR003-08 (who authors the allowable option set). No SIIRI gain from
                     the durable three.
 OWNER/REVIEW BASIS: Owner review.
 WHY:                Gains follow the MECHANISM, never the device - hearing aids are not
-                    PINA's and wheelchairs are not MAYA's. SIIRI's candidate gain sits with
+                    PINA's and wheelchairs are not MIRA's. SIIRI's candidate gain sits with
                     PR003-04, which is held, and no gain was invented to balance the four
                     minds. Shared knowledge remains shared.
 ```

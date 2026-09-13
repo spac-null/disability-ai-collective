@@ -150,7 +150,7 @@ no effect — or that the institution already models the distributed system and 
 **EXISTING AXIS.** Axis 8 (cognition and capacity); Axis 5 (independence and assistance).
 Reaches Axis 6.
 
-**MINDS SHARPENED.** MAYA primarily — assistance hidden inside an action called
+**MINDS SHARPENED.** MIRA primarily — assistance hidden inside an action called
 independent, here inside an action called remembering.
 
 **WHAT THIS ADDS.** PR003-03 asks what maintenance keeps an autonomy running. This asks the

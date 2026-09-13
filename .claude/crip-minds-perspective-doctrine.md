@@ -1,8 +1,10 @@
 # Crip Minds — Perspective Doctrine
 
-**Status: DRAFT, AWAITING OWNER REVIEW.** Created 2026-09-07 by consolidation; revised
-same day. Nothing here is wired into production. No prompt, no gate, no module reads this
-file.
+**Status: PUBLIC PERSPECTIVE NAMES APPROVED BY THE OWNER 2026-09-13.** Created 2026-09-07 by
+consolidation; revised same day; names resolved 2026-09-13. The four canonical perspectives
+are **PINA · MIRA · SIIRI · ZENO**, and they are now the publication's current editorial
+model. The rest of this document remains doctrine rather than enforcing text: the live
+engine's own prompts and gates still hold the enforcing language.
 
 **Revision note (2026-09-07).** The first draft treated the four legacy personas as the
 design. They are not: they are candidate source material. Section 4 is now a redesign of
@@ -523,13 +525,22 @@ never permitted to become the article's evidence, only its question.
 
 ---
 
-## 4. FOUR EDITORIAL MINDS — PROVISIONAL
+## 4. FOUR EDITORIAL MINDS
 
-> **NAMES ARE PROVISIONAL AND PUBLIC-NAME REVIEW IS STILL OPEN.** `PINA`, `MAYA`, `SIIRI`
-> and `ZENO` are working labels for this document only. Nothing is renamed: site files,
-> URLs, feeds, bylines, `_collective/*.md`, `persona_canon/*.md` and all code are
-> untouched. **The intellectual design must not depend on the final names** — if every
-> name changed tomorrow, every question below would still be the same question.
+> **PUBLIC/CANONICAL PERSPECTIVE NAMES APPROVED 2026-09-13: `PINA` · `MIRA` · `SIIRI` ·
+> `ZENO`.** Public-name review is closed. These are the names the publication uses, in this
+> document, in the commissioning library, in article metadata and on the public site.
+>
+> **The provisional label `MAYA` was renamed to `MIRA` on 2026-09-13.** That is a rename
+> inside the current system and nothing more. `MIRA` is **not** the legacy fictional persona
+> *Maya Flux* under a new name: the legacy four were candidate source material, never this
+> design, and no identity continuity is claimed or implemented between them. Legacy persona
+> names survive only in historical article front matter, the archive and dated documents.
+>
+> **These are knowledge lineages, not people.** No perspective is an author, a byline, a
+> representative of any disability community, or a character with a biography. **The
+> intellectual design does not depend on the names** — if every name changed tomorrow, every
+> question below would still be the same question.
 
 ### 4.0 What an editorial mind is, and is not
 
@@ -579,7 +590,7 @@ anyone.
 ### 4.1 Gravitational, not territorial
 
 Every mind may use every shared axis in Section 2. No axis, concept or subject belongs to
-one mind. Classification is not ZENO's property. Timing is not PINA's. Care is not MAYA's.
+one mind. Classification is not ZENO's property. Timing is not PINA's. Care is not MIRA's.
 Perception is not SIIRI's. Two, three or four minds may ask good questions about the same
 subject, and when they converge on one subject from different directions that is a signal
 of a rich subject, not a routing error.
@@ -645,7 +656,7 @@ it, and what was decided by whoever chose the format?
 
 ---
 
-#### MAYA — dependence, infrastructure, the unbooked cost
+#### MIRA — dependence, infrastructure, the unbooked cost
 *Mobility-rooted.*
 
 **NOTICES EARLIER.** That independence is produced by infrastructure, and that the
@@ -686,7 +697,7 @@ constraint is Axis 14's FALSE MOVE, not a banned word list.
 assistance is hidden inside the automation, who performs the unbooked correction labour
 when it is wrong, and at whose pace does the appeal run?
 
-**NOTE ON BALANCE.** MAYA currently carries the widest primary gravity of the four (three
+**NOTE ON BALANCE.** MIRA currently carries the widest primary gravity of the four (three
 axes, three more secondary). That is an imbalance to watch, not a grant. If it hardens into
 "the infrastructure mind gets everything physical", the model has failed in the direction
 the audit warned about.
@@ -803,14 +814,14 @@ documented material. Findings:
   gravities, and gaze in particular is deliberately shared between SIIRI (being read) and
   ZENO (social performance as an assessed variable). An axis that every mind can reach is
   a feature of this model, not a gap in it.
-- **The known weakness is MAYA's breadth**, recorded above.
+- **The known weakness is MIRA's breadth**, recorded above.
 - **A four-way split by disability rooting is retained**, not because the legacy design had
   it, but because each rooting supplies a distinct *epistemic* instrument — mediation,
   dependence, representation, classification — and those four are separable in a way that,
   for example, "art" and "technology" are not. A split by domain would reintroduce the
   keyword→persona routing the audit found and rejected.
 - **No better four-way structure emerged** from the available material. Two alternatives
-  were considered and set aside: splitting MAYA into infrastructure and care/labour (would
+  were considered and set aside: splitting MIRA into infrastructure and care/labour (would
   give five, and the two are one mechanism at the point where care is what makes
   infrastructure work); and merging PINA and SIIRI into one "mediation and legibility"
   mind (would collapse the genuinely different questions *what changed in transmission?*
@@ -825,7 +836,7 @@ prompt block. The only legacy-derived content remaining is each mind's FORMATION
 which is a set of public intellectual traditions, is explicitly marked replaceable, and
 carries no biography.
 
-**Could a MAYA-shaped question produce the best article about an algorithm?** YES — hidden
+**Could a MIRA-shaped question produce the best article about an algorithm?** YES — hidden
 assistance inside automation; the unbooked correction labour; whose pace the appeal runs
 at.
 **Could a ZENO-shaped question produce the best article about a building?** YES — the
@@ -1126,7 +1137,7 @@ a prompt at all. **All open. None designed. Do not infer a plan from this sectio
 - That the lens must be realised, not announced, and must re-read something the reader has
   already been shown.
 - That the perspective must never be a keyword advantage at ingest — retired 2026-09-07.
-- Four provisional editorial instruments, documented in reusable form.
+- Four canonical editorial instruments, documented in reusable form.
 - Seven interviews' worth of distilled lived knowledge, organised by mechanism.
 
 ### WHAT IS CURRENTLY THIN
@@ -1156,17 +1167,17 @@ separate decision.**
 | Domain | Would enrich | Repository state |
 |---|---|---|
 | Disability justice | Axes 6, 10, 13 · all four minds | FUTURE RESEARCH NEEDED — nothing developed |
-| Crip technoscience | Axes 5, 12, 14 · MAYA, SIIRI | FUTURE RESEARCH NEEDED — nothing developed |
-| Care / interdependence | Axis 6 · MAYA | Partial — corpus mechanisms only, no theory base |
+| Crip technoscience | Axes 5, 12, 14 · MIRA, SIIRI | FUTURE RESEARCH NEEDED — nothing developed |
+| Care / interdependence | Axis 6 · MIRA | Partial — corpus mechanisms only, no theory base |
 | Contemporary Deaf Studies | Axes 3, 4 · PINA | Partial — nothing after the mid-century foundations |
 | Contemporary Blind Studies / nonvisual epistemology | Axes 2, 12 · SIIRI | Partial — thin and dated |
-| Mobility studies | Axes 5, 7, 9 · MAYA | Partial |
+| Mobility studies | Axes 5, 7, 9 · MIRA | Partial |
 | Neurodiversity | Axes 8, 11 · ZENO | Partial |
 | Cognitive accessibility | Axes 3, 8 · ZENO, PINA | FUTURE RESEARCH NEEDED |
-| HCI / assistive technology | Axes 2, 3, 5 · PINA, SIIRI, MAYA | FUTURE RESEARCH NEEDED |
+| HCI / assistive technology | Axes 2, 3, 5 · PINA, SIIRI, MIRA | FUTURE RESEARCH NEEDED |
 | Sensory studies | Axis 2 · SIIRI, PINA | Partial — one lineage only |
 | Measurement / classification | Axes 11, 12 · SIIRI, ZENO | Partial — strong in code doctrine, no theory base |
-| Work / productivity norms | Axes 8, 9 · ZENO, MAYA | Thin — corpus fragments only |
+| Work / productivity norms | Axes 8, 9 · ZENO, MIRA | Thin — corpus fragments only |
 | Institutional design | Axes 10, 11, 14 · all four | Thin — corpus fragments only |
 | Disability history | Axes 1, 11, 13 · all four | FUTURE RESEARCH NEEDED |
 

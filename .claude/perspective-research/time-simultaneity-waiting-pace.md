@@ -94,7 +94,7 @@ arrived. A delay with no forfeited action is a delay, not a mechanism.
 
 **EXISTING AXIS.** Axis 4 (timing & simultaneity); reaches Axis 3 (mediation).
 
-**MINDS SHARPENED.** PINA primarily; MAYA where the expiry is institutional.
+**MINDS SHARPENED.** PINA primarily; MIRA where the expiry is institutional.
 
 **WHAT THIS ADDS.** Axis 4 asks whose pace a process assumes. This asks a narrower and more
 checkable thing: whether there was a **deadline inside the information itself**, after which
@@ -272,7 +272,7 @@ speed is produced by another party's delay — not the existence of a wait.
 **EXISTING AXIS.** Axis 9 (endurance, pace, accumulated cost); reaches Axis 5 (assistance)
 and Axis 10 (participation).
 
-**MINDS SHARPENED.** MAYA primarily — this is infrastructure and its economics in temporal
+**MINDS SHARPENED.** MIRA primarily — this is infrastructure and its economics in temporal
 form.
 
 **WHAT THIS ADDS.** Axis 9 asks what a thing costs in duration. This asks **who pays that
@@ -330,7 +330,7 @@ shown, it is a sad number.
 **EXISTING AXIS.** Axis 9; reaches Axis 12 (what a record can hold — here, a record that
 cannot hold change).
 
-**MINDS SHARPENED.** MAYA primarily; SIIRI where the frozen record is the point.
+**MINDS SHARPENED.** MIRA primarily; SIIRI where the frozen record is the point.
 
 **WHAT THIS ADDS.** A genuinely new question for the house. Neither Axis 9 nor Axis 12 asks
 what the *waiting itself* did to the thing being waited on. It also pairs with PR001-07: the
@@ -389,7 +389,7 @@ clothing, and the doctrine already refuses it.
 **EXISTING AXIS.** Axis 4 and Axis 9; reaches Axis 8 (capacity).
 
 **MINDS SHARPENED.** ZENO on episodic patterns and what a measure assumes about their shape;
-MAYA on provision.
+MIRA on provision.
 
 **WHAT THIS ADDS.** Distinguishes *quantity* of time from *shape* of time. The doctrine
 currently has no instrument for a resource that is unevenly distributed **inside** an
@@ -415,7 +415,7 @@ until the primaries are obtained. Research action: get Samuels and Kafer properl
 recovery time — a concrete temporal form of the existing unbooked-cost / affective-ledger
 logic. Preserved on approval: not all off-clock preparation is exploitation; the actual
 accounting boundary and the material recovery cost must both be shown; and the source is
-qualitative and establishes no magnitude. Sharpens Axis 9 and MAYA. No new axis.*
+qualitative and establishes no magnitude. Sharpens Axis 9 and MIRA. No new axis.*
 
 **SOURCE BASIS.** S4 (read): disabled workers "must dedicate a significant portion of their
 free time to self-care" in order to remain functional; a social-worker participant, knowing
@@ -440,7 +440,7 @@ not whether effort exists outside it.
 
 **EXISTING AXIS.** Axis 9 (endurance and accumulated cost); reaches Axis 6 (care) and Axis 5.
 
-**MINDS SHARPENED.** MAYA primarily — the unbooked-cost instrument in temporal form, and a
+**MINDS SHARPENED.** MIRA primarily — the unbooked-cost instrument in temporal form, and a
 direct sharpening of PR001's affective-ledger material.
 
 **WHAT THIS ADDS.** Axis 6 asks who performs unbooked labour. This asks specifically about
@@ -545,7 +545,7 @@ what the flexibility **does to the norm**, not whether the person should have re
 
 **EXISTING AXIS.** Axis 14 (access as a process, not a state) and Axis 9; reaches Axis 10.
 
-**MINDS SHARPENED.** MAYA primarily; ZENO on the exception that defines the rule.
+**MINDS SHARPENED.** MIRA primarily; ZENO on the exception that defines the rule.
 
 **WHAT THIS ADDS.** Axis 14 asks whether access is a certified state or a performed process.
 This adds the reflexive case: a process **whose success is what keeps the state unexamined.**

@@ -19,13 +19,13 @@ evidence.
 
 ## WHAT THIS CLUSTER IS FOR
 
-MAYA's territory, and the doctrine's own warning about it applies directly: *"MAYA currently
+MIRA's territory, and the doctrine's own warning about it applies directly: *"MIRA currently
 carries the widest primary gravity of the four. That is an imbalance to watch, not a grant.
 If it hardens into 'the infrastructure mind gets everything physical', the model has
 failed."*
 
 So this cluster deliberately does **not** extend into the built environment, which the owner
-also asked to become rare as an origin. It goes instead to the parts of MAYA's brief that
+also asked to become rare as an origin. It goes instead to the parts of MIRA's brief that
 had no instrument: who absorbs failure, whether help is reciprocity or debt, what happens
 when a pilot scale, where a cost moves to, and — the publication's central question in
 instrument form — where an ordinary technique actually came from.
@@ -56,7 +56,7 @@ versus moderator judgement. Bus and train crew discretion. Benefits decision-mak
 Loan underwriting. Any process with a documented pre- and post-automation period.
 
 **FALSE MOVE.** Technology proposed as, or blamed as, a solution to a political problem —
-named in MAYA's MUST NOT BECOME. Also: do not assume the discretion was benevolent.
+named in MIRA's MUST NOT BECOME. Also: do not assume the discretion was benevolent.
 Discretion is also where inconsistency and bias live, and a subject that shows that is a
 legitimate finding of this instrument.
 
@@ -66,7 +66,7 @@ removing the discretion improved outcomes on the process's own measures.
 **EXISTING AXIS.** Axis 5 (independence and assistance); Axis 10 (authorship of conditions).
 Reaches Axis 14.
 
-**MINDS SHARPENED.** MAYA primarily — what assistance is hidden inside the action, applied to
+**MINDS SHARPENED.** MIRA primarily — what assistance is hidden inside the action, applied to
 an institutional action.
 
 **WHAT THIS ADDS.** PR001-05 asks how technology participates in making ability. This asks
@@ -111,7 +111,7 @@ failure rate is low enough that no material absorption occurs.
 
 **EXISTING AXIS.** Axis 6 (care and interdependence); Axis 5. Reaches Axis 9 and Axis 12.
 
-**MINDS SHARPENED.** MAYA primarily — the unbooked cost, in reliability engineering's own
+**MINDS SHARPENED.** MIRA primarily — the unbooked cost, in reliability engineering's own
 vocabulary.
 
 **WHAT THIS ADDS.** PR002-07 asks about time a task's official duration omits. This asks
@@ -129,7 +129,7 @@ door.
 ### PR008-03 — RECIPROCITY OR DEBT
 
 **STATUS:** **APPROVED_DURABLE** — owner authorisation 2026-09-13.
-*Owner reason: MAYA's own further question — is help offered as ordinary reciprocity or taxed
+*Owner reason: MIRA's own further question — is help offered as ordinary reciprocity or taxed
 with visible gratitude — made into a commissioning instrument. Whether an exchange is mutual
 or one-directional is observable in how it is recorded and spoken about. Sharpens Axis 6. No
 new axis.*
@@ -158,7 +158,7 @@ mutual.
 
 **EXISTING AXIS.** Axis 6 (care and interdependence) primarily. Reaches Axes 5 and 10.
 
-**MINDS SHARPENED.** MAYA primarily.
+**MINDS SHARPENED.** MIRA primarily.
 
 **WHAT THIS ADDS.** Nothing in the library asked about the direction of an exchange.
 PR003-03 asks what maintenance an autonomy requires; this asks **who owes whom afterwards**,
@@ -175,7 +175,7 @@ lifts, and what happens when it is formalised.
 ### PR008-04 — IT WORKED BECAUSE OF WHO WAS THERE
 
 **STATUS:** **APPROVED_DURABLE** — owner authorisation 2026-09-13.
-*Owner reason: MAYA's STAYS WITH, made checkable — whether something that works because it is
+*Owner reason: MIRA's STAYS WITH, made checkable — whether something that works because it is
 not designed can be scaled without being killed. Pilot-to-rollout comparisons are documented
 in many fields. Sharpens Axes 5 and 14. No new axis.*
 
@@ -201,7 +201,7 @@ specified in advance and reproduced deliberately.
 **EXISTING AXIS.** Axis 5 (independence and assistance); Axis 14 (a process that must keep
 being performed). Reaches Axis 6.
 
-**MINDS SHARPENED.** MAYA primarily — a state a document can certify against a process
+**MINDS SHARPENED.** MIRA primarily — a state a document can certify against a process
 someone must keep performing.
 
 **WHAT THIS ADDS.** PR002-01 asks whether an arrangement expires. This asks whether it was
@@ -253,7 +253,7 @@ be expected to close often.
 Reaches Axis 3.
 
 **MINDS SHARPENED.** Shared, and deliberately so — this is a house question. PINA where the
-technique is a channel, SIIRI where it is a form of representation, MAYA where it is
+technique is a channel, SIIRI where it is a form of representation, MIRA where it is
 infrastructure, ZENO where its generalisation required reclassification.
 
 **WHAT THIS ADDS.** PR001-05 asks how technology participates in making ability — a question
@@ -300,7 +300,7 @@ that the eliminated work genuinely stopped being necessary.
 **EXISTING AXIS.** Axis 6 (care and interdependence); Axis 12 (what a system registers).
 Reaches Axis 9.
 
-**MINDS SHARPENED.** MAYA primarily — what things cost, who pays, over what period.
+**MINDS SHARPENED.** MIRA primarily — what things cost, who pays, over what period.
 
 **WHAT THIS ADDS.** PR002-07 asks about time outside a counted interval. This asks about
 **money and work crossing an organisational boundary**, which is evidenced in two sets of
@@ -387,7 +387,7 @@ system that produced the same lesson without it.
 
 **EXISTING AXIS.** Axis 9 (accumulated cost); Axis 10 (authorship). Reaches Axis 6.
 
-**MINDS SHARPENED.** MAYA primarily — who paid, and over what period.
+**MINDS SHARPENED.** MIRA primarily — who paid, and over what period.
 
 **WHAT THIS ADDS.** PR006-06 asks what a field generalised from a single case. This asks about
 **a lesson purchased with harm and the separation of the two records**, which is an inquiry
@@ -428,11 +428,11 @@ DATE:   2026-09-13
 ENTRY:  PR008-01 .. PR008-08
 DECISION: APPROVED_DURABLE
 OWNER/REVIEW BASIS: owner commissioning directive, 2026-09-13.
-WHY:    MAYA's brief contained several questions with no instrument — who absorbs failure,
+WHY:    MIRA's brief contained several questions with no instrument — who absorbs failure,
         reciprocity versus debt, whether a pilot was ever transferable, where a displaced
         cost lands. Deliberately routed AWAY from the built environment, per the same
         directive's instruction that built-environment origin become rare, and per the
-        doctrine's own standing warning about MAYA's breadth.
+        doctrine's own standing warning about MIRA's breadth.
         PR008-05 is the publication's central question in instrument form and carries the
         library's highest evidentiary bar; it is expected to close often.
 ```

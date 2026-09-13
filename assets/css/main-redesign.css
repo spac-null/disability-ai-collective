@@ -824,6 +824,63 @@ a:hover {
   box-shadow: var(--shadow-xl);
 }
 
+/* ── EDITORIAL PERSPECTIVE ─────────────────────────────────────────────────
+   Secondary metadata under an article's meta bar, and the /perspectives/ list.
+   Deliberately quiet: a perspective is a knowledge lineage, not a byline, so it
+   never competes with the title or the author. No avatars, no portraits. */
+.post-perspective {
+  margin: 0.75rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.post-perspective__label {
+  font-family: var(--font-family-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.post-perspective__name {
+  font-family: var(--font-family-mono);
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-border-primary);
+  padding-bottom: 1px;
+}
+.post-perspective__name:hover,
+.post-perspective__name:focus-visible { color: var(--color-accent); border-bottom-color: currentColor; }
+
+.perspective-list { margin: 0 0 2.5rem; padding: 0; }
+.perspective-list__item {
+  padding: 1.15rem 0;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+.perspective-list__item:first-child { border-top: 1px solid var(--color-border-primary); }
+.perspective-list__name {
+  margin: 0 0 0.3rem;
+  font-family: var(--font-family-mono);
+  font-size: 0.9375rem;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.perspective-list__gloss {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+.perspective-rule {
+  margin: 0 0 2rem;
+  padding-left: 1rem;
+  border-left: 3px solid var(--color-accent);
+}
+
 /* House accent border — current cards carry one publication identity. Replaces the
    four per-voice accents, which are kept below only for the legacy archive and the
    retained /collective/ pages. */

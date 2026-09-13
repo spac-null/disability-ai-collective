@@ -380,7 +380,7 @@ unchanged.
 
 **EXISTING AXIS.** Axis 14 (access as a process, not a state); reaches Axis 10.
 
-**MINDS SHARPENED.** MAYA on infrastructure and what persists.
+**MINDS SHARPENED.** MIRA on infrastructure and what persists.
 
 **WHAT THIS ADDS.** It is the **converse of PR002-09** and completes a pair. PR002-09 says
 flexibility can absorb deviation and thereby preserve an unchanged norm. This asks the opposite
@@ -469,7 +469,7 @@ required of either party.
 
 **EXISTING AXIS.** Axis 14 and Axis 10; reaches Axis 5.
 
-**MINDS SHARPENED.** MAYA on infrastructure and procurement; ZENO on templates and approval
+**MINDS SHARPENED.** MIRA on infrastructure and procurement; ZENO on templates and approval
 architecture.
 
 **WHAT THIS ADDS.** PR003-08 asks who defined the option set. This asks the prior structural
@@ -685,7 +685,7 @@ other surfaces.
 
 **EXISTING AXIS.** Axis 1 and Axis 5; touches Axis 7 (spatial dependence).
 
-**MINDS SHARPENED.** MAYA on the body–tool–surface relation. **Not assigned by the device.**
+**MINDS SHARPENED.** MIRA on the body–tool–surface relation. **Not assigned by the device.**
 
 **WHAT THIS ADDS.** It is distinct from **PR001-05** and **PR003-04**, both ways. *PR001-05
 applies and this does not:* a hearing aid, audiology and family resources jointly enacting the

@@ -128,6 +128,18 @@ layout: default
           {% endif %}
 
         </div>
+
+        {% comment %} EDITORIAL PERSPECTIVE. Secondary metadata, rendered only when the
+           article actually carries a perspective in its front matter. A perspective is a
+           disability-rooted knowledge lineage that shaped the question this article asks —
+           never the author, never a person, never a byline. The author above is unchanged.
+           An article with no perspective shows nothing here rather than "unknown". {% endcomment %}
+        {% if page.perspective %}
+        <p class="post-perspective">
+          <span class="post-perspective__label">Perspective</span>
+          <a class="post-perspective__name" href="{{ '/perspectives/' | relative_url }}#{{ page.perspective | downcase }}">{{ page.perspective }}</a>
+        </p>
+        {% endif %}
       </header>
 
       <!-- Article Body -->

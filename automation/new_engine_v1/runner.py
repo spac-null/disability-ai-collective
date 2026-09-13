@@ -46,6 +46,11 @@ ENGINE = "NEW_ENGINE_V1"
 MODE_OFF = "OFF"
 MODE_LIVE = "LIVE"
 
+# WRITER-PROMPT REGISTER ONLY -- not public authorship, and not an editorial
+# perspective. A published post's `author` front matter comes from
+# new_engine_candidate.PUBLIC_AUTHOR ("Jascha Blume"); this string only tells the
+# Writer which voice to write in and is deliberately left unchanged here, because
+# changing it would change generated prose rather than identity metadata.
 DEFAULT_BYLINE = "Maya Flux"
 
 

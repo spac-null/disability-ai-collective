@@ -239,7 +239,7 @@ the specific action the name unlocked or foreclosed, and the party it moved.
 **EXISTING AXIS.** Extends Axis 11; touches Axis 5 (assistance) where the name gates
 support.
 
-**MINDS SHARPENED.** ZENO primarily; MAYA where the consequence is provision or cost.
+**MINDS SHARPENED.** ZENO primarily; MIRA where the consequence is provision or cost.
 
 **WHAT THIS ADDS.** Axis 11 asks what a classification makes invisible. This asks what it
 makes *possible* — the productive rather than the excluding side.
@@ -362,7 +362,7 @@ political problem.
 
 **EXISTING AXIS.** Extends Axis 5 (independence & assistance); touches Axes 1 and 12.
 
-**MINDS SHARPENED.** MAYA primarily; ZENO where the arrangement is what gets measured.
+**MINDS SHARPENED.** MIRA primarily; ZENO where the arrangement is what gets measured.
 
 **WHAT THIS ADDS.** Axis 5 asks what assistance was hidden inside an action. This asks the
 prior question — whether the deficit that assistance answers is itself produced by the

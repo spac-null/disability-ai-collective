@@ -18,6 +18,7 @@ article_form_hash: ""
 writer_grounding_status: "settled"
 writer_grounding_unsupported: 0
 provider_model: "claude-opus-5"
+perspective: "PINA"
 excerpt: "In one of her drawings, Camille Holvoet considers gaining income from sales of her work, and the concern that comes with it: taxation, and the threat to her SSI — named as a frequent problem for these artists. It hung inside SFMOMA's show of more than 80 works the museum had just bought."
 dek: "SFMOMA acquired over 100 works by artists of Creative Growth and hung more than 80 of them for six months. One, by Camille Holvoet, weighs income from art sales against the threat of losing her SSI."
 meta_description: "SFMOMA bought over 100 Creative Growth works and showed more than 80 from April 6 to October 6, 2024. One drawing is about the threat of losing SSI."

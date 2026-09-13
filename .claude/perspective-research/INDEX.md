@@ -37,11 +37,11 @@ failure of the batch. Do not defend these entries; test them.
 | PR005 | `language-translation-channels-sensory-hierarchy.md` | 8 | 1 | PINA / SIIRI |
 | PR006 | `authorship-expertise-evidence-archive.md` | 8 | 3 | ZENO / SIIRI / PINA |
 | PR007 | `attention-memory-cognition-normality.md` | 8 | 3 | ZENO |
-| PR008 | `interdependence-work-cost-of-ordinary-operation.md` | 8 | 2 | MAYA |
+| PR008 | `interdependence-work-cost-of-ordinary-operation.md` | 8 | 2 | MIRA |
 
-**Pool after the batch — 48 approved.** PINA 10 · MAYA 11 · SIIRI 8 · ZENO 10 · SHARED 9.
+**Pool after the batch — 48 approved.** PINA 10 · MIRA 11 · SIIRI 8 · ZENO 10 · SHARED 9.
 SIIRI remains the thinnest at 8, which is an improvement on 1 and still the gap to watch.
-MAYA is the heaviest at 11, which the doctrine's own §4.2 warning anticipated; PR008 was
+MIRA is the heaviest at 11, which the doctrine's own §4.2 warning anticipated; PR008 was
 deliberately routed away from the built environment for that reason and because the same
 directive asked for built-environment origin to become rare.
 
@@ -91,12 +91,12 @@ deleted. Not permanently closed. **No new axis** — fourth consecutive cluster.
 | PR004-01 | Which channel is treated as the original | **APPROVED_DURABLE** | 2, 3, 12 | SIIRI / PINA |
 | PR004-02 | The mediator assigns a register to the mediated | **APPROVED_DURABLE** | 3, 13 | PINA |
 | PR004-03 | Does the explanation break without it? | **REJECTED — generic historiographic method** | — | — |
-| PR004-04 | Did the practice migrate, or stay with the project? | CANDIDATE — held *(A ≠ B ≠ C; C not proven)* | 14, 10 | MAYA |
-| PR004-05 | **When it doesn't fit, which one changes?** | **APPROVED_DURABLE** | 14, 10, 5 | MAYA / ZENO |
+| PR004-04 | Did the practice migrate, or stay with the project? | CANDIDATE — held *(A ≠ B ≠ C; C not proven)* | 14, 10 | MIRA |
+| PR004-05 | **When it doesn't fit, which one changes?** | **APPROVED_DURABLE** | 14, 10, 5 | MIRA / ZENO |
 | PR004-06 | **Did access change who could encounter it, or what the work became?** *(renamed; merge reversed)* | CANDIDATE | 14, 10 | — |
 | PR004-07 | Institutional objects encode a body model | **MERGED — AXIS 1 SHARPENING** | 1 | — |
 | PR004-08 | Rest or pace as part of the medium | **REJECTED — duplicate of PR002** | — | — |
-| PR004-09 | The tool as movement vocabulary | CANDIDATE — held *(capability vs repertoire)* | 1, 5, 7 | MAYA |
+| PR004-09 | The tool as movement vocabulary | CANDIDATE — held *(capability vs repertoire)* | 1, 5, 7 | MIRA |
 
 **Art did not grant novelty.** PR004-08 is the library's **second REJECTED entry** and the first
 rejected for being an existing instrument in another vocabulary — PR002-07 owns rest, PR002-02
@@ -141,12 +141,12 @@ entry · 1 REJECTED · 1 lead HELD.** Nothing deleted. Not permanently closed.
 |---|---|---|---|---|
 | PR003-01 | Independence is control over support | **MERGED — AXIS 5 SHARPENING** *(who · how · when · where · in what way)* | 5 | — |
 | PR003-02 | Support can disappear into independence | **REJECTED — already Axis 5** | — | — |
-| PR003-03 | Autonomy has a maintenance layer | **APPROVED_DURABLE** *(absorbs starting H)* | 5, 14, 9 | MAYA |
+| PR003-03 | Autonomy has a maintenance layer | **APPROVED_DURABLE** *(absorbs starting H)* | 5, 14, 9 | MIRA |
 | PR003-04 | A tool is incorporated by what it substitutes for, not by familiarity | CANDIDATE — held *(claim not yet mature)* | 1, 5 | SIIRI / SHARED |
-| PR003-05 | Support works differently when the user authors it | CANDIDATE — held *(1993 evidence dependency)* | 10, 5, 14 | MAYA / ZENO |
+| PR003-05 | Support works differently when the user authors it | CANDIDATE — held *(1993 evidence dependency)* | 10, 5, 14 | MIRA / ZENO |
 | PR003-06 | **The route to a setting CAN change whether support is used** | **APPROVED_DURABLE** *(narrowed twice; first pass overstated it)* | 5, 12, 10 | ZENO / PINA |
-| PR003-07 | A tool can move dependence rather than remove it | CANDIDATE — held *(strict two-sided gate)* | 5, 14, 10 | MAYA / ZENO |
-| PR003-08 | **Who defines the option set** | **APPROVED_DURABLE** | 10, 11, 5 | ZENO / MAYA |
+| PR003-07 | A tool can move dependence rather than remove it | CANDIDATE — held *(strict two-sided gate)* | 5, 14, 10 | MIRA / ZENO |
+| PR003-08 | **Who defines the option set** | **APPROVED_DURABLE** | 10, 11, 5 | ZENO / MIRA |
 | PR003-09 | What you authored, you can keep working | **MERGED → PR003-07** | — | — |
 
 **Three hypotheses died, two of them to evidence.** PR003-02 was killed by the canon check
@@ -185,15 +185,15 @@ Not permanently closed.
 
 | ID | Short name | Status | Axes | Minds |
 |---|---|---|---|---|
-| PR002-01 | Access can expire | **APPROVED_DURABLE** | 4, 3 | PINA / MAYA |
+| PR002-01 | Access can expire | **APPROVED_DURABLE** | 4, 3 | PINA / MIRA |
 | PR002-02 | Pace is part of the interface | **APPROVED_DURABLE** ★ strongest | 4, 3, 2 | PINA |
 | PR002-03 | Synchrony is a resource | **APPROVED_DURABLE** | 4, 2 | SIIRI / PINA |
-| PR002-04 | Waiting is an allocation | CANDIDATE — held *(source access)* | 9, 5, 10 | MAYA |
-| PR002-05 | Delay changes the state it waits on | **APPROVED_DURABLE** ★ new question | 9, 12 | MAYA / SIIRI |
-| PR002-06 | More time is not always different time | CANDIDATE — held *(essentialism risk; primaries unread)* | 4, 9, 8 | ZENO / MAYA |
-| PR002-07 | Recovery is part of the task | **APPROVED_DURABLE** | 9, 6, 5 | MAYA |
+| PR002-04 | Waiting is an allocation | CANDIDATE — held *(source access)* | 9, 5, 10 | MIRA |
+| PR002-05 | Delay changes the state it waits on | **APPROVED_DURABLE** ★ new question | 9, 12 | MIRA / SIIRI |
+| PR002-06 | More time is not always different time | CANDIDATE — held *(essentialism risk; primaries unread)* | 4, 9, 8 | ZENO / MIRA |
+| PR002-07 | Recovery is part of the task | **APPROVED_DURABLE** | 9, 6, 5 | MIRA |
 | PR002-08 | A deadline can define the person | **NEEDS_RESEARCH** — held | 8, 11, 4 | ZENO |
-| PR002-09 | The accommodation preserves the schedule | CANDIDATE — held, **not rejected** ✦ | 14, 9, 10 | MAYA / ZENO |
+| PR002-09 | The accommodation preserves the schedule | CANDIDATE — held, **not rejected** ✦ | 14, 9, 10 | MIRA / ZENO |
 | ME003 | Disconfirming shape | **OWNER-APPROVED META-EDITORIAL PRINCIPLE — ADOPTED into the protocol** (new entries from PR003) | — | — |
 
 **Two source cautions govern this cluster.** Samuels 2017 and Kafer 2013 — the two central
@@ -277,9 +277,9 @@ and Technology · Practices of Democracy.
 |---|---|---|---|---|
 | PR001-01 | Normality as an operation | CANDIDATE — held | 1, 12 | ZENO / SHARED |
 | PR001-02 | **The category enters the measurement** | **APPROVED_DURABLE** | 11 | ZENO |
-| PR001-03 | Classification changes the available action | **APPROVED_DURABLE** | 11, 5 | ZENO / MAYA |
+| PR001-03 | Classification changes the available action | **APPROVED_DURABLE** | 11, 5 | ZENO / MIRA |
 | PR001-04 | Controlled vs uncontrolled difference | CANDIDATE — held | 1, 11 | ZENO / SHARED |
-| PR001-05 | Technology participates in making ability | **APPROVED_DURABLE** *(extension of Axis 5)* | 5, 1, 12 | MAYA / ZENO |
+| PR001-05 | Technology participates in making ability | **APPROVED_DURABLE** *(extension of Axis 5)* | 5, 1, 12 | MIRA / ZENO |
 | PR001-06 | Self-normalisation | CANDIDATE — held ⚠ overlap | 1, 8, 13 | ZENO / SIIRI |
 | PR001-07 | Legibility enables and constrains | **APPROVED_DURABLE** ★ *(sharpens Axes 11/12)* | 12, 11, 10 | SIIRI / ZENO |
 | PR001-08 | Explanation can become closure | CANDIDATE — held, **not rejected** | 3, 12 | PINA / SIIRI |
@@ -396,7 +396,7 @@ failed; PR003-04 was reformulated after disconfirming evidence; PR003-01 was rec
 sharpening rather than an instrument. No new axis was required.
 
 **Perspective gains, by mechanism and never by device:** PINA — PR003-06 (the configuration
-route and what reaches daily use). MAYA — PR003-03 (the maintenance organisation beneath
+route and what reaches daily use). MIRA — PR003-03 (the maintenance organisation beneath
 ordinary agency). ZENO — PR003-06 (technical correctness against lived uptake) and PR003-08
 (who authors the allowable option set). No SIIRI gain from the durable three; none was
 invented to balance the four minds.
@@ -557,7 +557,7 @@ reproduce. (PR001 decision history, 2026-09-07; reframed 2026-09-08.)
 
 Likely to extend Axes 5, 6 and 10. New entries use the ten-field instrumentation including
 **DISCONFIRMING SHAPE** (README). **No persona territory:** hearing aids do not belong to
-PINA, wheelchairs to MAYA, screen readers to SIIRI, or adaptive software to ZENO. All minds
+PINA, wheelchairs to MIRA, screen readers to SIIRI, or adaptive software to ZENO. All minds
 may use all shared knowledge, and the eventual intellectual reading determines relevance —
 not the device category.
 
