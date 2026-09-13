@@ -3993,6 +3993,56 @@ def grounding_repair(provider, article_text: str, findings: list, ledger: dict,
 # already uses; nothing here duplicates that logic.
 GROUNDING_COMPLETION_MAX_ITERATIONS = 5
 
+# ── FAST LANE GROUNDING COMPLETION (owner-directed, 2026-09-13) ───────────────────────
+# Fast Lane could compose but could not repair grounding: the completion call was guarded
+# `compose_mode != COMPOSE_FAST_LANE`, so ANY repairable finding was automatically
+# terminal there. Measured on production-20260913T083824Z-f83f4b8a, which reached
+# Grounding with three findings, every one of them `repairable: true` and every one
+# carrying the Grounder's own narrow attribution patch -- and held anyway, with the fix
+# sitting unused inside the finding.
+#
+# That was too strict against the standing policy: one bounded repair is allowed,
+# materiality beats perfection, and no endless loops. So Fast Lane now gets EXACTLY ONE
+# pass, and the bound is the iteration count itself rather than a new code path -- the
+# same transactional loop, the same acceptance tests, one turn of it.
+#
+# WHY ONE IS GENUINELY ONE. `suggested_patch_candidate` and
+# `deterministic_subtraction_candidate` are both all-or-nothing over the WHOLE target
+# list, so a single iteration answers every eligible finding in one batched proposal,
+# checked by one Safety audit and one Grounding recheck. A second turn is not needed to
+# cover a second finding; it would only be a second attempt at findings the first turn
+# already failed, which is precisely what is forbidden.
+#
+# The post-repackage loop-back below remains Fast-Lane-disabled, so this cannot become a
+# second pass by another route.
+FAST_LANE_GROUNDING_COMPLETION_MAX_ITERATIONS = 1
+
+
+def fast_lane_grounding_completion_eligible(grounding: dict) -> bool:
+    """May Fast Lane spend its one completion pass on this HOLD?
+
+    Only when EVERY blocking finding is repairable. A single non-repairable blocker --
+    LEGITIMATE_INTERPRETATION, or anything without a quote to narrow -- makes the whole
+    HOLD terminal immediately, because the pass could not clear the run even if every
+    repair it attempted succeeded, and spending it would buy nothing.
+
+    This is deliberately stricter than the normal lane, which enters completion whenever
+    ANY finding is repairable and is allowed further turns to work through the rest.
+
+    It is a REPAIRABILITY test, not a materiality one, and the distinction matters: what
+    keeps a materially unsupported claim out of here is not this predicate but the loop's
+    own machinery downstream -- `apply_local_grounding_repair` is claim-local and
+    subtractive, it cites no new facts, and every candidate must still clear the same
+    Safety audit and a STRICTLY smaller Grounding blocking set. The SSI benefits
+    mechanism that held the same run earlier is the worked example: it needed an
+    editorial deletion spanning several sentences, no local patch could construct it, so
+    the candidate would simply have been refused.
+    """
+    blocking = (grounding or {}).get("blocking") or []
+    if not blocking:
+        return False
+    return len(repairable_findings(blocking)) == len(blocking)
+
 
 def _sentence_containing_quote(article_text: str, quote: str) -> int | None:
     """Index into CE.sentences(article_text) of the sentence carrying `quote`, or None."""
@@ -7440,9 +7490,31 @@ def run_story_architecture_composition(
         # Writer regeneration, no architecture rerun, no new research, at any point; the
         # package is untouched throughout (a Grounding factual repair changes only the
         # article, exactly as before).
-        if g["status"] != PASS and compose_mode != COMPOSE_FAST_LANE:
-            gc = grounding_completion_loop(P, final, pkg, g, ledger, wr["packet"], arch,
-                                           pack, source_text, source_sha, audit)
+        # FAST LANE gets exactly ONE turn of this same loop, and only when every blocking
+        # finding is repairable -- see FAST_LANE_GROUNDING_COMPLETION_MAX_ITERATIONS and
+        # fast_lane_grounding_completion_eligible. The normal lane is unchanged in both
+        # entry condition and budget.
+        _fast_lane = compose_mode == COMPOSE_FAST_LANE
+        _fl_eligible = _fast_lane and fast_lane_grounding_completion_eligible(g)
+        if g["status"] != PASS and (not _fast_lane or _fl_eligible):
+            # THE RAW HOLD IS PRESERVED BEFORE ANYTHING IS REPAIRED. `record(GROUNDING, ...)`
+            # below replaces st[GROUNDING] with the post-completion read, and without this
+            # the run's own account of what Grounding first said would be gone -- the
+            # original verdict must never be rewritten into a PASS.
+            st["GROUNDING_RAW"] = {
+                "status": g["status"],
+                "grounding_status": g.get("grounding_status"),
+                "blocking": g.get("blocking"),
+                "blocking_count": len(g.get("blocking") or []),
+                "repairable_count": len(repairable_findings(g.get("blocking"))),
+                "article_sha256": C.sha256_text(final),
+                "compose_mode": compose_mode,
+            }
+            gc = grounding_completion_loop(
+                P, final, pkg, g, ledger, wr["packet"], arch, pack, source_text,
+                source_sha, audit,
+                max_iterations=(FAST_LANE_GROUNDING_COMPLETION_MAX_ITERATIONS
+                                if _fast_lane else GROUNDING_COMPLETION_MAX_ITERATIONS))
             # gc["model_calls"] is ONLY this call's own (proposals + rechecks) -- added to
             # what calls[GROUNDING] already carries from the initial check (and any
             # furniture repackage above) before record() overwrites it with the total,
@@ -7456,6 +7528,35 @@ def run_story_architecture_composition(
             g = record(GROUNDING, gc)
             if gc["grounding_repairs_accepted"]:
                 final = gc["article_text"]
+                if _fast_lane:
+                    # THE CLAIM MAP IS BOUND TO ARTICLE BYTES, and a Fast Lane run
+                    # asserts that binding before it returns ("final prose no longer
+                    # matches the prose Claim Mapper read"). A grounding completion that
+                    # changes the article therefore has to re-map it, or the run would
+                    # hold at the end of the pipeline on an assertion about its own
+                    # repair. Re-mapping is also the honest thing independently: a claim
+                    # map describing superseded bytes is not a record of this article.
+                    #
+                    # The normal lane needs no equivalent because it maps after this
+                    # point, not before it.
+                    _rm, _rm_errs, _rm_retries, _rm_ident = claim_map_article(
+                        P, final, ledger, set(arch.get("use_facts") or []))
+                    _rm_calls = _rm_ident.get("claim_mapper_model_calls", 1)
+                    wr["model_calls"] = wr.get("model_calls", 0) + _rm_calls
+                    calls[WRITER] = calls.get(WRITER, 0) + _rm_calls
+                    if _rm_errs:
+                        wr["status"] = HOLD
+                        wr["claim_map_errors"] = _rm_errs
+                        return out(WRITER,
+                                   "FAST_LANE claim-mapping of the grounding-completed "
+                                   "prose did not validate: %s"
+                                   % "; ".join(_rm_errs)[:500],
+                                   WRITER_HOLD, final, pkg, surface)
+                    wr["claim_map"] = _rm
+                    wr["claim_map_retries"] = _rm_retries
+                    wr["claim_map_provider"] = _rm_ident
+                    wr["claim_map_article_sha256"] = C.sha256_text(final)
+                    wr["claim_map_after_grounding_completion"] = True
                 # The winning candidate's OWN Safety verdict, computed inside the loop
                 # with that candidate's own `repair=` baseline widening -- reused exactly,
                 # never re-derived here, so this can never disagree with what the loop
@@ -7836,6 +7937,18 @@ def persist(out_dir, result: dict) -> None:
              dict(_completion or {},
                   **({"pre_repackage_completion": _pre_completion}
                      if _pre_completion else {})))
+    # THE ORIGINAL GROUNDING VERDICT, never rewritten into the repaired one.
+    #
+    # GROUNDING_FINDINGS.json above carries the FINAL read -- after any completion pass --
+    # which is the right thing for it to carry and the wrong thing to audit a repair
+    # against. Without this, a run that entered completion left no record of what
+    # Grounding first said, and "did this article hold, and on what?" became unanswerable
+    # from the retained artifacts. Recorded at the moment of the HOLD, before any patch
+    # was constructed, with the article hash it applied to.
+    #
+    # OBSERVATION ONLY, like every file around it: nothing reads it back.
+    if det.get("GROUNDING_RAW"):
+        dump("GROUNDING_RAW.json", det["GROUNDING_RAW"])
     if det.get(FACT_CHECK, {}).get("status") not in (None, NOT_RUN, SKIPPED):
         dump("FACT_CHECK.json", det[FACT_CHECK])
     if det.get(PACKAGE, {}).get("package"):
