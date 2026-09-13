@@ -824,6 +824,13 @@ a:hover {
   box-shadow: var(--shadow-xl);
 }
 
+/* House accent border — current cards carry one publication identity. Replaces the
+   four per-voice accents, which are kept below only for the legacy archive and the
+   retained /collective/ pages. */
+.card--elevated[data-accent] {
+  border-top: 3px solid var(--color-accent);
+}
+
 /* Persona accent border — top edge signals identity without noise */
 /* Slugs used by homepage + author pages; full names used by research.html filter JS */
 .card--elevated[data-persona] {

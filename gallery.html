@@ -16,47 +16,18 @@ sitemap: false
         <p class="text-lead text-secondary">Images made for each article through an authored visual process drawing from print culture, glitch art, and radical publishing.</p>
       </div>
 
-      <div class="gallery-filter" role="group" aria-label="Filter by author">
-        <button class="gallery-filter__btn active" data-filter="all" title="All authors">
-          <div class="gallery-filter__all">
-            <img src="/assets/pixel_nova_style_matched.png" alt="">
-            <img src="/assets/siri_sage_style_matched.png" alt="">
-            <img src="/assets/maya_flux_style_matched.png" alt="">
-            <img src="/assets/zen_circuit_style_matched.png" alt="">
-          </div>
-          <span class="gallery-filter__label">All</span>
-        </button>
-        <button class="gallery-filter__btn" data-filter="pixel-nova" title="Pixel Nova">
-          <img class="gallery-filter__avatar" src="/assets/pixel_nova_style_matched.png" alt="Pixel Nova">
-          <span class="gallery-filter__label">Pixel Nova</span>
-        </button>
-        <button class="gallery-filter__btn" data-filter="siri-sage" title="Siri Sage">
-          <img class="gallery-filter__avatar" src="/assets/siri_sage_style_matched.png" alt="Siri Sage">
-          <span class="gallery-filter__label">Siri Sage</span>
-        </button>
-        <button class="gallery-filter__btn" data-filter="maya-flux" title="Maya Flux">
-          <img class="gallery-filter__avatar" src="/assets/maya_flux_style_matched.png" alt="Maya Flux">
-          <span class="gallery-filter__label">Maya Flux</span>
-        </button>
-        <button class="gallery-filter__btn" data-filter="zen-circuit" title="Zen Circuit">
-          <img class="gallery-filter__avatar" src="/assets/zen_circuit_style_matched.png" alt="Zen Circuit">
-          <span class="gallery-filter__label">Zen Circuit</span>
-        </button>
-      </div>
     </div>
   </section>
 
   <div class="gallery-scattered" id="gallery-scattered">
     {% assign sorted_posts = site.posts | sort: 'date' | reverse %}
     {% for post in sorted_posts %}
-      {% assign author_slug = post.author | downcase | replace: ' ', '-' %}
       {% if post.image and post.withdrawn != true %}
-      <a class="gallery-pin" href="{{ post.url | relative_url }}" data-categories="{{ author_slug }}" aria-label="{{ post.title }} by {{ post.author }}">
+      <a class="gallery-pin" href="{{ post.url | relative_url }}" aria-label="{{ post.title }}">
         <div class="gallery-pin__photo">
           <img src="{{ post.image | relative_url }}" alt="{{ post.title }}" loading="lazy" width="800" height="450">
         </div>
         <p class="gallery-pin__title">{{ post.title }}</p>
-        <p class="gallery-pin__author">{{ post.author }}</p>
       </a>
       {% endif %}
     {% endfor %}

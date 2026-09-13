@@ -8,13 +8,10 @@ layout: default
 {% assign _is_nl = false %}
 {% if page.lang == 'nl' %}{% assign _is_nl = true %}{% endif %}
 
-{% assign _author_url = '' %}
-{% if page.author == "Pixel Nova" %}{% assign _author_url = '/collective/pixel-nova/' %}
-{% elsif page.author == "Siri Sage" %}{% assign _author_url = '/collective/siri-sage/' %}
-{% elsif page.author == "Maya Flux" %}{% assign _author_url = '/collective/maya-flux/' %}
-{% elsif page.author == "Zen Circuit" %}{% assign _author_url = '/collective/zen-circuit/' %}
-{% elsif page.author == "Jascha Blume" %}{% assign _author_url = '/jascha/' %}
-{% endif %}
+{% comment %} Public authorship. Everything Crip Minds publishes is by Jascha Blume; the
+   per-article `author` string in front matter is retained legacy provenance from an earlier
+   editorial system and is deliberately not presented to readers as an author. See
+   `public_author` in _config.yml. {% endcomment %}
 
 <script type="application/ld+json">
 {
@@ -35,16 +32,11 @@ layout: default
   "description": {{ page.excerpt | default: page.description | strip_html | strip_newlines | truncate: 300 | jsonify }},
   "datePublished": "{{ page.date | date_to_xmlschema }}",
   "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
-  "author": {% if page.author == "Jascha Blume" %}{
+  "author": {
     "@type": "Person",
-    "name": "Jascha Blume",
+    "name": {{ site.public_author | jsonify }},
     "url": "{{ site.url }}/jascha/"
-  }{% else %}{
-    "@type": "Organization",
-    "name": "Crip Minds",
-    "url": "{{ site.url }}",
-    "description": "Published through the fictional editorial persona {{ page.author | escape }}"
-  }{% endif %},
+  },
   "publisher": {
     "@type": "Organization",
     "name": "Crip Minds",
@@ -66,23 +58,9 @@ layout: default
 </script>
 
 <div class="reading-progress" id="reading-progress" role="progressbar" aria-hidden="true" aria-label="Reading progress"></div>
-<main id="main-content" data-persona="{{ page.author | downcase | replace: ' ', '-' }}">
+<main id="main-content">
   <article class="section section--primary">
     <div class="container container--md post-shell">
-      {% assign author_icon = '/assets/maya_flux_style_matched_thumb.png' %}
-      {% assign is_editorial = false %}
-      {% if page.author == "Siri Sage" %}
-        {% assign author_icon = '/assets/siri_sage_style_matched_thumb.png' %}
-      {% elsif page.author == "Pixel Nova" %}
-        {% assign author_icon = '/assets/pixel_nova_style_matched_thumb.png' %}
-      {% elsif page.author == "Maya Flux" %}
-        {% assign author_icon = '/assets/maya_flux_style_matched_thumb.png' %}
-      {% elsif page.author == "Zen Circuit" %}
-        {% assign author_icon = '/assets/zen_circuit_style_matched_thumb.png' %}
-      {% elsif page.author == "Jascha Blume" %}
-        {% assign author_icon = '/assets/jascha.jpg' %}
-        {% assign is_editorial = true %}
-      {% endif %}
 
       <!-- Hero image — full-bleed, before header -->
       {% if page.image %}
@@ -132,23 +110,13 @@ layout: default
 
         <!-- Meta bar: date | author | reading time -->
         <div class="post-meta">
+          <span class="post-meta__item post-meta__item--agent">
+            <a href="{{ '/jascha/' | relative_url }}" class="font-weight-semibold">{{ site.public_author }}</a>
+          </span>
           <span class="post-meta__item">
             <time datetime="{{ page.date | date_to_xmlschema }}">
               {{ page.date | date: "%B %-d, %Y" }}
             </time>
-          </span>
-          <span class="post-meta__item post-meta__item--agent">
-            <img
-              class="post-meta__agent-icon"
-              src="{{ author_icon | relative_url }}"
-              alt=""
-              aria-hidden="true"
-              width="400"
-              height="400"
-              loading="lazy"
-              decoding="async"
-            >
-            <span class="font-weight-semibold">{{ page.author }}</span>
           </span>
           <span class="post-meta__item post-meta__reading-time">
             {{ content | number_of_words | divided_by: 200 | plus: 1 }}&thinsp;min read
@@ -217,7 +185,6 @@ layout: default
 
         <!-- Author Bio -->
         <div class="card p-6 mb-8 post-author-card">
-          {% if is_editorial %}
           <p class="post-author-eyebrow">Editorial</p>
           <div class="post-author-head">
             <div class="post-author-meta">
@@ -234,48 +201,6 @@ layout: default
             Deaf artist and builder, Amsterdam / Bologna. Editor of Crip Minds.
             <a href="/notes/" class="text-primary" style="margin-left: 0.5rem;">All notes &rarr;</a>
           </p>
-          {% else %}
-          <p class="post-author-eyebrow">About the Voice</p>
-          <div class="post-author-head">
-            <div class="agent-avatar agent-avatar--media post-author-avatar">
-              <img
-                class="agent-avatar__image"
-                src="{{ author_icon | relative_url }}"
-                alt="{{ page.author }} visual identity"
-                width="56"
-                height="56"
-                loading="lazy"
-                decoding="async"
-              >
-            </div>
-            <div class="post-author-meta">
-              <h3 class="text-h4 mb-1 post-author-name">
-              {% if page.author == "Siri Sage" %}<a href="/collective/siri-sage/" class="text-primary">{{ page.author }}</a>
-              {% elsif page.author == "Pixel Nova" %}<a href="/collective/pixel-nova/" class="text-primary">{{ page.author }}</a>
-              {% elsif page.author == "Maya Flux" %}<a href="/collective/maya-flux/" class="text-primary">{{ page.author }}</a>
-              {% elsif page.author == "Zen Circuit" %}<a href="/collective/zen-circuit/" class="text-primary">{{ page.author }}</a>
-              {% else %}{{ page.author }}{% endif %}
-            </h3>
-              <p class="text-small text-muted mb-0">
-                <span class="post-author-role">{% if page.author == "Pixel Nova" %}Deaf-rooted · Translation · Timing · Format{% elsif page.author == "Siri Sage" %}Blind-rooted · Place · Response · Relation{% elsif page.author == "Maya Flux" %}Mobility-rooted · Promise · Conditions · Work{% elsif page.author == "Zen Circuit" %}Neurodivergent-rooted · Category · Score · Judgment{% else %}Crip Minds{% endif %}</span>
-                <span class="post-author-collective">Recurring editorial voice</span>
-              </p>
-            </div>
-          </div>
-          <p class="text-body text-secondary mb-0 post-author-bio">
-            {% if page.author == "Siri Sage" %}
-              Siri Sage is a fictional editorial persona that tests what changes between a person and a setting, tool, or rule.
-            {% elsif page.author == "Pixel Nova" %}
-              Pixel Nova is a fictional editorial persona with factual roots in Jascha Blume&rsquo;s documented Deaf artistic practice, attentive to timing, translation, sequence, and format.
-            {% elsif page.author == "Maya Flux" %}
-              Maya Flux is a fictional editorial persona that follows the gap between a promise and the conditions needed to keep it.
-            {% elsif page.author == "Zen Circuit" %}
-              Zen Circuit is a fictional editorial persona that examines categories, scores, labels, and what a system must ignore to make reality fit.
-            {% else %}
-              A recurring fictional editorial voice for Crip Minds.
-            {% endif %}
-          </p>
-          {% endif %}
         </div>
 
         {% if page.pipeline_version %}
@@ -332,13 +257,6 @@ layout: default
           </script>
         </div>
 
-        <!-- Persona color for buttons -->
-        {% assign persona_color = "#7c6af7" %}
-        {% if page.author == "Siri Sage" %}{% assign persona_color = "#5c7a31" %}
-        {% elsif page.author == "Maya Flux" %}{% assign persona_color = "#3f5f89" %}
-        {% elsif page.author == "Zen Circuit" %}{% assign persona_color = "#b05a3a" %}
-        {% endif %}
-
         <!-- Related Articles -->
         {% comment %} English recommendations are suppressed on a Dutch edition: every entry
              here resolves to an English article, and the fallback pool would happily offer a
@@ -361,11 +279,6 @@ layout: default
           <div class="related-articles__grid">
             {% for item in curated limit: 3 %}
             {% assign item_post = site.posts | where: "url", item.url | first %}
-            {% assign item_icon = '/assets/maya_flux_style_matched.png' %}
-            {% if item_post.author == "Pixel Nova" %}{% assign item_icon = '/assets/pixel_nova_style_matched.png' %}
-            {% elsif item_post.author == "Siri Sage" %}{% assign item_icon = '/assets/siri_sage_style_matched.png' %}
-            {% elsif item_post.author == "Zen Circuit" %}{% assign item_icon = '/assets/zen_circuit_style_matched.png' %}
-            {% endif %}
             <a href="{{ item.url | relative_url }}" class="related-articles__card">
               {% if item_post.image %}
               <div class="related-articles__img">
@@ -378,19 +291,15 @@ layout: default
                 {% if item.category or item_archived %}<span class="related-articles__cat">{{ item.category }}{% if item_archived %}<span class="related-articles__archived">Archive</span>{% endif %}</span>{% endif %}
                 <h3 class="related-articles__title">{{ item.title | truncate: 80 }}</h3>
                 {% if item_post.excerpt %}<p class="related-articles__excerpt">{{ item_post.excerpt | strip_html | truncatewords: 18 }}</p>{% endif %}
-                {% if item_post.author %}
                 <div class="related-articles__author">
-                  <img src="{{ item_icon | relative_url }}" alt="" class="related-articles__author-icon" width="18" height="18">
-                  <span>{{ item_post.author }}</span>
+                  <span>{{ site.public_author }}</span>
                 </div>
-                {% endif %}
               </div>
             </a>
             {% endfor %}
           </div>
           <div class="text-center mt-6">
-            {% assign author_slug = page.author | downcase | replace: ' ', '-' %}
-            <a href="{% if _author_url != '' %}{{ _author_url | relative_url }}{% else %}{{ '/collective/' | relative_url }}{{ author_slug }}/{% endif %}" class="btn btn--outline btn--sm persona-more-btn" data-persona="{{ author_slug }}">More by {{ page.author }} →</a>
+            <a href="{{ '/research/' | relative_url }}" class="btn btn--outline btn--sm">All essays →</a>
           </div>
         </section>
         {% else %}
@@ -435,11 +344,6 @@ layout: default
           <h2 class="related-articles__heading">More to Read</h2>
           <div class="related-articles__grid">
             {% for post in related_posts limit: 3 %}
-            {% assign post_icon = '/assets/maya_flux_style_matched.png' %}
-            {% if post.author == "Pixel Nova" %}{% assign post_icon = '/assets/pixel_nova_style_matched.png' %}
-            {% elsif post.author == "Siri Sage" %}{% assign post_icon = '/assets/siri_sage_style_matched.png' %}
-            {% elsif post.author == "Zen Circuit" %}{% assign post_icon = '/assets/zen_circuit_style_matched.png' %}
-            {% endif %}
             <a href="{{ post.url | relative_url }}" class="related-articles__card">
               {% if post.image %}
               <div class="related-articles__img">
@@ -450,19 +354,15 @@ layout: default
                 {% if post.categories %}<span class="related-articles__cat">{{ post.categories | first }}</span>{% endif %}
                 <h3 class="related-articles__title">{{ post.title | truncate: 80 }}</h3>
                 {% if post.excerpt %}<p class="related-articles__excerpt">{{ post.excerpt | strip_html | truncatewords: 18 }}</p>{% endif %}
-                {% if post.author %}
                 <div class="related-articles__author">
-                  <img src="{{ post_icon | relative_url }}" alt="" class="related-articles__author-icon" width="18" height="18">
-                  <span>{{ post.author }}</span>
+                  <span>{{ site.public_author }}</span>
                 </div>
-                {% endif %}
               </div>
             </a>
             {% endfor %}
           </div>
           <div class="text-center mt-6">
-            {% assign author_slug = page.author | downcase | replace: ' ', '-' %}
-            <a href="{% if _author_url != '' %}{{ _author_url | relative_url }}{% else %}{{ '/collective/' | relative_url }}{{ author_slug }}/{% endif %}" class="btn btn--outline btn--sm persona-more-btn" data-persona="{{ author_slug }}">More by {{ page.author }} →</a>
+            <a href="{{ '/research/' | relative_url }}" class="btn btn--outline btn--sm">All essays →</a>
           </div>
         </section>
         {% endif %}

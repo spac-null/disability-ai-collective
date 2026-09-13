@@ -27,11 +27,6 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
     {% if backlist_active_slugs contains bk %}{% unless backlist_note_slugs contains bk %}{% assign featured = post %}{% break %}{% endunless %}{% endif %}
   {% endfor %}
 {% endif %}
-{% assign featured_icon = '/assets/maya_flux_style_matched.png' %}
-{% if featured.author == "Siri Sage" %}{% assign featured_icon = '/assets/siri_sage_style_matched.png' %}
-{% elsif featured.author == "Pixel Nova" %}{% assign featured_icon = '/assets/pixel_nova_style_matched.png' %}
-{% elsif featured.author == "Zen Circuit" %}{% assign featured_icon = '/assets/zen_circuit_style_matched.png' %}
-{% endif %}
 {% endif %}
 
 <main id="main-content">
@@ -62,8 +57,7 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
         {% endif %}
         <div class="home-hero__body">
           <div class="home-hero__meta">
-            <img src="{{ featured_icon | relative_url }}" alt="" aria-hidden="true" class="home-hero__icon" loading="lazy" decoding="async">
-            <span class="home-hero__author">{{ featured.author }}</span>
+            <span class="home-hero__author">{{ site.public_author }}</span>
             <span aria-hidden="true" class="home-hero__dot">&middot;</span>
             <time class="home-hero__date" datetime="{{ featured.date | date_to_xmlschema }}">{{ featured.date | date: "%B %-d, %Y" }}</time>
           </div>
@@ -100,19 +94,7 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
           {% if post.slug == featured.slug %}{% continue %}{% endif %}
           {% if recent_shown >= 3 %}{% break %}{% endif %}
           {% assign recent_shown = recent_shown | plus: 1 %}
-          {% assign home_author_icon = '/assets/maya_flux_style_matched.png' %}
-            {% assign home_persona_slug = 'maya-flux' %}
-            {% if post.author == "Siri Sage" %}
-              {% assign home_author_icon = '/assets/siri_sage_style_matched.png' %}
-              {% assign home_persona_slug = 'siri-sage' %}
-            {% elsif post.author == "Pixel Nova" %}
-              {% assign home_author_icon = '/assets/pixel_nova_style_matched.png' %}
-              {% assign home_persona_slug = 'pixel-nova' %}
-            {% elsif post.author == "Zen Circuit" %}
-              {% assign home_author_icon = '/assets/zen_circuit_style_matched.png' %}
-              {% assign home_persona_slug = 'zen-circuit' %}
-            {% endif %}
-          <article class="card card--elevated" data-persona="{{ home_persona_slug }}">
+          <article class="card card--elevated" data-accent="house">
 
             {% if post.image %}
             <div class="article-card__image">
@@ -128,17 +110,9 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
                 </time>
                 <span class="article-card__sep" aria-hidden="true">&middot;</span>
                 <span class="article-card__author">
-                  <img
-                    class="article-card__author-icon"
-                    src="{{ home_author_icon | relative_url }}"
-                    alt=""
-                    aria-hidden="true"
-                    loading="lazy"
-                    decoding="async"
-                  >
-                  <span class="article-card__author-name">{{ post.author | default: "Crip Minds" }}</span>
+                  <span class="article-card__author-name">{{ site.public_author }}</span>
                 </span>
-                {% if post.categories %}
+                {% if post.categories.size > 0 %}
                   <span class="article-card__sep" aria-hidden="true">&middot;</span>
                   <span class="article-card__topic">{{ post.categories | first | capitalize }}</span>
                 {% endif %}
@@ -167,17 +141,6 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
         </a>
       </div>
 
-      <div class="start-here-mini">
-        <p class="home-section-label text-center">Start <span class="marker marker--lime marker--strong">here</span></p>
-        {% comment %} Hand-picked, so it has to be kept inside the active backlist by hand:
-             every entry must be listed in _data/backlist.yml. A third pick used to point at
-             The City Forgot to Sound-Design Its Streets, which is now legacy archive. {% endcomment %}
-        <ul class="start-here-mini__list">
-          <li><a href="/2026/03/16/the-map-that-stops-at-the-door/" class="text-primary">The Map That Stops at the Door &rarr;</a></li>
-          <li><a href="/2026/06/24/the-disorder-is-a-system-property/" class="text-primary">The Disorder Is a System Property &rarr;</a></li>
-          <li><a href="/2026/07/06/the-four-point-rule-did-not-describe-disability-it-described-a-budget/" class="text-primary">The Four-Point Rule Did Not Describe Disability &rarr;</a></li>
-        </ul>
-      </div>
     {% else %}
       <!-- Empty State -->
       <div class="card text-center p-16">
@@ -193,58 +156,15 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
     </div>
   </section>
 
-  <!-- ── What Crip Minds is (compact, deeper explanation lives on /about/) ── -->
+  <!-- ── About, kept to a single line; the explanation lives on /about/ ── -->
   <section id="what-this-is" class="section section--secondary">
     <div class="container container--md">
-      <p class="home-section-label">About the project</p>
-      <div class="prose prose--compact text-secondary" style="max-width: 640px;">
-        <p class="mb-6">The four recurring voices are fictional editorial personas, not autonomous disabled people. Jascha designs the voices, source rules, fact checks, and editorial process &mdash; AI works within that design.</p>
-      </div>
+      <p class="text-body text-secondary mb-6" style="max-width: 640px;">Written and edited by {{ site.public_author }}.</p>
       <nav class="home-intro__nav" aria-label="About this publication">
-        <a href="{{ '/about/' | relative_url }}" class="home-intro__link">About the project &rarr;</a>
+        <a href="{{ '/about/' | relative_url }}" class="home-intro__link">About Crip Minds &rarr;</a>
         <span class="home-intro__sep" aria-hidden="true">&middot;</span>
         <a href="{{ '/jascha/' | relative_url }}" class="home-intro__link">About Jascha &rarr;</a>
       </nav>
-    </div>
-  </section>
-
-  <!-- ── The Collective (compact intro — About has the full treatment) ── -->
-  <section id="agents" class="section section--primary home-collective">
-    <div class="container">
-      <p class="text-small text-secondary mb-6" style="font-family: var(--font-family-mono); letter-spacing: 0.15em; text-transform: uppercase;">The Collective</p>
-
-      <div class="voice-strip">
-        <a href="/collective/pixel-nova/" class="voice-strip__item">
-          <img class="voice-strip__icon" src="{{ '/assets/pixel_nova_style_matched_thumb.png' | relative_url }}" alt="" aria-hidden="true" width="44" height="44" loading="lazy" decoding="async">
-          <span class="voice-strip__text">
-            <span class="voice-strip__name">Pixel Nova</span>
-            <span class="voice-strip__identity">Deaf-rooted editorial voice</span>
-          </span>
-        </a>
-        <a href="/collective/siri-sage/" class="voice-strip__item">
-          <img class="voice-strip__icon" src="{{ '/assets/siri_sage_style_matched_thumb.png' | relative_url }}" alt="" aria-hidden="true" width="44" height="44" loading="lazy" decoding="async">
-          <span class="voice-strip__text">
-            <span class="voice-strip__name">Siri Sage</span>
-            <span class="voice-strip__identity">Blind-rooted editorial voice</span>
-          </span>
-        </a>
-        <a href="/collective/maya-flux/" class="voice-strip__item">
-          <img class="voice-strip__icon" src="{{ '/assets/maya_flux_style_matched_thumb.png' | relative_url }}" alt="" aria-hidden="true" width="44" height="44" loading="lazy" decoding="async">
-          <span class="voice-strip__text">
-            <span class="voice-strip__name">Maya Flux</span>
-            <span class="voice-strip__identity">Mobility-rooted editorial voice</span>
-          </span>
-        </a>
-        <a href="/collective/zen-circuit/" class="voice-strip__item">
-          <img class="voice-strip__icon" src="{{ '/assets/zen_circuit_style_matched_thumb.png' | relative_url }}" alt="" aria-hidden="true" width="44" height="44" loading="lazy" decoding="async">
-          <span class="voice-strip__text">
-            <span class="voice-strip__name">Zen Circuit</span>
-            <span class="voice-strip__identity">Neurodivergent-rooted editorial voice</span>
-          </span>
-        </a>
-      </div>
-
-      <p class="text-small mt-6"><a href="/about/#agents" class="text-primary">Meet all four voices in depth &rarr;</a></p>
     </div>
   </section>
 
@@ -252,7 +172,7 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
 
 <script>
 (function() {
-  var sections = ['articles', 'agents'];
+  var sections = ['articles', 'what-this-is'];
   var seen = new Set();
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
@@ -278,10 +198,6 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
     else if (href.includes('/research/') && a.classList.contains('btn--primary')) label = 'cta-read-articles';
     else if (href.includes('/about/')) label = 'cta-about';
     else if (href.includes('/research/') && a.classList.contains('btn--secondary')) label = 'cta-browse-all';
-    else if (href.includes('/collective/pixel-nova/')) label = 'cta-persona-pixel-nova';
-    else if (href.includes('/collective/siri-sage/')) label = 'cta-persona-siri-sage';
-    else if (href.includes('/collective/maya-flux/')) label = 'cta-persona-maya-flux';
-    else if (href.includes('/collective/zen-circuit/')) label = 'cta-persona-zen-circuit';
     else if (href.includes('/2026/') && e.target.closest('.card')) {
       var parts = href.replace(/\/+$/, '').split('/');
       label = 'card-click-' + parts[parts.length - 1].substring(0, 50);

@@ -4,6 +4,13 @@ codename: "Resolution"
 title: "Crip Minds"
 description: "Experimental editorial publication asking what disabled ways of seeing can reveal about culture, science, technology, and ordinary life."
 author: "Crip Minds"
+
+# Public authorship for current site chrome. Articles still carry the per-article `author`
+# strings from an earlier editorial system (Pixel Nova / Siri Sage / Maya Flux / Zen Circuit)
+# as retained provenance in front matter; that system is no longer the publication's public
+# editorial model and those names are not presented to readers as authors. Templates that
+# show a byline read this value.
+public_author: "Jascha Blume"
 og_image: /assets/og-card.png
 url: "https://cripminds.com"
 baseurl: ""
