@@ -54,7 +54,12 @@ CAND = {"subject": "A named artist's 2025 retrospective reorganised its gallerie
                                      "whether the museum is accessible"}
 
 
-APPROVED_IDS = frozenset({
+#: The sixteen instruments approved across PR001-PR004, before the 2026-09-13 owner
+#: directive that added PR005-PR008 and took the pool to 48. Checked as a SUBSET: the
+#: library is a growing editorial asset, and an authorised addition must not read as a
+#: regression. The failure this still catches -- a foundation instrument silently
+#: disappearing -- is the one that would actually matter.
+FOUNDATION_IDS = frozenset({
     "PR001-02", "PR001-03", "PR001-05", "PR001-07", "PR001-09",
     "PR002-01", "PR002-02", "PR002-03", "PR002-05", "PR002-07",
     "PR003-03", "PR003-06", "PR003-08",
@@ -66,17 +71,23 @@ def test_questions_are_read_from_approved_material_never_authored():
     """The perspective boundary: this module may not mint a question. It reads entries the
     owner already reviewed, each of which states its own QUESTION."""
     qs = KF.load_questions()
-    check("only owner-approved durable questions load",
-          {q["id"] for q in qs} == APPROVED_IDS, sorted({q["id"] for q in qs}))
+    check("every foundation instrument is still in the pool",
+          FOUNDATION_IDS <= {q["id"] for q in qs},
+          sorted(FOUNDATION_IDS - {q["id"] for q in qs}))
     check("all loaded questions carry the approved status",
           all(q.get("status") == "APPROVED_DURABLE" for q in qs), "")
     check("each approved question is selectable in isolation",
           all(KF.select_question([q], rng=random.Random(0)) == q for q in qs), "")
     check("every question carries its provenance",
           all(q["id"] and q["doc"] and q["question"] for q in qs), "")
-    check("all four approved clusters are present",
-          {q["cluster"] for q in qs} >= {"PR001", "PR002", "PR003", "PR004"},
+    check("all eight approved clusters are present",
+          {q["cluster"] for q in qs} >= {"PR001", "PR002", "PR003", "PR004",
+                                         "PR005", "PR006", "PR007", "PR008"},
           sorted({q["cluster"] for q in qs}))
+    # The pool exists to serve two Knowledge First commissioning slots a day against a
+    # 21-day cooldown. Below roughly thirty instruments the cooldown cannot be honoured and
+    # the lane starts repeating itself, which is the failure the 2026-09-13 expansion fixed.
+    check("the pool is large enough for a daily commissioning lane", len(qs) >= 30, len(qs))
     src = (HERE / "knowledge_first.py").read_text()
     body = src.split("def load_questions")[1].split("\ndef ")[0]
     check("load_questions only reads -- no hardcoded question text",

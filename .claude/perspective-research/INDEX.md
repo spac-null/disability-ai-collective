@@ -1,8 +1,65 @@
 # Perspective Research — INDEX
 
 *Read this first. It should orient a fresh session in under two minutes.*
-*Last updated: 2026-09-08 — **PR004 first owner review complete; foundational phase complete,
-moving to calibration.***
+*Last updated: 2026-09-13 — **PR005–PR008 added by owner commissioning directive. The
+approved pool is now 48 instruments (was 16).***
+
+---
+
+## 2026-09-13 — THE LIBRARY IS NOW A COMMISSIONING INPUT, AND THAT CHANGED WHAT IT IS FOR
+
+**Read this before anything below it.** Until 2026-09-13 this directory was a research record
+that a lane occasionally consulted. It is now **the daily commissioning input**: the
+production desk runs two Knowledge First slots every morning, each drawing an approved
+question from here, on a 21-day cooldown with least-recently-used fallback
+(`automation/knowledge_first.py`). Sixteen instruments could not sustain that — fourteen of
+the sixteen were already claimed on the day the desk went live.
+
+**The owner therefore authorised PR005–PR008 in one directive: 32 new APPROVED_DURABLE
+instruments, taking the pool to 48.**
+
+**THESE FOUR CLUSTERS ARE DIFFERENT IN KIND FROM PR001–PR004, AND THE DIFFERENCE MUST NOT BE
+FORGOTTEN.** PR001–PR004 each began from read sources, and every entry carries a SOURCE BASIS
+naming what was actually read. **PR005–PR008 carry none, because none was read.** They are
+derived from already-approved doctrine — the fourteen axes and the four minds — and from the
+territory the owner named. Each cluster file states this at the top and each entry's BOUNDARY
+repeats it.
+
+That costs them nothing in authority, because APPROVED_DURABLE never granted any: it means
+trusted for *asking*, and the hard boundary is untouched. What it costs them is a
+demonstrated instance. **The first commissions from these clusters are also their evidence.**
+An instrument here that repeatedly sends Research looking and Research repeatedly finds
+nothing should be RETIRED, and retiring it is a normal successful outcome rather than a
+failure of the batch. Do not defend these entries; test them.
+
+| Cluster | File | Approved | Rejected | Primary weight |
+|---|---|---|---|---|
+| PR005 | `language-translation-channels-sensory-hierarchy.md` | 8 | 1 | PINA / SIIRI |
+| PR006 | `authorship-expertise-evidence-archive.md` | 8 | 3 | ZENO / SIIRI / PINA |
+| PR007 | `attention-memory-cognition-normality.md` | 8 | 3 | ZENO |
+| PR008 | `interdependence-work-cost-of-ordinary-operation.md` | 8 | 2 | MAYA |
+
+**Pool after the batch — 48 approved.** PINA 10 · MAYA 11 · SIIRI 8 · ZENO 10 · SHARED 9.
+SIIRI remains the thinnest at 8, which is an improvement on 1 and still the gap to watch.
+MAYA is the heaviest at 11, which the doctrine's own §4.2 warning anticipated; PR008 was
+deliberately routed away from the built environment for that reason and because the same
+directive asked for built-environment origin to become rare.
+
+**Nine proposals were rejected and are kept with reasons** — eight as duplicates, one
+(PR007-10) on doctrine. PR007-10 is the one to read: a question can be well formed, fully
+general, and still be an access-origin generator by virtue of which carriers it reliably
+reaches for. Deduplication concentrated where the directive predicted it would — time,
+maintenance, classification, legibility, channels, normality.
+
+**No new axis. Fifth, sixth, seventh and eighth consecutive clusters without one.**
+
+**KNOWN LATENT ISSUE, not acted on.** `knowledge_first.PREFERRED_CLUSTER` is still `"PR004"`,
+which hard-prefers PR004's three loadable questions over the other 45 whenever any of them is
+off cooldown. It is inert today — all three are within the 21-day window — and becomes live
+around **2026-10-01**. It was correct while PR004 was the active cluster being proven; with
+eight clusters it is not. Flagged rather than changed, because the directive scoped this task
+to the library and not to selection behaviour, and because no sample can currently demonstrate
+it. An owner should decide whether to retire the preference or rotate it.
 
 ---
 
