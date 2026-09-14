@@ -9,8 +9,10 @@ Disallow: /style-lab/
 Disallow: /gallery/
 Disallow: /realistic-scenes/
 
-# Automation artifacts
-Disallow: /archive/
+# Automation artifacts. NOT /archive/ -- the repository directory of that name is
+# excluded from the build and never served, while the public URL /archive/ is the
+# Legacy archive: the discovery surface for earlier published essays, which are
+# indexed, sitemapped and deliberately not withdrawn.
 Disallow: /automation/
 Disallow: /docs/
 Disallow: /calibration/
