@@ -393,7 +393,11 @@
           var textMatch = !activeQuery || (el.textContent || '').toLowerCase().indexOf(activeQuery) !== -1;
           var show = catMatch && psnMatch && textMatch;
           el.classList.toggle('hidden', !show);
-          if (show) visible++;
+          // An element marked data-filter-duplicate is a second presentation of an essay
+          // that is already in the list below it -- the Latest hero on the Articles page
+          // is the same essay as its own row in All essays. It filters like anything else,
+          // but counting it would report one matching essay as two.
+          if (show && !el.hasAttribute('data-filter-duplicate')) visible++;
         });
         if (statusEl && (activeQuery || activePsn !== 'all' || activeCat !== 'all')) {
           statusEl.textContent = visible + ' essay' + (visible === 1 ? '' : 's') + ' match' + (visible === 1 ? 'es' : '') + '.';

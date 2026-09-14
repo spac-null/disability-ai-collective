@@ -15,6 +15,11 @@ description: "Essays using disabled ways of seeing to ask different questions of
      the Works list can have any number of entries, so it needs its own responsive columns
      instead of leaving empty grid tracks that expose the container's gap-line background. */
   #works .research-threads { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+
+  /* Latest is a single hero card. Same treatment the homepage gives a lone recent card
+     (.recent-articles-wrap .articles-grid > .card:only-child), so one card reads as a
+     deliberate lead rather than a 360px card stranded in a three-column track. */
+  .articles-grid > .card:only-child { justify-self: center; max-width: 560px; width: 100%; }
 </style>
 
 <main id="main-content">
@@ -27,10 +32,12 @@ description: "Essays using disabled ways of seeing to ask different questions of
     </div>
   </header>
 
-  <!-- Filters + Hybrid Archive: the essay archive is the page's job, so it comes
-       immediately after the header, before Reading Threads / Works. A handful of
-       the newest pieces get full visual cards; the rest is a compact typographic
-       list so 100+ essays stay scannable instead of a 102-card catalogue. -->
+  <!-- The current corpus is the page's job, so it comes immediately after the header,
+       before Collections / Works. Latest gives the newest essay a full visual card;
+       All essays is the complete current list as a compact typographic index, so the
+       page reads the same way whether the publication is carrying two essays or fifty.
+       Search below is scoped to this page's DOM and therefore to current essays only;
+       earlier work is searched on /archive/. -->
   <section class="section section--primary" style="padding-top: var(--space-8);">
     <div class="container">
       <div class="research-filters">
@@ -49,9 +56,9 @@ description: "Essays using disabled ways of seeing to ask different questions of
           {% capture bk %}|{{ post.slug }}|{% endcapture %}
           {% unless backlist_active_slugs contains bk %}{% continue %}{% endunless %}
           {% if backlist_note_slugs contains bk %}{% continue %}{% endif %}
-          {% if latest_shown >= 3 %}{% break %}{% endif %}
+          {% if latest_shown >= 1 %}{% break %}{% endif %}
           {% assign latest_shown = latest_shown | plus: 1 %}
-          <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}" data-accent="house">
+          <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}" data-filter-duplicate data-accent="house">
             {% if post.image %}
             <img class="card__media" src="{{ post.image | strip | relative_url }}" alt="Article preview visual for {{ post.title }}" loading="lazy" decoding="async">
             {% endif %}
@@ -86,16 +93,15 @@ description: "Essays using disabled ways of seeing to ask different questions of
              competing with either. Counts derived from _data/threads.yml
              against the readable population (PR #25); a withdrawal drops out
              of the number automatically. -->
-        {% if backlist_article_count > 3 %}
+        {% comment %} The complete current list, the newest essay included: Latest above is
+           the hero treatment of the same piece, not a separate set, so this index stays a
+           full answer to "what is Crip Minds publishing now" at any corpus size. {% endcomment %}
         <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.75rem;">All essays</p>
         <div class="archive-list">
-          {% assign listed = 0 %}
           {% for post in readable_posts %}
           {% capture bk %}|{{ post.slug }}|{% endcapture %}
           {% unless backlist_active_slugs contains bk %}{% continue %}{% endunless %}
           {% if backlist_note_slugs contains bk %}{% continue %}{% endif %}
-          {% assign listed = listed | plus: 1 %}
-          {% if listed <= 3 %}{% continue %}{% endif %}
           <article class="archive-row" data-categories="{{ post.categories | join: "," | downcase }}">
             <p class="archive-row__meta">
               <time class="archive-row__date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
@@ -108,7 +114,6 @@ description: "Essays using disabled ways of seeing to ask different questions of
           </article>
           {% endfor %}
         </div>
-        {% endif %}
 
         {% comment %} Everything that is not the main reading flow leaves as one line each.
            Collections, Works and the legacy archive all keep their own pages and all of their

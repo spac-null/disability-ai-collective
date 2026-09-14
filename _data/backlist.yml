@@ -1,40 +1,70 @@
-# Selected backlist — the single source of truth for what Crip Minds actively carries.
+# The current publication epoch — the single source of truth for what Crip Minds
+# currently puts forward.
 #
 # The distinction this file draws is editorial, not archival. Everything published stays
 # published: the archive is earlier work retained with its correction history, not work
 # that was withdrawn. Withdrawal is a separate thing entirely and is still governed only
-# by a post's own `withdrawn` front matter.
+# by a post's own `withdrawn` front matter. Nothing here changes a URL, a body, a source
+# list or a correction notice.
 #
 # Consumers (all read the derived values from _includes/backlist.html, never this file
 # directly, so the predicate lives in exactly one place):
 #   index.html        featured essay and the Latest row
-#   research.html     the active backlist, Collections counts, the route to the archive
-#   archive.html      everything readable that is not active
-#   research/*.html   marks collection members that sit in the archive
-#   press/index.html  the selected figure alongside the corpus figures
+#   research.html     the current corpus, Collections counts, the route to the archive
+#   archive.html      everything readable that is not current
+#   feed.xml          the main feed
+#   _layouts/post.html    More to Read, and the older/newer pair
+#   _layouts/author.html  the per-byline split
+#   collections.html  which collections are promoted
 #
-# A readable post is ACTIVE when any of these holds:
+# ── WHAT "CURRENT" MEANS ────────────────────────────────────────────────────────────
 #
-#   1. its slug appears under `selected` below;
-#   2. it carries `pipeline_version` front matter — the marker the current editorial
-#      process stamps on what it publishes, which is what separates current work from
-#      the legacy cohort in repository history;
-#   3. it was published after `legacy_through` — a backstop so that new work can never
-#      be archived by default if the marker in (2) is ever missing;
-#   4. its author is `editor_byline` — the editor's notes are not essays and were never
-#      part of the legacy cohort the selection was drawn from.
+# CURRENT means "produced by the publication generation now running", not "published
+# after some calendar date". The generation is a fact the publishing system records on
+# the article itself: the current editorial engine stamps `engine_generation:
+# CURRENT_ENGINE` and `editorial_engine: NEW_ENGINE_V1` into front matter at publication
+# time (automation/new_engine_candidate.py, ENGINE_GENERATION), and automation/
+# publication_audit.py already classifies articles by exactly those two markers in
+# `is_current_engine()`. This file reuses that existing authority rather than inventing
+# a second one, which is why a future article joins the current corpus on its own, with
+# no list here to edit.
 #
-# Everything else readable is legacy archive.
+# A readable post is CURRENT when it is not listed under `pre_epoch` below AND any of:
 #
-# `selected` holds the 30 legacy essays the reissue programme finished: the 28 reissued
-# across the two pilots and four waves, plus the 2 that were already final and carried no
-# correction apparatus to retire. Adding a slug here promotes an essay into the active
-# backlist; removing one returns it to the archive. Nothing else needs editing, and no
-# article body carries any selection state.
+#   1. it carries `engine_generation: CURRENT_ENGINE`;
+#   2. it carries `editorial_engine: NEW_ENGINE_V1`   — (1) and (2) are the two markers
+#      the current engine writes, and either alone is enough, so that dropping a single
+#      front-matter line cannot quietly move an article between generations;
+#   3. it was published after `legacy_through` — a backstop, retained from the previous
+#      scheme, so that new work can never be archived by default if the markers in (1)
+#      and (2) are ever missing;
+#   4. its author is `editor_byline` — the editor's notes are not essays, are never
+#      archived, and are counted separately everywhere.
+#
+# Everything else readable is the legacy archive.
+#
+# `pre_epoch` is a closed historical list, and the reason it is a list rather than a
+# date. Two articles carry the current engine's markers but were published before the
+# publication epoch opened: both were owner-approved by hand during the changeover
+# (`engine_decision: OWNER_APPROVED` and `OWNER_APPROVED_RESCUE`) rather than accepted by
+# the engine, and neither carries the audit bundle the running system now binds to what
+# it publishes. They were already in the archive before this boundary existed and they
+# stay there. The list is finite and closed: it describes a transition that has happened
+# and cannot acquire new members, so nothing needs editing here when new work publishes.
+#
+# `selected` below is no longer part of the predicate. It is kept as the record of which
+# legacy essays the reissue programme finished, because that programme is real publication
+# history and the list is the only place it is written down. Those essays are readable at
+# their original URLs, in the archive, with their correction history intact.
 
 legacy_through: 2026-09-06
 editor_byline: "Jascha Blume"
 
+pre_epoch:
+  - at-tollymore-getting-to-bed-means-crossing-a-courtyard
+  - the-upper-room-at-wildsumaco
+
+# Historical record only — not read by the membership predicate. See the note above.
 selected:
   # Already final — no correction apparatus, nothing to reissue.
   - the-disorder-is-a-system-property

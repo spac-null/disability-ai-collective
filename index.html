@@ -132,8 +132,11 @@ description: "An AI-assisted editorial publication created and directed by Deaf 
       </div>
 
       <div class="text-center mt-10">
+        {% comment %} No count in the label. The number was a flourish when the corpus was
+           large; read against a young current corpus it becomes a statement about size
+           rather than a route to the essays, which is not what this button is for. {% endcomment %}
         <a href="{{ '/research/' | relative_url }}" class="btn btn--secondary">
-          All <span class="marker marker--lime">{{ backlist_article_count }}</span> essays &rarr;
+          All <span class="marker marker--lime">essays</span> &rarr;
         </a>
       </div>
 

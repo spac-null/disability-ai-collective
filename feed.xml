@@ -10,7 +10,31 @@
     <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
     <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
     <generator>Jekyll v{{ jekyll.version }}</generator>
-    {% for post in site.posts limit:10 %}
+    {% comment %}
+      The main feed is the current publication. It carries essays from the publication
+      generation now running, newest first, and nothing else: an archived essay is not
+      re-announced to subscribers because its corpus state changed, and a withdrawal
+      notice is not delivered as if it were an article. Membership is the shared
+      predicate in _includes/backlist.html — the same one /research/ and / use — so a
+      new article enters the feed by publishing, with nothing to edit here.
+
+      Item identity is deliberately untouched: <link> and <guid isPermaLink="true"> are
+      still the article's own permanent URL and <pubDate> is still its original
+      publication date, so items a reader already has keep their identity and stay read.
+    {% endcomment %}
+    {%- include backlist.html -%}
+    {%- assign feed_posts = site.posts | where_exp: "p", "p.withdrawn != true" -%}
+    {%- assign feed_emitted = 0 -%}
+    {%- for post in feed_posts -%}
+      {%- capture feed_key %}|{{ post.slug }}|{% endcapture -%}
+      {%- unless backlist_active_slugs contains feed_key %}{% continue %}{% endunless -%}
+      {% comment %} Editor's notes are not essays and are not syndicated here. They live at
+        /notes/, they are excluded from the article catalogue and every article count, and
+        including one would push a note published months ago into subscribers' readers as
+        new material the moment the essay list grew shorter than the item limit. {% endcomment %}
+      {%- if backlist_note_slugs contains feed_key %}{% continue %}{% endif -%}
+      {%- if feed_emitted >= 10 %}{% break %}{% endif -%}
+      {%- assign feed_emitted = feed_emitted | plus: 1 -%}
       <item>
         <title>{{ post.title | xml_escape }}</title>
         <description>{{ post.content | strip_html | truncatewords: 50 | xml_escape }}</description>

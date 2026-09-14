@@ -26,9 +26,12 @@ They are not the current perspectives renamed. Maya Flux is not MIRA, and there 
 
 ## Published essays
 
-Essays are original work, indexed at /research/. An interpretation may go beyond what a source explicitly concludes; the facts it depends on must remain supported. Earlier archived essays were produced under previous editorial systems and are reviewed against the current standard rather than assumed to meet it.
+Essays are original work. An interpretation may go beyond what a source explicitly concludes; the facts it depends on must remain supported. Earlier archived essays were produced under previous editorial systems and are reviewed against the current standard rather than assumed to meet it.
+
+The current publication begins with the September 2026 editorial system, and /research/ indexes its essays. Earlier essays remain published and readable at their original addresses, indexed at /archive/. Neither index has a fixed size; do not state a corpus count that is not read from the site itself.
 
 - [Articles index](https://cripminds.com/research/)
+- [Legacy archive](https://cripminds.com/archive/)
 - [RSS feed](https://cripminds.com/feed.xml)
 
 ## About

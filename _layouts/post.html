@@ -293,9 +293,9 @@ layout: default
              Dutch reader the English original of the piece they are already reading. A Dutch
              page gets a Dutch route instead, below. {% endcomment %}
         {% unless _is_nl %}
-        {% comment %} "More to Read" recommends, so it observes the active/archive split:
-             an actively carried essay recommends only actively carried essays, while an
-             archived essay keeps its archive neighbours, which is where its context is.
+        {% comment %} "More to Read" recommends, so it observes the current/archive split:
+             a current essay recommends only current essays, while an earlier essay keeps
+             its archive neighbours, which is where its context is.
              Curated entries are never dropped — an archived one is labelled instead, so
              _data/related.yml keeps its meaning. {% endcomment %}
         {% include backlist.html %}
@@ -335,15 +335,22 @@ layout: default
         {% else %}
         {% assign current_cats = page.categories %}
         {% assign related_posts = "" | split: "" %}
-        {% assign related_pool = site.posts | where_exp: "p", "p.withdrawn != true" %}
-        {% if page_is_active %}
-          {% assign active_pool = "" | split: "" %}
-          {% for p in related_pool %}
-            {% capture pool_key %}|{{ p.slug }}|{% endcapture %}
-            {% if backlist_active_slugs contains pool_key %}{% unless backlist_note_slugs contains pool_key %}{% assign active_pool = active_pool | push: p %}{% endunless %}{% endif %}
-          {% endfor %}
-          {% if active_pool.size > 3 %}{% assign related_pool = active_pool %}{% endif %}
-        {% endif %}
+        {% comment %} Recommendations stay inside the reader's own cohort, both ways.
+           A current essay recommends current essays and is never topped up from earlier
+           generations to reach three cards, because a card here is an invitation to read
+           something the publication is currently putting forward; fewer cards is the
+           correct outcome of a young corpus, and the section hides itself at zero. An
+           earlier essay keeps its archive neighbours, which is where its context is.
+           Editor's notes are not essays and are in neither pool. {% endcomment %}
+        {%- assign related_readable = site.posts | where_exp: "p", "p.withdrawn != true" -%}
+        {%- assign related_pool = "" | split: "" -%}
+        {%- for p in related_readable -%}
+          {%- capture pool_key %}|{{ p.slug }}|{% endcapture -%}
+          {%- if backlist_note_slugs contains pool_key %}{% continue %}{% endif -%}
+          {%- assign p_is_active = false -%}
+          {%- if backlist_active_slugs contains pool_key %}{% assign p_is_active = true %}{% endif -%}
+          {%- if p_is_active == page_is_active %}{% assign related_pool = related_pool | push: p %}{% endif -%}
+        {%- endfor -%}
         {% for post in related_pool %}
           {% if post.url != page.url %}
             {% for cat in post.categories %}
@@ -416,23 +423,63 @@ layout: default
         {% endif %}
 
         <!-- Prev/Next Navigation -->
-        {% if page.previous or page.next %}
+        {% comment %}
+          Older/Newer walks the reader's own cohort rather than the whole of site.posts.
+          Jekyll's page.previous/page.next step through every post in date order, which
+          would hand a reader of a current essay an earlier-generation piece under a label
+          that says only "Older", and would step a reader of an archived essay into the
+          current corpus. Each side now stays where it started: current with current,
+          earlier work with earlier work. Withdrawal notices are not offered as
+          destinations either. Editor's notes and the Dutch collection keep Jekyll's
+          defaults — neither is part of the essay cohorts this splits.
+
+          Ends are simply absent: the newest current essay has no Newer, and at cutover
+          the older of the two current essays has no Older. The nav hides itself when
+          both sides are empty.
+        {% endcomment %}
+        {%- assign nav_prev = page.previous -%}
+        {%- assign nav_next = page.next -%}
+        {%- unless _is_nl -%}
+          {%- capture nav_self_key %}|{{ page.slug }}|{% endcapture -%}
+          {%- unless backlist_note_slugs contains nav_self_key -%}
+            {%- assign nav_pool = "" | split: "" -%}
+            {%- assign nav_readable = site.posts | where_exp: "p", "p.withdrawn != true" -%}
+            {%- for p in nav_readable -%}
+              {%- capture nav_key %}|{{ p.slug }}|{% endcapture -%}
+              {%- if backlist_note_slugs contains nav_key %}{% continue %}{% endif -%}
+              {%- assign p_is_active = false -%}
+              {%- if backlist_active_slugs contains nav_key %}{% assign p_is_active = true %}{% endif -%}
+              {%- if p_is_active == page_is_active %}{% assign nav_pool = nav_pool | push: p %}{% endif -%}
+            {%- endfor -%}
+            {%- assign nav_prev = nil -%}
+            {%- assign nav_next = nil -%}
+            {%- assign nav_idx = -1 -%}
+            {%- for p in nav_pool %}{% if p.url == page.url %}{% assign nav_idx = forloop.index0 %}{% break %}{% endif %}{% endfor -%}
+            {%- if nav_idx >= 0 -%}
+              {%- comment %} site.posts is newest-first, so "older" is the next index. {% endcomment -%}
+              {%- assign nav_older_i = nav_idx | plus: 1 -%}
+              {%- if nav_older_i < nav_pool.size %}{% assign nav_prev = nav_pool[nav_older_i] %}{% endif -%}
+              {%- if nav_idx > 0 %}{% assign nav_newer_i = nav_idx | minus: 1 %}{% assign nav_next = nav_pool[nav_newer_i] %}{% endif -%}
+            {%- endif -%}
+          {%- endunless -%}
+        {%- endunless -%}
+        {% if nav_prev or nav_next %}
         <nav class="post-nav" aria-label="Article navigation">
-          {% if page.previous %}
-          <a href="{{ page.previous.url | relative_url }}" class="post-nav__link">
-            {% if page.previous.image %}<div class="post-nav__img"><img src="{{ page.previous.image | relative_url }}" alt="" loading="lazy" decoding="async"></div>{% endif %}
+          {% if nav_prev %}
+          <a href="{{ nav_prev.url | relative_url }}" class="post-nav__link">
+            {% if nav_prev.image %}<div class="post-nav__img"><img src="{{ nav_prev.image | relative_url }}" alt="" loading="lazy" decoding="async"></div>{% endif %}
             <div class="post-nav__text">
               <span class="post-nav__label">{% if _is_nl %}← Ouder{% else %}← Older{% endif %}</span>
-              <span class="post-nav__title">{{ page.previous.title | truncate: 60 }}</span>
+              <span class="post-nav__title">{{ nav_prev.title | truncate: 60 }}</span>
             </div>
           </a>
           {% else %}<div></div>{% endif %}
-          {% if page.next %}
-          <a href="{{ page.next.url | relative_url }}" class="post-nav__link post-nav__link--next">
-            {% if page.next.image %}<div class="post-nav__img"><img src="{{ page.next.image | relative_url }}" alt="" loading="lazy" decoding="async"></div>{% endif %}
+          {% if nav_next %}
+          <a href="{{ nav_next.url | relative_url }}" class="post-nav__link post-nav__link--next">
+            {% if nav_next.image %}<div class="post-nav__img"><img src="{{ nav_next.image | relative_url }}" alt="" loading="lazy" decoding="async"></div>{% endif %}
             <div class="post-nav__text">
               <span class="post-nav__label">{% if _is_nl %}Nieuwer →{% else %}Newer →{% endif %}</span>
-              <span class="post-nav__title">{{ page.next.title | truncate: 60 }}</span>
+              <span class="post-nav__title">{{ nav_next.title | truncate: 60 }}</span>
             </div>
           </a>
           {% else %}<div></div>{% endif %}
