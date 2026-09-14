@@ -63,3 +63,8 @@
         not be assumed to have passed safeguards that were introduced later.
         Earlier work is being reviewed and corrected where necessary; that
         review is not complete.
+
+  v3.3  Epoch         2026-09-14
+        The current publication separated from earlier work. What Crip Minds
+        carries now is the work of the present editorial system; earlier
+        essays remain published and readable as publication history.
