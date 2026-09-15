@@ -50,6 +50,7 @@ from . import jurisdiction as JU
 from . import ledger as LG
 from . import stages as S
 from . import story as ST
+from . import materiality as MAT
 from .provider import Provider, ProviderError, parse_json_object
 
 # ── stage names, in order ─────────────────────────────────────────────────────
@@ -7045,6 +7046,89 @@ def claim_map_article(provider, article_text: str, ledger: dict, allowed_fact_id
     return claim_map, errs, 1, ident2
 
 
+
+MATERIALITY_HOLD_REASON = ("unsupported factual surface judged MATERIAL: %s")
+
+
+def safety_materiality(provider, sa: dict, article_text: str, package: dict | None,
+                       arch: dict | None, ledger: dict | None,
+                       packet: dict | None) -> dict:
+    """ONE bounded adjudication of a raw Safety HOLD's unsupported factual surface.
+
+    Safety stays authoritative about SUPPORT. This asks only about CONSEQUENCE -- would
+    the reader understand the story materially differently if the unsupported element
+    were removed or corrected -- and it can only ever decide whether the finding STOPS
+    publication. It never licenses anything: the raw finding is preserved verbatim, and
+    an article that continues from here continues with "unsupported" still on its record.
+
+    The hard-override list is enforced mechanically in materiality.hard_material() BEFORE
+    any model call, so numbers, invented scene/sensory surface, quoted names and thesis
+    surface are never even offered for downgrade.
+
+    ONE CALL. No retry for a better answer, no alternate model, no loop. Every failure
+    mode -- ineligible category, nothing adjudicable, provider unavailable, malformed or
+    unexplained reply, any exception at all -- resolves to MATERIAL. A subscription limit
+    is the one thing re-raised rather than absorbed, because that is an infrastructure
+    condition the operator alert depends on seeing, not an editorial verdict.
+    """
+    ev = {"ran": False, "classification": "MATERIAL", "may_continue": False,
+          "model_calls": 0, "reason": "", "withheld": [], "adjudicated": [],
+          "findings": []}
+    buckets, eligible = MAT.parse_blocking(sa.get("blocking") or [])
+    if not eligible:
+        ev["reason"] = "a blocking finding is not an unsupported-factual-surface category"
+        return ev
+
+    withheld = MAT.hard_material(buckets, article_text, package)
+    ev["withheld"] = [{"finding": t, "reason": r} for t, r in withheld]
+    if withheld:
+        ev["reason"] = ("hard-material finding present, not adjudicable: %s"
+                        % ", ".join("%s (%s)" % (t, r) for t, r in withheld[:4]))
+        return ev
+
+    tokens = MAT.adjudicable(buckets, article_text, package)
+    if not tokens:
+        ev["reason"] = "no adjudicable finding"
+        return ev
+
+    context = []
+    for tok in tokens:
+        sentence, para = MAT.locate(article_text, tok)
+        if not sentence:
+            ev["reason"] = "could not locate %r in the article" % tok
+            return ev
+        facts = "; ".join(
+            str((v or {}).get("proposition", ""))[:160]
+            for v in list((ledger or {}).values())[:6] if isinstance(v, dict))
+        context.append({"token": tok, "sentence": sentence, "paragraph": para,
+                        "ledger_facts": facts})
+
+    ev["adjudicated"] = tokens
+    user = MAT.build_user(context, MAT.packet_summary(packet, arch),
+                          "; ".join(sa.get("blocking") or [])[:600])
+    try:
+        reply, ident = _ask(provider, MAT.MATERIALITY_SYSTEM + "\n\n" + MAT.MATERIALITY_SCHEMA,
+                            user, 2_000, SAFETY, SAFETY_HOLD)
+    except CompositionHold as e:
+        if getattr(e, "code", None) == CLAUDE_SUBSCRIPTION_LIMIT:
+            raise
+        ev["model_calls"] = 1
+        ev["reason"] = "adjudicator unavailable; failing closed"
+        return ev
+    except Exception as e:                                        # noqa: BLE001
+        ev["model_calls"] = 1
+        ev["reason"] = "adjudicator failed (%s); failing closed" % type(e).__name__
+        return ev
+
+    ev["ran"] = True
+    ev["model_calls"] = 1
+    ev["provider"] = ident
+    v = MAT.verdict(reply, tokens)
+    ev.update({"classification": v["classification"], "may_continue": v["may_continue"],
+               "findings": v["findings"], "reason": v["reason"]})
+    return ev
+
+
 def run_story_architecture_composition(
         provider, *, pack: dict, source_text: str, source_sha: str,
         subject: str = "", fact_check: bool = True, reader: bool = True,
@@ -7425,11 +7509,41 @@ def run_story_architecture_composition(
                     calls[SAFETY] = calls.get(SAFETY, 0) + prep.get("model_calls", 0)
 
         if sa["status"] != PASS:
-            why = "; ".join(sa["blocking"])[:600]
-            if delta_errs:
-                why = ("continuity was discarded (%s) and the Writer draft did not pass "
-                       "either: %s" % ("; ".join(str(e) for e in delta_errs)[:200], why))
-            return out(SAFETY, why, SAFETY_HOLD, final, pkg, surface)
+            # MATERIALITY > PERFECTION. Safety has investigated and its verdict stands
+            # unchanged on the record; this decides only whether the finding is serious
+            # enough to STOP publication. One bounded call, hard overrides enforced
+            # mechanically before it, and every failure mode resolving to MATERIAL.
+            # A DISCARDED CONTINUITY IS NOT A PERIPHERAL FINDING. When delta_errs is
+            # set the editor's version was thrown away for adding material -- on
+            # 2026-09-15, entities and a CAUSAL relation. Causality is on the hard list,
+            # and a run with that much turbulence is not the quiet gloss this path
+            # exists for, even though the discarded text is not the candidate. So
+            # materiality is offered only when adjudicable unsupported surface is the
+            # ONLY thing between this candidate and a PASS.
+            mat = ({"ran": False, "classification": "MATERIAL", "may_continue": False,
+                    "model_calls": 0, "withheld": [], "adjudicated": [], "findings": [],
+                    "reason": "continuity was discarded; not eligible for materiality"}
+                   if delta_errs else
+                   safety_materiality(P, sa, final, pkg, arch, ledger, wr["packet"]))
+            sa["materiality"] = mat
+            calls[SAFETY] = calls.get(SAFETY, 0) + mat.get("model_calls", 0)
+            if mat.get("may_continue"):
+                # The raw verdict is NOT rewritten. `status` stays what Safety said, and
+                # the effective publication consequence is recorded beside it, so the
+                # audit trail reads "unsupported, and published anyway because peripheral"
+                # rather than "passed".
+                sa["raw_safety_status"] = sa["status"]
+                sa["raw_safety_blocking"] = list(sa.get("blocking") or [])
+                sa["effective_publication_status"] = "PASS_WITH_MINOR_FINDINGS"
+            else:
+                why = "; ".join(sa["blocking"])[:600]
+                if mat.get("reason"):
+                    why = "%s -- %s" % (why, mat["reason"])
+                if delta_errs:
+                    why = ("continuity was discarded (%s) and the Writer draft did not "
+                           "pass either: %s"
+                           % ("; ".join(str(e) for e in delta_errs)[:200], why))
+                return out(SAFETY, why, SAFETY_HOLD, final, pkg, surface)
 
         g = record(GROUNDING, ground_candidate(P, bundle_text(final, pkg), source_text,
                                                source_sha, pack, arch, wr["packet"]))
