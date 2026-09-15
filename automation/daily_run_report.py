@@ -273,6 +273,75 @@ def corpus_counts():
         return None, None
 
 
+
+# ── reading a failure that produced no run directory ────────────────────────────────
+
+LOG = REPO / "automation.log"
+
+# A typed failure is worth translating into the sentence that says what to DO. The
+# generic "article generation failed — check automation.log" is true and useless: it
+# cannot be acted on from a phone, and on 2026-09-15 it hid a one-command fix for
+# nine hours. Anything not listed here is reported verbatim rather than flattened.
+FAILURE_HELP = {
+    "CLAUDE_SUBSCRIPTION_AUTH_FAILURE":
+        ("The Claude CLI is signed out on Trident.",
+         "Fix: ssh trident, then: claude auth login\n"
+         "(must be the claude.ai subscription login, not --console)"),
+    "CLAUDE_SUBSCRIPTION_LIMIT":
+        ("The Claude subscription hit its usage limit.",
+         "No action: it resets on its own. Tomorrow's 09:00 run should proceed."),
+}
+
+
+def last_failure_from_log(day):
+    """The orchestrator failure recorded for `day`, if there is one.
+
+    A provider failure on the first model call leaves no run directory at all, so the
+    evidence root cannot answer "what went wrong" -- only the log can.
+
+    Anchored on the wrapper's own "ERROR: orchestrator failed" line for `day`, and then
+    the run_status block immediately BEFORE it, so a later successful run on the same
+    day cannot be mistaken for the failure and an in-flight run is never read as one.
+    Returns (status, stage, detail, reason_code) or None.
+    """
+    try:
+        text = LOG.read_text(encoding="utf-8", errors="replace")
+    except Exception:
+        return None
+    marks = [m.end() for m in re.finditer(
+        re.escape(day.strftime("[%Y-%m-%d")) + r"[^\]]*\] ERROR: orchestrator failed", text)]
+    if not marks:
+        return None
+    head = text[:marks[-1]]
+    blocks = list(re.finditer(r'"run_status":\s*\{(.*?)\}', head, re.S))
+    if not blocks:
+        return None
+    blk = blocks[-1].group(1)
+    get = lambda k: (re.search(r'"%s":\s*"([^"]*)"' % k, blk) or [None, ""])[1]
+    reasons = re.findall(r'"reason_code":\s*"([^"]+)"', head)
+    return get("status"), get("stage"), get("detail"), (reasons[-1] if reasons else "")
+
+
+def failure_lines(day):
+    """Explanatory lines for a failure with no run directory, most useful first."""
+    f = last_failure_from_log(day)
+    if not f:
+        return ["No production run directory for today, and no orchestrator failure "
+                "recorded in automation.log. The 09:00 job may not have started."]
+    status, stage, detail, reason = f
+    out = []
+    key = next((k for k in FAILURE_HELP if k in (detail or "") or k in (reason or "")), None)
+    if key:
+        what, how = FAILURE_HELP[key]
+        out.append(what)
+        out.append(how)
+    else:
+        out.append(detail or reason or "unknown failure")
+    tail = "%s%s" % (status or "FAILURE", " at %s" % stage if stage else "")
+    out.append("(%s)" % tail)
+    return out
+
+
 # ── the message ─────────────────────────────────────────────────────────────────────
 
 def build_message(day):
@@ -283,10 +352,12 @@ def build_message(day):
         strip = outcome_strip(day)
         lp = last_published(day)
         extra = "\nLast published: %d days ago" % lp[0] if lp else ""
-        return ("\U0001f4d5 Crip Minds — daily run\n%s · ⚠️ NO RUN\n\n"
-                "No production run directory for today. The 09:00 job may not have "
-                "started, or it died before writing any evidence.\n\n"
-                "Last %d days: %s%s" % (d, TREND_DAYS, strip, extra))
+        why = failure_lines(day)
+        title = "⚠️ FAILED" if last_failure_from_log(day) else "⚠️ NO RUN"
+        return ("\U0001f4d5 Crip Minds — daily run\n%s · %s\n\n%s\n\n"
+                "Nothing was written: no run directory, no draft, no post.\n\n"
+                "Last %d days: %s%s"
+                % (d, title, "\n".join(why), TREND_DAYS, strip, extra))
 
     run_dir = rs[-1]
     manifest = _load(run_dir, "MANIFEST.json")
@@ -404,9 +475,20 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true", help="print the message, send nothing")
     ap.add_argument("--date", help="YYYY-MM-DD (default: today)")
+    ap.add_argument("--alert-failure", action="store_true",
+                    help="send the immediate failure alert (called by cripminds-daily.sh "
+                         "when the orchestrator exits non-zero)")
     a = ap.parse_args()
     day = (datetime.datetime.strptime(a.date, "%Y-%m-%d").date()
            if a.date else datetime.date.today())
+    if a.alert_failure:
+        msg = ("\U0001f4d5 Crip Minds — run failed\n%s\n\n%s"
+               % (datetime.datetime.now().strftime("%a %-d %b %H:%M"),
+                  "\n".join(failure_lines(day))))
+        print(msg)
+        if not a.dry_run:
+            send(msg)
+        return 0
     try:
         msg = build_message(day)
     except Exception as e:
