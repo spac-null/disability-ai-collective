@@ -61,6 +61,13 @@ GLYPH = {"PUBLISHED": "✅", "ACCEPT": "✅", "CLEARED": "☑️", "HOLD": "⏸"
          "FAIL": "⚠️", "NONE": "·"}
 
 
+def _log(line):
+    """One stamped line. The log is read months later by someone asking whether the
+    report actually fired on a given morning; an unstamped line cannot answer that."""
+    print("[%s] %s" % (datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), line),
+          flush=True)
+
+
 def _load(d, name):
     """A missing or malformed artifact is a fact to report, never an exception."""
     try:
@@ -453,8 +460,7 @@ def send(text):
     token = os.environ.get("REEF_BOT_TOKEN", "")
     chat = os.environ.get("REEF_CHAT_ID", "")
     if not token or not chat:
-        print("NOT SENT: REEF_BOT_TOKEN/REEF_CHAT_ID missing from environment",
-              file=sys.stderr)
+        _log("NOT SENT: REEF_BOT_TOKEN/REEF_CHAT_ID missing from environment")
         return False
     data = urllib.parse.urlencode(
         {"chat_id": chat, "text": text, "disable_web_page_preview": "true"}).encode()
@@ -463,11 +469,11 @@ def send(text):
             "https://api.telegram.org/bot%s/sendMessage" % token, data=data)
         with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
             ok = json.loads(r.read().decode("utf-8", "replace")).get("ok")
-            print("sent" if ok else "telegram returned ok=false")
+            _log("sent" if ok else "telegram returned ok=false")
             return bool(ok)
     except Exception as e:
         # Never echo the URL: it carries the token.
-        print("NOT SENT: telegram request failed (%s)" % type(e).__name__, file=sys.stderr)
+        _log("NOT SENT: telegram request failed (%s)" % type(e).__name__)
         return False
 
 
@@ -485,7 +491,9 @@ def main():
         msg = ("\U0001f4d5 Crip Minds — run failed\n%s\n\n%s"
                % (datetime.datetime.now().strftime("%a %-d %b %H:%M"),
                   "\n".join(failure_lines(day))))
-        print(msg)
+        if not a.dry_run:
+            _log("--- failure alert ---")
+        print(msg, flush=True)
         if not a.dry_run:
             send(msg)
         return 0
@@ -495,7 +503,11 @@ def main():
         msg = ("\U0001f4d5 Crip Minds — daily run\n%s\n\nREPORTER ERROR: %s: %s\n"
                "The run itself is unaffected; only this report failed."
                % (day.strftime("%a %-d %b"), type(e).__name__, str(e)[:200]))
-    print(msg)
+    if a.dry_run:
+        print(msg)
+    else:
+        _log("--- daily run report ---")
+        print(msg, flush=True)
     if a.dry_run:
         print("\n[dry run — nothing sent]")
         return 0
