@@ -326,7 +326,10 @@ def last_failure_from_log(day):
     blk = blocks[-1].group(1)
     get = lambda k: (re.search(r'"%s":\s*"([^"]*)"' % k, blk) or [None, ""])[1]
     reasons = re.findall(r'"reason_code":\s*"([^"]+)"', head)
-    return get("status"), get("stage"), get("detail"), (reasons[-1] if reasons else "")
+    # `detail` is the composition shape; `error` + `failure_category` is the run-status
+    # shape. Whichever is present is what a person needs; a bare reason code is not.
+    detail = get("detail") or get("error") or get("failure_category")
+    return get("status"), get("stage"), detail, (reasons[-1] if reasons else "")
 
 
 def failure_lines(day):
@@ -416,9 +419,20 @@ def build_message(day):
         for r in (manifest.get("reasons") or [])[:2]:
             L.append("  " + str(r)[:150])
 
-    rstat = manifest.get("run_status") or {}
+    # run_status is a dict in some runs and a bare string in others (MANIFEST.json
+    # records "PROVIDER_FAILURE"; the composition result records {status, stage, ...}).
+    # Reading only the dict shape made 2026-09-18 report a calm "HOLD" for a run that had
+    # actually failed on infrastructure -- the one line that most needed saying.
+    rstat = manifest.get("run_status")
     if isinstance(rstat, dict) and rstat.get("status"):
         L.append("⚠️ Run status: %s at %s" % (rstat.get("status"), rstat.get("stage")))
+    elif isinstance(rstat, str) and rstat.strip():
+        rs = _load(run_dir, "RUN_STATUS.json")
+        stage = rs.get("stage") or ""
+        L.append("⚠️ %s%s" % (rstat.strip(), " at %s" % stage if stage else ""))
+        detail = str(rs.get("error") or "").strip()
+        if detail:
+            L.append("  " + (detail[:140] + "\u2026" if len(detail) > 140 else detail))
 
     # ── context ──
     L.append("")
