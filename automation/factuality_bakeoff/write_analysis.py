@@ -198,6 +198,42 @@ for name, fr in (("FactCG", frank_f), ("MiniCheck", frank_m)):
              "system. They are not a deployment argument: both systems have public "
              "benchmark histories, and FRANK is news-summarisation, not Crip Minds prose.\n")
 
+rag = {}
+for name in ("FACTCG", "MINICHECK", "LETTUCE"):
+    r = rd("external/RAGTRUTH_%s.json" % name)
+    if r:
+        rag[name] = r
+if rag:
+    D.append("\n## RAGTruth - implicit_true sanity probe\n")
+    D.append("Compatibility check only. LettuceDetect's model card documents training on "
+             "RAGTruth; MiniCheck and FactCG report LLM-AggreFact, which incorporates it. "
+             "No system may be promoted on these numbers.\n")
+    any_sys = list(rag.values())[0]
+    D.append("Test split, bounded sample per group drawn before scoring "
+             "(cap %d, seed %d). Pool sizes in the test split: %s.\n"
+             % (any_sys["sampling"]["per_group_cap"], any_sys["sampling"]["seed"],
+                any_sys["pool_sizes_test_split"]))
+    D.append("\nPercentage of each group judged **supported** (probability >= 0.5, or no "
+             "span flagged). `implicit_true` is kept as its own group and is never folded "
+             "into the unsupported or contradicted counts.\n")
+    groups = ["SUPPORTED_BY_CONTEXT", "IMPLICIT_TRUE", "UNSUPPORTED_BASELESS", "CONTRADICTED"]
+    D.append("| system | " + " | ".join(g.lower().replace("_", " ") for g in groups)
+             + " | implicit_true − contradicted |")
+    D.append("|---|" + "---|" * (len(groups) + 1))
+    for name, r in rag.items():
+        row = []
+        for g in groups:
+            bg = r["by_group"].get(g)
+            row.append("%s%% (n=%d)" % (bg["pct_judged_SUPPORTED"], bg["n"]) if bg else "-")
+        D.append("| %s | %s | %s pp |" % (name, " | ".join(row),
+                                          r.get("implicit_true_minus_contradicted_pct_supported")))
+    D.append("\nHow to read the last column: a value near zero means the system treats "
+             "*\"not established by the supplied context but not known to be false\"* the "
+             "same way it treats *\"contradicted by the supplied context\"*. That is exactly "
+             "the collapse Crip Minds must never make. A checker that cannot separate them "
+             "produces a grounding signal, not a truth claim, and nothing downstream may "
+             "present its output as evidence that something is false in the world.\n")
+
 D.append("\n## Verdicts\n")
 D.append("| system | verdict |")
 D.append("|---|---|")

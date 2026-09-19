@@ -194,16 +194,17 @@ manifest = {
         "FRANK": {"status": "RUN",
                   "note": "published valid/test split respected; threshold chosen on "
                           "validation only; test scored once"},
-        "RAGTruth": {"status": "NOT_RUN",
-                     "reason": "Experiment time was spent on the project-specific set, which "
-                               "§8 makes the deciding surface, and on diagnosing a FactCG "
-                               "defect. RAGTruth would also be a compatibility check only for "
-                               "LettuceDetect, which documents training on it."},
+        "RAGTruth": {"status": "RUN",
+                     "scope": "implicit_true sanity probe only, at owner direction",
+                     "note": "Test split, bounded sample per group drawn before scoring with "
+                             "a fixed seed, published default threshold, adapters unchanged. "
+                             "implicit_true is kept as its own group and never collapsed into "
+                             "'lie' or 'factual error'. Compatibility metric only: every "
+                             "system here may have seen RAGTruth."},
         "MAVEN-ERE": {"status": "NOT_RUN",
-                      "reason": "No defensible support/contradiction probe was constructed "
-                                "within this experiment; per the brief an invalid probe is "
-                                "worse than none, and absence of an annotation is not proof "
-                                "of absence."},
+                      "reason": "Skipped at owner direction. Independently, no defensible "
+                                "support/contradiction probe had been constructed, and "
+                                "absence of an annotation is not proof of absence."},
     },
     "contamination": {
         "LettuceDetect": "Model card documents training on RAGTruth and PsiloQA. RAGTruth "
