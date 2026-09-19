@@ -116,20 +116,28 @@ def run_cell(ledger: BU.Ledger, cell: str, role: str, provider, fn, *,
         err_text = "%s: %s" % (type(exc).__name__, exc)
         print("    ! %-8s %s" % (role, err_text[:120]))
 
-    spent = max(meter.spent(), 1)
+    # A cell that genuinely issued no request must not be charged one. Two cases reach
+    # here: a plan refused before any call because the frozen beat layout cannot host a
+    # carrier, and arm C skipped because that plan never validated. Everything else is
+    # charged at least one call even when the provider counter did not move, because a
+    # failure that consumed quota is the case the counter is least able to see.
+    issued = meter.spent()
+    no_call = isinstance(out, dict) and (out.get("no_model_call_was_made")
+                                         or out.get("model_calls") == 0)
+    spent = issued if (issued == 0 and no_call) else max(issued, 1)
     ledger.record(cell=cell, role=role, provider=provider_label,
                   requested_model=requested_model, resolved_model=resolved_model,
                   prompt_version=prompt_version, input_text=input_text, effort=effort,
                   duration_ms=int((time.time() - t0) * 1000),
                   error_code=err_code, error_text=err_text,
-                  extra={"provider_calls_issued": spent})
+                  extra={"provider_calls_issued": spent, "calls_issued": 1 if spent else 0})
     # The provider's extra internal retries are real quota. Record each as its own row so
     # the count in CALLS.jsonl equals the count the account saw.
     for n in range(1, spent):
         ledger.record(cell=cell, role=role + ":internal-retry", provider=provider_label,
                       requested_model=requested_model, resolved_model=resolved_model,
                       prompt_version=prompt_version, input_text="", effort=effort,
-                      retry_of=cell)
+                      retry_of=cell, extra={"calls_issued": 1})
 
     payload = {"cell": cell, "role": role, "status": "ERROR" if out is None else "OK",
                "error_code": err_code, "error_text": err_text,

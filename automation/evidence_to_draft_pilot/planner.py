@@ -1,40 +1,46 @@
 """
-planner.py -- Experiment C's evidence/argument review and improved plan (section 13).
+planner.py -- Experiment C: evidence-grounded REPLANNING over the frozen Ledger.
 
-WHAT CODEX IS ASKED FOR, and what it is NOT.
+See PROTOCOL_AMENDMENT_01.md in the experiment root for why this module was rewritten.
+In short: the first version held the retained beat structure fixed and let Codex only
+rank the facts inside it. That made Arm C a hierarchy retrofit rather than the replanning
+treatment section 13 commissions, and it caused a real conflation -- "these historical
+beats cannot host the current hierarchy" was reported as though it were "this evidence
+cannot support a valid plan". The first is a property of one past planning choice. The
+second is a claim about the evidence, and the old adapter could not test it.
 
-Codex receives the frozen source evidence, the frozen Ledger and the commissioning
-subject. It does NOT receive the final article, the historical findings, the reason codes
-or any owner label -- those live in the subject manifest's `evaluation_only` block, which
-nothing here reads.
+WHAT IS FROZEN, and enforced here rather than merely requested:
+  * the subject and commissioning question;
+  * the source set;
+  * the approved Ledger -- every fact id in the plan must exist in it, and nothing else
+    may enter. No fact from model memory, no unapproved source text promoted into Ledger
+    permission, no new research;
+  * the qualifications, attribution, chronology and event boundaries those facts carry;
+  * the production validators, which are imported and called unmodified.
 
-It returns the compact planning output section 13 specifies: SOURCE BASELINE, DISTINCT
-READING, CENTRAL DEPENDENCIES, SUPPORT, MISSING OR DISPUTED, NARRATIVE HIERARCHY,
-ALTERNATIVE READING, ARTICLE PLAN -- plus the international-reader pass of section 15.
+WHAT ARM C MAY CHANGE, within that same approved factual universe: which eligible facts
+it selects, which are load-bearing and which merely supporting, what it omits, how the
+beats are ordered, combined or split, which eligible fact ids sit in which beat, the
+opening, the ending, how narrow the supported interpretation is, and which fact carries
+it.
 
-WHY THE PLAN IS DERIVED DETERMINISTICALLY RATHER THAN WRITTEN BY THE MODEL.
+THE ADAPTER DOES NOT REPAIR THE PLAN. The previous version promoted facts to
+load-bearing, re-pointed `supports` and substituted the carrier when the planner's own
+choices did not validate. Every one of those was the adapter quietly doing the planning
+it was supposed to be measuring. Now the planner owns plan validity: the adapter
+assembles what it returns, carries forward only the fields it does not supply, runs
+`composition.check_architecture` unmodified, and reports the result.
 
-The incumbent Writer takes a story architecture that must satisfy `check_architecture`:
-minted-fact refusal, USE/CUT honesty, carrier-occurrence support, turn-relation support,
-the evidence hierarchy, final-lens and lens-embodiment validation, the architect-prose
-audit and the packet gate. Asking a second model to emit that object from scratch would
-mostly measure its ability to guess a schema, and every failure would be a schema failure
-wearing an editorial costume.
+ONE ATTEMPT PER SUBJECT. No retry until a supported plan appears.
 
-So Codex supplies EDITORIAL JUDGEMENT ONLY -- which fact carries the article, which facts
-are load-bearing, which merely ride along, which are deliberately omitted, and what
-narrative work each beat does -- and this module applies that judgement to the frozen
-architecture by MUTATING ONLY THE HIERARCHY AND SELECTION FIELDS. The architect's prose
-fields (`crip_turn`, `final_lens`, `opening_object_or_event`, `lens_realization`) are
-carried through untouched, because those are exactly the fields whose rewriting produces
-MINTED_FACT and TURN_RELATION_NOT_SUPPORTED failures. No new factual permission can arise
-from a review, which is section 13's own requirement, and here it is structural rather
-than merely instructed: a fact Codex does not name cannot enter `use_facts`, and a fact
-outside the frozen ledger cannot enter it either.
-
-NO_SUPPORTED_PLAN is a valid answer and is recorded as one. Section 13: the original
-thesis is not forced to survive. It is NOT a software failure, and it is NOT a successful
-article -- it is reported in the completion denominator (section 18).
+THE FOUR OUTCOMES, kept distinct:
+    PASS                            a valid plan over the frozen evidence
+    NO_SUPPORTED_PLAN               the planner replanned and reports that the evidence
+                                    supports no valid article
+    PLAN_VALIDATION_FAILED          a returned plan violates the contract
+    TECHNICAL_FAILURE               transport, parsing or adapter failure
+`HISTORICAL_PLAN_INCOMPATIBLE` is recorded as a DESCRIPTIVE property of the retained
+architecture, never as a reason to skip replanning.
 """
 from __future__ import annotations
 
@@ -51,29 +57,47 @@ if str(AUTOMATION) not in sys.path:
 from new_engine_v1 import composition as CP                        # noqa: E402
 from new_engine_v1 import story as ST                              # noqa: E402
 
-PROMPT_VERSION = "codex-planner-v1"
+PROMPT_VERSION = "codex-replanner-v2"
+C_CONTRACT = "C2-replanning"
 
 LOAD_BEARING = "LOAD_BEARING"
 SUPPORTING = "SUPPORTING"
 
-# Section 15. When the plan needs an explanation the evidence does not carry, it says so
-# in this exact word rather than inventing one.
 RESEARCH_NEEDED = "RESEARCH_NEEDED_BEFORE_DRAFTING"
 
-PLANNER_SYSTEM = """You are an editor reviewing the evidence behind one commissioned
-article before it is written. You are not writing the article.
+# Outcomes. Distinct on purpose; see the module docstring and the amendment.
+PASS = "PASS"
+NO_SUPPORTED_PLAN = "NO_SUPPORTED_PLAN"
+PLAN_VALIDATION_FAILED = "PLAN_VALIDATION_FAILED"
+TECHNICAL_FAILURE = "TECHNICAL_FAILURE"
+HISTORICAL_PLAN_INCOMPATIBLE = "HISTORICAL_PLAN_INCOMPATIBLE"
 
-You have the frozen source material and a frozen Ledger of numbered facts extracted from
-it. Every fact id you name must come from that Ledger. You may not introduce a fact,
-a number, a name, a date or a relationship that the Ledger does not carry. A review
-creates no new factual permission.
+# Fields the planner may not touch unless it supplies its own: these carry claim-bearing
+# prose whose support is checked against the ledger. Carried forward from the retained
+# architecture when the planner does not replace them.
+CARRIED_FORWARD = ("article_type", "crip_turn", "final_lens", "lens_realization",
+                   "reader_initial_state", "crip_turn_rereads", "definitions",
+                   "prohibitions")
 
-Your job is to decide what this article can honestly be ABOUT, and what carries it.
+
+REPLANNER_SYSTEM = """You are replanning one commissioned article from its evidence.
+
+You are given the commissioning subject, the frozen source material, and a frozen Ledger
+of numbered facts extracted from that material. THE LEDGER IS THE WHOLE OF WHAT YOU MAY
+SAY. Every fact id you name must come from it. You may not introduce a fact, number,
+name, date, place or relationship the Ledger does not carry, you may not reach into the
+source text for something the Ledger did not approve, and you may not use anything you
+happen to know about this subject from elsewhere.
+
+You are also shown the article's PREVIOUS plan. It is context, not a constraint. You may
+keep none of it. You may select different facts, order the story differently, use fewer
+or more beats, put different facts in different beats, open somewhere else and end
+somewhere else.
 
 Judge the evidence, not the ambition. If the strongest supported reading is narrower than
-the commissioning subject, say so and plan the narrower article. If the evidence does not
-support an article at all, set "no_supported_plan": true and explain why. That is a valid
-and useful answer; a forced thesis is not.
+the commissioning subject, plan the narrower article. If the evidence supports no article
+at all, set "no_supported_plan": true and say why -- that is a valid and useful answer,
+and a forced thesis is not.
 
 Reply with ONE JSON object and nothing else:
 
@@ -85,36 +109,81 @@ Reply with ONE JSON object and nothing else:
  "missing_or_disputed": ["what is not established, ambiguous or contradicted"],
  "alternative_reading": "what would undermine or materially narrow the argument",
  "article_plan": "what changes for the reader from opening to ending",
- "narrative_hierarchy": {
-   "primary_carrier": "F07",
-   "load_bearing": ["F07", "F12"],
-   "supporting": {"F03": ["F07"]},
-   "deliberate_omissions": [{"fact_id": "F44", "reason": "true but does not advance"}]
- },
- "beat_functions": {"B1": "REVEAL", "B2": "COMPLICATE"},
+
+ "story_spine": "ONE sentence naming the path through the story",
+ "opening_object_or_event": "the concrete thing the article opens on",
+ "ending_move": "what the ending does",
+
+ "beats": [
+   {"beat_id": "B1",
+    "concrete_carrier": "the concrete thing this beat is about -- a NOUN PHRASE, not a
+                         narrated event",
+    "why_reader_wants_next": "why the reader reads on (every beat but the last)",
+    "facts_allowed": ["F03", "F07"],
+    "beat_function": "REVEAL"}],
+
+ "use_facts": ["F03", "F07"],
+ "evidence_roles": {"F07": "LOAD_BEARING", "F03": "SUPPORTING"},
+ "supports": {"F03": ["F07"]},
+ "primary_carrier": "F07",
+ "cut_evidence": [{"evidence_id": "F44", "reason": "BACKGROUND_NOT_NEEDED"}],
+
  "international_reader_context": [
    {"term": "an institution, acronym or local term an international reader needs",
     "explanation": "the short explanation, IF the evidence carries it",
     "fact_ids": ["F09"],
     "status": "SUPPORTED_BY_EVIDENCE or RESEARCH_NEEDED_BEFORE_DRAFTING",
     "bounded_query": "the research question a future live workflow should ask"}],
+
  "no_supported_plan": false,
  "no_supported_plan_reason": ""
 }
 
-RULES FOR THE HIERARCHY.
- - "primary_carrier" is ONE fact id, and it must appear in "load_bearing".
- - Every fact you keep is either load_bearing or a key in "supporting".
- - Each "supporting" fact maps to the load-bearing fact(s) it makes intelligible.
- - A supporting fact must share a beat with a fact it supports; the beats and the facts
-   each beat allows are given to you.
- - Omit aggressively. A plan that keeps every true fact is a plan that repeats.
- - "beat_functions" assigns each beat id EXACTLY ONE of these five, and no other word:
-   REVEAL, COMPLICATE, EXPLAIN, REVERSE, RESOLVE.
+THE CONTRACT YOUR PLAN MUST SATISFY. It is checked mechanically and a violation is
+reported, not repaired.
 
-RULES FOR INTERNATIONAL CONTEXT. If the evidence carries the explanation, cite the fact
-ids. If it does not, set status to RESEARCH_NEEDED_BEFORE_DRAFTING and write the bounded
-query. Never invent the explanation."""
+ SELECTION
+  - Every id in use_facts, in any beat's facts_allowed, and in cut_evidence must be a
+    Ledger fact id.
+  - use_facts must be EXACTLY the union of the beats' facts_allowed. A fact you use is a
+    fact some beat allows.
+  - cut_evidence must be non-empty and must not overlap use_facts. Selection that
+    discards nothing is not selection. Cut aggressively: a plan that keeps every true
+    fact is a plan that repeats.
+  - Each cut reason must be EXACTLY ONE of these nine words:
+    REDUNDANT_PROOF, BACKGROUND_NOT_NEEDED, SECOND_EXAMPLE_SAME_POINT, NAME_OVERLOAD,
+    CONCEPT_OVERLOAD, BREAKS_STORY_MOMENTUM, PROVENANCE_ONLY, MACHINE_BOUNDARY_ONLY,
+    INTERESTING_BUT_WRONG_STORY.
+
+ SHAPE
+  - At least two beats. Unique beat ids. Every beat needs a concrete_carrier; every beat
+    but the last needs why_reader_wants_next.
+  - beat_function is EXACTLY ONE of: REVEAL, COMPLICATE, EXPLAIN, REVERSE, RESOLVE.
+  - story_spine is ONE sentence.
+
+ HIERARCHY
+  - evidence_roles assigns every used fact exactly one of LOAD_BEARING or SUPPORTING,
+    and covers use_facts exactly.
+  - Each SUPPORTING fact names in "supports" the LOAD_BEARING fact(s) it makes
+    intelligible, and must SHARE A BEAT with one of them.
+  - primary_carrier is one LOAD_BEARING used fact. At least two beats must allow it and
+    the LAST beat must allow it: the ending returns to the carrier with changed
+    understanding rather than merely stopping.
+  - Choose a carrier the story genuinely returns to. DO NOT scatter a fact across beats
+    just to satisfy the rule -- a beat may only allow a fact that beat is really about.
+
+ CARRIERS AND CLAIMS
+  - A concrete_carrier NAMES a thing. It must not narrate an event the Ledger holds only
+    as a rule or a description. "the brake that does not move" is a carrier; "the bike
+    that coasted through the junction" asserts a ride nobody reported.
+  - Do not assert a relationship between two facts that the Ledger does not itself
+    assert. Two true facts side by side are not a cause, a consequence, an equivalence,
+    a comparison, a superlative or a generalisation.
+
+ INTERNATIONAL CONTEXT
+  - If the evidence carries the explanation, cite the fact ids. If it does not, set
+    status to RESEARCH_NEEDED_BEFORE_DRAFTING and write the bounded query a future live
+    workflow should ask. Never invent the explanation."""
 
 
 def ledger_block(ledger: dict) -> str:
@@ -124,35 +193,41 @@ def ledger_block(ledger: dict) -> str:
         if isinstance(f, dict):
             prop = f.get("proposition") or f.get("text") or ""
             src = f.get("source_id") or ""
-            lines.append("  %s  %s  [%s]" % (fid, prop, src))
+            q = f.get("qualifier") or ""
+            lines.append("  %s  %s%s  [%s]"
+                         % (fid, prop, (" (%s)" % q) if q else "", src))
         else:
             lines.append("  %s  %s" % (fid, f))
     return "\n".join(lines)
 
 
-def beats_block(arch: dict) -> str:
-    lines = []
+def previous_plan_block(arch: dict) -> str:
+    """The retained plan, shown as CONTEXT. Explicitly not a constraint."""
+    lines = ["  story_spine: %s" % (arch.get("story_spine") or ""),
+             "  opening: %s" % (arch.get("opening_object_or_event") or ""),
+             "  ending_move: %s" % (arch.get("ending_move") or ""),
+             "  beats:"]
     for b in arch.get("beats") or []:
-        lines.append("  %s  facts_allowed=%s  %s"
+        lines.append("    %s  facts_allowed=%s  carrier=%r"
                      % (b.get("beat_id"), b.get("facts_allowed"),
-                        (b.get("beat_intent") or b.get("intent") or "")[:120]))
+                        (b.get("concrete_carrier") or "")[:80]))
     return "\n".join(lines)
 
 
 def sources_block(sources: list, per_source_chars: int = 6000) -> str:
-    out = []
-    for s in sources:
-        out.append("--- SOURCE %s | %s | %s\n%s"
-                   % (s.get("source_id"), s.get("publisher") or "",
-                      s.get("title") or "", (s.get("text") or "")[:per_source_chars]))
-    return "\n\n".join(out)
+    return "\n\n".join(
+        "--- SOURCE %s | %s | %s\n%s"
+        % (s.get("source_id"), s.get("publisher") or "", s.get("title") or "",
+           (s.get("text") or "")[:per_source_chars])
+        for s in sources)
 
 
 def planner_prompt(subject: str, ledger: dict, arch: dict, sources: list) -> str:
     return "\n\n".join([
         "THE COMMISSIONING SUBJECT\n%s" % subject,
         "THE FROZEN LEDGER -- the only facts you may name\n%s" % ledger_block(ledger),
-        "THE BEATS ALREADY PLANNED, with the facts each allows\n%s" % beats_block(arch),
+        "THE PREVIOUS PLAN -- context only, keep none of it if the evidence suggests "
+        "otherwise\n%s" % previous_plan_block(arch),
         "THE SOURCE MATERIAL\n%s" % sources_block(sources),
         "Reply with one JSON object.",
     ])
@@ -172,134 +247,130 @@ def parse_plan(reply: str) -> tuple:
         return None, ["the planner reply is not valid JSON: %s" % exc]
 
 
-def derive_architecture(base_arch: dict, plan: dict, ledger: dict) -> tuple:
-    """Apply Codex's hierarchy to the frozen architecture. Returns (arch, errors).
+def historical_plan_compatible(arch: dict) -> tuple:
+    """DESCRIPTIVE ONLY. Can the RETAINED beats host the current hierarchy unchanged?
 
-    Only selection and hierarchy fields move. Every prose field is carried through
-    byte-identical, so this cannot mint a fact or a relation.
+    This was once a gate that skipped the planner, which is the conflation
+    PROTOCOL_AMENDMENT_01 corrects. It is kept because the answer is a genuine finding
+    about how far the pre-2026-09-11 architectures sit from the current contract -- but
+    it never decides whether replanning runs.
     """
-    errs = []
-    h = plan.get("narrative_hierarchy") or {}
-    carrier = h.get("primary_carrier")
-    load = [f for f in (h.get("load_bearing") or []) if isinstance(f, str)]
-    sup_map = {k: [v for v in (vs or []) if isinstance(v, str)]
-               for k, vs in (h.get("supporting") or {}).items()
-               if isinstance(k, str)}
-
-    known = set(ledger)
-    base_use = set(base_arch.get("use_facts") or [])
-
-    # A FACT MAY ONLY BE NARROWED, NEVER ADDED. Anything outside the original plan's own
-    # use_facts is dropped here rather than argued with downstream: the pilot compares
-    # planning strategies on identical evidence, and a plan that reaches for a fact the
-    # incumbent never selected is not the comparison this experiment is running.
-    def keep(fs):
-        return [f for f in fs if f in known and f in base_use]
-
-    load, dropped_load = keep(load), [f for f in load if f not in base_use or f not in known]
-    sup_map = {k: keep(v) for k, v in sup_map.items() if k in known and k in base_use}
-    sup_map = {k: v for k, v in sup_map.items() if v}
-    if dropped_load:
-        errs.append("planner named load-bearing facts outside the frozen plan's own "
-                    "selection and they were dropped: %s" % sorted(dropped_load)[:8])
-
-    use = sorted(set(load) | set(sup_map))
-    if not use:
-        return None, errs + ["the plan keeps no usable fact"]
-    if carrier not in load:
-        if load:
-            errs.append("primary_carrier %r was not load-bearing; the first load-bearing "
-                        "fact was used instead" % carrier)
-            carrier = load[0]
-        else:
-            return None, errs + ["the plan declares no load-bearing fact"]
-
-    roles = {f: LOAD_BEARING for f in load}
-    roles.update({f: SUPPORTING for f in sup_map})
-
-    arch = dict(base_arch)
-    arch["use_facts"] = use
-    arch["evidence_roles"] = roles
-    arch["supports"] = sup_map
-    arch["primary_carrier"] = carrier
-
-    # BEATS: prune to the kept facts, drop beats left with nothing, assign the function.
-    fns = plan.get("beat_functions") or {}
-    beats = []
-    for b in base_arch.get("beats") or []:
-        allowed = [f for f in (b.get("facts_allowed") or []) if f in use]
-        if not allowed:
-            continue
-        nb = dict(b, facts_allowed=allowed)
-        fn = fns.get(b.get("beat_id"))
-        if fn in ST.BEAT_FUNCTIONS:
-            nb["beat_function"] = fn
-        elif not nb.get("beat_function"):
-            errs.append("beat %s has no valid beat_function from the planner"
-                        % b.get("beat_id"))
-        beats.append(nb)
+    beats = arch.get("beats") or []
     if not beats:
-        return None, errs + ["no beat survived the plan's fact selection"]
-    arch["beats"] = beats
-
-    # CUT HONESTY. A fact the plan drops must be declared cut, with a reason.
-    reasons = {o.get("fact_id"): o.get("reason")
-               for o in (h.get("deliberate_omissions") or []) if isinstance(o, dict)}
-    cut = list(base_arch.get("cut_evidence") or [])
-    already = {c.get("fact_id") if isinstance(c, dict) else c for c in cut}
-    for f in sorted(base_use - set(use)):
-        if f in already:
-            continue
-        cut.append({"fact_id": f,
-                    "reason": reasons.get(f)
-                    or "omitted by the evidence review: true but not load-bearing "
-                       "for the supported reading"})
-    arch["cut_evidence"] = cut
-    return arch, errs
+        return False, "the retained plan carries no beats"
+    occ = {}
+    for b in beats:
+        for f in (b.get("facts_allowed") or []):
+            occ[f] = occ.get(f, 0) + 1
+    recurring = [f for f in (beats[-1].get("facts_allowed") or []) if occ.get(f, 0) >= 2]
+    if recurring:
+        return True, ""
+    return False, ("the retained closing beat %s allows no fact that any earlier retained "
+                   "beat also allows, so the retained beats cannot host a recurring "
+                   "primary carrier unchanged" % beats[-1].get("beat_id"))
 
 
-def plan_subject(provider, subject_manifest: dict, *, repair_provider=None) -> dict:
-    """One planner call, one optional repair call. Returns the cell payload."""
+def unknown_ids(plan: dict, ledger: dict) -> list:
+    """Every fact id the plan names that the frozen Ledger does not carry.
+
+    THE ONE RESTRICTION THE ADAPTER STILL ENFORCES STRUCTURALLY, because it is the one
+    that is a factual permission rather than a planning choice: a plan cannot reach
+    outside the approved Ledger. Everything else is checked by the production validators
+    and reported, not corrected.
+    """
+    known = set(ledger)
+    named = set(plan.get("use_facts") or [])
+    named |= {f for b in (plan.get("beats") or []) if isinstance(b, dict)
+              for f in (b.get("facts_allowed") or [])}
+    named |= set((plan.get("evidence_roles") or {}))
+    named |= set((plan.get("supports") or {}))
+    named |= {x for v in (plan.get("supports") or {}).values() for x in (v or [])}
+    named |= {c.get("evidence_id") for c in (plan.get("cut_evidence") or [])
+              if isinstance(c, dict)}
+    if plan.get("primary_carrier"):
+        named.add(plan["primary_carrier"])
+    return sorted(x for x in named if isinstance(x, str) and x not in known)
+
+
+def build_architecture(base_arch: dict, plan: dict) -> dict:
+    """Assemble the planner's replan into an architecture object.
+
+    Assembly only. Nothing here decides anything the planner was asked to decide: no
+    fact is added or removed, no role is changed, no carrier is substituted, no beat is
+    restored. Fields the planner did not supply are carried forward from the retained
+    architecture so that claim-bearing prose it did not rewrite keeps the wording that
+    already validated.
+    """
+    arch = {k: base_arch.get(k) for k in CARRIED_FORWARD if k in base_arch}
+    for field in ("story_spine", "opening_object_or_event", "ending_move"):
+        arch[field] = plan.get(field) or base_arch.get(field)
+    arch["beats"] = [b for b in (plan.get("beats") or []) if isinstance(b, dict)]
+    arch["use_facts"] = list(plan.get("use_facts") or [])
+    arch["evidence_roles"] = dict(plan.get("evidence_roles") or {})
+    arch["supports"] = dict(plan.get("supports") or {})
+    arch["primary_carrier"] = plan.get("primary_carrier")
+    arch["cut_evidence"] = [c for c in (plan.get("cut_evidence") or [])
+                            if isinstance(c, dict)]
+    return arch
+
+
+def plan_subject(provider, subject_manifest: dict) -> dict:
+    """One replanning attempt. Assemble, validate, report. No repair, no retry."""
     gi = subject_manifest["generation_inputs"]
     ledger, base_arch = gi["ledger"], gi["architecture"]
-    prompt = planner_prompt(gi["subject"], ledger, base_arch, gi["sources"])
 
-    comp = provider.complete(PLANNER_SYSTEM, prompt)
-    plan, perrs = parse_plan(comp.text)
+    compatible, why = historical_plan_compatible(base_arch)
     out = {
         "prompt_version": PROMPT_VERSION,
-        "provider": comp.identity(),
+        "c_contract": C_CONTRACT,
         "model_calls": 1,
-        "parse_errors": perrs,
-        "plan": plan,
-        "raw_reply_sha256": CP.C.sha256_text(comp.text),
-        "prompt_sha256": CP.C.sha256_text(prompt),
+        # Descriptive, never a gate. See PROTOCOL_AMENDMENT_01.
+        "historical_plan_compatible": compatible,
+        "historical_plan_note": (HISTORICAL_PLAN_INCOMPATIBLE if not compatible else ""),
+        "historical_plan_reason": why,
     }
+
+    prompt = planner_prompt(gi["subject"], ledger, base_arch, gi["sources"])
+    comp = provider.complete(REPLANNER_SYSTEM, prompt)
+    out["provider"] = comp.identity()
+    out["prompt_sha256"] = CP.C.sha256_text(prompt)
+    out["raw_reply_sha256"] = CP.C.sha256_text(comp.text)
+
+    plan, perrs = parse_plan(comp.text)
+    out["parse_errors"] = perrs
     if plan is None:
-        out["status"] = "PLANNER_REPLY_UNUSABLE"
+        out["status"] = TECHNICAL_FAILURE
+        out["reason"] = "; ".join(perrs)
         return out
+    out["plan"] = plan
+
     if plan.get("no_supported_plan"):
-        # Section 13/18: valid, not a software failure, and not a successful article.
-        out["status"] = "NO_SUPPORTED_PLAN"
+        out["status"] = NO_SUPPORTED_PLAN
         out["reason"] = plan.get("no_supported_plan_reason") or ""
         return out
 
-    arch, derr = derive_architecture(base_arch, plan, ledger)
-    out["derivation_notes"] = derr
-    if arch is None:
-        out["status"] = "PLAN_DERIVATION_FAILED"
+    outside = unknown_ids(plan, ledger)
+    if outside:
+        out["status"] = PLAN_VALIDATION_FAILED
+        out["reason"] = ("the plan names fact ids that are not in the frozen Ledger: %s"
+                         % outside[:10])
+        out["unknown_fact_ids"] = outside
         return out
 
+    arch = build_architecture(base_arch, plan)
+    out["architecture"] = arch
     verrs = CP.check_architecture(arch, ledger)
     out["architecture_errors"] = verrs
     if verrs:
-        out["status"] = "DERIVED_PLAN_INVALID"
-        out["architecture"] = arch
+        out["status"] = PLAN_VALIDATION_FAILED
+        out["reason"] = "; ".join(verrs[:4])
         return out
 
-    out["status"] = "PASS"
-    out["architecture"] = arch
+    out["status"] = PASS
     out["plan_sha256"] = CP.C.sha256_text(json.dumps(arch, sort_keys=True))
     out["facts_kept"] = len(arch["use_facts"])
-    out["facts_in_base_plan"] = len(base_arch.get("use_facts") or [])
+    out["facts_in_ledger"] = len(ledger)
+    out["facts_in_retained_plan"] = len(base_arch.get("use_facts") or [])
+    out["beats"] = len(arch["beats"])
+    out["beats_in_retained_plan"] = len(base_arch.get("beats") or [])
     return out

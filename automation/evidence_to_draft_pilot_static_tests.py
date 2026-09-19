@@ -23,7 +23,8 @@ if str(HERE) not in sys.path:
 from evidence_to_draft_pilot import budget as BU                   # noqa: E402
 from evidence_to_draft_pilot import guarded_editor as GE           # noqa: E402
 from evidence_to_draft_pilot import planner as PL                  # noqa: E402
-from evidence_to_draft_pilot import subjects as SU                 # noqa: E402
+from evidence_to_draft_pilot import subjects as SU
+from new_engine_v1 import composition as CP                 # noqa: E402
 import codex_cli_provider as CX                                    # noqa: E402
 
 FAILURES = []
@@ -309,45 +310,83 @@ def test_generation_inputs_carry_no_labels():
               and (p.parent / "EVALUATION_ONLY.json").exists())
 
 
-# ── 11. PLAN DERIVATION MAY NARROW, NEVER ADD ────────────────────────────────
+# ── 11. REPLANNING: THE ADAPTER ASSEMBLES AND VALIDATES, IT DOES NOT PLAN ────
 def test_plan_derivation():
-    print("\n[11] plan derivation narrows and never adds")
+    print("\n[11] replanning contract (PROTOCOL_AMENDMENT_01)")
+    from new_engine_v1 import story as _ST
     ledger = {"F01": {"proposition": "a"}, "F02": {"proposition": "b"},
               "F03": {"proposition": "c"}, "F09": {"proposition": "unused"}}
     base = {"article_type": "REPORTED_ESSAY",
-            "use_facts": ["F01", "F02", "F03"],
-            "beats": [{"beat_id": "B1", "facts_allowed": ["F01", "F02"]},
-                      {"beat_id": "B2", "facts_allowed": ["F03"]}],
+            "story_spine": "old spine.",
+            "opening_object_or_event": "old opening",
+            "ending_move": "old ending",
+            "use_facts": ["F01", "F02"],
+            "beats": [{"beat_id": "B1", "facts_allowed": ["F01"]},
+                      {"beat_id": "B2", "facts_allowed": ["F02"]}],
             "cut_evidence": [], "crip_turn": "untouched prose",
             "final_lens": {"lens_claim": "untouched"}}
-    plan = {"narrative_hierarchy": {
-        "primary_carrier": "F01", "load_bearing": ["F01", "F09"],
-        "supporting": {"F02": ["F01"]},
-        "deliberate_omissions": [{"fact_id": "F03", "reason": "rode along"}]},
-        "beat_functions": {"B1": "REVEAL", "B2": "RESOLVE"}}
-    arch, errs = PL.derive_architecture(base, plan, ledger)
-    check("a fact outside the frozen plan cannot be added",
-          "F09" not in (arch["use_facts"] or []), str(arch["use_facts"]))
-    check("the drop is reported, not silent", any("outside the frozen" in e for e in errs))
-    check("the plan narrowed the selection", arch["use_facts"] == ["F01", "F02"])
-    check("omitted facts are declared cut with a reason",
-          any(c.get("fact_id") == "F03" and c.get("reason") for c in arch["cut_evidence"]))
-    check("an emptied beat is dropped", [b["beat_id"] for b in arch["beats"]] == ["B1"])
-    check("beat_function is assigned from the plan",
-          arch["beats"][0]["beat_function"] == "REVEAL")
-    check("prose fields are carried through untouched",
-          arch["crip_turn"] == base["crip_turn"]
-          and arch["final_lens"] == base["final_lens"])
-    check("roles cover exactly the used facts",
-          set(arch["evidence_roles"]) == set(arch["use_facts"]))
-    check("the carrier is load-bearing",
-          arch["evidence_roles"][arch["primary_carrier"]] == "LOAD_BEARING")
 
-    bad = dict(plan)
-    bad["narrative_hierarchy"] = dict(plan["narrative_hierarchy"], load_bearing=[],
-                                      supporting={})
-    a2, e2 = PL.derive_architecture(base, bad, ledger)
-    check("a plan keeping nothing is refused", a2 is None)
+    # THE CENTRAL POINT OF THE AMENDMENT: a fact the RETAINED plan never selected is
+    # still eligible, because eligibility is the approved Ledger and not the incumbent's
+    # choice. F09 is in the Ledger and not in base["use_facts"].
+    plan = {"story_spine": "new spine.", "opening_object_or_event": "new opening",
+            "ending_move": "new ending",
+            "beats": [{"beat_id": "N1", "facts_allowed": ["F09", "F03"],
+                       "concrete_carrier": "a thing", "why_reader_wants_next": "because",
+                       "beat_function": "REVEAL"},
+                      {"beat_id": "N2", "facts_allowed": ["F09"],
+                       "concrete_carrier": "the same thing",
+                       "beat_function": "RESOLVE"}],
+            "use_facts": ["F09", "F03"],
+            "evidence_roles": {"F09": "LOAD_BEARING", "F03": "SUPPORTING"},
+            "supports": {"F03": ["F09"]},
+            "primary_carrier": "F09",
+            "cut_evidence": [{"evidence_id": "F01", "reason": "REDUNDANT_PROOF"},
+                             {"evidence_id": "F02", "reason": "NAME_OVERLOAD"}]}
+    arch = PL.build_architecture(base, plan)
+    check("a Ledger fact the retained plan never selected is eligible",
+          "F09" in arch["use_facts"], str(arch["use_facts"]))
+    check("the planner's own beats replace the retained ones",
+          [b["beat_id"] for b in arch["beats"]] == ["N1", "N2"])
+    check("beat count may differ from the retained plan",
+          len(arch["beats"]) == 2 and len(base["beats"]) == 2)
+    check("the planner's opening and ending are used",
+          arch["opening_object_or_event"] == "new opening"
+          and arch["ending_move"] == "new ending")
+    check("claim-bearing prose the planner did not supply is carried forward",
+          arch["crip_turn"] == "untouched prose"
+          and arch["final_lens"] == base["final_lens"])
+    check("the planner's carrier is used, not substituted",
+          arch["primary_carrier"] == "F09")
+    check("cut_evidence uses the evidence_id key the contract reads",
+          all("evidence_id" in c for c in arch["cut_evidence"]))
+    check("cut reasons are from the declared set",
+          all(c["reason"] in _ST.CUT_REASONS for c in arch["cut_evidence"]))
+
+    # THE ONE RESTRICTION STILL ENFORCED STRUCTURALLY: outside the frozen Ledger.
+    bad = dict(plan, use_facts=["F09", "F77"])
+    check("a fact id outside the frozen Ledger is caught",
+          "F77" in PL.unknown_ids(bad, ledger), str(PL.unknown_ids(bad, ledger)))
+    check("an in-Ledger id is not flagged", PL.unknown_ids(plan, ledger) == [])
+
+    # THE ADAPTER DOES NOT REPAIR. A plan with a broken hierarchy must be REPORTED.
+    broken = dict(plan, primary_carrier="F03")
+    a2 = PL.build_architecture(base, broken)
+    check("a bad carrier is assembled as given, not corrected",
+          a2["primary_carrier"] == "F03")
+    check("and the production validator reports it",
+          any("primary_carrier" in e for e in CP.check_architecture(a2, ledger)))
+
+    # HISTORICAL COMPATIBILITY IS DESCRIPTIVE, NEVER A GATE.
+    ok, _ = PL.historical_plan_compatible(base)
+    check("the retained-beat check reports incompatibility", ok is False)
+    check("but it no longer gates the planner",
+          "carrier_rule_feasible" not in
+          (HERE / "evidence_to_draft_pilot" / "planner.py").read_text())
+    check("the four outcomes are distinct",
+          len({PL.PASS, PL.NO_SUPPORTED_PLAN, PL.PLAN_VALIDATION_FAILED,
+               PL.TECHNICAL_FAILURE, PL.HISTORICAL_PLAN_INCOMPATIBLE}) == 5)
+    check("C results are tagged with their contract", PL.C_CONTRACT == "C2-replanning")
 
 
 # ── 12. HEAVILY STUDIED CASES ARE EXCLUDED ───────────────────────────────────

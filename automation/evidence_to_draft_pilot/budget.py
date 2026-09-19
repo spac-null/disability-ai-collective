@@ -75,9 +75,16 @@ class Ledger:
 
     @property
     def subscription_calls(self) -> int:
-        """Every subscription invocation, successful or not. A failed call still spent
-        quota, so counting only successes would understate the budget."""
-        return sum(1 for r in self._rows
+        """Every subscription invocation, successful or not.
+
+        A FAILED call still spent quota, so counting only successes would understate the
+        budget -- which is why `calls_issued` defaults to 1 rather than to whether the
+        cell produced a usable result. The one case it is 0 is a cell that provably made
+        no request at all: a plan refused on the frozen beat layout before the planner
+        was called, and the arm C that plan never reached. Charging those would overstate
+        the budget just as badly in the other direction.
+        """
+        return sum(int(r.get("calls_issued", 1)) for r in self._rows
                    if r.get("provider") in SUBSCRIPTION_PROVIDERS)
 
     @property
