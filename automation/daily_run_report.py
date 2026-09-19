@@ -57,6 +57,9 @@ TIMEOUT = 15
 TREND_DAYS = 7          # width of the outcome strip
 RECURRENCE_RUNS = 20    # how far back "recurring stage" looks
 
+# Run-status values that mean "the pipeline itself was fine". Reported by omission.
+_RUN_OK = {"OK", "PASS", "SUCCESS", "COMPLETED", "NONE", ""}
+
 GLYPH = {"PUBLISHED": "✅", "ACCEPT": "✅", "CLEARED": "☑️", "HOLD": "⏸",
          "FAIL": "⚠️", "NONE": "·"}
 
@@ -423,7 +426,16 @@ def build_message(day):
     # records "PROVIDER_FAILURE"; the composition result records {status, stage, ...}).
     # Reading only the dict shape made 2026-09-18 report a calm "HOLD" for a run that had
     # actually failed on infrastructure -- the one line that most needed saying.
+    # ONLY WHEN ABNORMAL. run_status is "OK" on a perfectly healthy run, and the previous
+    # version rendered any non-empty string, so a normal editorial HOLD carried a bare
+    # "⚠️ OK" underneath it -- a warning glyph attached to the word for nothing being
+    # wrong, next to a verdict that WAS a stop. Infrastructure is worth a line only when
+    # it is the reason, and silence already means the pipeline ran fine.
     rstat = manifest.get("run_status")
+    if isinstance(rstat, dict) and str(rstat.get("status") or "").upper() in _RUN_OK:
+        rstat = None
+    if isinstance(rstat, str) and rstat.strip().upper() in _RUN_OK:
+        rstat = None
     if isinstance(rstat, dict) and rstat.get("status"):
         L.append("⚠️ Run status: %s at %s" % (rstat.get("status"), rstat.get("stage")))
     elif isinstance(rstat, str) and rstat.strip():
