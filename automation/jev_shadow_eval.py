@@ -289,7 +289,12 @@ def evaluate(case_list, live, api_key, timeout=180):
             "finding_type": case["finding_type"],
             "expected_route": case["expected_route"],
             "expected_materiality": case["expected_materiality"],
+            "expected_repair_route": case.get("expected_repair_route"),
             "label_authority": case["label_authority"],
+            "independence_key": case.get("independence_key"),
+            "trusted": case.get("trusted", False),
+            "scored_for_materiality": case.get("scored_for_materiality", False),
+            "scored_for_repair": case.get("scored_for_repair", False),
             "source_artifacts": case["source_artifacts"],
             "input_hash": case["input_hash"],
             "hard_conditions": case["hard_conditions"],
@@ -350,13 +355,23 @@ def evaluate(case_list, live, api_key, timeout=180):
                 },
             }
         )
-        expected = case["expected_materiality"]
-        if expected in cases.MATERIALITY_LABELS:
+        # Only a trusted label scores. An UNRESOLVED case, a detector false
+        # positive and an unlabelled exploratory finding all answer `None`, and
+        # `metrics` never counts them.
+        if case.get("scored_for_materiality"):
             record["materiality_match"] = (
-                validated["answers"]["materiality"]["choice"] == expected
+                validated["answers"]["materiality"]["choice"]
+                == case["expected_materiality"]
             )
         else:
             record["materiality_match"] = None
+        if case.get("scored_for_repair"):
+            record["repair_route_match"] = (
+                validated["answers"]["repair_route"]["choice"]
+                == case["expected_repair_route"]
+            )
+        else:
+            record["repair_route_match"] = None
         results.append(record)
     return results
 
@@ -419,15 +434,96 @@ def metrics(results):
         r.get("reported_cost_usd") for r in ok if r.get("reported_cost_usd") is not None
     ]
 
+    # Baselines. The first benchmark's 10/12 was the MINOR base rate, not
+    # accuracy: a model that answered MINOR to everything would have scored the
+    # same. Both constant answers are reported so that cannot recur unnoticed.
+    expected_minor = len(
+        [r for r in scored if r["expected_materiality"] == "MINOR"]
+    )
+    expected_material = len(scored) - expected_minor
+    constant_minor = (
+        round(expected_minor / len(scored), 4) if scored else None
+    )
+    constant_material = (
+        round(expected_material / len(scored), 4) if scored else None
+    )
+    accuracy = round(len(correct) / len(scored), 4) if scored else None
+
+    repair_scored = [
+        r
+        for r in results
+        if r.get("status") == "OK" and r.get("repair_route_match") is not None
+    ]
+    repair_correct = [r for r in repair_scored if r["repair_route_match"]]
+    repair_expected = {option: 0 for option in REPAIR_OPTIONS}
+    for r in repair_scored:
+        repair_expected[r["expected_repair_route"]] += 1
+    constant_repair = (
+        round(max(repair_expected.values()) / len(repair_scored), 4)
+        if repair_scored
+        else None
+    )
+    repair_accuracy = (
+        round(len(repair_correct) / len(repair_scored), 4) if repair_scored else None
+    )
+
+    # The two labels are independent questions. A model that collapses them --
+    # every MATERIAL answered HOLD, every MINOR answered DELETE -- is not
+    # judging repairability, and the gold set contains the counterexamples
+    # (17 Sep F4 is MATERIAL and repairable).
+    collapsed = [
+        r["case_id"]
+        for r in repair_scored
+        if (
+            r["materiality"]["choice"] == "MATERIAL"
+            and r["repair_route"]["choice"] == "HOLD"
+        )
+        or (
+            r["materiality"]["choice"] == "MINOR"
+            and r["repair_route"]["choice"] == "DELETE_PERIPHERAL_SURFACE"
+        )
+    ]
+
     return {
         "cases_total": len(results),
         "jev_called": len(called),
         "model_error": len([r for r in results if r.get("status") == "MODEL_ERROR"]),
         "scored_cases": len(scored),
         "materiality_correct": len(correct),
-        "materiality_accuracy": (
-            round(len(correct) / len(scored), 4) if scored else None
+        "materiality_accuracy": accuracy,
+        "expected_minor": expected_minor,
+        "expected_material": expected_material,
+        "constant_minor_baseline": constant_minor,
+        "constant_material_baseline": constant_material,
+        "beats_both_constant_baselines": (
+            None
+            if accuracy is None
+            else accuracy > max(constant_minor, constant_material)
         ),
+        "repair_route_scored": len(repair_scored),
+        "repair_route_correct": len(repair_correct),
+        "repair_route_accuracy": repair_accuracy,
+        "repair_route_expected_distribution": repair_expected,
+        "constant_repair_route_baseline": constant_repair,
+        "repair_beats_constant_baseline": (
+            None
+            if repair_accuracy is None
+            else repair_accuracy > constant_repair
+        ),
+        "repair_collapsed_onto_materiality": collapsed,
+        "excluded_from_materiality_accuracy": {
+            "detector_false_positive": [
+                r["case_id"]
+                for r in results
+                if r["route"] == "DETECTOR_FALSE_POSITIVE"
+            ],
+            "hard_bypass": [
+                r["case_id"] for r in results if r["route"] == "HARD_BYPASS"
+            ],
+            "untrusted_label": [
+                r["case_id"] for r in results if not r.get("trusted")
+            ],
+        },
         "false_minor": [r["case_id"] for r in false_minor],
         "high_confidence_false_minor": _high(false_minor),
         "false_material": [r["case_id"] for r in false_material],
@@ -525,8 +621,30 @@ def main(argv=None):
     parser.add_argument("--run-id", help="single historical run, exploratory")
     parser.add_argument("--live", action="store_true", help="call Jev")
     parser.add_argument("--dry-run", action="store_true", help="no network at all")
+    parser.add_argument(
+        "--balance",
+        action="store_true",
+        help="print the gold caseset's label balance and baselines, then exit",
+    )
+    parser.add_argument(
+        "--review-queue",
+        action="store_true",
+        help="print the unresolved owner-review cases, then exit",
+    )
     parser.add_argument("--engine-root", default=None)
     args = parser.parse_args(argv)
+
+    if args.balance:
+        gold = cases.gold_cases(root=args.engine_root)
+        print(json.dumps(cases.balance_report(gold), indent=1, sort_keys=True))
+        return 0
+    if args.review_queue:
+        queue = cases.review_queue_cases(root=args.engine_root)
+        for case in queue:
+            print("%s  %s  %s" % (case["case_id"], case["stage"], case["run_id"]))
+            print("   owner must decide: %s" % case["owner_must_decide"])
+        print("\n%d unresolved; none are scored." % len(queue))
+        return 0
 
     if args.live and args.dry_run:
         parser.error("--live and --dry-run are mutually exclusive")
@@ -562,6 +680,7 @@ def main(argv=None):
         "generated_at": _dt.datetime.now(_dt.timezone.utc).isoformat(),
         "mode": "LIVE" if args.live else "DRY_RUN",
         "results": results,
+        "caseset_balance": cases.balance_report(case_list),
         "metrics": metrics(results),
         "counterfactual": counterfactual(results),
     }

@@ -34,7 +34,8 @@ def check(name, condition, detail=""):
 
 
 def write_run(root, run_id, safety, manifest, packet=None, grounding=None,
-              publication=None, continuity=None):
+              publication=None, continuity=None, owner_repair=None,
+              fact_check=None):
     path = os.path.join(root, run_id)
     os.makedirs(path, exist_ok=True)
 
@@ -42,8 +43,13 @@ def write_run(root, run_id, safety, manifest, packet=None, grounding=None,
         with open(os.path.join(path, name), "w", encoding="utf-8") as fh:
             json.dump(obj, fh)
 
-    dump("SAFETY_AUDIT.json", safety)
+    if safety is not None:
+        dump("SAFETY_AUDIT.json", safety)
     dump("MANIFEST.json", manifest)
+    if owner_repair is not None:
+        dump("OWNER_COPYDESK_REPAIR.json", owner_repair)
+    if fact_check is not None:
+        dump("FACT_CHECK_ADJUDICATION.json", fact_check)
     if packet is not None:
         dump("WRITER_PACKET.json", packet)
     if grounding is not None:
@@ -216,7 +222,61 @@ def build_fixture_root():
             },
             "reader_materiality_classification": {"OPENING": "MINOR", "ENDING": "MINOR"},
         },
-        continuity="Placeholder.",
+        owner_repair={
+            "owner_authorized": True,
+            "reason": "nonmaterial factual-scope/attribution imprecisions with "
+                      "exact source-supported Grounder patches",
+            "finding_ids": ["F1"],
+            "exact_before": {"F1": "The drawing names a problem."},
+            "exact_after": {"F1": "A reviewer noted the problem."},
+        },
+        continuity="It hung at the San Francisco Museum of Modern Art.",
+    )
+    # Fast Lane analogue: a Fact Check contradiction the owner adjudicated
+    # against the primary document. No SAFETY_AUDIT at all -- the stage-scoped
+    # artifact requirement must tolerate that.
+    write_run(
+        root,
+        "fast-lane-v1-fresh-asl-whitehouse-20260912",
+        None,
+        {"decision": "PASS_WITH_MINOR_FINDINGS", "reasons": []},
+        packet=PACKET,
+        fact_check={
+            "policy": "PRIMARY_SOURCE_EXACT_MATCH",
+            "findings": [
+                {
+                    "finding_id": "C04",
+                    "raw_status": "CONTRADICTED",
+                    "adjudication": "VERIFIED_PRIMARY_SOURCE",
+                    "article_span": "their gripe is with Congress",
+                    "document_identity": "Document 29 (order, Judge Amir H. Ali)",
+                    "reason": "byte-level normalized match against the primary PDF",
+                }
+            ],
+        },
+    )
+    # A Grounding-only run: the article never reached Safety, so there is no
+    # SAFETY_AUDIT and no CONTINUITY_FINAL. This must still resolve.
+    write_run(
+        root,
+        "production-20260903T135702Z-3ea6156a",
+        None,
+        {"decision": "HOLD", "reasons": ["repair verification failed"]},
+        grounding={
+            "payload": {
+                "status": "settled",
+                "findings": [
+                    {
+                        "id": "F2",
+                        "classification": "TRUE_UNSUPPORTED",
+                        "repairable": True,
+                        "quote": "The rest goes back into the river.",
+                        "suggested_patch": "The rest -- most of it -- goes back.",
+                        "why": "The figure is derived by subtraction.",
+                    }
+                ],
+            }
+        },
     )
     return root
 
@@ -285,16 +345,247 @@ def test_extraction(root):
     )
 
     reader = [c for c in gold if c["stage"] == "READER"]
-    check("SFMOMA owner cases extracted", len(reader) == 2, str(len(reader)))
+    check("SFMOMA reader case extracted", len(reader) == 1, str(len(reader)))
     check(
         "SFMOMA labels are owner-authored",
         all(c["label_authority"] == "OWNER" for c in reader),
     )
     check(
-        "SFMOMA labels taken verbatim",
-        sorted(c["expected_materiality"] for c in reader) == ["MINOR", "MINOR"],
+        "SFMOMA label taken verbatim from the decision",
+        [c["expected_materiality"] for c in reader] == ["MINOR"],
+    )
+
+    owner = by_id["20260913-owner-repair-F1-attribution"]
+    check(
+        "owner copy-desk span read from the artifact",
+        owner["state"]["disputed_span"] == "The drawing names a problem.",
+        owner["state"]["disputed_span"],
+    )
+    check(
+        "owner copy-desk patch flagged as source-supported",
+        owner["state"]["repair_available_from_approved_material"] is True,
+    )
+
+    fc = by_id["20260912-factcheck-C04-primary-verified"]
+    check(
+        "fact check case resolves with no SAFETY_AUDIT",
+        fc["state"]["fact_check_adjudication"] == "VERIFIED_PRIMARY_SOURCE",
+    )
+    check(
+        "grounding-only run resolves with no SAFETY_AUDIT",
+        "20260903-grounding-F2-derived-litres" in by_id,
     )
     return gold
+
+
+def test_labels(gold):
+    """Both gold labels, their authority, and the bar for being scored."""
+    print("\n[gold labels]")
+    by_id = {c["case_id"]: c for c in gold}
+
+    for case in gold:
+        check(
+            "%s materiality label is valid" % case["case_id"],
+            case["expected_materiality"] is None
+            or case["expected_materiality"] in cases.MATERIALITY_LABELS,
+            str(case["expected_materiality"]),
+        )
+        check(
+            "%s repair route is valid" % case["case_id"],
+            case["expected_repair_route"] is None
+            or case["expected_repair_route"] in cases.REPAIR_ROUTES,
+            str(case["expected_repair_route"]),
+        )
+
+    f2 = by_id["20260917-grounding-F2-macaulay-linkage"]
+    f4 = by_id["20260917-grounding-F4-weather-conflation"]
+    check(
+        "materiality and repairability are separate labels",
+        f2["expected_materiality"] == f4["expected_materiality"] == "MATERIAL"
+        and f2["expected_repair_route"] == "HOLD"
+        and f4["expected_repair_route"] == "TARGETED_SUPPORTED_REPAIR",
+        "%s / %s" % (f2["expected_repair_route"], f4["expected_repair_route"]),
+    )
+    c14 = by_id["20260914-safety-entity-italian"]
+    check(
+        "a MINOR finding can still be deleted rather than passed through",
+        c14["expected_materiality"] == "MINOR"
+        and c14["expected_repair_route"] == "DELETE_PERIPHERAL_SURFACE",
+    )
+
+    check(
+        "every scored case has a trusted authority",
+        all(
+            c["label_authority"] in cases.TRUSTED_AUTHORITIES
+            for c in gold
+            if c["scored_for_materiality"]
+        ),
+    )
+    check(
+        "no UNRESOLVED case is in gold",
+        all(c["label_authority"] != "UNRESOLVED" for c in gold),
+    )
+    check(
+        "detector false positives are not scored for materiality",
+        all(
+            not c["scored_for_materiality"]
+            for c in gold
+            if c["computed_route"] == "DETECTOR_FALSE_POSITIVE"
+        ),
+    )
+    check(
+        "hard-bypassed cases are not scored for materiality",
+        all(
+            not c["scored_for_materiality"]
+            for c in gold
+            if c["computed_route"] == "HARD_BYPASS"
+        ),
+    )
+
+
+def test_review_queue():
+    """Unresolved cases are carried, described, and never scored."""
+    print("\n[owner review queue]")
+    check("review queue non-empty", len(cases.REVIEW_QUEUE) >= 5,
+          str(len(cases.REVIEW_QUEUE)))
+    check(
+        "every unresolved case says what the owner must decide",
+        all(spec.get("owner_must_decide") for spec in cases.REVIEW_QUEUE),
+    )
+    check(
+        "no unresolved case carries a label",
+        all(
+            spec.get("expected_materiality") is None
+            and spec.get("expected_repair_route") is None
+            for spec in cases.REVIEW_QUEUE
+        ),
+    )
+    gold_ids = {spec["case_id"] for spec in cases.GOLD_REGISTRY}
+    queue_ids = {spec["case_id"] for spec in cases.REVIEW_QUEUE}
+    check("gold and queue are disjoint", not (gold_ids & queue_ids))
+
+
+def test_registry_validation():
+    """The registry guards, each proved by a mutation that must be refused."""
+    print("\n[registry validation]")
+    check("the committed registry validates", cases.validate_registry() is True)
+
+    def refuses(name, registry=None, queue=None, cap=cases.ARTICLE_CAP):
+        try:
+            cases.validate_registry(
+                registry=registry if registry is not None else cases.GOLD_REGISTRY,
+                queue=queue if queue is not None else [],
+                cap=cap,
+            )
+        except cases.RegistryError:
+            check(name, True)
+            return
+        check(name, False, "accepted")
+
+    def mutate(**fields):
+        spec = dict(cases.GOLD_REGISTRY[0])
+        spec.update(fields)
+        return [spec]
+
+    refuses("invalid materiality label", mutate(expected_materiality="MAYBE"))
+    refuses("invalid repair route", mutate(expected_repair_route="DELETE"))
+    refuses("unknown stage", mutate(stage="COPYDESK"))
+    refuses("unknown authority", mutate(label_authority="VIBES"))
+    refuses(
+        "materiality label without a trusted authority",
+        mutate(label_authority="UNRESOLVED", owner_must_decide="x"),
+    )
+    refuses(
+        "repair route with no materiality label",
+        mutate(expected_materiality=None),
+    )
+    refuses(
+        "a bypassed case carrying adjudication labels",
+        mutate(expected_route="HARD_BYPASS"),
+    )
+    refuses(
+        "an UNRESOLVED case inside gold",
+        [
+            dict(
+                cases.REVIEW_QUEUE[0],
+                label_authority="UNRESOLVED",
+            )
+        ],
+    )
+    refuses(
+        "unpublished prose committed as a registry field",
+        mutate(note="x" * (cases._MAX_REGISTRY_FIELD + 1)),
+    )
+    refuses(
+        "a registry field long enough to be a retained span",
+        mutate(finding_type="y" * 240),
+    )
+
+    over_cap = []
+    for index in range(cases.ARTICLE_CAP + 1):
+        spec = dict(cases.GOLD_REGISTRY[0])
+        spec["case_id"] = "cap-%d" % index
+        spec["independence_key"] = "one-article"
+        over_cap.append(spec)
+    refuses("one article above the per-article cap", over_cap)
+
+    at_cap = over_cap[: cases.ARTICLE_CAP]
+    try:
+        ok = cases.validate_registry(registry=at_cap, queue=[])
+    except cases.RegistryError as exc:  # noqa: BLE001
+        ok = "raised: %s" % exc
+    check("exactly at the cap is allowed", ok is True, str(ok))
+
+    duplicates = [cases.GOLD_REGISTRY[0], dict(cases.GOLD_REGISTRY[0])]
+    refuses("duplicate case_id", duplicates)
+
+
+def test_balance(gold):
+    """Balance reporting, and the baselines a model has to beat."""
+    print("\n[balance reporting]")
+    # From the registry alone: no artifacts, so this holds on any host.
+    report = cases.registry_balance()
+    check(
+        "minor and material both present",
+        report["minor"] >= 10 and report["material"] >= 10,
+        report["minor_material_ratio"],
+    )
+    check(
+        "not trivially solvable by a constant answer",
+        report["trivially_solvable_by_constant_materiality"] is False,
+        str(report["constant_minor_baseline"]),
+    )
+    check(
+        "baselines are complementary",
+        abs(
+            report["constant_minor_baseline"]
+            + report["constant_material_baseline"]
+            - 1.0
+        )
+        < 1e-9,
+    )
+    check(
+        "per-article cap holds in the resolved set",
+        report["max_cases_from_one_article"] <= cases.ARTICLE_CAP,
+        str(report["max_cases_from_one_article"]),
+    )
+    check(
+        "cases drawn from many articles",
+        report["articles"] >= 15,
+        str(report["articles"]),
+    )
+    check(
+        "repair routes are reported per option",
+        set(report["repair_route_counts"]) == set(cases.REPAIR_ROUTES),
+    )
+    check(
+        "unresolved cases are outside the balance",
+        report["by_authority"].get("UNRESOLVED") is None,
+    )
+    check(
+        "the fixture-backed subset also reports balance",
+        cases.balance_report(gold)["cases_total"] == len(gold),
+    )
 
 
 def test_routing(gold):
@@ -551,6 +842,121 @@ def test_metrics(gold):
     return results
 
 
+def test_repair_scoring(gold):
+    """Repair route is scored separately, and only where the label is trusted."""
+    print("\n[repair route scoring]")
+
+    scored = [c for c in gold if c["scored_for_repair"]]
+    if not scored:
+        check("fixture provides a repair-scored case", False)
+        return
+
+    # evaluate() walks the list in order and calls only the ADJUDICATE cases,
+    # so the nth call is the nth adjudicable case.
+    adjudicable = [c for c in gold if c["computed_route"] == "ADJUDICATE"]
+
+    def run(choose):
+        pending = list(adjudicable)
+
+        def fake(payload, api_key, timeout=180):
+            case = pending.pop(0)
+            materiality, repair = choose(case)
+            return mock_response(materiality, repair, 0.2), 40, None
+
+        original = ev.call_jev
+        ev.call_jev = fake
+        try:
+            return ev.evaluate(gold, live=True, api_key="k")
+        finally:
+            ev.call_jev = original
+
+    # Every answer correct on both axes.
+    perfect = run(
+        lambda c: (
+            c["expected_materiality"] or "MINOR",
+            c["expected_repair_route"] or "HOLD",
+        )
+    )
+    m = ev.metrics(perfect)
+    check("repair accuracy computed", m["repair_route_accuracy"] == 1.0,
+          str(m["repair_route_accuracy"]))
+    check(
+        "repair scoring counts only trusted adjudicated cases",
+        m["repair_route_scored"] == len(scored),
+        "%s vs %s" % (m["repair_route_scored"], len(scored)),
+    )
+    check(
+        "materiality and repair are scored independently",
+        m["scored_cases"] >= m["repair_route_scored"] - len(scored)
+        and m["materiality_accuracy"] == 1.0,
+    )
+
+    # A model that always answers HOLD: right on the HOLD cases only.
+    always_hold = run(lambda c: ("MATERIAL", "HOLD"))
+    mh = ev.metrics(always_hold)
+    check(
+        "a constant repair answer does not score 1.0",
+        mh["repair_route_accuracy"] is not None and mh["repair_route_accuracy"] < 1.0,
+        str(mh["repair_route_accuracy"]),
+    )
+    check(
+        "constant repair baseline reported",
+        mh["constant_repair_route_baseline"] is not None,
+    )
+    check(
+        "collapsing repair onto materiality is detected",
+        bool(mh["repair_collapsed_onto_materiality"]),
+    )
+    check(
+        "both constant materiality baselines reported",
+        mh["constant_minor_baseline"] is not None
+        and mh["constant_material_baseline"] is not None,
+    )
+    check(
+        "a constant materiality answer is measured against its own baseline",
+        mh["beats_both_constant_baselines"] is False,
+        str(mh["materiality_accuracy"]),
+    )
+    check(
+        "bypassed and untrusted cases are named as excluded",
+        set(mh["excluded_from_materiality_accuracy"])
+        == {"detector_false_positive", "hard_bypass", "untrusted_label"},
+    )
+    for record in always_hold:
+        if record.get("route") != "ADJUDICATE":
+            check(
+                "%s never scored" % record["case_id"],
+                record.get("materiality_match") is None
+                and record.get("repair_route_match") is None,
+            )
+    return always_hold
+
+
+def test_no_unpublished_prose():
+    """Nothing in the registry is a retained span; the artifacts hold those."""
+    print("\n[no unpublished prose committed]")
+    for spec in list(cases.GOLD_REGISTRY) + list(cases.REVIEW_QUEUE):
+        for key, value in spec.items():
+            if not isinstance(value, str):
+                continue
+            limit = (
+                cases._MAX_REGISTRY_FIELD
+                if key in ("note", "owner_must_decide")
+                else 200
+            )
+            check(
+                "%s.%s within reference length" % (spec["case_id"], key),
+                len(value) <= limit,
+                "%d chars" % len(value),
+            )
+    source = open(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "jev_shadow_cases.py"),
+        encoding="utf-8",
+    ).read()
+    check("no article body committed", "\n\n## " not in source)
+    check("registry validation enforces the limit", "_MAX_REGISTRY_FIELD" in source)
+
+
 def test_secrets_and_paths(results):
     print("\n[result path and secret hygiene]")
     repo_root = os.path.dirname(os.path.dirname(os.path.abspath(ev.__file__)))
@@ -600,10 +1006,16 @@ def main():
     root = build_fixture_root()
     try:
         gold = test_extraction(root)
+        test_labels(gold)
         test_routing(gold)
+        test_review_queue()
+        test_registry_validation()
+        test_balance(gold)
         test_request_schema(gold)
         test_validation()
         test_malformed_run(gold)
+        test_repair_scoring(gold)
+        test_no_unpublished_prose()
         results = test_metrics(gold)
         test_secrets_and_paths(results)
         test_no_production_imports()
