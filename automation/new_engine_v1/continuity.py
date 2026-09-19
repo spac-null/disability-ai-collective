@@ -176,6 +176,24 @@ def semantic_delta(before: str, after: str) -> dict:
     b, a = _surface(before), _surface(after)
     b_words = _content_words(before, fold=True)
     added_surface = {k: sorted(a[k] - b[k]) for k in a}
+    # THE REFERENCE SIDE MAY NOT SKIP SENTENCE-INITIAL NAMES (2026-09-19). _surface reads
+    # both texts in prose mode, which drops a capitalised token that opens a sentence --
+    # correct when asking "is this a name?", wrong when asking "was this name already
+    # here?". An edit that merely moves a name off the front of its sentence then reads as
+    # the editor introducing it.
+    #
+    # Measured on production-20260916T070723Z-5a4e7891, which it cost the day:
+    #   draft: "Cem Behar gives notations in the book as examples..."   -> {Behar}
+    #   final: "Notation, by contrast, Cem Behar calls a vague suggestion..." -> {Behar, Cem}
+    # so the delta reported "editing added entities: ['Cem']" for a person named in both
+    # texts and carried by 28 Ledger facts. Nothing was added.
+    #
+    # The `after` side keeps prose mode, so an ordinary capitalised word opening a rewritten
+    # sentence ("Notation") is still not mistaken for a name. Only the reference changes --
+    # exactly the asymmetry story.factual_surface_audit already uses for the approved
+    # surface. An entity absent from the draft in ANY position is still reported.
+    added_surface["entities"] = sorted(
+        a["entities"] - _entities(before, skip_sentence_initial=False))
     rb, ra = relations(before), relations(after)
     added_rel = {k: ra[k] - rb.get(k, 0) for k in ra if ra[k] > rb.get(k, 0)}
     new_content = sorted(w for w in _content_words(after)
