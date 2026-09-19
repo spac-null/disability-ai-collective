@@ -28,6 +28,7 @@ if str(AUTOMATION) not in sys.path:
 
 from evidence_to_draft_pilot import arms as AR                     # noqa: E402
 from evidence_to_draft_pilot import budget as BU                   # noqa: E402
+from evidence_to_draft_pilot import origin as OR                   # noqa: E402
 
 ROOT = pathlib.Path("/srv/data/cripminds-new-engine-v1/experiments/"
                     "evidence-to-draft-pilot")
@@ -128,13 +129,34 @@ def write_variants(ledger: BU.Ledger, run: str) -> dict:
                 a["deterministic_checks_error"] = str(exc)[:200]
         row["arms"][arm] = a
 
+    # DISCIPLINED OMISSION vs A THIN ARTICLE (owner's distinction, measured not judged).
+    #
+    # C is not to be rewarded merely for using fewer facts: a sparse plan trivially
+    # reduces factual risk. The separation needs two numbers that move independently --
+    # how much evidence the arm actually carried, and how much evidence the blind
+    # reviewers said the article NEEDED and dropped. Fewer facts with few needed-omission
+    # flags is discipline; fewer facts with many is thinness. Neither number is a verdict
+    # and the report prints both rather than a ratio.
+    row["evidence_load"] = {
+        "ledger_facts": subj["ledger_facts"],
+        "retained_plan_use_facts": len(gi["architecture"].get("use_facts") or []),
+        "retained_plan_beats": len(gi["architecture"].get("beats") or []),
+        "note": "A and B draft the retained plan, so their evidence load is the "
+                "retained plan's. Only C selects its own.",
+    }
+
     p = ledger.load_cell("%s:plan" % run)
     if p and p["status"] == "OK":
         pr = p["result"]
         row["plan"] = {"status": pr["status"],
+                       "c_contract": pr.get("c_contract"),
                        "calls": p["provider_calls_issued"],
                        "facts_kept": pr.get("facts_kept"),
-                       "facts_in_base_plan": pr.get("facts_in_base_plan"),
+                       "beats": pr.get("beats"),
+                       "beats_in_retained_plan": pr.get("beats_in_retained_plan"),
+                       "facts_in_retained_plan": pr.get("facts_in_retained_plan"),
+                       "historical_plan_compatible":
+                           pr.get("historical_plan_compatible"),
                        "architecture_errors": pr.get("architecture_errors"),
                        "derivation_notes": pr.get("derivation_notes")}
         plan_obj = pr.get("plan") or {}
@@ -149,10 +171,30 @@ def write_variants(ledger: BU.Ledger, run: str) -> dict:
     if patches:
         (d / "PATCHES.json").write_text(json.dumps(patches, indent=1,
                                                    ensure_ascii=False))
+        if pr.get("status") == "PASS":
+            row["evidence_load"]["c_use_facts"] = pr.get("facts_kept")
+            row["evidence_load"]["c_beats"] = pr.get("beats")
+
     rev = ROOT / "reviews" / ("%s.json" % run)
     if rev.exists():
         rv = json.loads(rev.read_text())
         row["review"] = rv["reconciliation"]
+        # The needed-omission signal, per arm, from both reviewers. Counted, not scored.
+        omitted = {}
+        for who in ("claude", "codex"):
+            for arm, v in ((rv.get(who) or {}).get("by_arm") or {}).items():
+                omitted.setdefault(arm, {})[who] = len(
+                    v.get("useful_evidence_omitted") or [])
+        row["needed_evidence_omitted_flags"] = omitted
+
+        # TASK 3: where each reported defect actually came from. Deterministic.
+        a_txt = (ledger.load_cell("%s:A" % run) or {}).get("result") or {}
+        b_txt = (ledger.load_cell("%s:B" % run) or {}).get("result") or {}
+        row["failure_origin"] = OR.classify_subject(
+            draft=draft,
+            a_text=a_txt.get("article_text") or "",
+            b_text=b_txt.get("article_text") or "",
+            reviews={w: rv.get(w) for w in ("claude", "codex") if rv.get(w)})
     return row
 
 

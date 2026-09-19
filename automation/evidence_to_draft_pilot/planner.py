@@ -57,8 +57,8 @@ if str(AUTOMATION) not in sys.path:
 from new_engine_v1 import composition as CP                        # noqa: E402
 from new_engine_v1 import story as ST                              # noqa: E402
 
-PROMPT_VERSION = "codex-replanner-v2"
-C_CONTRACT = "C2-replanning"
+PROMPT_VERSION = "codex-replanner-v2.1"
+C_CONTRACT = "C2.1-replanning-with-lens"
 
 LOAD_BEARING = "LOAD_BEARING"
 SUPPORTING = "SUPPORTING"
@@ -75,9 +75,19 @@ HISTORICAL_PLAN_INCOMPATIBLE = "HISTORICAL_PLAN_INCOMPATIBLE"
 # Fields the planner may not touch unless it supplies its own: these carry claim-bearing
 # prose whose support is checked against the ledger. Carried forward from the retained
 # architecture when the planner does not replace them.
-CARRIED_FORWARD = ("article_type", "crip_turn", "final_lens", "lens_realization",
-                   "reader_initial_state", "crip_turn_rereads", "definitions",
-                   "prohibitions")
+# THE LENS IS PART OF THE PLAN, NOT AN INHERITANCE. `final_lens`, `crip_turn` and
+# `crip_turn_rereads` NAME BEAT IDS -- story_beat_before, story_beat_after, the beat the
+# turn re-reads -- and the turn must name a noun from that beat's concrete_carrier.
+# Carrying them forward onto a replanned beat list left all four held-out plans pointing
+# at beats that no longer existed (B6, B7, B8), which is PROTOCOL_AMENDMENT_02. The
+# planner supplies them now.
+#
+# `verdict` stays carried forward inside final_lens where present: it is the Worth gate's
+# ruling about whether the lens is publishable, not a planning choice, and a planner that
+# could set it would be marking its own homework.
+CARRIED_FORWARD = ("article_type", "lens_realization", "reader_initial_state",
+                   "definitions", "prohibitions")
+LENS_FIELDS = ("crip_turn", "crip_turn_rereads", "final_lens")
 
 
 REPLANNER_SYSTEM = """You are replanning one commissioned article from its evidence.
@@ -127,6 +137,19 @@ Reply with ONE JSON object and nothing else:
  "supports": {"F03": ["F07"]},
  "primary_carrier": "F07",
  "cut_evidence": [{"evidence_id": "F44", "reason": "BACKGROUND_NOT_NEEDED"}],
+
+ "crip_turn": "the sentence that re-reads an earlier beat through disability experience",
+ "crip_turn_rereads": "B2",
+ "final_lens": {
+   "lens_claim": "what the article finally claims, in one sentence",
+   "evidence_basis": ["F07", "F12"],
+   "what_changes_for_the_reader": "...",
+   "story_beat_before": "B2",
+   "crip_turn": "the same turn sentence",
+   "story_beat_after": "B3",
+   "before_reading": "what a reader assumed before",
+   "after_reading": "what they understand instead",
+   "crip_turn_carrier": "the concrete thing the turn lands on"},
 
  "international_reader_context": [
    {"term": "an institution, acronym or local term an international reader needs",
@@ -179,6 +202,31 @@ reported, not repaired.
   - Do not assert a relationship between two facts that the Ledger does not itself
     assert. Two true facts side by side are not a cause, a consequence, an equivalence,
     a comparison, a superlative or a generalisation.
+
+ THE LENS IS PART OF YOUR PLAN, AND IT MUST POINT AT YOUR OWN BEATS
+  - story_beat_before, story_beat_after and crip_turn_rereads must all be beat ids from
+    YOUR beats list. Do not reuse beat ids from the previous plan.
+  - story_beat_before must come EARLIER in your beats list than story_beat_after.
+  - The crip_turn must NAME something from the concrete_carrier of the beat it re-reads.
+    A turn that shares no noun with that carrier is an aside, not a turn.
+  - evidence_basis lists Ledger fact ids.
+
+ ARCHITECT FIELDS ARE SEMANTIC, NOT STAGE DIRECTIONS
+  Write what is TRUE of the story, never an instruction about how to write it. This is
+  checked mechanically against a word list. These phrases are BANNED anywhere in
+  story_spine, opening_object_or_event, ending_move, crip_turn or the lens fields:
+    return to, go back to, ask the reader, remind the reader, notice, pivot,
+    land with, land on, end on, end beat on, close the paragraph, callback, punchline,
+    rhetorical question, surprise sentence, read ... again, state the paradox,
+    open with, finish on.
+  Not: "Return to the propped panels." Instead: "The panels are still propped against
+  the wall, and now unpriced."
+
+ EVERY NAME AND NUMBER IN YOUR OWN PROSE MUST BE CARRIED BY AN APPROVED FACT
+  Your architect fields are audited for names and numbers that no Ledger fact carries.
+  If the Ledger says "the regional authority", do not write "Lombardy's". If a figure is
+  not in a fact, do not put it in a carrier. This applies to every prose field you write,
+  not only to the fact ids you list.
 
  INTERNATIONAL CONTEXT
   - If the evidence carries the explanation, cite the fact ids. If it does not, set
@@ -289,6 +337,11 @@ def unknown_ids(plan: dict, ledger: dict) -> list:
               if isinstance(c, dict)}
     if plan.get("primary_carrier"):
         named.add(plan["primary_carrier"])
+    basis = (plan.get("final_lens") or {}).get("evidence_basis")
+    if isinstance(basis, str):
+        named.add(basis)
+    elif isinstance(basis, list):
+        named |= {x for x in basis if isinstance(x, str)}
     return sorted(x for x in named if isinstance(x, str) and x not in known)
 
 
@@ -302,8 +355,15 @@ def build_architecture(base_arch: dict, plan: dict) -> dict:
     already validated.
     """
     arch = {k: base_arch.get(k) for k in CARRIED_FORWARD if k in base_arch}
-    for field in ("story_spine", "opening_object_or_event", "ending_move"):
+    for field in ("story_spine", "opening_object_or_event", "ending_move",
+                  "crip_turn", "crip_turn_rereads"):
         arch[field] = plan.get(field) or base_arch.get(field)
+    # The lens, from the planner, but keeping the Worth gate's verdict.
+    lens = dict(plan.get("final_lens") or base_arch.get("final_lens") or {})
+    base_lens = base_arch.get("final_lens") or {}
+    if base_lens.get("verdict") is not None and "verdict" not in (plan.get("final_lens") or {}):
+        lens["verdict"] = base_lens["verdict"]
+    arch["final_lens"] = lens
     arch["beats"] = [b for b in (plan.get("beats") or []) if isinstance(b, dict)]
     arch["use_facts"] = list(plan.get("use_facts") or [])
     arch["evidence_roles"] = dict(plan.get("evidence_roles") or {})

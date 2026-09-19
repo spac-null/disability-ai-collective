@@ -386,7 +386,24 @@ def test_plan_derivation():
     check("the four outcomes are distinct",
           len({PL.PASS, PL.NO_SUPPORTED_PLAN, PL.PLAN_VALIDATION_FAILED,
                PL.TECHNICAL_FAILURE, PL.HISTORICAL_PLAN_INCOMPATIBLE}) == 5)
-    check("C results are tagged with their contract", PL.C_CONTRACT == "C2-replanning")
+    check("C results are tagged with their contract",
+          PL.C_CONTRACT == "C2.1-replanning-with-lens", PL.C_CONTRACT)
+    # PROTOCOL_AMENDMENT_02: the lens names beat ids, so it is planned with the beats
+    # and never inherited onto a replanned beat list.
+    check("the lens is not carried forward",
+          not set(PL.LENS_FIELDS) & set(PL.CARRIED_FORWARD), str(PL.CARRIED_FORWARD))
+    check("the planner's lens is used when supplied",
+          PL.build_architecture(base, dict(plan, final_lens={"lens_claim": "new"},
+                                           crip_turn="new turn"))["crip_turn"]
+          == "new turn")
+    check("the Worth gate's verdict is still carried forward, not planned",
+          PL.build_architecture(
+              dict(base, final_lens={"lens_claim": "old", "verdict": "STRONG_DIRECT_LENS"}),
+              dict(plan, final_lens={"lens_claim": "new"})
+          )["final_lens"]["verdict"] == "STRONG_DIRECT_LENS")
+    check("a lens evidence_basis id outside the Ledger is caught",
+          "F77" in PL.unknown_ids(
+              dict(plan, final_lens={"evidence_basis": ["F77"]}), ledger))
 
 
 # ── 12. HEAVILY STUDIED CASES ARE EXCLUDED ───────────────────────────────────
