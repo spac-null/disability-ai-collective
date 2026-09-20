@@ -504,6 +504,91 @@ check("run_shadow survives provider construction failure",
 # The shadow was merged with no caller, so the flag could not produce a canary.
 # composition.run_semantic_claim_shadow is the one call site; these pin the three
 # properties that let it sit inside a production run.
+
+# ── N. VERBATIM IS COMPUTED FROM THE SPAN, NOT ASKED OF THE MODEL ────────────
+# The check compared the shadow's derivation against the BACKBONE ATOM's, a statement
+# about a different string. Of 11 provenance errors across the six-draft replay and the
+# canary, 9 had a claim_text that IS the article's contiguous wording; all 11 had a
+# non-literal atomic_claim, which is what the check was reading.
+print("\nN. derivation is computed from the anchored span")
+from new_engine_v1 import claims as _CL                            # noqa: E402
+
+PARENT = "The streets around the museum were unusually quiet, and the men capitalised on that."
+CASES = [
+    # (claim, span, expected, why)
+    (PARENT, PARENT, "VERBATIM", "the whole sentence"),
+    ("The men capitalised on that.", PARENT, "VERBATIM",
+     "a contiguous substring, sentence-initial capital folded"),
+    ("Both numbers come from a project page.",
+     "Both numbers come from a project page presenting an interactive comparison.",
+     "DERIVED", "a truncation closed with a full stop is not the article's wording"),
+    ("Maria sat down.", "She sat down.", "DERIVED", "a resolved pronoun"),
+    ("The room was empty.", "Nobody was in the room.", "DERIVED", "a paraphrase"),
+    ("no service existed the trust knew",
+     "The report states that no service existed, and that the trust knew.",
+     "DERIVED", "two fragments that exist only separately"),
+    ('"unrealistic"', "the coroner said \u201cunrealistic\u201d here", "DERIVED",
+     "quote shape is NOT folded -- existing policy, unchanged"),
+    ("the  men   capitalised on that", PARENT, "VERBATIM",
+     "whitespace IS collapsed -- existing policy, unchanged"),
+]
+for claim, span, want, why in CASES:
+    got = _CL.derivation_of(claim, span)
+    check("%s -> %s (%s)" % (claim[:34], want, why), got == want, got)
+
+# The shadow must now report the computed value, whatever the model said, and must fail
+# only when the model claimed the article's words for text that is not.
+N_ART = ("The streets around the museum were unusually quiet, and the men capitalised "
+         "on that. She sat down.")
+nsents = CM.segment(N_ART)
+N_RECORDS = [{"sentence_id": x["sentence_id"], "parent_exact_span": x["exact_span"],
+              "type": "EMPIRICAL",
+              "atoms": [{"atomic_id": x["sentence_id"] + "-A1",
+                         # the backbone atom is DERIVED -- a resolved pronoun, exactly the
+                         # case that used to condemn a verbatim claim_text
+                         "atomic_claim": "The men capitalised on the quiet streets.",
+                         "claim_type": "EMPIRICAL", "derivation": "DERIVED"}]}
+             for x in nsents]
+
+
+def _n(claim_text, said, sid="S001"):
+    a = SH.enrich(Fake({"semantic_claims": [{
+        "semantic_id": "SC1", "sentence_id": sid, "atomic_id": sid + "-A1",
+        "claim_text": claim_text, "claim_type": "EMPIRICAL", "derivation": said,
+        "attribution": None, "qualifiers": [], "relations": [], "event_referents": [],
+        "resolved_referents": [], "unresolved_referents": []}]}),
+        "N", N_ART, nsents, N_RECORDS)
+    SH.validate(a, N_ART, nsents, N_RECORDS)
+    return a
+
+
+ok = _n("The men capitalised on that.", "VERBATIM")
+check("a verbatim claim_text VALIDATES even though its backbone atom is DERIVED",
+      ok["validation_result"]["ok"], ok["validation_result"])
+check("and the recorded derivation is the computed one",
+      ok["semantic_claims"][0]["derivation"] == "VERBATIM"
+      and ok["semantic_claims"][0]["derivation_source"] == "COMPUTED_FROM_SPAN",
+      ok["semantic_claims"][0].get("derivation"))
+
+bad = _n("The men capitalised on the unusual quiet.", "VERBATIM")
+check("a paraphrase labelled VERBATIM still FAILS",
+      not bad["validation_result"]["ok"], bad["validation_result"])
+check("and the error names the span, not the atom",
+      any("contiguous wording" in e
+          for e in bad["validation_result"]["errors"]),
+      str(bad["validation_result"]["errors"])[:160])
+
+conservative = _n("The men capitalised on the unusual quiet.", "DERIVED")
+check("a paraphrase honestly labelled DERIVED passes and stays DERIVED",
+      conservative["validation_result"]["ok"]
+      and conservative["semantic_claims"][0]["derivation"] == "DERIVED",
+      conservative["validation_result"])
+
+pron = _n("Maria sat down.", "VERBATIM", sid="S002")
+check("a resolved pronoun claimed VERBATIM still FAILS",
+      not pron["validation_result"]["ok"], pron["validation_result"])
+
+
 print("\nM. active-path invocation")
 from new_engine_v1 import composition as _CP                       # noqa: E402
 

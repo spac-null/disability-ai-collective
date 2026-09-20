@@ -305,11 +305,10 @@ def enrich(provider, article_id: str, article_text: str, sentences: list,
 def validate(artifact: dict, article_text: str, sentences: list, records: list) -> dict:
     """Deterministic. Nothing here consults a model. An artifact that fails is marked
     SHADOW_INVALID and discarded; the article is untouched either way."""
+    from . import claims as CL          # the one owner of "the article's own words"
     errs: list[str] = []
     sent_by = {s["sentence_id"]: s for s in sentences}
     atom_types = {a.get("atomic_id"): a.get("claim_type")
-                  for r in (records or []) for a in (r.get("atoms") or [])}
-    atom_deriv = {a.get("atomic_id"): a.get("derivation")
                   for r in (records or []) for a in (r.get("atoms") or [])}
 
     if artifact.get("article_sha") != sha256_text(article_text):
@@ -337,9 +336,32 @@ def validate(artifact: dict, article_text: str, sentences: list, records: list) 
         if aid in atom_types and atom_types[aid] == "INTERPRETIVE" \
                 and sc.get("claim_type") == "EMPIRICAL":
             errs.append("%s retypes an INTERPRETIVE atom as EMPIRICAL" % aid)
-        if aid in atom_deriv and atom_deriv[aid] == "DERIVED" \
-                and sc.get("derivation") == "VERBATIM":
-            errs.append("%s marks DERIVED content VERBATIM" % aid)
+        # DERIVATION IS COMPUTED, NOT ASKED FOR (2026-09-20).
+        #
+        # This compared the shadow's `derivation` against the BACKBONE ATOM's, which is
+        # a statement about a DIFFERENT STRING: the atom's own rewritten claim, not the
+        # shadow's claim_text. `atomize` resolves a pronoun to make an atom stand alone,
+        # so the atom is DERIVED; the shadow's claim_text for the same atom may still be
+        # the sentence's own words, and was.
+        #
+        # Measured over the six-draft replay plus the canary: 11 provenance errors, and
+        # in 9 of them claim_text IS the article's contiguous wording under
+        # claims.is_literal_span -- the authoritative test, unchanged. Every one of the
+        # 11 had a non-literal atomic_claim, which is what the check was actually reading.
+        # The two real errors were truncations that drop the rest of the sentence and
+        # close it with a full stop ("Both numbers come from a project page.").
+        #
+        # So the field is no longer trusted from the model at all. claims.derivation_of
+        # decides it from the anchored parent span, by the same rule the backbone uses,
+        # and a model that labels a paraphrase VERBATIM is still an error -- the label is
+        # simply no longer how that is detected. Nothing is relaxed: a resolved pronoun,
+        # a paraphrase, and two fragments only separately present all compute DERIVED.
+        computed = CL.derivation_of(sc.get("claim_text") or "", sent["exact_span"])
+        if sc.get("derivation") == "VERBATIM" and computed == "DERIVED":
+            errs.append("%s claims VERBATIM but claim_text is not the article's "
+                        "contiguous wording in %s" % (aid, sid))
+        sc["derivation"] = computed
+        sc["derivation_source"] = "COMPUTED_FROM_SPAN"
         span = sent["exact_span"]
 
         def frag_ok(frag):

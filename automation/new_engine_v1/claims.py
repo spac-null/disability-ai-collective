@@ -229,7 +229,6 @@ def _record(sentence: dict, entry: dict) -> dict:
     atoms_in = entry.get("atoms") or []
     if not atoms_in:
         return _unresolved(sentence, "no atoms returned")
-    span_norm = " ".join(sentence["exact_span"].split()).lower()
     atoms = []
     for i, a in enumerate(atoms_in, 1):
         claim = (a.get("claim") or "").strip()
@@ -237,7 +236,7 @@ def _record(sentence: dict, entry: dict) -> dict:
             return _unresolved(sentence, "empty atom")
         ctype = a.get("claim_type") if a.get("claim_type") in (EMPIRICAL, INTERPRETIVE) \
             else (INTERPRETIVE if stype == INTERPRETIVE else EMPIRICAL)
-        literal = " ".join(claim.split()).lower() in span_norm
+        literal = is_literal_span(claim, sentence["exact_span"])
         atoms.append({
             "atomic_id": "%s-A%d" % (sentence["sentence_id"], i),
             "atomic_claim": claim,
@@ -250,6 +249,28 @@ def _record(sentence: dict, entry: dict) -> dict:
     return {"sentence_id": sentence["sentence_id"],
             "parent_exact_span": sentence["exact_span"],
             "type": stype, "atoms": atoms}
+
+
+# THE ONE DEFINITION OF "THE ARTICLE'S OWN WORDS" (2026-09-20).
+# This test was inline in `atomize` and the semantic shadow asked a model for the same
+# judgement instead of computing it, so the two could disagree -- and did, on 9 of the 11
+# provenance errors in the six-draft replay and the canary. The shadow's VERBATIM was
+# correct every time; the validator was comparing the shadow's claim_text status against
+# the backbone's ATOMIC_CLAIM status, which is a different string.
+#
+# Whitespace-collapsed, casefolded, contiguous containment in the parent span. Nothing
+# else: no quote folding, no unicode folding, no stemming, no fragment joining. A
+# paraphrase, a pronoun resolution and two fragments that are only separately present all
+# fail it, which is the point.
+def is_literal_span(claim: str, span: str) -> bool:
+    """Is `claim` the article's own contiguous wording inside `span`?"""
+    return " ".join((claim or "").split()).lower() in \
+           " ".join((span or "").split()).lower()
+
+
+def derivation_of(claim: str, span: str) -> str:
+    """VERBATIM or DERIVED, decided from the anchored span -- never asked of a model."""
+    return "VERBATIM" if is_literal_span(claim, span) else "DERIVED"
 
 
 def claims_for_classification(records: list) -> list:
