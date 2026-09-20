@@ -3213,10 +3213,21 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
         else:
             unadmitted.append(h)
     if unadmitted:
+        # SAY WHICH PROBLEM IT IS (2026-09-20). "no negative fact behind them" described
+        # two different situations and named neither: a sentence the Ledger does support
+        # but whose citation the article never reached, and a sentence with nothing of the
+        # kind anywhere in the Ledger. Both block; only the second is an invention, and a
+        # reader of the hold could not tell them apart. negative_admission_audit now
+        # returns the distinction on each hit.
+        by_basis = {}
+        for h in unadmitted:
+            by_basis.setdefault(h.get("basis") or ST.NO_EVIDENCE_SUPPORT, []).append(h)
         blocking.append(
             "UNSUPPORTED_NEGATIVES: %d negative-shaped sentence(s) with no negative fact "
-            "behind them: %s"
-            % (len(unadmitted), [h["sentence"][:90] for h in unadmitted][:4]))
+            "behind them (%s): %s"
+            % (len(unadmitted),
+               ", ".join("%s=%d" % (k, len(v)) for k, v in sorted(by_basis.items())),
+               [(h.get("basis"), h["sentence"][:90]) for h in unadmitted][:4]))
     # Only a HIGH-confidence shape blocks. A bare everyday token that happens to occur
     # in a cut fact is recorded as telemetry and settled by the controls that can read a
     # claim rather than a string.

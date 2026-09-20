@@ -199,6 +199,44 @@ The preflight tool checks these in order:
 3. Otherwise (every origin-only commit is `SAFE_ROUTINE_CONTENT`, zero
    overlap) → `SAFE_REBASE_REQUIRED`.
 
+## The Claude subscription window — 08:45–10:00 Europe/Rome
+
+There is a second kind of concurrency, and it is not about `main`. Every
+Claude-family stage of the daily run is served by **one claude.ai
+subscription**, and `automation/claude_cli_provider.py` has no paid fallback
+by policy: if the subscription cannot serve a call, the stage fails and the
+day is lost. The article cron fires at **09:00 Europe/Rome**.
+
+So between **08:45 and 10:00 Europe/Rome, production has first call on the
+subscription.** Crip Minds *automated* work that spends it — benchmarks,
+shadow replays, calibration sweeps, probe batches — should not be started
+inside that window.
+
+This is a rule about scheduling, not an enforcement mechanism:
+
+- It applies to Crip Minds automated jobs and experiments only. It is **not**
+  a reason to kill anything, and it says nothing about a person working
+  interactively.
+- `automation/production_window_guard.py` is the voluntary check. A Python
+  job calls `assert_outside_production_window("<job name>")`; a shell job
+  runs `python3 automation/production_window_guard.py || exit 0` before it
+  starts. `CRIPMINDS_IGNORE_PRODUCTION_WINDOW=1` overrides it deliberately.
+- Nothing calls the guard automatically. Wire it into an experiment
+  entrypoint when you add one; an experiment launched by hand is the owner's
+  call.
+
+What prompted it, stated exactly: on 2026-09-20 the 09:00 run died at
+KF_COMMISSION on `CLAUDE_SUBSCRIPTION_TIMEOUT` after 180s, and a shadow-replay
+experiment was started against the same subscription at 09:35, during the
+recovery. The replay began *after* the failure, so it did not cause it, and
+the recovery rerun's own commission call succeeded in ~2 minutes alongside
+it. **No contention incident has been measured.** The window is written down
+because the arrangement that makes one possible is real, not because one
+happened.
+
+The 180s KF_COMMISSION timeout is unchanged. One isolated timeout is not
+evidence for a configuration change.
+
 ## What this procedure deliberately does NOT automate (yet)
 
 `release_preflight.py` diagnoses only. It never rebases, pushes, deploys,

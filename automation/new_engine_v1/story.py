@@ -315,6 +315,44 @@ def validate_lens(lens: dict) -> list:
 
 
 # ── STORY ARCHITECT ───────────────────────────────────────────────────────────
+# A FULL STOP IS NOT ALWAYS A SENTENCE END (2026-09-20). The spine length check counted
+# `spine.split(".")`, so every decimal point and every dotted abbreviation read as a
+# sentence boundary. Two decimals in one clause were enough to fail it.
+#
+# Measured on production-20260920T074108Z-f1a93cd8, which it cost the day:
+#   "A study of 22 ME/CFS patients recorded a 13.8% fall in VO2peak and a 21.3% fall in
+#    work at the ventilatory threshold on a second cardiopulmonary exercise test 24 hours
+#    later."
+# One sentence to any reader; four parts to `split(".")`. The architect was then asked to
+# repair a complaint it could not satisfy without deleting the two numbers the story is
+# about, produced the same correct spine twice more, and the run terminated at
+# ARCHITECTURE with the composition budget spent. production-20260905T212756Z-d1d8a8d5
+# hit the same check on "U.S. Senate".
+#
+# The tolerance is unchanged. `split(".") > 3` admitted at most two full stops, which is
+# at most two sentences; `sentence_count() > 2` admits exactly the same. A spine that
+# really is three sentences still fails. Only the counting is fixed.
+_DOTTED_NOT_A_STOP = (
+    re.compile(r"\d\.\d"),                                  # 13.8, 21.3
+    re.compile(r"\b(?:[A-Za-z]\.){2,}"),                    # U.S., e.g., i.e., a.m.
+    re.compile(r"\b(?:Mr|Mrs|Ms|Dr|Prof|St|Jr|Sr|vs|No|Fig|approx|cf|al)\."),
+)
+
+
+def sentence_count(text: str) -> int:
+    """How many sentences `text` actually contains.
+
+    Decimals and dotted abbreviations are masked before the stops are counted, so the
+    number reflects sentences rather than periods. A trailing stop does not add one.
+    """
+    masked = (text or "").strip()
+    for pat in _DOTTED_NOT_A_STOP:
+        masked = pat.sub(lambda m: m.group(0).replace(".", "\x00"), masked)
+    if not masked:
+        return 0
+    return len([s for s in re.split(r"(?<=[.!?])(?:\s+|$)", masked) if s.strip()])
+
+
 def validate_architecture(arch: dict, evidence_ids: set, ledger: dict | None = None) -> list:
     """The architecture is the reader's path. Checked for shape and for honesty about
     which evidence it intends to use -- and to CUT."""
@@ -326,7 +364,7 @@ def validate_architecture(arch: dict, evidence_ids: set, ledger: dict | None = N
     spine = (arch.get("story_spine") or "").strip()
     if not spine:
         errs.append("story_spine missing")
-    elif len(spine.split(".")) > 3:
+    elif sentence_count(spine) > 2:
         errs.append("story_spine is not one sentence")
     if not (arch.get("opening_object_or_event") or "").strip():
         errs.append("opening_object_or_event missing -- openings must be concrete")
@@ -1919,33 +1957,95 @@ def intent_causal_scan(article_text: str) -> list:
     return out
 
 
-def negative_admission_audit(article_text: str, ledger: dict) -> dict:
-    """A negative-shaped sentence needs a ledger fact of a negative type behind it.
+# A REPORTING CUE. Used only to keep an attributed negation attributed; see below.
+_ATTRIBUTION_CUE = re.compile(
+    r"\b(?:said|says|told|state[sd]?|stating|writes?|wrote|report(?:s|ed)?|record(?:s|ed)?"
+    r"|note[sd]?|describe[sd]?|according to|testified|concluded|found|heard)\b", re.I)
 
-    The pairing is reported, not inferred: each hit is matched against negative facts
-    whose proposition shares substantial wording. Anything unmatched is a HOLD, and the
+MISSING_CITED_BASIS = "MISSING_CITED_BASIS"
+NO_EVIDENCE_SUPPORT = "NO_EVIDENCE_SUPPORT"
+
+
+def negative_admission_audit(article_text: str, ledger: dict) -> dict:
+    """A negative-shaped sentence needs a ledger fact that carries the same negation.
+
+    The pairing is reported, not inferred: each hit is matched against facts whose
+    proposition shares substantial wording. Anything unmatched is a HOLD, and the
     prescribed repair is REMOVAL, never a caveat -- a caveat is how the research memo got
     into the prose in the first place.
+
+    THE NEGATION IS IN THE PROPOSITION, NOT IN THE TYPE LABEL (2026-09-20). The candidate
+    pool was `claim_type in NEGATIVE_TYPES`, so a fact whose proposition states the
+    absence in so many words was invisible to this audit whenever the Ledger had typed it
+    POSITIVE_FACT or ATTRIBUTION. The article was then held for asserting an absence the
+    Ledger grants verbatim.
+
+    Measured on three retained runs:
+      production-20260919T070300Z-faa849c8  (cost the day)
+        article "...malnutrition, which was a consequence of her ME, for which there is
+        no known cure."            <- F18 POSITIVE_FACT, same clause, 0.91 word overlap
+        article "The coroner said in conclusion that there is no known treatment of ME..."
+                                   <- F60 ATTRIBUTION, 1.00 word overlap
+      production-20260910T073435Z-703b7b90  <- F39 ATTRIBUTION, 0.94 and 1.00
+      production-20260910T175526Z-757004af  <- F23 ATTRIBUTION, 0.91
+
+    So the pool now also admits a fact of ANY type whose proposition is itself
+    negative-shaped, decided by `negative_shape_of` -- the single owner of that question,
+    the same one that produced the hit being matched. Nothing else is relaxed: the same
+    word-overlap threshold applies, and a sentence with no negation anywhere in the
+    Ledger still blocks.
+
+    ATTRIBUTION SURVIVES. A fact admitted this way that is typed ATTRIBUTION licenses an
+    ATTRIBUTED sentence only. "The coroner said there is no known treatment" is a claim
+    about what the coroner said; prose that drops the cue and asserts the absence flatly
+    is a different claim, is not matched by that fact, and still holds. All three
+    measured sentences above carry their cue ("said", "states", "the authors note",
+    "writes"), so this costs the recovery nothing and closes the one way it could widen.
+
+    Unmatched hits are reported with a `basis`: MISSING_CITED_BASIS when the Ledger does
+    carry a negation whose wording partly overlaps the sentence -- the article is ahead of
+    its citation -- and NO_EVIDENCE_SUPPORT when it carries nothing of the kind. Both
+    block. The distinction is for the person reading the hold, who otherwise cannot tell
+    a citation problem from an invention.
     """
     from . import ledger as LG
     negs = {fid: f for fid, f in ledger.items()
-            if f.get("claim_type") in LG.NEGATIVE_TYPES}
+            if isinstance(f, dict) and f.get("claim_type") in LG.NEGATIVE_TYPES}
+    carried = {fid: f for fid, f in ledger.items()
+               if isinstance(f, dict) and fid not in negs
+               and negative_shape_of(f.get("proposition") or "")[0]}
     hits = negative_claim_scan(article_text)
     unmatched = []
+
+    def _key(f):
+        return [w for w in re.findall(r"[a-z]{5,}", (f.get("proposition") or "").lower())
+                if w not in _FUNCTION_WORDS]
+
     for h in hits:
         sl = " ".join(h["sentence"].lower().split())
-        ok = False
-        for f in negs.values():
-            key = [w for w in re.findall(r"[a-z]{5,}", f["proposition"].lower())
-                   if w not in _FUNCTION_WORDS]
-            if key and sum(1 for w in key if w in sl) >= max(2, len(key) // 3):
+        attributed = bool(_ATTRIBUTION_CUE.search(h["sentence"]))
+        ok, partial = False, False
+        for fid, f in list(negs.items()) + list(carried.items()):
+            key = _key(f)
+            if not key:
+                continue
+            shared = sum(1 for w in key if w in sl)
+            if shared >= max(2, len(key) // 3):
+                if fid in carried and f.get("claim_type") == "ATTRIBUTION" \
+                        and not attributed:
+                    partial = True          # the basis exists; the prose dropped the cue
+                    continue
                 ok = True
                 break
+            if shared:
+                partial = True
         if not ok:
-            unmatched.append(h)
+            unmatched.append(dict(h, basis=MISSING_CITED_BASIS if partial
+                                  else NO_EVIDENCE_SUPPORT))
     return {"negative_sentences": len(hits), "unmatched": unmatched,
             "ok": not unmatched,
-            "negative_facts_available": sorted(negs)}
+            "negative_facts_available": sorted(negs),
+            "negation_carrying_facts": sorted(carried)}
 
 
 # ── FINAL LENS CONTRACT ───────────────────────────────────────────────────────
