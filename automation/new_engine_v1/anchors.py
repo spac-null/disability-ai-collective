@@ -48,9 +48,12 @@ NO_ANCHOR = "NONE"              # Discovery's explicit "no span here supports a 
 
 # Abbreviations that must not end a sentence. Without this "P.R." splits mid-phrase and
 # the candidate list fills with fragments ("But the importance of good royal P.R.").
-_ABBREV = (r"(?<!\bP\.R)(?<!\bMr)(?<!\bMrs)(?<!\bMs)(?<!\bDr)(?<!\bSt)(?<!\bJr)"
-           r"(?<!\bSr)(?<!\bvs)(?<!\bNo)(?<!\bcf)(?<!\bal)(?<!\be\.g)(?<!\bi\.e)"
-           r"(?<!\bU\.S)(?<!\bU\.K)")
+# Same defect, carried the same way: these lookbehinds omitted the period they
+# protect and so never fired either. Fixed identically so both components agree
+# on sentence boundaries.
+_ABBREV = (r"(?<!\bP\.R\.)(?<!\bMr\.)(?<!\bMrs\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bSt\.)"
+           r"(?<!\bJr\.)(?<!\bSr\.)(?<!\bvs\.)(?<!\bNo\.)(?<!\bn\.)(?<!\bcf\.)"
+           r"(?<!\bal\.)(?<!\be\.g\.)(?<!\bi\.e\.)(?<!\bU\.S\.)(?<!\bU\.K\.)")
 _SPLIT = re.compile(_ABBREV + r"(?<=[.!?])[\"')\]]?\s+(?=[A-Z\"'(\[])")
 
 
