@@ -46,8 +46,26 @@ RELATION_TYPES = (
 # house is the perspective ...", turning a demonstrative into an identity assertion.
 # These are the surface forms that must be left unresolved unless the article settles
 # them; the prompt names them explicitly and a fixture pins the exact failure.
-DEICTIC_FORMS = ("this", "that", "these", "those", "they", "it", "such",
+# Forms whose CROSS-SENTENCE resolution is forbidden by default. These refer to
+# propositions, situations, perspectives and other discourse units at least as often
+# as they refer to a preceding noun phrase, so a confident-looking antecedent is
+# frequently the wrong kind of thing. "That is the perspective typical of ..." became
+# "The floor of the house is the perspective ...": a vantage point silently promoted
+# into an identity predication. Entity pronouns are NOT in this set -- see
+# ENTITY_PRONOUNS -- because "Maria entered. She sat down." is ordinary and safe.
+DEICTIC_FORMS = ("this", "that", "these", "those", "such",
                  "the former", "the latter")
+
+# Cross-sentence resolution is allowed for these when an exact antecedent span is
+# anchored. The validator checks structure only; it never tries to prove the
+# antecedent is semantically right, and it does not need to -- the layer is advisory.
+ENTITY_PRONOUNS = ("he", "she", "they", "it", "him", "her", "them",
+                   "his", "hers", "their", "theirs", "its")
+
+RESOLUTION_TYPES = ("SAME_SENTENCE_EXPLICIT", "CROSS_SENTENCE_ENTITY_PRONOUN",
+                    "CROSS_SENTENCE_NOMINAL_REPEAT", "OTHER_EXPLICIT")
+
+CROSS_SENTENCE_DEICTIC_UNSAFE = "CROSS_SENTENCE_DEICTIC_UNSAFE"
 
 
 def enabled() -> bool:
@@ -75,10 +93,21 @@ SYSTEM = (
     "  resolved_referents   - only where the article licenses the identity.\n"
     "  unresolved_referents - everywhere else.\n\n"
     "RULES THAT MATTER MORE THAN COVERAGE:\n"
-    "* AMBIGUITY BEATS GUESSING. For this/that/these/those/they/it/such/the former/the "
-    "latter, resolve ONLY when the article context makes the identity clear. Otherwise "
-    "record an unresolved_referent. Never invent a referent to make the graph complete. "
-    "Turning a demonstrative into an identity assertion is the worst error here.\n"
+    "* AMBIGUITY BEATS GUESSING, AND DEICTICS ARE THE HARD CASE. For this, that, these, "
+    "those, such, the former, the latter: you may resolve ONLY when the SAME sentence "
+    "contains an explicit identity construction that supplies the target. If the target "
+    "would come from a different sentence, do NOT resolve it -- record an "
+    "unresolved_referent instead. These words point at propositions, situations and "
+    "perspectives as often as at nouns, so a plausible antecedent in the previous "
+    "sentence is not enough. Turning a demonstrative into an identity assertion is the "
+    "worst error you can make here.\n"
+    "* ENTITY PRONOUNS ARE DIFFERENT. he, she, they, it, his, her, their, its MAY be "
+    "resolved across sentences when you can point at the exact antecedent words in the "
+    "article. If you cannot, record an unresolved_referent.\n"
+    "* EVERY RESOLUTION IS ANCHORED AT BOTH ENDS. A resolved_referent must give the "
+    "surface form with its sentence and offsets, AND the target with its sentence and "
+    "offsets, and target_text must be exactly the article substring at those offsets. A "
+    "target you paraphrased is not a target.\n"
     "* SUBSET COUNTS STAY SUBSET COUNTS. 'eight of the most interesting pavilions' is a "
     "count of a SELECTION. Record it as CONTAINMENT_SUBSET with the subset, the count "
     "and the container. It must never become a total for the container.\n"
@@ -140,8 +169,11 @@ def user_prompt(items: list) -> str:
         '"subject":"","object":"","evidence_span_ids":["S001"],"evidence_span":"",'
         '"status":"ASSERTED_BY_ARTICLE"}],\n'
         '  "event_referents":[{"event_id":"E1","event_text":"","evidence_span":""}],\n'
-        '  "resolved_referents":[{"surface_form":"","resolved_target":"",'
-        '"evidence_span":"","resolution_basis":""}],\n'
+        '  "resolved_referents":[{"surface_form":"","surface_sentence_id":"S001",'
+        '"surface_start_offset":0,"surface_end_offset":0,'
+        '"target_text":"","target_sentence_id":"S001",'
+        '"target_start_offset":0,"target_end_offset":0,'
+        '"resolution_type":"SAME_SENTENCE_EXPLICIT|CROSS_SENTENCE_ENTITY_PRONOUN|CROSS_SENTENCE_NOMINAL_REPEAT|OTHER_EXPLICIT","resolution_basis_span_ids":["S001"]}],\n'
         '  "unresolved_referents":[{"surface_form":"","reason_unresolved":""}]\n'
         "}]}\n"
         "Every evidence_span must be an exact substring of its sentence's exact_span.\n"
@@ -283,12 +315,78 @@ def validate(artifact: dict, article_text: str, sentences: list, records: list) 
         att = sc.get("attribution")
         if att and not frag_ok(att.get("evidence_span")):
             errs.append("%s attribution evidence not in span" % sid)
+        # Resolved referents are anchored at BOTH ends, and an unsafe cross-sentence
+        # deictic is downgraded to an unresolved referent rather than failing the whole
+        # artifact: one over-confident pronoun should cost that pronoun, not the article.
+        kept, downgraded = [], []
         for rr in sc.get("resolved_referents") or []:
-            if not frag_ok(rr.get("evidence_span")):
-                errs.append("%s resolved referent evidence not in span" % sid)
+            surf = (rr.get("surface_form") or "").strip()
+            ssid = rr.get("surface_sentence_id")
+            tsid = rr.get("target_sentence_id")
+            rtype = rr.get("resolution_type")
+            local = []
+            if rtype not in RESOLUTION_TYPES:
+                local.append("illegal resolution_type %r" % rtype)
+            # OFFSETS ARE DERIVED HERE, NOT TRUSTED. Asking a language model to count
+            # characters into a 6KB article is a known-unreliable instruction, and the
+            # first replay proved it: 79 of 80 validation errors were offset mismatches
+            # on referents whose TEXT was perfectly correct. What matters for the
+            # anchoring guarantee is that the words exist exactly where the model says
+            # they do -- which sentence -- so the validator locates the text inside the
+            # named sentence itself and computes the article offsets deterministically.
+            # A referent whose text is not in its named sentence is still rejected.
+            for which, s_id, txt in (("surface", ssid, surf),
+                                     ("target", tsid, rr.get("target_text"))):
+                if s_id not in sent_by:
+                    local.append("%s referent cites unknown sentence %r" % (which, s_id))
+                    continue
+                if not txt:
+                    local.append("%s referent text is empty" % which)
+                    continue
+                host = sent_by[s_id]
+                idx = host["exact_span"].find(txt)
+                if idx < 0:
+                    local.append("%s referent text %r is not in %s"
+                                 % (which, txt[:40], s_id))
+                    continue
+                a = host["start"] + idx
+                b = a + len(txt)
+                if article_text[a:b] != txt:            # belt and braces
+                    local.append("%s referent offset derivation failed" % which)
+                    continue
+                rr[which + "_start_offset"] = a
+                rr[which + "_end_offset"] = b
+                rr["offsets_derived"] = True
+            for b_id in rr.get("resolution_basis_span_ids") or []:
+                if b_id not in sent_by:
+                    local.append("resolution basis cites unknown sentence %r" % b_id)
+            if local:
+                errs.extend("%s %s" % (sid, m) for m in local)
+                continue
+            if surf.lower() in DEICTIC_FORMS and tsid != ssid:
+                downgraded.append({"surface_form": rr.get("surface_form"),
+                                   "reason_unresolved": CROSS_SENTENCE_DEICTIC_UNSAFE,
+                                   "attempted_target": rr.get("target_text"),
+                                   "attempted_target_sentence_id": tsid})
+                continue
+            kept.append(rr)
+        if downgraded:
+            sc["resolved_referents"] = kept
+            sc["unresolved_referents"] = list(sc.get("unresolved_referents") or []) \
+                + downgraded
+            artifact.setdefault("warnings", []).append(
+                "%s: %d cross-sentence deictic resolution(s) downgraded to unresolved"
+                % (sid, len(downgraded)))
         for ur in sc.get("unresolved_referents") or []:
             if not isinstance(ur, dict) or not ur.get("surface_form"):
                 errs.append("%s malformed unresolved_referent record" % sid)
+    # Rebuilt after the downgrade pass so the artifact's own list reflects what the
+    # validator actually decided, not what the model originally proposed.
+    artifact["unresolved_referents"] = [
+        dict(u, sentence_id=sc.get("sentence_id"))
+        for sc in (artifact.get("semantic_claims") or [])
+        for u in (sc.get("unresolved_referents") or [])
+    ]
     ok = not errs
     artifact["validation_result"] = {"ok": ok, "errors": errs[:50],
                                      "error_count": len(errs)}

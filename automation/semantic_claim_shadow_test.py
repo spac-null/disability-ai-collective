@@ -184,13 +184,109 @@ art, _ = run(unresolved)
 check("leaving 'That' unresolved validates", art["validation_result"]["ok"], art["validation_result"])
 check("unresolved referent surfaces on the artifact",
       any(u["surface_form"] == "That" for u in art["unresolved_referents"]), art["unresolved_referents"])
-over = {"semantic_claims": [sc(
-    "S004", "S004-A1", "The floor of the house is the perspective typical of where wheelchair seating is located.",
-    resolved_referents=[{"surface_form": "That", "resolved_target": "the floor of the house",
-                         "evidence_span": "the floor of the house",
-                         "resolution_basis": "assumed"}])]}
-art, _ = run(over)
-check("over-resolving 'That' is rejected: its evidence is not in the span",
+# The REAL failure, reproduced exactly. The earlier version of this fixture only
+# tested a model that cited OUT-OF-SPAN evidence, which is the easy case; the live
+# replay then produced a resolution whose evidence WAS in span and sailed through.
+# Here both ends are perfectly anchored to real article offsets -- the shape that
+# previously survived -- and it must still not survive.
+DEICTIC_ART = (
+    "The video projection content was designed by Maag, also a wheelchair user, to be "
+    "visually and emotionally felt from the floor of the house. "
+    "That is the perspective typical of where wheelchair and accessibility seating is "
+    "located in a theater.")
+dsents = CM.segment(DEICTIC_ART)
+assert len(dsents) == 2, dsents
+D_RECORDS = [{"sentence_id": x["sentence_id"], "parent_exact_span": x["exact_span"],
+              "type": "EMPIRICAL",
+              "atoms": [{"atomic_id": x["sentence_id"] + "-A1",
+                         "atomic_claim": x["exact_span"], "claim_type": "EMPIRICAL",
+                         "derivation": "VERBATIM"}]} for x in dsents]
+t_start = DEICTIC_ART.index("the floor of the house")
+t_end = t_start + len("the floor of the house")
+s_start = DEICTIC_ART.index("That", dsents[1]["start"])
+s_end = s_start + len("That")
+check("fixture anchors are real article offsets",
+      DEICTIC_ART[t_start:t_end] == "the floor of the house"
+      and DEICTIC_ART[s_start:s_end] == "That")
+
+over = {"semantic_claims": [{
+    "semantic_id": "SC1", "sentence_id": "S002", "atomic_id": "S002-A1",
+    "claim_text": "The floor of the house is the perspective typical of where "
+                  "wheelchair and accessibility seating is located in a theater.",
+    "claim_type": "EMPIRICAL", "derivation": "DERIVED",
+    "attribution": None, "qualifiers": [], "relations": [], "event_referents": [],
+    "resolved_referents": [{
+        "surface_form": "That", "surface_sentence_id": "S002",
+        "surface_start_offset": s_start, "surface_end_offset": s_end,
+        "target_text": "the floor of the house", "target_sentence_id": "S001",
+        "target_start_offset": t_start, "target_end_offset": t_end,
+        "resolution_type": "CROSS_SENTENCE_NOMINAL_REPEAT",
+        "resolution_basis_span_ids": ["S001"]}],
+    "unresolved_referents": []}]}
+f = Fake(over)
+art = SH.enrich(f, "D", DEICTIC_ART, dsents, D_RECORDS)
+SH.validate(art, DEICTIC_ART, dsents, D_RECORDS)
+scd = art["semantic_claims"][0]
+check("fully-anchored cross-sentence 'That' does NOT survive as resolved",
+      scd["resolved_referents"] == [], scd["resolved_referents"])
+check("it is downgraded to an unresolved referent",
+      any(u.get("surface_form") == "That" for u in scd["unresolved_referents"]),
+      scd["unresolved_referents"])
+check("downgrade reason is CROSS_SENTENCE_DEICTIC_UNSAFE",
+      any(u.get("reason_unresolved") == SH.CROSS_SENTENCE_DEICTIC_UNSAFE
+          for u in scd["unresolved_referents"]), scd["unresolved_referents"])
+check("the article is not invalidated by one unsafe pronoun",
+      art["validation_result"]["ok"] and art["status"] == "SHADOW_PRODUCED",
+      (art["status"], art["validation_result"]))
+check("the downgrade is recorded as a warning", bool(art.get("warnings")), art.get("warnings"))
+check("artifact-level unresolved list reflects the downgrade",
+      any(u.get("reason_unresolved") == SH.CROSS_SENTENCE_DEICTIC_UNSAFE
+          for u in art["unresolved_referents"]), art["unresolved_referents"])
+
+# Positive control: an ordinary entity pronoun across sentences is legitimate and
+# must NOT be swept up by the deictic rule.
+ENT_ART = "Maria entered the room. She sat down."
+esents = CM.segment(ENT_ART)
+E_RECORDS = [{"sentence_id": x["sentence_id"], "parent_exact_span": x["exact_span"],
+              "type": "EMPIRICAL",
+              "atoms": [{"atomic_id": x["sentence_id"] + "-A1",
+                         "atomic_claim": x["exact_span"], "claim_type": "EMPIRICAL",
+                         "derivation": "VERBATIM"}]} for x in esents]
+m_start = ENT_ART.index("Maria"); m_end = m_start + len("Maria")
+sh_start = ENT_ART.index("She"); sh_end = sh_start + len("She")
+ent = {"semantic_claims": [{
+    "semantic_id": "SC1", "sentence_id": "S002", "atomic_id": "S002-A1",
+    "claim_text": "Maria sat down.", "claim_type": "EMPIRICAL", "derivation": "DERIVED",
+    "attribution": None, "qualifiers": [], "relations": [], "event_referents": [],
+    "resolved_referents": [{
+        "surface_form": "She", "surface_sentence_id": "S002",
+        "surface_start_offset": sh_start, "surface_end_offset": sh_end,
+        "target_text": "Maria", "target_sentence_id": "S001",
+        "target_start_offset": m_start, "target_end_offset": m_end,
+        "resolution_type": "CROSS_SENTENCE_ENTITY_PRONOUN",
+        "resolution_basis_span_ids": ["S001"]}],
+    "unresolved_referents": []}]}
+f = Fake(ent)
+art = SH.enrich(f, "E", ENT_ART, esents, E_RECORDS)
+SH.validate(art, ENT_ART, esents, E_RECORDS)
+check("cross-sentence entity pronoun survives", art["validation_result"]["ok"]
+      and len(art["semantic_claims"][0]["resolved_referents"]) == 1,
+      (art["validation_result"], art["semantic_claims"][0]["resolved_referents"]))
+
+# Anchoring is mandatory: a paraphrased target with no real offsets is rejected.
+bad_anchor = json.loads(json.dumps(ent))
+bad_anchor["semantic_claims"][0]["resolved_referents"][0]["target_text"] = "the woman"
+f = Fake(bad_anchor)
+art = SH.enrich(f, "E", ENT_ART, esents, E_RECORDS)
+SH.validate(art, ENT_ART, esents, E_RECORDS)
+check("a paraphrased (unanchored) target is rejected",
+      not art["validation_result"]["ok"], art["validation_result"])
+bad_type = json.loads(json.dumps(ent))
+bad_type["semantic_claims"][0]["resolved_referents"][0]["resolution_type"] = "VIBES"
+f = Fake(bad_type)
+art = SH.enrich(f, "E", ENT_ART, esents, E_RECORDS)
+SH.validate(art, ENT_ART, esents, E_RECORDS)
+check("illegal resolution_type is rejected",
       not art["validation_result"]["ok"], art["validation_result"])
 
 # ── F. interpretation safety ─────────────────────────────────────────────────
