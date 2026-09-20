@@ -63,7 +63,13 @@ TYPES = (EMPIRICAL, INTERPRETIVE, MIXED)
 # Same construction as the repository's existing splitter in orchestrator/gate.py,
 # re-expressed here because new_engine_v1 may not import the orchestrator (the package
 # purity test forbids it, and that boundary is worth more than the shared line).
-_ABBR = r"(?<!\bMr)(?<!\bMrs)(?<!\bDr)(?<!\bSt)(?<!\bNo)"
+# The guard sits at the whitespace AFTER the terminator, so every lookbehind must
+# include the period it protects. Written without it, (?<!\bMr) tested the two
+# characters "r." and could never fire -- Mr./Mrs./Dr./St./No. all split anyway. An
+# independent audit (2026-09-20) surfaced this through "Gazzetta Ufficiale of 28
+# February 2026, n. 49.", which split after "n." and hid the issue number from its
+# own sentence. "n." (Italian numero) is added for that case.
+_ABBR = (r"(?<!\bMr\.)(?<!\bMrs\.)(?<!\bDr\.)(?<!\bSt\.)(?<!\bNo\.)(?<!\bn\.)")
 _SPLIT = re.compile(_ABBR + r"(?<=[.!?])\s+(?=[\"'“‘(]?[A-Z0-9])")
 
 
