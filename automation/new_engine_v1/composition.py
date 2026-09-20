@@ -7076,6 +7076,65 @@ def claim_map_article(provider, article_text: str, ledger: dict, allowed_fact_id
 
 
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SEMANTIC CLAIM SHADOW -- NON-AUTHORITATIVE, DEFAULT OFF
+# ══════════════════════════════════════════════════════════════════════════════
+# The shadow was merged on 2026-09-20 and nothing invoked it. A feature flag with no
+# call site cannot produce a canary, so the horizontal audit recorded "merged but
+# unreachable" as a finding rather than a capability. This is the one call site.
+#
+# IT RUNS AFTER THE AUTHORITATIVE CLAIM MAPPER AND CHANGES NOTHING. `final` is already
+# frozen at this point in FAST_LANE -- the SHA assertion before return enforces that --
+# and the authoritative claim map is already recorded. Nothing here is written into `wr`,
+# `st` or the result: the artifact is a separate file, and no gate reads it.
+#
+# WHY IT BUILDS ITS OWN TYPED BACKBONE. The authoritative claim map is fact bookkeeping
+# ({"sentence_id", "fact_ids", "claim_status", ...}); it carries no EMPIRICAL/INTERPRETIVE
+# typing and no VERBATIM/DERIVED marking. The shadow's interpretation-safety check is
+# defined against exactly those, so handing it a fabricated typing would make that check
+# vacuous. `claims.identify` produces the real one, and it is the backbone all six
+# retained replays were validated on. Those are the only extra calls, and only when ON.
+#
+# EVERY FAILURE IS ABSORBED. A provider timeout, a malformed reply, an invalid artifact
+# or any exception at all returns None or an artifact marked SHADOW_INVALID/UNAVAILABLE.
+# None of them touches the run's decision. That is tested in
+# semantic_claim_shadow_test.py sections H, I and K, and asserted again here by the bare
+# `except Exception`.
+def run_semantic_claim_shadow(provider, article_text: str, claim_map, claim_map_sha: str,
+                              out_dir=None, article_id: str = "") -> dict | None:
+    """The shadow, or None. Never raises, never blocks, never returns to a gate."""
+    from . import semantic_claim_shadow as SCS
+    if not SCS.enabled():
+        return None
+    try:
+        from . import claims as CL
+        t0 = time.time()
+        sentences = CL.segment(article_text)
+        ident = CL.identify(provider, article_text, sentences)
+        records = ident.get("records") or []
+        if isinstance(records, dict):
+            records = list(records.values())
+        artifact = SCS.run_shadow(lambda: provider, article_id or "run", article_text,
+                                  sentences, records)
+        if artifact is None:
+            return None
+        artifact["authority"] = "NON_AUTHORITATIVE"
+        artifact["authoritative_claim_map_sha256"] = claim_map_sha
+        artifact["authoritative_claim_map_entries"] = len(claim_map or [])
+        artifact["backbone_sentences"] = len(sentences)
+        artifact["wall_seconds"] = round(time.time() - t0, 1)
+        if out_dir is not None:
+            import pathlib
+            pathlib.Path(out_dir).mkdir(parents=True, exist_ok=True)
+            (pathlib.Path(out_dir) / "CLAIM_MAP_SEMANTIC_SHADOW.json").write_text(
+                json.dumps(artifact, indent=2, ensure_ascii=False), encoding="utf-8")
+        return artifact
+    except Exception:                                             # noqa: BLE001
+        # Deliberately bare. A shadow that can end a publication day is not a shadow.
+        return None
+
+
 MATERIALITY_HOLD_REASON = ("unsupported factual surface judged MATERIAL: %s")
 
 
@@ -7467,6 +7526,14 @@ def run_story_architecture_composition(
             _cm_calls = _cm_ident.get("claim_mapper_model_calls", 1)
             wr["model_calls"] = wr.get("model_calls", 0) + _cm_calls
             calls[WRITER] = calls.get(WRITER, 0) + _cm_calls
+            # The authoritative claim map is complete and recorded. Everything below is
+            # advisory and is not read by Safety, Grounding, Fact Check, Materiality,
+            # Reader or the publication bridge. Returns None when the flag is off, with
+            # no provider constructed and no call made.
+            run_semantic_claim_shadow(P, final, _cm_map,
+                                      wr["claim_map_article_sha256"], out_dir,
+                                      article_id=str(out_dir or "run").rstrip("/")
+                                      .rsplit("/", 1)[-1])
 
         pkg = make_package(final)
         pkg_ref = [pkg]

@@ -211,7 +211,10 @@ check("fixture anchors are real article offsets",
 
 over = {"semantic_claims": [{
     "semantic_id": "SC1", "sentence_id": "S002", "atomic_id": "S002-A1",
-    "claim_text": "The floor of the house is the perspective typical of where "
+    # claim_text keeps the article's own wording. The variant that rewrites it is a
+    # SEPARATE defect with its own fixture -- see "L. an unresolved referent may not be
+    # resolved in the claim text instead".
+    "claim_text": "That is the perspective typical of where "
                   "wheelchair and accessibility seating is located in a theater.",
     "claim_type": "EMPIRICAL", "derivation": "DERIVED",
     "attribution": None, "qualifiers": [], "relations": [], "event_referents": [],
@@ -290,6 +293,126 @@ check("illegal resolution_type is rejected",
       not art["validation_result"]["ok"], art["validation_result"])
 
 # ── F. interpretation safety ─────────────────────────────────────────────────
+
+# ── L. AN UNRESOLVED REFERENT MAY NOT BE RESOLVED IN THE CLAIM TEXT INSTEAD ──
+# Replay 3 (2026-09-20) reproduced the original defect through a different field: the
+# referent record said "That" was unresolvable and claim_text resolved it anyway. 22 of
+# 443 semantic claims in that replay dropped a surface form they had just declared
+# unresolved. The rule is provenance only -- it asks whether the word disappeared, never
+# whether the replacement means the same thing.
+print("\nL. an unresolved referent may not be resolved in the claim text instead")
+
+
+def _shadow_over(claim_text, unresolved, resolved=None, sid="S002", aid="S002-A1"):
+    return {"semantic_claims": [{
+        "semantic_id": "SC1", "sentence_id": sid, "atomic_id": aid,
+        "claim_text": claim_text, "claim_type": "EMPIRICAL", "derivation": "DERIVED",
+        "attribution": None, "qualifiers": [], "relations": [], "event_referents": [],
+        "resolved_referents": resolved or [],
+        "unresolved_referents": unresolved}]}
+
+
+def _run(article, sents, records, over):
+    a = SH.enrich(Fake(over), "L", article, sents, records)
+    SH.validate(a, article, sents, records)
+    return a
+
+
+# A. THE KNOWN BAD CASE, verbatim from replay 3 draft 8a0dab48 S021.
+bad = _run(DEICTIC_ART, dsents, D_RECORDS, _shadow_over(
+    "The floor of the house is the perspective typical of where wheelchair and "
+    "accessibility seating is located in a theater. "
+    "[DERIVED: pronoun 'that' resolved, not the article's wording]",
+    [{"surface_form": "That", "reason_unresolved": "Demonstrative pointing outside "
+      "this sentence; no identity construction inside the sentence supplies it."}]))
+check("A. the known 'That' case FAILS validation",
+      not bad["validation_result"]["ok"] and bad["status"] == "SHADOW_INVALID",
+      (bad["status"], bad["validation_result"]))
+check("A. and it is named as the dropped-referent error",
+      any(SH.UNRESOLVED_REFERENT_DROPPED in e
+          for e in bad["validation_result"]["errors"]),
+      str(bad["validation_result"]["errors"])[:200])
+
+# B. SAFE UNRESOLVED -- the same referent, the article's own wording kept.
+safe = _run(DEICTIC_ART, dsents, D_RECORDS, _shadow_over(
+    "That is the perspective typical of where wheelchair and accessibility seating is "
+    "located in a theater.",
+    [{"surface_form": "That", "reason_unresolved": "Demonstrative; not settled here."}]))
+check("B. keeping the unresolved surface form PASSES",
+      safe["validation_result"]["ok"] and safe["status"] == "SHADOW_PRODUCED",
+      (safe["status"], safe["validation_result"]))
+check("B. sentence-initial casing does not defeat the match",
+      _run(DEICTIC_ART, dsents, D_RECORDS, _shadow_over(
+          "that is the perspective typical of where wheelchair and accessibility "
+          "seating is located in a theater.",
+          [{"surface_form": "That", "reason_unresolved": "x"}]
+      ))["validation_result"]["ok"])
+
+# C. A VALID RESOLUTION IS UNTOUCHED. "Maria entered the room. She sat down." -- an
+#    anchored entity pronoun, so the claim may name Maria and nothing is unresolved.
+m_t0 = ENT_ART.index("Maria")
+m_s0 = ENT_ART.index("She")
+ok_res = _run(ENT_ART, esents, E_RECORDS, _shadow_over(
+    "Maria sat down.", [],
+    [{"surface_form": "She", "surface_sentence_id": "S002",
+      "target_text": "Maria", "target_sentence_id": "S001",
+      "resolution_type": "CROSS_SENTENCE_ENTITY_PRONOUN",
+      "resolution_basis_span_ids": ["S001"]}]))
+check("C. an anchored entity-pronoun resolution still PASSES and may name Maria",
+      ok_res["validation_result"]["ok"]
+      and ok_res["semantic_claims"][0]["resolved_referents"],
+      (ok_res["status"], ok_res["validation_result"]))
+
+# D. AN UNRESOLVED PERSONAL PRONOUN GETS NO SPECIAL TREATMENT.
+pron = _run(ENT_ART, esents, E_RECORDS, _shadow_over(
+    "The investigators sat down.",
+    [{"surface_form": "She", "reason_unresolved": "No anchored antecedent."}]))
+check("D. an unresolved 'She' replaced by a name FAILS",
+      not pron["validation_result"]["ok"], (pron["status"], pron["validation_result"]))
+keep = _run(ENT_ART, esents, E_RECORDS, _shadow_over(
+    "She sat down.", [{"surface_form": "She", "reason_unresolved": "No antecedent."}]))
+check("D. keeping 'She' PASSES", keep["validation_result"]["ok"],
+      keep["validation_result"])
+
+# E. INTERPRETIVE. A demonstrative must not become a named empirical subject.
+INT_ART = ("The tribunal moved the case to a different list. "
+           "That is best understood as a change in classification.")
+isents = CM.segment(INT_ART)
+I_RECORDS = [{"sentence_id": x["sentence_id"], "parent_exact_span": x["exact_span"],
+              "type": "INTERPRETIVE",
+              "atoms": [{"atomic_id": x["sentence_id"] + "-A1",
+                         "atomic_claim": x["exact_span"],
+                         "claim_type": "INTERPRETIVE", "derivation": "VERBATIM"}]}
+             for x in isents]
+interp = _run(INT_ART, isents, I_RECORDS, {"semantic_claims": [{
+    "semantic_id": "SC1", "sentence_id": "S002", "atomic_id": "S002-A1",
+    "claim_text": "The move to a different list is best understood as a change in "
+                  "classification.",
+    "claim_type": "INTERPRETIVE", "derivation": "DERIVED", "attribution": None,
+    "qualifiers": [], "relations": [], "event_referents": [], "resolved_referents": [],
+    "unresolved_referents": [{"surface_form": "That",
+                              "reason_unresolved": "Demonstrative."}]}]})
+check("E. an interpretive demonstrative cannot become a named subject",
+      not interp["validation_result"]["ok"], interp["validation_result"])
+
+# THE RULE DOES NOT OVERREACH.
+desc = _run(DEICTIC_ART, dsents, D_RECORDS, _shadow_over(
+    "The video projection content was designed to be felt from the floor of the house.",
+    [{"surface_form": 'implicit subject of "designed"',
+      "reason_unresolved": "Described, not quoted."}], sid="S001", aid="S001-A1"))
+check("a DESCRIBED referent that is not a token of the sentence does not trigger it",
+      desc["validation_result"]["ok"], desc["validation_result"])
+check("token matching: 'it' is not found inside 'Its'",
+      not SH._contains_surface("Its legs gave way.", "it"))
+check("token matching: 'that' is not found inside 'thatch'",
+      not SH._contains_surface("The thatch was old.", "that"))
+check("token matching: a multi-word form is matched as a phrase",
+      SH._contains_surface("The former was cheaper.", "the former")
+      and not SH._contains_surface("A formerly cheap seat.", "the former"))
+check("token matching: curly and straight quotes are the same text",
+      SH._contains_surface("the \u201cfloor\u201d of the house", '"floor"'))
+
+
 print("F. interpretation safety")
 retyped = {"semantic_claims": [sc(
     "S005", "S005-A1", "The piece is a refusal.", claim_type="EMPIRICAL")]}
@@ -376,6 +499,60 @@ check("run_shadow survives provider construction failure",
       art["status"] == "SHADOW_UNAVAILABLE", art)
 
 # ── K. flag off = zero difference, zero calls ────────────────────────────────
+
+# ── M. THE ACTIVE-PATH CALL SITE ─────────────────────────────────────────────
+# The shadow was merged with no caller, so the flag could not produce a canary.
+# composition.run_semantic_claim_shadow is the one call site; these pin the three
+# properties that let it sit inside a production run.
+print("\nM. active-path invocation")
+from new_engine_v1 import composition as _CP                       # noqa: E402
+
+_prev = os.environ.pop(SH.FLAG, None)
+
+
+class _Boom:
+    model = "claude-opus-5"
+    calls = 0
+
+    def complete(self, *a, **k):
+        _Boom.calls += 1
+        raise RuntimeError("provider is down")
+
+
+_Boom.calls = 0
+check("OFF: returns None",
+      _CP.run_semantic_claim_shadow(_Boom(), "Some prose.", [], "sha") is None)
+check("OFF: zero provider calls", _Boom.calls == 0, _Boom.calls)
+
+os.environ[SH.FLAG] = "1"
+try:
+    _Boom.calls = 0
+    r = _CP.run_semantic_claim_shadow(_Boom(), "Some prose. And more.", [], "sha")
+    check("ON: a provider that raises never propagates an exception", True)
+    check("ON: the result is either nothing or a marked-unusable artifact",
+          r is None or r.get("status") in ("SHADOW_UNAVAILABLE", "SHADOW_INVALID"),
+          str((r or {}).get("status")))
+    check("ON: and it is stamped NON_AUTHORITATIVE",
+          r is None or r.get("authority") == "NON_AUTHORITATIVE",
+          str((r or {}).get("authority")))
+    check("ON: the failure was reached, not skipped", _Boom.calls >= 1, _Boom.calls)
+finally:
+    os.environ.pop(SH.FLAG, None)
+    if _prev is not None:
+        os.environ[SH.FLAG] = _prev
+
+src = open(_CP.__file__, encoding="utf-8").read()
+check("the call site sits after the authoritative claim map is recorded",
+      src.index('wr["claim_map_article_sha256"]')
+      < src.index("run_semantic_claim_shadow(P, final"))
+check("nothing in composition READS the shadow's return value",
+      "= run_semantic_claim_shadow(" not in src)
+consumers = [n for n in ("safety_audit", "ground_candidate", "reader_gate",
+                         "safety_materiality", "validate_claim_map")
+             if "semantic_claim_shadow" in src.split("def %s" % n)[-1][:4000]]
+check("no gate function mentions the shadow", consumers == [], str(consumers))
+
+
 print("K. flag OFF")
 before = json.dumps(CM.segment(ART), sort_keys=True)
 os.environ.pop(SH.FLAG, None)

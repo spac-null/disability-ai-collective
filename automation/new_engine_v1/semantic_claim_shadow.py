@@ -27,10 +27,12 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import time
+import unicodedata
 
 FLAG = "CRIPMINDS_SEMANTIC_CLAIM_SHADOW"
-PROMPT_VERSION = "semantic-claim-shadow/1"
+PROMPT_VERSION = "semantic-claim-shadow/2"
 ARTIFACT_VERSION = 1
 
 # A constrained enum rather than free text: an open vocabulary is unreviewable, and the
@@ -66,6 +68,55 @@ RESOLUTION_TYPES = ("SAME_SENTENCE_EXPLICIT", "CROSS_SENTENCE_ENTITY_PRONOUN",
                     "CROSS_SENTENCE_NOMINAL_REPEAT", "OTHER_EXPLICIT")
 
 CROSS_SENTENCE_DEICTIC_UNSAFE = "CROSS_SENTENCE_DEICTIC_UNSAFE"
+UNRESOLVED_REFERENT_DROPPED = "UNRESOLVED_REFERENT_DROPPED_FROM_CLAIM"
+
+# AN UNRESOLVED REFERENT MAY NOT BE RESOLVED IN THE CLAIM TEXT INSTEAD (2026-09-20).
+# The deictic policy closed the `resolved_referents` route and the defect came straight
+# back through the prose. Replay 3, draft 8a0dab48, sentence S021:
+#
+#   article      "That is the perspective typical of where wheelchair and accessibility
+#                 seating is located in a theater."
+#   unresolved   {"surface_form": "That", "reason_unresolved": "Demonstrative pointing
+#                 outside this sentence; no identity construction inside the sentence
+#                 supplies its target..."}
+#   claim_text   "The floor of the house is the perspective typical of where wheelchair
+#                 and accessibility seating is located in a theater.
+#                 [DERIVED: pronoun 'that' resolved, not the article's wording]"
+#   claim_type   EMPIRICAL
+#
+# The record contradicts itself: the referent is declared unresolvable and the resolution
+# is performed anyway, one field along, where no rule looked. 22 of 443 semantic claims in
+# that replay declared a referent unresolved whose surface form is absent from their own
+# claim_text.
+#
+# The rule below is provenance only. It asks whether an explicitly unresolved surface form
+# DISAPPEARED from the derived claim -- never whether the replacement means the same
+# thing. A DERIVED atom may still rewrite freely around the referent; it may not delete
+# the one token it has just said it cannot resolve.
+_QUOTES = {"\u2018": "'", "\u2019": "'", "\u201a": "'", "\u201b": "'",
+           "\u201c": '"', "\u201d": '"', "\u201e": '"', "\u00ab": '"',
+           "\u00bb": '"', "\u2032": "'", "\u2033": '"'}
+
+
+def _canon(text: str) -> str:
+    """NFC, canonical quotes, collapsed whitespace, casefolded. Nothing else -- no
+    stemming, no synonyms, no fuzzy matching. See the note above."""
+    t = unicodedata.normalize("NFC", text or "")
+    for a, b in _QUOTES.items():
+        t = t.replace(a, b)
+    return " ".join(t.split()).casefold()
+
+
+def _contains_surface(haystack: str, surface: str) -> bool:
+    """Whole-token occurrence of `surface` in `haystack`, both canonicalised.
+
+    Word-bounded so "it" is not found inside "its" and "that" is not found inside
+    "thatch"; a multi-word form ("the former") is matched as the phrase it is.
+    """
+    h, s = _canon(haystack), _canon(surface)
+    if not s:
+        return False
+    return re.search(r"(?<![\w']){0}(?![\w'])".format(re.escape(s)), h) is not None
 
 
 def enabled() -> bool:
@@ -101,6 +152,11 @@ SYSTEM = (
     "perspectives as often as at nouns, so a plausible antecedent in the previous "
     "sentence is not enough. Turning a demonstrative into an identity assertion is the "
     "worst error you can make here.\n"
+    "* AN UNRESOLVED REFERENT STAYS IN THE CLAIM TEXT. If you record a surface form as "
+    "an unresolved_referent, claim_text MUST still contain that exact word. Writing "
+    "\"That is the perspective ...\" as \"The floor of the house is the perspective ...\" "
+    "performs the resolution you just said you could not make, and labelling it DERIVED "
+    "does not license it. Rewrite everything else you need to; leave that word alone.\n"
     "* ENTITY PRONOUNS ARE DIFFERENT. he, she, they, it, his, her, their, its MAY be "
     "resolved across sentences when you can point at the exact antecedent words in the "
     "article. If you cannot, record an unresolved_referent.\n"
@@ -380,6 +436,20 @@ def validate(artifact: dict, article_text: str, sentences: list, records: list) 
         for ur in sc.get("unresolved_referents") or []:
             if not isinstance(ur, dict) or not ur.get("surface_form"):
                 errs.append("%s malformed unresolved_referent record" % sid)
+                continue
+            # THE PROVENANCE RULE. Only fires when the surface form is a real token of
+            # the parent sentence: a model that describes a referent rather than quoting
+            # it ('implicit subject of "Generated"') is not making the claim this rule
+            # is about, and the IF clause simply does not apply.
+            surf = ur.get("surface_form") or ""
+            if not _contains_surface(sent["exact_span"], surf):
+                continue
+            if not _contains_surface(sc.get("claim_text") or "", surf):
+                errs.append(
+                    "%s %s: %r is declared unresolved but does not appear in claim_text "
+                    "-- the claim resolved it anyway (%r)"
+                    % (sid, UNRESOLVED_REFERENT_DROPPED, surf,
+                       (sc.get("claim_text") or "")[:80]))
     # Rebuilt after the downgrade pass so the artifact's own list reflects what the
     # validator actually decided, not what the model originally proposed.
     artifact["unresolved_referents"] = [
