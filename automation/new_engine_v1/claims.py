@@ -69,8 +69,11 @@ TYPES = (EMPIRICAL, INTERPRETIVE, MIXED)
 # independent audit (2026-09-20) surfaced this through "Gazzetta Ufficiale of 28
 # February 2026, n. 49.", which split after "n." and hid the issue number from its
 # own sentence. "n." (Italian numero) is added for that case.
-_ABBR = (r"(?<!\bMr\.)(?<!\bMrs\.)(?<!\bDr\.)(?<!\bSt\.)(?<!\bNo\.)(?<!\bn\.)")
-_SPLIT = re.compile(_ABBR + r"(?<=[.!?])\s+(?=[\"'“‘(]?[A-Z0-9])")
+# 2026-09-20, horizontal audit: the guard now lives in story.SENTENCE_SPLIT so the
+# backbone, continuity.sentences and story._sentences_of cannot drift apart again. The
+# shared pattern is this one plus the initials rule ("Martin R. Smith", "A.I.") and the
+# month/Art./Fig. abbreviations the retained corpus actually contains.
+from .story import SENTENCE_SPLIT as _SPLIT
 
 
 def segment(article_text: str) -> list:

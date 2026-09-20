@@ -332,25 +332,71 @@ def validate_lens(lens: dict) -> list:
 # The tolerance is unchanged. `split(".") > 3` admitted at most two full stops, which is
 # at most two sentences; `sentence_count() > 2` admits exactly the same. A spine that
 # really is three sentences still fails. Only the counting is fixed.
-_DOTTED_NOT_A_STOP = (
-    re.compile(r"\d\.\d"),                                  # 13.8, 21.3
-    re.compile(r"\b(?:[A-Za-z]\.){2,}"),                    # U.S., e.g., i.e., a.m.
-    re.compile(r"\b(?:Mr|Mrs|Ms|Dr|Prof|St|Jr|Sr|vs|No|Fig|approx|cf|al)\."),
+#
+# ONE SPLITTER FOR THE WHOLE ENGINE (2026-09-20, horizontal audit). There were four
+# sentence splitters with three different ideas of an abbreviation:
+#
+#   claims.segment        guarded Mr./Mrs./Dr./St./No./n.   (fixed 2026-09-20, b328095)
+#   anchors._SPLIT        guarded P.R./Mr./Mrs./Ms./Dr./St. (fixed the same day)
+#   story._sentences_of   NO GUARD AT ALL                   <- active in Safety
+#   continuity.sentences  NO GUARD AT ALL, byte-identical   <- active; the Writer's ids
+#
+# The two that were fixed are on the LEGACY path; the two unguarded ones are the active
+# ones. `continuity.sentences` is what `composition.label_sentences` numbers S001.. with
+# and what the Writer is told to cite in `negative_lineage`; `story._sentences_of` is
+# what `negative_claim_scan` and `intent_causal_scan` read. Both were handing those
+# consumers fragments. Measured across the retained corpus: 14 articles segment into
+# pieces like 'and Mrs.', 'On Sept.', 'Decreto-legge n.', '49.', 'Martin R.', 'Joan C.',
+# 'Chi says A.I.'.
+#
+# THE GUARD BELONGS AT THE WHITESPACE AFTER THE TERMINATOR, so each lookbehind has to
+# include the period it protects -- the mistake b328095 fixed elsewhere.
+#
+# `(?<!(?<![A-Za-z])[A-Z]\.)` is the general case no per-word list can cover: a LONE
+# capital plus a period is an initial ("Martin R. Smith", "J. R. Smith", "A.I."), never a
+# sentence end. The nested lookbehind is what makes it lone, and it is not optional --
+# the first version omitted it and blocked every sentence ending in an acronym ("...as an
+# MPhil/PhD.", "...none from Gemini or Meta AI.", "...the trust is the NHS."), merging 132
+# retained texts' real sentence boundaries. Measured before and after on the whole
+# retained corpus; what remains is the abbreviation merges and nothing else. It still
+# costs the rare sentence ending in a bare capital ("the grade was A. Then ...").
+#
+# A decimal needs no rule: "13.8" has no whitespace after the stop, so no split was ever
+# possible there. Only `sentence_count`'s old `split(".")` saw it, and this replaces it.
+_SENTENCE_ABBR = (
+    r"(?<!(?<![A-Za-z])[A-Z]\.)"                           # a LONE initial: R. J. A.I.
+    r"(?<!\bMr\.)(?<!\bMrs\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bProf\.)"
+    r"(?<!\bSt\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bNo\.)(?<!\bn\.)"
+    r"(?<!\bJan\.)(?<!\bFeb\.)(?<!\bMar\.)(?<!\bApr\.)(?<!\bJun\.)"
+    r"(?<!\bJul\.)(?<!\bAug\.)(?<!\bSep\.)(?<!\bSept\.)(?<!\bOct\.)"
+    r"(?<!\bNov\.)(?<!\bDec\.)"
+    r"(?<!\bArt\.)(?<!\bFig\.)(?<!\bvs\.)(?<!\bcf\.)(?<!\bal\.)"
+    r"(?<!\be\.g\.)(?<!\bi\.e\.)"
 )
+# The lookahead is claims.segment's: a stop followed by lowercase is not a sentence
+# boundary either ("7:30 a.m. and 3:00 p.m.", "i.e. the Royal Devon"). Its opener class
+# is widened by the Markdown characters this corpus actually starts sentences with --
+# measured, not guessed: `*Deaf Material* is Kim's first artist book` opens 4 retained
+# articles' sentences and claims.segment's original class would have swallowed them into
+# the preceding sentence.
+# A LINE BREAK IS ALWAYS A BOUNDARY. The opener class alone lost 726 real boundaries in
+# the retained corpus, because a Markdown structure -- a `>` blockquote, a `## Heading`,
+# a list item -- does not begin with a capital and the lookahead refused to split before
+# it. A paragraph or line break ends a sentence whatever follows it, so that is its own
+# branch; the opener class only governs a break made of spaces on one line.
+SENTENCE_SPLIT = re.compile(
+    _SENTENCE_ABBR
+    + r"(?<=[.!?])(?:[ \t]*\n\s*|[ \t]+(?=[\"'“‘‛«(\[*_]{0,3}[A-Z0-9]))")
+
+
+def split_sentences(text: str) -> list:
+    """The engine's one sentence splitter. Whitespace-separated pieces, stripped."""
+    return [s.strip() for s in SENTENCE_SPLIT.split(text or "") if s.strip()]
 
 
 def sentence_count(text: str) -> int:
-    """How many sentences `text` actually contains.
-
-    Decimals and dotted abbreviations are masked before the stops are counted, so the
-    number reflects sentences rather than periods. A trailing stop does not add one.
-    """
-    masked = (text or "").strip()
-    for pat in _DOTTED_NOT_A_STOP:
-        masked = pat.sub(lambda m: m.group(0).replace(".", "\x00"), masked)
-    if not masked:
-        return 0
-    return len([s for s in re.split(r"(?<=[.!?])(?:\s+|$)", masked) if s.strip()])
+    """How many sentences `text` actually contains. A trailing stop does not add one."""
+    return len(split_sentences((text or "").strip()))
 
 
 def validate_architecture(arch: dict, evidence_ids: set, ledger: dict | None = None) -> list:
@@ -1919,10 +1965,14 @@ INTENT_SHAPES = [
 ]
 
 
-def _sentences_of(text: str) -> list:
+def article_body(text: str) -> str:
+    """The prose, with YAML frontmatter and a leading Markdown heading removed."""
     body = text.split("---", 2)[2] if text.startswith("---") else text
-    body = re.sub(r"^#\s+.*\n", "", body.strip(), count=1)
-    return [s.strip() for s in re.split(r"(?<=[.!?])\s+", body.strip()) if s.strip()]
+    return re.sub(r"^#\s+.*\n", "", body.strip(), count=1).strip()
+
+
+def _sentences_of(text: str) -> list:
+    return split_sentences(article_body(text))
 
 
 def negative_shape_of(text: str) -> tuple:

@@ -56,7 +56,7 @@ from __future__ import annotations
 import re
 
 from .story import (SCENE_RISK, SENSORY_RISK, SPATIAL_RISK, _content_words, _entities,
-                    _numbers, _stem, _FUNCTION_WORDS)
+                    _numbers, _stem, _FUNCTION_WORDS, article_body, split_sentences)
 
 # ── operations the editor may declare ─────────────────────────────────────────
 NO_CHANGE = "NO_CHANGE"          # a valid edit: good prose is left alone
@@ -68,9 +68,10 @@ OPERATIONS = (NO_CHANGE, REPHRASE, MERGE, SPLIT, DELETE)
 
 
 def sentences(text: str) -> list:
-    body = text.split("---", 2)[2] if text.startswith("---") else text
-    body = re.sub(r"^#\s+.*\n", "", body.strip(), count=1)
-    return [s.strip() for s in re.split(r"(?<=[.!?])\s+", body.strip()) if s.strip()]
+    """The same splitter story._sentences_of uses. It was a byte-identical copy with no
+    abbreviation guard, and this is what composition.label_sentences numbers S001.. with
+    -- the ids the Writer is told to cite. See story.SENTENCE_SPLIT."""
+    return split_sentences(article_body(text))
 
 
 def paragraphs(text: str) -> list:

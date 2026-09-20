@@ -30,6 +30,9 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from new_engine_v1 import story as ST
+from new_engine_v1 import continuity as CE
+from new_engine_v1 import claims as CM
+from new_engine_v1 import composition as CP
 
 FAILURES = []
 CHECKS = [0]
@@ -223,6 +226,118 @@ def test_the_production_window_guard():
         del os.environ[PW.OVERRIDE_ENV]
 
 
+
+# ── 4. ONE SENTENCE SPLITTER, AND IT KNOWS AN ABBREVIATION ───────────────────
+# The horizontal audit (2026-09-20) found four splitters with three ideas of an
+# abbreviation. b328095 fixed the two on the LEGACY path; the two active ones --
+# story._sentences_of (negative_claim_scan, intent_causal_scan) and continuity.sentences
+# (composition.label_sentences, i.e. the ids the Writer is told to cite) -- had no guard
+# at all and were byte-identical copies of each other.
+ABBREV_CASES = [
+    ("Gazzetta Ufficiale of 28 February 2026, n. 49.", 1),
+    ("Mr. Gwynne said so.", 1),
+    ("Mrs. Boothby told the inquest.", 1),
+    ("Dr. Shenton told the inquest.", 1),
+    ("St. Thomas' is closed.", 1),
+    ("No. 49 was published.", 1),
+    ("On Sept. 12 the report landed.", 1),
+    ("The rule (see Art. 5) applies.", 1),
+    ("Martin R. Lebowitz won the prize.", 1),
+    ("J. R. Smith wrote it.", 1),
+    ("Chi says A.I. is the future.", 1),
+    ("Payment resumed at 9 a.m. on the Monday.", 1),
+    ("The trust, i.e. the Royal Devon, had no pathway.", 1),
+]
+# The assertions that matter: a real boundary must still be one.
+REAL_BOUNDARIES = [
+    ("There were no beds. 49 patients waited.", 2),
+    ("It ended. Then more.", 2),
+    ("She has a PhD. The next one followed.", 2),          # acronym-final, NOT an initial
+    ("None came from Gemini or Meta AI. The tell was gone.", 2),
+    ("The trust is the NHS. It failed her.", 2),
+    ("Is it over? Yes! It is.", 3),
+    ("It is one image among many.\n\n*Deaf Material* is her first book.", 2),
+    ("One. Two. Three.", 3),
+]
+
+
+def test_all_three_splitters_agree_and_keep_abbreviations():
+    for text, n in ABBREV_CASES:
+        got = (len(ST._sentences_of(text)), len(CE.sentences(text)), len(CM.segment(text)))
+        check("abbreviation kept: %r" % text[:40], got == (n, n, n), str(got))
+
+
+def test_a_real_sentence_boundary_is_still_a_boundary():
+    """The negative half. The first version of this fix blocked every sentence ending in
+    an acronym -- PhD., Meta AI., the NHS. -- and merged 132 retained texts' real
+    boundaries. These cases are why the initials rule requires a LONE capital."""
+    for text, n in REAL_BOUNDARIES:
+        got = (len(ST._sentences_of(text)), len(CE.sentences(text)), len(CM.segment(text)))
+        check("boundary kept: %r" % text[:40], got == (n, n, n), str(got))
+
+
+def test_the_backbone_is_still_exactly_anchored():
+    art = ("Dr. Shenton told the inquest. The decree, n. 26, provides no register.\n\n"
+           "Martin R. Lebowitz won it.")
+    sents = CM.segment(art)
+    check("verify_backbone clean", CM.verify_backbone(art, sents) == [],
+          str(CM.verify_backbone(art, sents)))
+    check("every span sits at its own offsets",
+          all(art[s["start"]:s["end"]] == s["exact_span"] for s in sents))
+
+
+# ── 5. THE POSSESSIVE EXEMPTION READS THE SAME APPROVED SET AS THE AUDIT ─────
+def test_a_ledger_only_name_is_approved_for_its_possessive():
+    """safety_audit's approved_entities was packet+repair while the audit it moderates
+    is packet+LEDGER, so a name only the Ledger grants blocked on its apostrophe."""
+    import re as _re
+    pkt = {"article_type": ST.NARRATIVE_ARTICLE,
+           "story_spine": "A report lands and what it leaves out.",
+           "opening": "The table, published in 2026.",
+           "reader_initial_state": "That it is complete.",
+           "turn": "", "crip_turn": "The table holds the total and not the method.",
+           "lens": "", "ending_move": "The total is there; the method is not.",
+           "beats": [{"beat_id": "B1", "happens": "The table and its total.",
+                      "carrier": "the table", "facts": [], "concept": "", "withhold": ""}],
+           "facts": [], "quotes": [], "definitions": {}, "prohibitions": [],
+           "_cut_count": 0}
+    led = {"F1": {"fact_id": "F1", "claim_type": "POSITIVE_FACT",
+                  "proposition": "Morgan published the table in 2026.",
+                  "support_span": "Morgan published the table in 2026."}}
+    approved = ST.render(pkt)
+    check("the packet render does not carry the name",
+          "Morgan" not in approved, approved[:80])
+    art = "The table is the record. It rests on Morgan's table and nothing else."
+    surface = ST.factual_surface_audit(art, pkt, led)
+    check("the bare name is approved by the Ledger, only the possessive is flagged",
+          surface["unapproved_entities"] == ["Morgan's"],
+          str(surface["unapproved_entities"]))
+    # The fix: the exemption's own set now includes the Ledger, so the base is found.
+    ledger_text = " ".join("%s %s" % (v["proposition"], v["support_span"])
+                           for v in led.values())
+    ents = ST._entities(approved + " " + ledger_text, skip_sentence_initial=False)
+    check("with the Ledger folded in, the base IS approved", "Morgan" in ents)
+    check("an invented name is still NOT approved", "Quilter" not in ents)
+    art2 = "The table is the record. It rests on Quilter's table and nothing else."
+    s2 = ST.factual_surface_audit(art2, pkt, led)
+    check("and an invented possessive still blocks",
+          "Quilter's" in s2["unapproved_entities"], str(s2["unapproved_entities"]))
+
+
+# ── 6. A HOLD RETURNS THE TEXT THE RUN ENDED ON ──────────────────────────────
+def test_the_hold_handler_prefers_final():
+    """Of 58 retained runs carrying audited_text_sha256, ARTICLE_FINAL.md was not those
+    bytes in 10; in two it was byte-identical to CONTINUITY_FINAL.md or WRITER_DRAFT.md."""
+    src = open(CP.__file__, encoding="utf-8").read()
+    check("the handler returns `final` before the Continuity fallback",
+          "final\n                   or st.get(CONTINUITY, {}).get(\"article_text\")"
+          in src, "handler not patched")
+    check("the stale Continuity-first form is gone",
+          "e.code,\n                   st.get(CONTINUITY" not in src)
+    check("`final` is initialised before the try so a pre-Continuity hold still works",
+          "\n    final = None\n    try:" in src)
+
+
 def main():
     for fn in (test_decimals_do_not_end_a_sentence,
                test_abbreviations_do_not_end_a_sentence,
@@ -232,7 +347,12 @@ def main():
                test_a_negation_with_nothing_behind_it_still_holds,
                test_an_unrelated_negation_does_not_license_a_different_one,
                test_negative_typed_facts_still_work_exactly_as_before,
-               test_the_production_window_guard):
+               test_the_production_window_guard,
+               test_all_three_splitters_agree_and_keep_abbreviations,
+               test_a_real_sentence_boundary_is_still_a_boundary,
+               test_the_backbone_is_still_exactly_anchored,
+               test_a_ledger_only_name_is_approved_for_its_possessive,
+               test_the_hold_handler_prefers_final):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)

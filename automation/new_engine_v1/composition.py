@@ -3015,7 +3015,25 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
         allow_rel = tuple({k for e in (repair.get("edits") or [])
                            for k in CE.relations(e.get("repaired") or "")})
 
+    # THE POSSESSIVE EXEMPTION MUST READ THE SAME APPROVED SET AS THE AUDIT IT MODERATES
+    # (2026-09-20, horizontal audit). `screens()` below calls
+    # `ST.factual_surface_audit(text, packet, ledger)`, whose approved surface has been
+    # packet + EVERY ledger proposition and support span since 2026-09-13. This set was
+    # left at packet + repair, so a name the Ledger grants and the packet's condensed
+    # render omits produced `unapproved_entities == ["Foo's"]` -- the bare "Foo" was
+    # approved, only the possessive survived -- and then failed the lookup that exists to
+    # forgive exactly that, holding the article on an apostrophe.
+    #
+    # Nothing is widened beyond this function's own stated rule ("Survey's is not a new
+    # entity when the packet grants Survey"): only a possessive whose base is already
+    # approved is forgiven, and every other unapproved entity still blocks. No retained
+    # run hit it; it is closed because the two sets must not disagree about "approved".
     approved_render = ST.render(packet) + " " + repair_text
+    if ledger:
+        approved_render += " " + " ".join(
+            "%s %s" % (str((v or {}).get("proposition", "")),
+                       str((v or {}).get("support_span", "")))
+            for v in ledger.values() if isinstance(v, dict))
     approved_entities = ST._entities(approved_render, skip_sentence_initial=False)
 
     def _possessive_of_approved(e: str) -> bool:
@@ -7235,6 +7253,23 @@ def run_story_architecture_composition(
     replay = frozen or {}
     surface = SURFACE_PROSE_FINISH
     pkg = None
+    # THE HOLD HANDLER MUST RETURN THE TEXT THE RUN ACTUALLY ENDED ON (2026-09-20,
+    # horizontal audit). It returned `st[CONTINUITY]["article_text"]`, which is stale in
+    # two ways: when Continuity was DISCARDED for adding material the run explicitly
+    # refused that text, and after Prose Finish, a Safety repair or a grounding-completion
+    # repair it is simply pre-repair prose. `persist` then writes it to ARTICLE_FINAL.md
+    # under the comment "the exact bytes Safety last audited", and `article_sha256` /
+    # `bundle_sha256` are stamped over it.
+    #
+    # Measured: of 58 retained runs carrying an `audited_text_sha256`, ARTICLE_FINAL.md is
+    # not those bytes in 10, and in two of them it is byte-identical to CONTINUITY_FINAL.md
+    # or WRITER_DRAFT.md instead -- this path. No article was mispublished (the handler
+    # only runs on a HOLD) but every later audit of those runs read the wrong prose.
+    #
+    # `final` is bound as soon as Continuity decides, and rebound by each later stage, so
+    # it is the right answer whenever it exists. Bound to None here because a hold before
+    # Continuity leaves it unset, and the old chain remains the fallback for that case.
+    final = None
     try:
         if replay.get("ledger"):
             ledger = replay["ledger"]
@@ -7946,7 +7981,8 @@ def run_story_architecture_composition(
         elapsed[e.stage] = round(time.time() - marks["_last"], 1)
         st[e.stage] = dict(e.payload, status=HOLD, code=e.code, reasons=e.reasons)
         return out(e.stage, "; ".join(e.reasons)[:600], e.code,
-                   st.get(CONTINUITY, {}).get("article_text")
+                   final
+                   or st.get(CONTINUITY, {}).get("article_text")
                    or st.get(WRITER, {}).get("article_text"),
                    package_out=pkg, article_surface=surface)
 
