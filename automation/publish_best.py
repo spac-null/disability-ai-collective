@@ -525,8 +525,39 @@ def art_direct_for(post_path, provider=None):
         return None, None, "no usable brief (%s) — legacy image path" % (
             reason or "art director returned none")
     brief = out["brief"]
-    return brief, arch, "run %s — %s image(s), architecture=%s visual_context=%s" % (
+
+    # WHAT THE ART DIRECTOR ASKED FOR, NOT ONLY WHAT SURVIVED. `reconcile_brief` drops an
+    # image whose factual anchors the settled prose does not support, and lowers
+    # image_count to match -- deliberately, and its own docstring says "IF THIS EVER
+    # STARTS DROPPING IMAGES, that is the signal to revisit it". The signal was
+    # unobservable: this function returned the post-reconciliation count and discarded
+    # `out["reconciled"]`, so a one-image article could not be told apart from a
+    # three-image brief that lost two anchors on an attribution verb. Measured on the
+    # 2026-09-22 publication, which shipped one image and left no way to say which it was.
+    #
+    # So the envelope is written beside the run's own artifacts. It changes nothing about
+    # what publishes: a failure to write it is swallowed, because an evidence file is
+    # never a reason an accepted article does not reach readers.
+    rec = out.get("reconciled") or {}
+    dropped = rec.get("images_dropped") or 0
+    try:
+        (run_dir / "ART_DIRECTION.json").write_text(json.dumps({
+            "engine_run": fm.get("engine_run", ""),
+            "image_count_final": brief.get("image_count"),
+            "images_dropped": dropped,
+            "image_count_requested": (brief.get("image_count") or 0) + dropped,
+            "anchors_dropped": rec.get("anchors_dropped") or [],
+            "architecture_present": bool(arch),
+            "visual_context_used": bool(brief.get("visual_context_used")),
+            "count_reasoning": brief.get("count_reasoning", ""),
+            "brief": brief,
+        }, indent=1, sort_keys=True, default=str), encoding="utf-8")
+    except Exception as e:                                            # noqa: BLE001
+        print("  art direction: evidence not retained (%s)" % type(e).__name__)
+
+    return brief, arch, "run %s — %s image(s)%s, architecture=%s visual_context=%s" % (
         fm.get("engine_run", ""), brief.get("image_count"),
+        " (%d dropped: unsupported anchors)" % dropped if dropped else "",
         "yes" if arch else "no", "yes" if brief.get("visual_context_used") else "no")
 
 
