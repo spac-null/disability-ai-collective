@@ -28,6 +28,7 @@ publication_safety_profile: "CURRENT_ENGINE_V1"
 publication_safety_version: 1
 image: /assets/the-pavilions-at-jia-curated-2026-that-a-photograph-cannot-hold_1_conceptual_cover.jpg
 image_alt: "Material samples laid on damp sand in flat daylight: a pale pink salt brick with visible crystal grain, a rough-sawn teak offcut, a speckled board of compressed rice husk and recycled plastic, a coil of raw rattan, a piece of perforated timber and a length of water-beaded chain. The surfaces are grainy and dusty; no people, labels or buildings are visible."
+translation_nl: "/nl/the-pavilions-at-jia-curated-2026-that-a-photograph-cannot-hold/"
 ---
 
 The fifth edition of Jia Curated ran from 13 to 17 August 2026 at Pengembak Beach in Sanur, on Bali's eastern shoreline. The new venue set the theme, Nature Weave, and shaped eight pavilions each built to respond to the landscape. The materials are the first thing to name. Rice husks and recycled plastic. Salt bricks. Raw teak slabs and timber offcuts. These are physical things before they are anything else, and several of the pavilions were built to do their work through them rather than around them.
