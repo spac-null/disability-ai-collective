@@ -28,6 +28,7 @@ publication_safety_profile: "CURRENT_ENGINE_V1"
 publication_safety_version: 1
 image: /assets/apple-s-emissions-stopped-falling-in-tim-cook-s-last-year_1_conceptual_cover.jpg
 image_alt: "A creased sheet of matte printed paper photographed at a shallow angle. A single thick printed line falls steadily from the left, marked 2015 at its start, then levels off and runs perfectly flat to the edge of the printed area, ending without an arrow. The flat run is labelled 60%. Lower and further to the right, a small separate marker reads 75%, sitting well below the flat line and unreached by it. The rest of the sheet is blank."
+translation_nl: "/nl/apple-s-emissions-stopped-falling-in-tim-cook-s-last-year/"
 ---
 
 As Tim Cook steps down as Apple CEO, the company points to a number. Apple has cut its global greenhouse gas emissions by more than 60 percent against its 2015 baseline, a figure it put forward in the announcement of Cook's move to executive chairman. The record has drawn praise where Big Tech usually draws complaint. A 2023 report by Stand.earth found Apple was the only major tech company at the time to have set a 100 percent renewable electricity target for its suppliers. In 2025 Greenpeace East Asia gave Apple a B+ for pushing renewable energy along its supply chains. While Google's and Microsoft's emissions have risen with the energy demands of generative AI, Apple has held its own carbon footprint flat.
