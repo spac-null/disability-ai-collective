@@ -253,6 +253,36 @@ def last_published(day):
     return (day - best[0]).days, best[1]
 
 
+def stranded_candidates():
+    """Accepted candidates still sitting in _drafts/, unpublished.
+
+    WHY THIS IS REPORTED AND NOT RETRIED. `publish_if_eligible` makes exactly one
+    publication attempt and a mechanical failure there is deliberately never retried --
+    an ACCEPT must not be re-litigated by a filesystem error. The cost of that rule is
+    that a candidate the engine approved can sit in _drafts forever with nobody told.
+    It happened: two candidates from 2026-09-03/04 carried publication_eligible: true
+    and publish_attempts: 1 for nineteen days, through the every-two-days backlog cron
+    being switched off, and nothing said so.
+
+    So this counts them and the report says the number. It publishes nothing, retries
+    nothing and changes no editorial state -- it only makes the silence audible.
+    """
+    out = []
+    try:
+        for f in sorted((REPO / "_drafts").glob("*.md")):
+            head = f.read_text(encoding="utf-8", errors="replace")[:4000]
+            fm = head.split("---", 2)[1] if head.startswith("---") else head
+            if not re.search(r"^publication_eligible:\s*true", fm, re.M):
+                continue
+            if re.search(r"^cutover_rehearsal:\s*true", fm, re.M):
+                continue          # a rehearsal was never meant to publish
+            t = re.search(r'^title:\s*"?(.+?)"?\s*$', fm, re.M)
+            out.append(t.group(1) if t else f.stem)
+    except Exception:
+        return []
+    return out
+
+
 def corpus_counts():
     """Current vs earlier, using the site's own epoch predicate (_data/backlist.yml)."""
     try:
@@ -472,6 +502,14 @@ def build_message(day):
         bits.append("~$%.0f this month" % mc)
     if bits:
         L.append(" · ".join(bits))
+
+    stranded = stranded_candidates()
+    if stranded:
+        L.append("⚠️ Unpublished accepted: %d — %s%s"
+                 % (len(stranded), stranded[0][:40],
+                    " +%d more" % (len(stranded) - 1) if len(stranded) > 1 else ""))
+        L.append("  run: python3 -c \"import sys;sys.path.insert(0,'automation');"
+                 "import publish_best as P;P.publish_candidate('_drafts/<file>')\"")
 
     cur, arch = corpus_counts()
     if cur is not None:
