@@ -3957,6 +3957,34 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   margin-bottom: 0 !important;
 }
 
+/* ── Pull quote: decorative repeat of a sentence from the prose ──
+   Not a <blockquote>: the words are the article's own, not quoted from elsewhere, and
+   the sentence already stands a paragraph above. It carries aria-hidden="true", so this
+   is emphasis for a sighted reader only and a screen reader meets the sentence once,
+   in its place in the argument. Styled to match the blockquote treatment below it. */
+.prose .pullquote {
+  display: block;
+  margin: var(--space-10) calc(-1 * var(--space-6));
+  padding: var(--space-6) var(--space-8);
+  border-top: 3px solid var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-family-serif);
+  font-size: clamp(1.25rem, 2.3vw, 1.55rem);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 640px) {
+  .prose .pullquote {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+}
+
 /* ── Body images: full-width, proper caption ── */
 .prose img {
   width: 100% !important;

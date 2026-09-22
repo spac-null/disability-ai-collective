@@ -561,6 +561,52 @@ def art_direct_for(post_path, provider=None):
         "yes" if arch else "no", "yes" if brief.get("visual_context_used") else "no")
 
 
+PULLQUOTE_OPEN = '<aside class="pullquote" aria-hidden="true">'
+PULLQUOTE_CLOSE = "</aside>"
+
+
+def place_pull_quote(text, quote):
+    """Repeat `quote` as a decorative pull quote after the paragraph it came from.
+
+    Returns (text, note). The sentence is REPEATED, newspaper-fashion, rather than the
+    body sentence being reformatted in place: the paragraph stays exactly as Safety, the
+    Grounder and the Fact Check read it, and the only new bytes are a copy of bytes those
+    gates already approved.
+
+    IT IS MARKED DECORATIVE, AND THAT IS NOT OPTIONAL HERE. The sentence is already in
+    the prose a paragraph above. Rendered as a blockquote it would be announced to a
+    screen reader twice, with no signal that the second one is the same sentence -- and
+    <blockquote> would additionally assert the words came from somewhere else, which is
+    false: they are the article's own. So it is an <aside> carrying aria-hidden="true".
+    A sighted reader gets the emphasis; a screen-reader user reads the sentence once, in
+    its place in the argument, which is where it does its work. It holds no link, no
+    heading and nothing focusable, so hiding it removes nothing reachable.
+
+    RE-VERIFIED HERE, not trusted. composition.pull_quote_failure already refused a
+    reworded quote when the package was built, but this is the function that writes to
+    _posts and it is the last place the claim "these are the article's own words" can be
+    checked. If the sentence is not found, nothing is inserted and the article publishes
+    unchanged -- a missing pull quote is never a reason to fail a publication.
+    """
+    body = text or ""
+    q = str(quote or "").strip().strip('"\u201c\u201d')
+    if not q:
+        return text, "none offered"
+    if PULLQUOTE_OPEN in body:
+        return text, "skipped: the article already carries a pull quote"
+    blocks = body.split("\n\n")
+    for i, block in enumerate(blocks):
+        if block.lstrip().startswith(("---", "#", ">", "!", "|", "<")):
+            continue
+        if q in block:
+            if i == len(blocks) - 1:
+                return text, "skipped: the sentence is in the final paragraph"
+            esc = q.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            blocks.insert(i + 1, PULLQUOTE_OPEN + esc + PULLQUOTE_CLOSE)
+            return "\n\n".join(blocks), "placed after paragraph %d" % (i + 1)
+    return text, "skipped: not found verbatim in the body"
+
+
 def set_publish_date(path, when):
     """Rewrite the front matter `date:` field to the actual promotion date.
 
@@ -603,6 +649,24 @@ def promote_candidate(draft, dest, now):
     shutil.move(str(draft), str(dest))
     set_publish_date(dest, now)
     mutated += [str(dest), str(draft)]      # created, and moved out of
+
+    # THE PULL QUOTE, IF THE PACKAGE CARRIED ONE. Placed at the same boundary the
+    # illustrations are, for the same reason: one implementation, both engines, and the
+    # article's own bytes are the input. Failure is silent by design -- see
+    # place_pull_quote.
+    try:
+        _fm = parse_frontmatter(dest.read_text(encoding="utf-8", errors="replace"))
+        _pq = str(_fm.get("pull_quote") or "").strip()
+        if _pq:
+            _txt = dest.read_text(encoding="utf-8", errors="replace")
+            _head, _sep, _body = _txt.partition("\n---\n")
+            if _sep:
+                _new, _note = place_pull_quote(_body, _pq)
+                if _new != _body:
+                    dest.write_text(_head + _sep + _new, encoding="utf-8")
+                print("  pull quote: %s" % _note)
+    except Exception as e:                                            # noqa: BLE001
+        print("  pull quote: not placed (%s)" % type(e).__name__)
 
     # ILLUSTRATE HERE, AT THE ONE BOUNDARY BOTH ENGINES CROSS. Illustration used
     # to live inside the legacy composition path (orchestrator/generate.py calls

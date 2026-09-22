@@ -6599,6 +6599,20 @@ PACKAGE_SYSTEM = (
     "SOCIAL_HOOK. One or two sentences for a post, no hashtags, no emoji, no 'thread', no "
     "'here is why'. Under 240 characters.\n"
     "\n"
+    "PULL_QUOTE. ONE SENTENCE COPIED OUT OF THE ARTICLE, CHARACTER FOR CHARACTER. Not a "
+    "summary of one, not a tightened version of one, not two joined together -- the exact "
+    "sentence, as it stands in the prose, because it is going to be set beside the "
+    "paragraph it came from and a reader will see both. Anything you rewrite will be "
+    "discarded.\n"
+    "  Choose the sentence that makes the rest of the article mean what it means: the one "
+    "where the reading turns, where a thing the reader already met stops being what it "
+    "looked like. Usually that is where the piece reads its own material rather than "
+    "adding to it. Not the opening, not the conclusion, not the most quotable line, and "
+    "not a fact -- a sentence that only states a fact has nothing to turn.\n"
+    "  If no single sentence does that job, return an empty string. An absent pull quote "
+    "costs nothing; a pull quote on a sentence that was not the turn tells the reader the "
+    "article is about the wrong thing.\n"
+    "\n"
     "REGISTER. Calm and specific. No 'in a world where', no 'this raises questions', no "
     "'a fascinating look at', no 'we are all'. Say the concrete thing."
 )
@@ -6606,11 +6620,51 @@ PACKAGE_SYSTEM = (
 PACKAGE_SCHEMA = (
     "Reply with ONE JSON object:\n"
     '{"package": {"title": "...", "dek": "...", "homepage_excerpt": "...",\n'
-    '             "meta_description": "...", "social_hook": "..."}}\n'
+    '             "meta_description": "...", "social_hook": "...",\n'
+    '             "pull_quote": "one sentence copied verbatim from the article, or \"\""}}\n'
     "No prose outside the JSON."
 )
 
 PACKAGE_FIELDS = ("title", "dek", "homepage_excerpt", "meta_description", "social_hook")
+
+# DELIBERATELY NOT IN PACKAGE_FIELDS. The five required lines hold the article back when
+# they fail; this one must never be able to. A pull quote is a reading aid -- it repeats a
+# sentence the reader is about to meet anyway -- so its absence costs a little emphasis
+# and nothing else, while a required sixth field would be a new way to lose a finished
+# article. It is validated hard and dropped quietly, never escalated.
+PACKAGE_OPTIONAL_FIELD = "pull_quote"
+
+# A pull quote long enough to be a paragraph is not a pull quote, and one short enough to
+# be a fragment cannot carry a turn. Generous at both ends: this is a shape check.
+PULL_QUOTE_BOUNDS = (6, 45, 300)
+
+
+def pull_quote_failure(quote: str, article_text: str) -> str:
+    """Why this pull quote may not be used, or "" if it may.
+
+    VERBATIM IS THE WHOLE CONTRACT. The quote is published beside the paragraph it was
+    taken from, so a reader sees both: a tightened or merged version reads as the article
+    contradicting itself, and a reworded one is new prose appearing after Safety, Grounding
+    and the Fact Check have finished. Comparison is on normalize_span, the same normaliser
+    the package's existing quotation screen uses, so punctuation and whitespace differences
+    do not matter and wording differences do.
+    """
+    q = str(quote or "").strip()
+    if not q:
+        return "empty"
+    if "\n" in q:
+        return "spans more than one line"
+    lo, hi, chars = PULL_QUOTE_BOUNDS
+    n = len(q.split())
+    if n < lo:
+        return "%d words, under the %d-word minimum" % (n, lo)
+    if n > hi:
+        return "%d words, over the %d-word maximum" % (n, hi)
+    if len(q) > chars:
+        return "%d characters, over the %d-character maximum" % (len(q), chars)
+    if normalize_span(q) not in normalize_span(article_text or ""):
+        return "not a verbatim sentence of the article"
+    return ""
 
 # Bounds are a shape check, not a taste check: a title that runs to thirty words or an
 # excerpt of four is not a judgement call, it is a stage that misunderstood its job.
@@ -6760,7 +6814,7 @@ def editorial_package(provider, article_text: str, arch: dict, worth: dict,
     pkg = obj.get("package") or {}
     errs = check_package(pkg, article_text)
     if not errs:
-        return {"status": PASS, "package": _clean_package(pkg), "applied": True,
+        return {"status": PASS, "package": _clean_package(pkg, article_text), "applied": True,
                 "package_status": PACKAGE_OK, "repaired": False, "provider": ident,
                 "model_calls": calls, "repairs": 0}
     # ONE repair, on the exact failures and the same article. No second one.
@@ -6777,7 +6831,7 @@ def editorial_package(provider, article_text: str, arch: dict, worth: dict,
     pkg2 = obj2.get("package") or {}
     errs2 = check_package(pkg2, article_text)
     if not errs2:
-        return {"status": PASS, "package": _clean_package(pkg2), "applied": True,
+        return {"status": PASS, "package": _clean_package(pkg2, article_text), "applied": True,
                 "package_status": PACKAGE_OK, "repaired": True,
                 "first_attempt_failures": errs[:10], "provider": ident,
                 "model_calls": calls, "repairs": 1}
@@ -6785,8 +6839,23 @@ def editorial_package(provider, article_text: str, arch: dict, worth: dict,
                  "package refused after one repair: %s" % "; ".join(errs2), calls, 1, errs2)
 
 
-def _clean_package(pkg: dict) -> dict:
-    return {f: str(pkg.get(f) or "").strip() for f in PACKAGE_FIELDS}
+def _clean_package(pkg: dict, article_text: str = "") -> dict:
+    """The five required lines, plus the pull quote when it survives its own check.
+
+    An unusable pull quote is removed here rather than reported upward: check_package's
+    return value decides whether the article publishes, and this field is not allowed to
+    influence that. The reason is kept beside it so a run can still say why the page has
+    no pull quote.
+    """
+    out = {f: str(pkg.get(f) or "").strip() for f in PACKAGE_FIELDS}
+    raw = str(pkg.get(PACKAGE_OPTIONAL_FIELD) or "").strip()
+    if raw:
+        why = pull_quote_failure(raw, article_text)
+        if why:
+            out["pull_quote_rejected"] = "%s: %r" % (why, raw[:120])
+        else:
+            out[PACKAGE_OPTIONAL_FIELD] = raw
+    return out
 
 
 # ══════════════════════════════════════════════════════════════════════════════

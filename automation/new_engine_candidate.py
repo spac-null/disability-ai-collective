@@ -215,7 +215,7 @@ def build_frontmatter(*, title: str, author: str, engine_meta: dict,
     # beside it: `dek` renders as the article's standfirst, and the last two are handed
     # to whatever posts the piece.
     pkg = {k: str(v).strip() for k, v in (package or {}).items() if str(v or "").strip()}
-    for k in ("excerpt", "dek", "meta_description", "social_hook"):
+    for k in ("excerpt", "dek", "meta_description", "social_hook", "pull_quote"):
         src = "homepage_excerpt" if k == "excerpt" else k
         if pkg.get(src):
             fields.append((k, pkg[src]))
