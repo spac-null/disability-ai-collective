@@ -230,18 +230,31 @@ def month_cost(day):
 
 
 def last_published(day):
-    """(days_ago, title) from _posts -- what actually reached readers."""
+    """(days_ago, title) from _posts -- what actually reached readers.
+
+    THE DATE IS THE FRONTMATTER'S, NOT THE FILENAME'S. A candidate keeps the filename it
+    was drafted under, and `date:` is rewritten to the day it actually publishes; Jekyll
+    sorts and builds its permalink from the frontmatter field, so that is the date a
+    reader sees. On 2026-09-22 a candidate drafted on the 4th went out, and this function
+    -- reading the filename -- reported "last published 9 days ago" an hour later. That is
+    the exact false reassurance the line exists to refuse, so the filename is now only the
+    fallback for a post that carries no parseable date of its own.
+    """
     best = None
     try:
         for p in (REPO / "_posts").glob("*.md"):
             m = re.match(r"(\d{4})-(\d{2})-(\d{2})-", p.name)
             if not m:
                 continue
-            d = datetime.date(*(int(x) for x in m.groups()))
-            if d > day:
-                continue
             head = p.read_text(encoding="utf-8", errors="replace")[:2000]
             if "withdrawn: true" in head:
+                continue
+            fd = re.search(r'^date:\s*"?(\d{4})-(\d{2})-(\d{2})', head, re.M)
+            try:
+                d = datetime.date(*(int(x) for x in (fd or m).groups()[:3]))
+            except ValueError:
+                d = datetime.date(*(int(x) for x in m.groups()))
+            if d > day:
                 continue
             t = re.search(r'^title:\s*"?(.+?)"?\s*$', head, re.M)
             if best is None or d > best[0]:
