@@ -7515,11 +7515,16 @@ def run_prewrite_story_shadow(provider, pack: dict, ledger: dict, worth: dict,
     if not PSS.enabled():
         return None
     try:
+        # _ask retries ONCE on a malformed reply, so this can be two physical calls. The
+        # attempt count was being discarded here; the shadow records it now.
+        meta = {}
+
         def ask(system, user):
-            obj, _ident = _ask(provider, system, user, 2_000, "PREWRITE_STORY_SHADOW",
-                               "PREWRITE_STORY_SHADOW_SKIPPED")
+            obj, ident = _ask(provider, system, user, 2_000, "PREWRITE_STORY_SHADOW",
+                              "PREWRITE_STORY_SHADOW_SKIPPED")
+            meta["physical_model_calls"] = (ident or {}).get("attempts", 1)
             return obj
-        return PSS.run(ask, pack, ledger, worth, arch, out_dir=out_dir)
+        return PSS.run(ask, pack, ledger, worth, arch, out_dir=out_dir, call_meta=meta)
     except Exception:                                             # noqa: BLE001
         # Deliberately bare. A shadow that can end a publication day is not a shadow.
         return None
