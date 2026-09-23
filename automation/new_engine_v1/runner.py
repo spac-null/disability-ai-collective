@@ -35,6 +35,7 @@ import pathlib
 from . import anchors as AN
 from . import contracts as C
 from . import invariants as INV
+from . import provenance as PV
 from . import repair_identity as RI
 from . import research as RS
 from . import stages as S
@@ -603,6 +604,11 @@ def _persist(A: dict, run_root: pathlib.Path, name: str, mode: str,
         "run": name,
         "schema_version": C.SCHEMA_VERSION,
         "stage_hashes": {s: a.content_hash() for s, a in A.items()},
+        # ADDITIVE (2026-09-23). stage_hashes already chains the artifacts to each other;
+        # this says which code produced the chain, which nothing recorded anywhere. Not a
+        # schema change: MANIFEST.json is the run's own record and is not hashed by, or
+        # an input to, any artifact. See provenance.py.
+        "code_identity": PV.code_identity(),
         "decision": decision,
         "reasons": reasons,
         "source_sha256": A[C.SOURCE_SNAPSHOT].payload["source_sha256"],

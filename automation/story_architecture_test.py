@@ -191,10 +191,15 @@ def test_a_refusal_is_a_valid_outcome_and_needs_no_proof():
         r = ST.validate_lens({"verdict": v, "lens_claim": "", "evidence_ids": []})
         check("%s validates without a claim" % v, r == [], r)
         check("  and is not publishable", v not in ST.LENS_PUBLISHABLE)
+    # The packet used to carry a `lens` key gated on this verdict. It was removed on
+    # 2026-09-23: every caller passes the ARCHITECTURE's `final_lens`, which has no
+    # `verdict`, so the gate was never satisfied and the key could only hold "". The
+    # invariant it was reaching for -- no lens text reaches the Writer -- is now
+    # structural rather than conditional, and is asserted in lens_wire_contract_test.py.
     p = ST.build_packet(arch(), {"verdict": ST.WRONG_PUBLICATION, "lens_claim": "x"},
                         FACTS)
-    check("a refused lens contributes no lens text to the packet", p["lens"] == "",
-          p["lens"])
+    check("no lens text reaches the packet at all", "lens" not in p, sorted(p))
+    check("  and none reaches the rendered prompt", "x" not in ST.render(p).split())
 
 
 # ── architecture honesty ────────────────────────────────────────────────────
@@ -359,8 +364,13 @@ def test_the_crip_turn_must_declare_what_it_rereads():
     check("a turn that names the beat's own carrier is accepted",
           ST.validate_lens_embodiment(a5, LENS) == [],
           ST.validate_lens_embodiment(a5, LENS))
-    check("a refused lens is exempt (there is no turn to embody)",
-          ST.validate_lens_embodiment(arch(), {"verdict": ST.WRONG_PUBLICATION}) == [])
+    # The exemption used to be carried by the lens VERDICT, which the production caller
+    # never supplies (see validate_lens_embodiment's docstring and
+    # lens_wire_contract_test.py). It is carried by the article_type now: a HOLD has no
+    # turn to embody, and that is the only architecture that reaches here without one.
+    check("a HOLD is exempt (there is no turn to embody)",
+          ST.validate_lens_embodiment(arch(article_type=ST.HOLD_NO_STORY), LENS) == [],
+          ST.validate_lens_embodiment(arch(article_type=ST.HOLD_NO_STORY), LENS))
 
 
 def test_the_factual_surface_audit_catches_additions_the_packet_never_granted():

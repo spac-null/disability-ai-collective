@@ -26,7 +26,20 @@ import json
 import os
 import time
 
+from . import provenance as PV
+
 SCHEMA_VERSION = "prewrite-story-shadow-v1"
+
+# Keys this module owns. The artifact is merged with a MODEL REPLY, and `art.update(obj)`
+# let that reply overwrite whatever it liked -- including `authority`, the field whose
+# entire job is to say this observation decides nothing. A reply claiming
+# {"authority": "HIGH"} would have been written to disk saying so. Nothing suggests a
+# model has done this; the point is that the record of a thing's authority must not be
+# writable by the thing. Stripped rather than silently dropped: a reply that tried is
+# itself worth seeing in the artifact.
+TOOL_OWNED = ("schema_version", "authority", "article_not_written_yet", "status",
+              "validation_errors", "wall_seconds", "execution", "physical_model_calls",
+              "tool_fields_ignored", "error")
 ENV_FLAG = "CRIPMINDS_PREWRITE_STORY_SHADOW"
 
 MOVES = ("REVEALS", "DEEPENS_MECHANISM", "COMPLICATES", "REVERSES", "CONNECTS",
@@ -157,10 +170,19 @@ def build_user(pack: dict, ledger: dict, worth: dict, arch: dict,
         for k, v in (arch["definitions"] or {}).items():
             L.append("  %s -- %s" % (k, str(v)[:200]))
         L.append("")
-    L.append("FROZEN FACTS")
+    # WRITER-AVAILABLE IS NOT THE SAME AS PRESENT IN THE LEDGER. This block used to list
+    # every frozen fact flat, so the shadow was answering "can the plan be written from
+    # this?" about a set the Writer will never see: render() gives it only the
+    # propositions a beat allows, and a CUT fact is gone. A research-budget or
+    # grounding-readiness answer computed over the wrong set is not a weaker answer, it is
+    # an answer to a different question. The marking is factual and adds no judgement.
+    use = set((arch or {}).get("use_facts") or [])
+    cut = {c.get("evidence_id") for c in ((arch or {}).get("cut_evidence") or [])}
+    L.append("FROZEN FACTS -- [USED] reaches the Writer; [CUT] and [UNUSED] do not")
     for fid, f in list((ledger or {}).items()):
         if isinstance(f, dict):
-            L.append("  %s  %s" % (fid, str(f.get("proposition", ""))[:220]))
+            tag = "USED" if fid in use else ("CUT" if fid in cut else "UNUSED")
+            L.append("  [%-6s] %s  %s" % (tag, fid, str(f.get("proposition", ""))[:220]))
     L.append("")
     if packet_text:
         L.append("(the writer packet renders from exactly the above)")
@@ -169,17 +191,24 @@ def build_user(pack: dict, ledger: dict, worth: dict, arch: dict,
     return "\n".join(L)
 
 
-def validate(obj, ledger: dict) -> list:
+def validate(obj, ledger: dict, beat_ids=None) -> list:
     """Shape, vocabulary and fact-id honesty. Errors invalidate the ARTIFACT only.
 
     A fact id the ledger does not contain is the one thing that must never pass: an
     artifact citing invented evidence would be worse than no artifact, because a future
     audit would count it as a real observation.
+
+    BEAT IDS ARE HELD TO THE SAME BAR (2026-09-23). `discovery_arc` is keyed by beat_id
+    and nothing checked those against the architecture, so an arc could describe the
+    movement of beats that do not exist -- exactly the invented-observation failure the
+    fact-id check exists to prevent, one field over. `beat_ids` is optional so the
+    existing two-argument callers are unaffected.
     """
     errs = []
     if not isinstance(obj, dict):
         return ["shadow reply is not an object"]
     known = set(ledger or {})
+    known_beats = set(beat_ids or [])
 
     def ids(v, where):
         for f in (v or []):
@@ -206,6 +235,9 @@ def validate(obj, ledger: dict) -> list:
             if b.get("move") not in MOVES:
                 errs.append("discovery_arc[%d] move %r is not one of the declared moves"
                             % (i, b.get("move")))
+            if known_beats and str(b.get("beat_id")) not in known_beats:
+                errs.append("discovery_arc[%d] describes beat %r, which the architecture "
+                            "does not contain" % (i, b.get("beat_id")))
             ids(b.get("fact_ids"), "discovery_arc[%d]" % i)
     for i, c in enumerate(obj.get("load_bearing_concepts") or [], 1):
         if not isinstance(c, dict):
@@ -235,25 +267,57 @@ def validate(obj, ledger: dict) -> list:
     return errs
 
 
+def _h(obj) -> str:
+    try:
+        return PV.sha256_text(json.dumps(obj, sort_keys=True, default=str))
+    except Exception:                                             # noqa: BLE001
+        return ""
+
+
 def run(ask, pack: dict, ledger: dict, worth: dict, arch: dict,
-        out_dir=None, packet_text: str = "") -> dict | None:
+        out_dir=None, packet_text: str = "", call_meta: dict | None = None) -> dict | None:
     """The shadow artifact, or None. Never raises, never blocks, never returns a verdict.
 
     `ask` is a callable taking (system, user) and returning a parsed object -- injected
     so the caller owns the transport and a test can supply its own without a network.
+    `call_meta` is that caller's record of what the transport actually did; it is read
+    after the model reply and cannot be overwritten by it.
+
+    INSTRUMENTATION ONLY (2026-09-23). The editorial question, the schema, the vocabulary
+    and the zero-authority contract are untouched, and nothing here was tuned from the two
+    dry observations. What changed is whether a future audit can trust what it is reading:
+    an artifact that cannot be joined to the code, inputs and prompt that produced it is
+    an anecdote, and this module exists to collect evidence rather than anecdotes.
     """
     if not enabled():
         return None
     t0 = time.time()
+    user = build_user(pack, ledger, worth, arch, packet_text)
     art = {"schema_version": SCHEMA_VERSION, "authority": "ZERO",
-           "article_not_written_yet": True}
+           "article_not_written_yet": True,
+           # WHAT THIS OBSERVATION IS OF. Without it two shadow artifacts cannot be
+           # told apart, cannot be attributed to a code version, and cannot be joined
+           # to the Writer/Grounding/Reader outcome of the same execution -- which is
+           # the entire purpose of collecting them.
+           "execution": {"code": PV.code_identity(),
+                         "ledger_sha256": _h(ledger),
+                         "worth_sha256": _h(worth),
+                         "architecture_sha256": _h(arch),
+                         "system_sha256": PV.sha256_text(SYSTEM),
+                         "user_prompt_sha256": PV.sha256_text(user)}}
+    beat_ids = [b.get("beat_id") for b in ((arch or {}).get("beats") or [])]
     try:
-        obj = ask(SYSTEM, build_user(pack, ledger, worth, arch, packet_text))
-        errs = validate(obj, ledger)
+        obj = ask(SYSTEM, user)
+        errs = validate(obj, ledger, beat_ids)
         if errs:
             art.update({"status": "INVALID", "validation_errors": errs[:10]})
         else:
-            art.update(obj)
+            # The model's own fields only. See TOOL_OWNED: a reply may not restate what
+            # authority this observation has, or whether it validated.
+            stolen = sorted(k for k in obj if k in TOOL_OWNED)
+            art.update({k: v for k, v in obj.items() if k not in TOOL_OWNED})
+            if stolen:
+                art["tool_fields_ignored"] = stolen
             art["status"] = "OK"
     except Exception as e:                                        # noqa: BLE001
         # Deliberately bare, like run_semantic_claim_shadow. A shadow that can end a
@@ -261,6 +325,11 @@ def run(ask, pack: dict, ledger: dict, worth: dict, arch: dict,
         art.update({"status": "FAILED",
                     "error": "%s: %s" % (type(e).__name__, str(e)[:200])})
     art["wall_seconds"] = round(time.time() - t0, 1)
+    # HOW MANY CALLS IT ACTUALLY COST. The transport retries once on a malformed reply,
+    # so "one bounded call" is a budget, not a measurement, and the retry was invisible:
+    # the caller's `_ask` returns an identity carrying the attempt count and the shadow
+    # wrapper discarded it. A shadow whose cost is unknown cannot be argued about.
+    art["physical_model_calls"] = (call_meta or {}).get("physical_model_calls")
     try:
         if out_dir is not None:
             import pathlib

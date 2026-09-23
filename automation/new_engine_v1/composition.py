@@ -51,6 +51,7 @@ from . import ledger as LG
 from . import stages as S
 from . import story as ST
 from . import materiality as MAT
+from . import provenance as PV
 from .provider import Provider, ProviderError, parse_json_object
 
 # ── stage names, in order ─────────────────────────────────────────────────────
@@ -504,13 +505,31 @@ def check_ledger(ledger: dict, srcs: dict) -> dict:
             add(fid, "%s: claim_kind %r is not one of %s"
                 % (fid, kind, ", ".join(ST.CLAIM_KINDS)))
 
-        # 2. span binding to the cited sources
-        if f.get("claim_type") == LG.INTERPRETATION:
-            continue
+        # 2. SOURCE BINDING first, then span binding to the cited sources.
+        #
+        # THE SOURCE-ID CHECK APPLIES TO EVERY CLAIM TYPE, INTERPRETATIONS INCLUDED. An
+        # interpretation is exempt from quoting a verbatim span -- it reads the evidence
+        # rather than reporting it -- but WHICH evidence it reads is not the thing it is
+        # exempt from. Until 2026-09-23 the `continue` sat above this check, and
+        # ledger.validate_fact only requires evidence_ids to be NON-EMPTY, so this was
+        # the only place in the engine where a cited id was resolved against the pack at
+        # all. An interpretation citing a source that does not exist therefore passed
+        # every check there is.
+        #
+        # That made INTERPRETATION the only claim type with no evidence binding
+        # whatsoever. The others are held by the verbatim span below even though their
+        # ids, too, were unresolved before this line existed -- the span is what stops
+        # them. An interpretation has no span, so the id is all there is, and it has to
+        # name something real.
+        #
+        # This does not widen what an interpretation may claim. It narrows what it may
+        # claim to have read.
         cited = [e for e in (f.get("evidence_ids") or [])]
         unknown = [e for e in cited if e not in srcs]
         if unknown:
             add(fid, "%s: cites source ids that are not in the pack: %s" % (fid, unknown))
+        if f.get("claim_type") == LG.INTERPRETATION:
+            continue
         span = f.get("support_span") or ""
         known = [e for e in cited if e in srcs]
         if span and known and not any(span_in(span, srcs[e]) for e in known):
@@ -1173,6 +1192,17 @@ ARCHITECT_SYSTEM = (
     "explanation of a term the article cannot do without, that is worth knowing NOW, "
     "while the plan can still be built on material that can be explained, rather than at "
     "the gate that refuses the sentence.\n"
+    "  SO SAY WHAT LICENSES IT, FOR EVERY TERM. `definition_evidence` needs one entry per "
+    "term in `definitions`, naming the fact ids that license that gloss. This is not "
+    "reserved for glosses that look risky: a definition is prose the Writer is instructed "
+    "to state, and what licenses a stated sentence is not a judgement call. The ids must "
+    "be ones you also USE -- a fact you CUT is never given to the Writer, so no "
+    "explanation can be written from it -- and they must carry the gloss's own numbers, "
+    "names and relations. Evidence sitting elsewhere in the plan licenses nothing here; "
+    "a superlative, a cause or a date needs a fact that states THAT, not a neighbouring "
+    "fact that happens to state something similar. If a term cannot be licensed, drop it "
+    "and build the plan on material that can be explained, or return a HOLD. Do not hand "
+    "the Writer an explanation and hope it finds one.\n"
     "\n"
     "WRITE MEANING, NOT PERFORMANCE. Your prose fields are read by the Writer as "
     "instructions and get copied. So state what is true and what it means; do not write "
@@ -1228,8 +1258,12 @@ ARCHITECT_SCHEMA = (
     ' "evidence_roles": {"F..": "LOAD_BEARING"},  every id in use_facts, one of: %(roles)s\n'
     ' "supports": {"F..": ["F.."]},               for each SUPPORTING id only: the\n'
     "                                            LOAD_BEARING id(s) it makes intelligible\n"
-    ' "use_quotes": [],\n'
     ' "definitions": {"term": "plain-words gloss, explained at first use"},\n'
+    ' "definition_evidence": {"term": ["F.."]},   REQUIRED: one entry for EVERY term in\n'
+    "                                            definitions, naming the used fact ids\n"
+    "                                            that license that gloss. Ids must be in\n"
+    "                                            use_facts and never cut. A term you\n"
+    "                                            cannot license is a term to drop.\n"
     ' "cut_evidence": [{"evidence_id": "F..", "reason": "REDUNDANT_PROOF"}],\n'
     "                                            reasons: %(cuts)s\n"
     ' "prohibitions": ["Do not ..."],\n'
@@ -1275,7 +1309,60 @@ def _sentence_initial(word: str, arch: dict) -> bool:
     return True
 
 
-def check_architecture(arch: dict, ledger: dict) -> list:
+def quote_requirement_errors(arch: dict) -> list:
+    """An architecture may not require a quotation this engine cannot deliver.
+
+    THE CONTRADICTION THIS REMOVES. `use_quotes` asked the architect to name quote ids.
+    build_packet resolves them against a `quotes` mapping -- and writer_packet() calls
+    build_packet with THREE arguments, so that mapping is always {}. Nothing in the engine
+    produces one: grep finds no Q-id producer in research, the ledger, or any stage. So
+    `packet["quotes"]` was always [], render()'s QUOTE EXACTLY block never fired, and a
+    quotation the architecture had decided the article needed vanished between the plan
+    and the prompt without a word.
+
+    Meanwhile the FAST_LANE writing contract told the Writer it could quote when a fact
+    granted `quote_permission: DIRECT_VERBATIM` -- a condition that cannot occur here.
+    One half of the engine planned quotations it could not deliver; the other half
+    described a permission system that does not exist.
+
+    The requirement is removed rather than wired, because wiring it would mean inventing
+    authority. A ledger fact's `support_span` is verbatim source text, but it is the span
+    that SUPPORTS a proposition, not a record of someone speaking, and the ledger has no
+    speaker structure to attribute it to. Turning spans into attributed quotations is a
+    new evidence contract, not a repair to this one.
+
+    It is refused loudly instead of dropped quietly. `use_quotes` is gone from
+    ARCHITECT_SCHEMA, so a compliant architect never emits it; one that emits it anyway is
+    answered by the repair loop, not silently ignored.
+
+    Note this is deliberately NOT in story.validate_architecture. That function is the
+    story-level contract and is called on frozen experiment artefacts -- `roman` carries
+    use_quotes ['Q01'] WITH its own hand-supplied quotes mapping, which is a legitimate
+    thing for an experiment to have done. What is broken is the production wiring, so the
+    check lives on the production path.
+    """
+    want = [q for q in (arch.get("use_quotes") or []) if str(q).strip()]
+    if not want:
+        return []
+    return ["use_quotes names %s, and this engine has no quote channel: writer_packet "
+            "builds the packet with no quotes mapping and nothing produces one, so the "
+            "quotation would be dropped between the plan and the prompt. Plan the article "
+            "without quotation, or HOLD." % want]
+
+
+# The contract an architecture is judged against. CURRENT is the only value any NEW
+# architecture may be checked under; LEGACY_REPLAY exists solely because replay
+# revalidates a STORED architecture against its stored ledger, and one retained before
+# `definition_evidence` existed cannot have declared it. A replay reproduces a past run
+# rather than authorising a new one. The call site that uses it must record that it did --
+# see the REPLAYED branch in compose() -- because a compatibility path nobody can see in
+# the artifact is indistinguishable from a weaker contract.
+CONTRACT_CURRENT = "CURRENT"
+CONTRACT_LEGACY_REPLAY = "LEGACY_REPLAY"
+
+
+def check_architecture(arch: dict, ledger: dict,
+                       contract: str = CONTRACT_CURRENT) -> list:
     """Every merged pre-Writer gate, called in one place.
 
     This runs BEFORE the packet is built, which is the whole point: a Writer handed an
@@ -1292,6 +1379,14 @@ def check_architecture(arch: dict, ledger: dict) -> list:
     # genuinely-optional `propositions` representation checked further down.
     errs += ["EVIDENCE_HIERARCHY: " + e
              for e in ST.validate_evidence_hierarchy(arch, set(ledger))]
+    # `definitions` was the one architect-generated field with no factual screen at all:
+    # not in architect_prose_audit's field list, not among validate_turn_support's three
+    # fields, and rendered to the Writer under EXPLAIN AT FIRST USE. See
+    # ST.validate_definition_support for the measured counterexample.
+    errs += ["DEFINITION_SUPPORT: " + e
+             for e in ST.validate_definition_support(
+                 arch, ledger, legacy_replay=(contract == CONTRACT_LEGACY_REPLAY))]
+    errs += ["QUOTE_CHANNEL: " + e for e in quote_requirement_errors(arch)]
     fl = arch.get("final_lens") or {}
     errs += ["FINAL_LENS: " + e for e in ST.validate_final_lens(fl, arch, ledger)]
     errs += ["LENS_EMBODIMENT: " + e for e in ST.validate_lens_embodiment(arch, fl)]
@@ -2594,17 +2689,26 @@ FAST_LANE_WRITER_DELTA = (
     "ATTRIBUTED, DISPUTED or UNCERTAIN written as if ESTABLISHED. Literary "
     "smoothness is never permission to remove a meaningful hedge or narrow a "
     "licensed either/or into one branch.\n"
-    "\n\nDIRECT_QUOTE_REQUIRES_EXACT_PERMISSION. Use quotation marks around a "
-    "speaker's words ONLY when a fact below explicitly grants quote_permission: "
-    "DIRECT_VERBATIM and gives its quote_text -- and then reproduce that quote_text "
-    "exactly, nothing added, nothing joined from elsewhere. You may NOT: "
-    "reconstruct a quote from fragments; combine two separated clauses into one "
-    "quotation; treat a secondary source's own editorial ellipsis ('X ... Y') as a "
-    "verified verbatim sentence and quote it as one; silently clean up or "
-    "strengthen a quote's wording; or paraphrase inside quotation marks. A fact "
-    "with quote_permission: ATTRIBUTED_PARAPHRASE_ONLY (or no quote_permission at "
-    "all) may be reported in your own words with the speaker named, but never "
-    "inside quotation marks.\n"
+    # THIS CLAUSE USED TO BE UNSATISFIABLE (fixed 2026-09-23). It read "use quotation
+    # marks ONLY when a fact below explicitly grants quote_permission: DIRECT_VERBATIM
+    # and gives its quote_text". No fact on this path has ever carried either field:
+    # writer_packet() calls build_packet() with three arguments, so `quotes` defaults to
+    # {} and render() emits nothing but propositions. The condition could never be met,
+    # so the instruction resolved to "never quote" while saying something else -- and
+    # saying it in the one register the Writer is known to transcribe. The rule is now
+    # written as what it actually is on this path. It is not a relaxation: the previous
+    # text permitted quoting under a condition that cannot occur, and this permits none.
+    "\n\nDO_NOT_QUOTE. Do not put quotation marks around anyone's words. Nothing "
+    "you are given below is verbatim source text -- every fact is a proposition "
+    "written for this article, not a transcript -- so any quotation you form would "
+    "be a reconstruction, however faithful it felt. Report what was said in your "
+    "own words with the speaker named ('her lawyer says...', 'a spokesperson "
+    "said...'). You may NOT: reconstruct a quote from fragments; combine two "
+    "separated clauses into one quotation; present an editorial ellipsis "
+    "('X ... Y') as a verified verbatim sentence; or paraphrase inside quotation "
+    "marks. Quotation marks around a title, a term being named, or a phrase the "
+    "article is examining are unaffected; this is about attributing words to a "
+    "speaker.\n"
     "\n\nEVENT_CONTEXT_BINDING. Some facts below may carry an event_id, date, "
     "location or participant list. ADJACENCY DOES NOT LICENSE EVENT MERGER: "
     "placing a fact from one event next to a fact from another in your prose "
@@ -2682,7 +2786,10 @@ def writer_packet(arch: dict, ledger: dict, cut_prohibitions=None) -> tuple:
                        if p not in (arch.get("prohibitions") or [])])
     packet = ST.build_packet(arch, arch.get("final_lens") or {},
                              LG.propositions(ledger))
-    errs = ST.validate_packet(packet)
+    # Fail-closed, the same way validate_packet keeps its own call here even though
+    # check_architecture already ran it: a quotation the plan required must never be
+    # dropped between the plan and the prompt in silence. See quote_requirement_errors.
+    errs = ST.validate_packet(packet) + quote_requirement_errors(arch)
     if errs:
         raise CompositionHold(WRITER, WRITER_HOLD,
                               ["the writer packet is not clean"] + errs)
@@ -2746,6 +2853,15 @@ def write_article(provider, arch: dict, ledger: dict, cut_prohibitions=None,
             return {"status": PASS, "article_text": article, "packet": packet,
                     "compose_mode": compose_mode,
                     "prompt": prompt, "prompt_sha256": C.sha256_text(prompt),
+                    # The two identities the retained record was missing. The rendered
+                    # user prompt was already hashed; the SYSTEM prompt was identified
+                    # only by `compose_mode`, which names the text only if you know the
+                    # code version -- and no code version was recorded anywhere in the
+                    # engine. Together with prompt_sha256 these make one sentence
+                    # provable later: this code + this system prompt + this user prompt
+                    # produced this call. See provenance.py.
+                    "system_sha256": C.sha256_text(system),
+                    "code_identity": PV.code_identity(),
                     "provider": _identity(comp, attempt),
                     "model_calls": attempt, "repairs": 0,
                     "words": len(article.split()),
@@ -7413,11 +7529,16 @@ def run_prewrite_story_shadow(provider, pack: dict, ledger: dict, worth: dict,
     if not PSS.enabled():
         return None
     try:
+        # _ask retries ONCE on a malformed reply, so this can be two physical calls. The
+        # attempt count was being discarded here; the shadow records it now.
+        meta = {}
+
         def ask(system, user):
-            obj, _ident = _ask(provider, system, user, 2_000, "PREWRITE_STORY_SHADOW",
-                               "PREWRITE_STORY_SHADOW_SKIPPED")
+            obj, ident = _ask(provider, system, user, 2_000, "PREWRITE_STORY_SHADOW",
+                              "PREWRITE_STORY_SHADOW_SKIPPED")
+            meta["physical_model_calls"] = (ident or {}).get("attempts", 1)
             return obj
-        return PSS.run(ask, pack, ledger, worth, arch, out_dir=out_dir)
+        return PSS.run(ask, pack, ledger, worth, arch, out_dir=out_dir, call_meta=meta)
     except Exception:                                             # noqa: BLE001
         # Deliberately bare. A shadow that can end a publication day is not a shadow.
         return None
@@ -7644,7 +7765,16 @@ def run_story_architecture_composition(
         frozen_article = replay.get("article")
         if replay.get("architecture"):
             arch = replay["architecture"]
-            errs = check_architecture(arch, ledger)
+            # OLD-CONTRACT COMPATIBILITY, RECORDED RATHER THAN SILENT. An architecture
+            # retained before `definition_evidence` existed cannot have declared it, and a
+            # replay reproduces a past run rather than authorising a new one. The
+            # relaxation is named in the artifact so a later audit can tell a replayed
+            # legacy plan from a plan that met the current contract. It applies to replay
+            # only: `architect()` is always checked under CONTRACT_CURRENT.
+            legacy_defs = ST.definitions_predate_evidence_binding(arch)
+            errs = check_architecture(
+                arch, ledger,
+                contract=(CONTRACT_LEGACY_REPLAY if legacy_defs else CONTRACT_CURRENT))
             if errs:
                 raise CompositionHold(
                     ARCHITECTURE, ARCHITECTURE_HOLD,
@@ -7652,6 +7782,9 @@ def run_story_architecture_composition(
                      "ledger"] + errs[:8], {"architecture": arch, "failures": errs})
             st[ARCHITECTURE] = {"status": REPLAYED, "architecture": arch,
                                 "beats": len(arch.get("beats") or []),
+                                "contract": (CONTRACT_LEGACY_REPLAY if legacy_defs
+                                             else CONTRACT_CURRENT),
+                                "legacy_definitions_accepted": legacy_defs,
                                 "model_calls": 0, "repairs": 0}
             calls[ARCHITECTURE] = repairs[ARCHITECTURE] = 0
         else:
@@ -8382,6 +8515,18 @@ def persist(out_dir, result: dict) -> None:
         dump("CUT_WATCH_TERMS.json", det[CUT_TERMS]["terms"])
     if det.get(WRITER, {}).get("prompt"):
         (d / "WRITER_PACKET.txt").write_text(det[WRITER]["prompt"])
+    if det.get(WRITER, {}).get("prompt_sha256"):
+        # The Writer call's identity, in one small file rather than a new framework:
+        # which code, which system prompt, which rendered user prompt, which article.
+        # WRITER_PACKET.txt already holds the user prompt itself; this is what makes it
+        # attributable. A REPLAYED writer has no prompt_sha256 and writes nothing here.
+        dump("WRITER_CALL_IDENTITY.json", {
+            "code": det[WRITER].get("code_identity"),
+            "compose_mode": det[WRITER].get("compose_mode"),
+            "system_sha256": det[WRITER].get("system_sha256"),
+            "prompt_sha256": det[WRITER].get("prompt_sha256"),
+            "article_sha256": C.sha256_text(det[WRITER].get("article_text") or ""),
+        })
     if det.get(WRITER, {}).get("claim_map") is not None:
         dump("CLAIM_MAP.json", {
             "article_sha256": det[WRITER].get("claim_map_article_sha256"),

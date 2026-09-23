@@ -204,8 +204,10 @@ def leak_hits(text: str, where: str = "") -> list:
 # So the scan is scoped to the fields the ARCHITECT GENERATED. `facts` and `quotes` carry
 # verbatim evidence and are excluded. The vocabulary is unchanged, and the same scan still
 # runs over the finished article in the safety stack, where the prose IS model-written.
+# "lens" was removed from this tuple on 2026-09-23 with the packet key it scanned. See
+# build_packet: that key could only ever hold "", so this entry scanned nothing.
 _GENERATED_PACKET_FIELDS = ("story_spine", "opening", "reader_initial_state", "turn",
-                            "crip_turn", "lens", "ending_move")
+                            "crip_turn", "ending_move")
 _GENERATED_BEAT_FIELDS = ("happens", "carrier", "concept", "withhold")
 
 
@@ -584,6 +586,166 @@ def validate_evidence_hierarchy(arch: dict, evidence_ids: set) -> list:
                         "the ending must return to the carrier with changed "
                         "understanding, not merely stop" % (carrier, last.get("beat_id")))
     return errs
+
+
+# ── A DEFINITION IS PROSE THE WRITER IS TOLD TO STATE ─────────────────────────
+# `definitions` was the one architect-generated field with no factual screen of any kind.
+# It is not in architect_prose_audit's field list, so its numbers and entities were never
+# compared to the approved facts; it is not among the three fields validate_turn_support
+# covers, so the relations it asserts were never licensed. And render() puts it in front
+# of the Writer under EXPLAIN AT FIRST USE, which is an instruction to state it.
+#
+# Measured on 2026-09-23 against current main: an architecture carrying
+#
+#   {"servo": "a small motor from Hitachi that turns to a commanded angle in 45
+#             milliseconds and holds there under 12 kg of load"}
+#
+# passed check_architecture with ZERO errors. The same brand and the same two numbers
+# placed in `story_spine` or a beat's `happens` are caught by the entity and number
+# channels. Putting them in a definition evaded every gate in the engine.
+#
+# It got worse downstream rather than better. composition's grounding adjudication clears
+# a TRUE_UNCERTAIN finding when the flagged sentence names a declared term and "adds no
+# factual surface the packet does not carry" -- and `approved_words` there is computed
+# from render(packet), which CONTAINS the definition. The gloss licenses the article
+# sentence that restates it. That is precisely the circularity ledger.py's own docstring
+# was written against: "an audit whose ground truth is itself generated cannot detect a
+# fabrication introduced upstream of it."
+#
+# WHAT THIS DOES NOT DO. It does not require every definition to be licensed. A plain-
+# language gloss is the legitimate and expected use -- the held-out real architecture's
+# two definitions ("rent burden", "block group") are exactly that, and they carry no
+# entity, no number and no relation, so they need no fact and are accepted unchanged.
+# Nothing here is a glossary policy, a jargon list or a readability rule.
+#
+# THE EVIDENCE MUST BE DECLARED PER DEFINITION. A first version of this check let an
+# undeclared definition inherit `use_facts`, on the reasoning that this gave a gloss the
+# same licence the crip turn gets. That was wrong, and its own acceptance control proved
+# it: the held-out architecture's "block group: the smallest area the survey publishes
+# figures for" asserts a SUPERLATIVE that nothing in its evidence states, and it PASSED
+# under the fallback -- because some unrelated fact among the 26 used ones happened to
+# carry a superlative somewhere. A broad pool does not license a specific sentence. It
+# only makes the check look like it ran.
+#
+# So the licence is per-term and explicit. A definition acquires no authority from the
+# mere availability of facts elsewhere in the plan.
+#
+# WHY A PARALLEL MAP RATHER THAN `term -> {text, evidence_ids}`, which is the more obvious
+# way to make ownership intrinsic. Measured, not preferred: the packet carries
+# `definitions` straight through, and the per-term object breaks two things at once.
+# generated_packet_text guards on `isinstance(v, str)`, so dict values would SILENTLY stop
+# being leak-scanned -- the exact class of defect this whole pass exists to remove -- and
+# render() formats the value with %s, so the Writer's prompt would read
+# "servo -- {'text': 'a small motor', 'evidence_ids': ['F04']}". Fixing both would widen
+# the change for no gain in enforcement: with the parallel map REQUIRED and its key set
+# checked in both directions, a used definition without its evidence cannot pass the gate,
+# which is where ownership actually has to hold. The binding also belongs upstream of the
+# packet: the Writer is given the gloss, never the fact ids behind it.
+#
+# No new model, no challenger, no retry, no jargon list, no readability rule.
+def validate_definition_support(arch: dict, ledger: dict,
+                                legacy_replay: bool = False) -> list:
+    """Every used definition must name the usable facts that license its factual surface.
+
+    `legacy_replay` is the OLD-CONTRACT COMPATIBILITY PATH and nothing else. Replay
+    revalidates a stored architecture against its stored ledger, and architectures retained
+    before `definition_evidence` existed cannot have declared it. Those replay, because a
+    replay reproduces a past run rather than authorising a new one. It applies ONLY when
+    the field is absent altogether -- a partially-declared architecture was written by an
+    author who knew about the field, and is held to the current contract. The caller must
+    record that it used this path; see check_architecture's `contract` argument. Being
+    published once is not evidence, and it does not relax the contract for new work.
+    """
+    if arch.get("article_type") in (HOLD_NO_STORY, HOLD_WRONG_PUBLICATION):
+        return []
+    defs = arch.get("definitions") or {}
+    if not isinstance(defs, dict) or not defs:
+        return []
+
+    declared = arch.get("definition_evidence")
+    if declared is None and legacy_replay:
+        return []
+    if declared is not None and not isinstance(declared, dict):
+        return ["definition_evidence is %s, not an object mapping term -> fact ids"
+                % type(declared).__name__]
+    support = declared or {}
+
+    errs = []
+    use = set(arch.get("use_facts") or [])
+    cut = {c.get("evidence_id") for c in (arch.get("cut_evidence") or [])}
+
+    stray = sorted(set(support) - set(defs))
+    if stray:
+        errs.append("definition_evidence names terms that are not defined: %s" % stray)
+
+    for term in sorted(defs):
+        gloss = str(defs.get(term) or "")
+        if not gloss.strip():
+            errs.append("the definition of %r is empty" % term)
+            continue
+
+        ids = support.get(term)
+        if isinstance(ids, str):
+            ids = [ids]
+        ids = [str(i) for i in (ids or [])]
+        if not ids:
+            errs.append("the definition of %r declares no evidence. A definition is prose "
+                        "the Writer is instructed to state, so name in definition_evidence "
+                        "the used fact ids that license it -- or drop the term and build "
+                        "the plan on material that can be explained" % term)
+            continue
+
+        usable = []
+        for fid in ids:
+            if fid not in ledger:
+                errs.append("the definition of %r cites %s, which is not in the ledger"
+                            % (term, fid))
+            elif fid in cut:
+                errs.append("the definition of %r rests on %s, which the architecture "
+                            "CUT -- the Writer is never given a cut fact, so the "
+                            "explanation cannot be written from it" % (term, fid))
+            elif fid not in use:
+                errs.append("the definition of %r rests on %s, which is not in "
+                            "use_facts -- the Writer is only given the facts a beat "
+                            "allows" % (term, fid))
+            else:
+                usable.append(fid)
+        if not usable:
+            continue                      # already reported; nothing left to license with
+
+        licensing = " ".join(str((ledger.get(f) or {}).get("proposition") or "")
+                             for f in usable)
+
+        # Same two channels check_architecture reads as failures on the architect's other
+        # prose fields, and read the same way round: sentence-initial capitals are not
+        # evidence of a name, and the licensing side is built without that exemption.
+        unlicensed_n = sorted(_numbers(gloss) - _numbers(licensing))
+        if unlicensed_n:
+            errs.append("the definition of %r states a number %s do not carry: %s"
+                        % (term, usable, unlicensed_n))
+        unlicensed_e = sorted(_entities(gloss)
+                              - _entities(licensing, skip_sentence_initial=False))
+        if unlicensed_e:
+            errs.append("the definition of %r names %s, which %s do not carry"
+                        % (term, unlicensed_e, usable))
+
+        # And the same relation licence the crip turn is held to. A gloss that says one
+        # thing CAUSES, PRECEDES or EXCLUDES another is making the same kind of claim a
+        # turn makes, and general knowledge is not a licence for it.
+        for e in validate_turn_support(gloss, usable, ledger):
+            errs.append("the definition of %r asserts %s (%r) -- %s"
+                        % (term, e["relation"], e["carried_by"], e["why"]))
+    return errs
+
+
+def definitions_predate_evidence_binding(arch: dict) -> bool:
+    """True for an architecture retained before `definition_evidence` existed.
+
+    Used to LABEL a replay that took the compatibility path, never to take it silently.
+    """
+    defs = (arch or {}).get("definitions") or {}
+    return bool(isinstance(defs, dict) and defs
+                and (arch or {}).get("definition_evidence") is None)
 
 
 # ── CARRIERS MAY NOT ASSERT AN OCCURRENCE THE LEDGER DOES NOT HOLD ───────────
@@ -969,6 +1131,12 @@ def validate_turn_support(turn: str, fact_ids, ledger: dict) -> list:
 def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None) -> dict:
     """The minimal writing packet.
 
+    `lens` IS NO LONGER READ (2026-09-23). It is kept in the signature only because ~30
+    call sites pass it positionally, and dropping a positional parameter would silently
+    turn `build_packet(a, lens, facts)` into `facts=lens` at any site missed -- a quiet
+    wrong packet rather than a loud error. The lens reaches the architecture validators
+    directly; see the removed `lens` key below for why the packet does not carry it.
+
     What is deliberately ABSENT is the point: no research pack bodies, no source roles,
     no provenance, no evidence_gaps, no grounding-boundary prose. Prohibitions travel in
     `prohibitions`, which `render()` turns into imperatives ("Do not name...") rather
@@ -995,7 +1163,13 @@ def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None
                   for b in (arch.get("beats") or [])],
         "turn": arch.get("turn", ""),
         "crip_turn": arch.get("crip_turn", ""),
-        "lens": lens.get("lens_claim", "") if lens.get("verdict") in LENS_PUBLISHABLE else "",
+        # `lens` was REMOVED on 2026-09-23. It read `lens.get("verdict")`, a WORTH-stage
+        # field; every call site passes the ARCHITECTURE's `final_lens`, which has no
+        # `verdict` in ARCHITECT_SCHEMA. The condition was therefore never true and the
+        # key could only ever hold "". render() never read it, so nothing downstream
+        # loses anything -- and it is not re-added as `lens_claim`, because the packet is
+        # what reaches the Writer and the lens deliberately does not (see the crip_turn
+        # block in render(): the reader must ARRIVE at the lens, not be handed it).
         "ending_move": arch.get("ending_move", ""),
         "facts": [facts[f] for f in use if f in facts],
         # Telemetry only, same reasoning as "beat_function" above: which used fact is
@@ -1820,10 +1994,48 @@ GENERIC_SUBJECTS = [r"\banyone whose\b", r"\banyone who\b", r"\bpeople who\b",
                     r"\bwe all\b", r"\beveryone who\b"]
 
 
+def lens_evidence_ids(lens: dict) -> set:
+    """The fact ids a lens cites, in either of the two shapes that exist.
+
+    `evidence_basis` is the ARCHITECTURE's field name (ARCHITECT_SCHEMA) and wins.
+    `evidence_ids` is the WORTH stage's name for the same thing; it is still read because
+    the frozen loop-3 artefacts carry it and are live regression assets. A string is
+    accepted for the same reason validate_final_lens accepts one.
+    """
+    v = lens.get("evidence_basis")
+    if not v:
+        v = lens.get("evidence_ids")
+    if isinstance(v, str):
+        v = [v]
+    return set(v or [])
+
+
 def validate_lens_embodiment(arch: dict, lens: dict) -> list:
-    """The crip turn must land on something the reader has already been shown."""
+    """The crip turn must land on something the reader has already been shown.
+
+    WIRE CONTRACT (2026-09-23). This validated nothing in production for as long as it
+    existed. It was written against the WORTH-stage lens -- which carries `verdict` and
+    `evidence_ids` -- while `check_architecture` calls it with the ARCHITECTURE's
+    `final_lens`, which ARCHITECT_SCHEMA never gives a `verdict` and whose evidence field
+    is named `evidence_basis`. So `lens.get("verdict")` was always None, the guard on the
+    first line always fired, and the function returned [] before reading anything at all.
+    Every assertion covering it injected the Worth shape, so ten tests passed against a
+    path the production caller could not reach past line one. `crip_turn_rereads` has no
+    other validator anywhere, so it was entirely unchecked.
+
+    Two changes, both shape. No check below is stronger or weaker than the one the
+    original author wrote:
+
+      1. THE SKIP IS NOW THE ARCHITECTURE'S OWN. The guard existed to exempt a lens that
+         is not publishable. An architecture only exists once Worth has already approved
+         one, so what is left to exempt is a HOLD -- exempted here exactly as
+         validate_evidence_hierarchy exempts it.
+      2. THE EVIDENCE FIELD IS READ IN BOTH SHAPES, `evidence_basis` first. Reading only
+         the architecture's name would have quietly stopped exercising the frozen
+         Worth-shaped fixtures, which is the same class of failure as the one being fixed.
+    """
     errs = []
-    if lens.get("verdict") not in LENS_PUBLISHABLE:
+    if arch.get("article_type") in (HOLD_NO_STORY, HOLD_WRONG_PUBLICATION):
         return errs
     turn = (arch.get("crip_turn") or "").strip()
     if not turn:
@@ -1861,7 +2073,7 @@ def validate_lens_embodiment(arch: dict, lens: dict) -> list:
                     "re-read (expected one of %s)" % (rereads, sorted(tnouns)[:6]))
 
     # 1. the lens's evidence must be evidence the story actually showed
-    lens_ev = set(lens.get("evidence_ids") or [])
+    lens_ev = lens_evidence_ids(lens)
     if lens_ev and not (lens_ev & earlier_facts):
         errs.append("the lens cites evidence the beats never show: %s"
                     % sorted(lens_ev - earlier_facts))
