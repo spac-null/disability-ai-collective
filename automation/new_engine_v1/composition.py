@@ -6676,7 +6676,26 @@ PACKAGE_BOUNDS = {
     "social_hook": (8, 45, 240),
 }
 
-_QUOTED = re.compile(r"[\"“]([^\"”]{12,})[\"”]")
+# QUOTES ARE PAIRED FIRST, MEASURED SECOND. This used to be one pattern,
+# [\"“]([^\"”]{12,})[\"”], and the length bound inside it broke the pairing: when a
+# field quoted two short terms the engine could not satisfy {12,} between quote 1 and 2,
+# so it resumed and matched from quote 2 to quote 3 -- capturing the field's own
+# connective prose BETWEEN the two quotations and reporting it as a quotation the article
+# does not contain.
+#
+# Measured on the 2026-09-23 candidate, an article about a book whose subject is quoted
+# fragments. A dek reading  ... between "stoppage" and "thence" in Ellis's 144-page book,
+# whose pages carry musical scores, and he asks what it means to "aster" a stutter.
+# yielded the "quotation"  ' in JJJJJerome Ellis's 144-page book, whose pages carry
+# musical scores, and he asks what it means to '  -- which of course is not in the
+# article, because the package stage wrote it. Every package for that article was refused,
+# four attempts in a row, on prose the screen had invented for itself.
+#
+# Pairing without the bound gives (1,2), (3,4), (5,6) -- what a reader means by quotation
+# marks -- and the 12-character floor is then applied to each captured span. Short quoted
+# terms go unchecked exactly as before; nothing new is exempted.
+_QUOTED = re.compile(r"[\"“]([^\"”]*)[\"”]")
+_QUOTED_MIN = 12
 
 _PACKAGE_BANNED = (
     "in a world where", "raises questions", "fascinating look", "we are all",
@@ -6715,6 +6734,8 @@ def package_additions(field_text: str, article_text: str, title_case: bool = Fal
         out.append("number not in the article: %r" % n)
     art = normalize_span(article_text or "")
     for q in _QUOTED.findall(field_text or ""):
+        if len(q) < _QUOTED_MIN:
+            continue
         if normalize_span(q) not in art:
             out.append("quotation not in the article: %r" % q[:60])
     return out
