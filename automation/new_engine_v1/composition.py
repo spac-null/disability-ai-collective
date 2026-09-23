@@ -504,13 +504,31 @@ def check_ledger(ledger: dict, srcs: dict) -> dict:
             add(fid, "%s: claim_kind %r is not one of %s"
                 % (fid, kind, ", ".join(ST.CLAIM_KINDS)))
 
-        # 2. span binding to the cited sources
-        if f.get("claim_type") == LG.INTERPRETATION:
-            continue
+        # 2. SOURCE BINDING first, then span binding to the cited sources.
+        #
+        # THE SOURCE-ID CHECK APPLIES TO EVERY CLAIM TYPE, INTERPRETATIONS INCLUDED. An
+        # interpretation is exempt from quoting a verbatim span -- it reads the evidence
+        # rather than reporting it -- but WHICH evidence it reads is not the thing it is
+        # exempt from. Until 2026-09-23 the `continue` sat above this check, and
+        # ledger.validate_fact only requires evidence_ids to be NON-EMPTY, so this was
+        # the only place in the engine where a cited id was resolved against the pack at
+        # all. An interpretation citing a source that does not exist therefore passed
+        # every check there is.
+        #
+        # That made INTERPRETATION the only claim type with no evidence binding
+        # whatsoever. The others are held by the verbatim span below even though their
+        # ids, too, were unresolved before this line existed -- the span is what stops
+        # them. An interpretation has no span, so the id is all there is, and it has to
+        # name something real.
+        #
+        # This does not widen what an interpretation may claim. It narrows what it may
+        # claim to have read.
         cited = [e for e in (f.get("evidence_ids") or [])]
         unknown = [e for e in cited if e not in srcs]
         if unknown:
             add(fid, "%s: cites source ids that are not in the pack: %s" % (fid, unknown))
+        if f.get("claim_type") == LG.INTERPRETATION:
+            continue
         span = f.get("support_span") or ""
         known = [e for e in cited if e in srcs]
         if span and known and not any(span_in(span, srcs[e]) for e in known):
