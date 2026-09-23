@@ -3893,6 +3893,50 @@ def apply_grounding_repair(article_text: str, edits: list, findings: list,
     return out.strip(), prov, errs
 
 
+def repair_damage(before_para: str, after_para: str) -> str:
+    """Why this repaired paragraph may not be promoted, or "" if it may.
+
+    A GROUNDING REPAIR SUBTRACTS A CLAIM. It does not get to leave prose that is not
+    prose. Both retained failures are this shape and neither was caught:
+
+      2026-09-22 (Ellis)  a DELETE removed the first sentence of a span and left its
+                          remainder standing as "a key concept in the book -- stuttering
+                          and other forms of speech that are disabled..." -- a fragment
+                          with no subject, which Safety then passed.
+      2026-09-21 (H.M.)   three accepted repairs over five iterations emptied whole
+                          paragraphs; the promoted article was a title, three blank
+                          paragraphs and two surviving sentences, 854 words down to 16.
+
+    The checks are deliberately few, deterministic, and about STRUCTURE only -- never
+    about whether the prose is any good, which is the Reader's question and not this
+    function's. Sentence identity comes from CE.sentences, the splitter every other
+    stage already uses; nothing here re-segments text its own way.
+    """
+    after = (after_para or "").strip()
+    if not after:
+        return "the repair emptied the paragraph"
+    before_sents = CE.sentences(before_para or "")
+    after_sents = CE.sentences(after)
+    if not after_sents:
+        return "the repair left no sentence standing"
+    # A sentence that opens in lower case is the signature of a deletion that removed a
+    # subject and left its predicate behind. Compared against the paragraph as it stood,
+    # so prose that already read this way is not blamed on the repair.
+    def _opens_lower(t):
+        t = (t or "").lstrip(" \t*_>#-[(\"'\u201c\u2018")
+        return bool(t) and t[0].islower()
+    if sum(1 for x in after_sents if _opens_lower(x)) > \
+       sum(1 for x in before_sents if _opens_lower(x)):
+        return "the repair left a sentence fragment"
+    # Same test for the paragraph's own end: a paragraph that ended in terminal
+    # punctuation must still do so.
+    _term = ".!?\"'\u201d\u2019)]*_"
+    if (before_para or "").strip().endswith(tuple(_term)) and \
+            not after.endswith(tuple(_term)):
+        return "the repair left the paragraph unterminated"
+    return ""
+
+
 def apply_local_grounding_repair(article_text: str, edits: list, findings: list,
                                  ledger: dict, packet: dict) -> tuple:
     """Grounding's OWN repair (Stage 8b's first repair and Stage 8c's completion pass),
@@ -3988,16 +4032,46 @@ def apply_local_grounding_repair(article_text: str, edits: list, findings: list,
                         "(whitespace or punctuation drift) -- refused rather than "
                         "guessed at" % i)
             continue
+        # THE TARGET MUST CONTAIN THE DECLARED SPAN, never merely intersect it. The
+        # second disjunct here used to be `normalize_span(s) in normalize_span(orig)`,
+        # which matched when `orig` was LONGER than a sentence: the first sentence
+        # inside the span became the target, was replaced or deleted whole, and the
+        # rest of the span was left standing on its own. That is the 2026-09-22 Ellis
+        # fragment exactly. A span covering more than one sentence is not a local
+        # sentence repair and is now refused instead of half-applied.
         target = next((s for s in CE.sentences(out)
-                       if normalize_span(orig) in normalize_span(s)
-                       or normalize_span(s) in normalize_span(orig)), None)
+                       if normalize_span(orig) in normalize_span(s)), None)
         if target is None:
-            errs.append("edit %d: could not locate the sentence to replace" % i)
+            errs.append("edit %d: the span covers more than one sentence, or no "
+                        "sentence contains it -- not a local repair: %r"
+                        % (i, orig[:80]))
             continue
-        out = out.replace(target, rep, 1) if rep else out.replace(target, "", 1)
-        out = re.sub(r"[ \t]{2,}", " ", out)
+        candidate = out.replace(target, rep, 1) if rep else out.replace(target, "", 1)
+        candidate = re.sub(r"[ \t]{2,}", " ", candidate)
+        # STRUCTURAL VALIDATION BEFORE COMMIT, on the one paragraph this edit touched.
+        # A proposal that leaves a fragment, an empty paragraph or an unterminated one
+        # is refused and the article stays exactly as it was -- the repair budget is
+        # spent, but the prose is not damaged. Fail closed, never destructively.
+        before_paras = CE.paragraphs(out)
+        after_paras = CE.paragraphs(candidate)
+        damage = ""
+        if len(after_paras) != len(before_paras):
+            damage = "the repair changed the paragraph structure"
+        else:
+            for b, a in zip(before_paras, after_paras):
+                if b != a:
+                    damage = repair_damage(b, a)
+                    if damage:
+                        break
+        if damage:
+            errs.append("edit %d refused: %s (the article is left unchanged)"
+                        % (i, damage))
+            continue
+        out = candidate
         prov.append({"finding_id": fid, "operation": op,
                      "original": target.strip(), "repaired": rep,
+                     "paragraph_index": host_idx,
+                     "declared_span": orig,
                      "what_was_removed": e.get("what_was_removed", ""),
                      "fact_ids": lic,
                      "support_spans": [ (ledger.get(f) or {}).get("support_span", "")
