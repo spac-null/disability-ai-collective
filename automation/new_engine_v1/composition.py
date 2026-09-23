@@ -51,6 +51,7 @@ from . import ledger as LG
 from . import stages as S
 from . import story as ST
 from . import materiality as MAT
+from . import provenance as PV
 from .provider import Provider, ProviderError, parse_json_object
 
 # ── stage names, in order ─────────────────────────────────────────────────────
@@ -2838,6 +2839,15 @@ def write_article(provider, arch: dict, ledger: dict, cut_prohibitions=None,
             return {"status": PASS, "article_text": article, "packet": packet,
                     "compose_mode": compose_mode,
                     "prompt": prompt, "prompt_sha256": C.sha256_text(prompt),
+                    # The two identities the retained record was missing. The rendered
+                    # user prompt was already hashed; the SYSTEM prompt was identified
+                    # only by `compose_mode`, which names the text only if you know the
+                    # code version -- and no code version was recorded anywhere in the
+                    # engine. Together with prompt_sha256 these make one sentence
+                    # provable later: this code + this system prompt + this user prompt
+                    # produced this call. See provenance.py.
+                    "system_sha256": C.sha256_text(system),
+                    "code_identity": PV.code_identity(),
                     "provider": _identity(comp, attempt),
                     "model_calls": attempt, "repairs": 0,
                     "words": len(article.split()),
@@ -8474,6 +8484,18 @@ def persist(out_dir, result: dict) -> None:
         dump("CUT_WATCH_TERMS.json", det[CUT_TERMS]["terms"])
     if det.get(WRITER, {}).get("prompt"):
         (d / "WRITER_PACKET.txt").write_text(det[WRITER]["prompt"])
+    if det.get(WRITER, {}).get("prompt_sha256"):
+        # The Writer call's identity, in one small file rather than a new framework:
+        # which code, which system prompt, which rendered user prompt, which article.
+        # WRITER_PACKET.txt already holds the user prompt itself; this is what makes it
+        # attributable. A REPLAYED writer has no prompt_sha256 and writes nothing here.
+        dump("WRITER_CALL_IDENTITY.json", {
+            "code": det[WRITER].get("code_identity"),
+            "compose_mode": det[WRITER].get("compose_mode"),
+            "system_sha256": det[WRITER].get("system_sha256"),
+            "prompt_sha256": det[WRITER].get("prompt_sha256"),
+            "article_sha256": C.sha256_text(det[WRITER].get("article_text") or ""),
+        })
     if det.get(WRITER, {}).get("claim_map") is not None:
         dump("CLAIM_MAP.json", {
             "article_sha256": det[WRITER].get("claim_map_article_sha256"),
