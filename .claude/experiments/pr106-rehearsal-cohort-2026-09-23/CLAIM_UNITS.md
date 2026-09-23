@@ -40,9 +40,9 @@ Declared evidence — `[F46, F47, F48]`, full propositions:
 |---|---|---|---|
 | 1.1 | People were asked to put on what they would wear | `SUPPORTED` | F46 |
 | 1.2 | The scenario was a large-scale evacuation | `SUPPORTED` | F46 |
-| 1.3 | The evacuation was presented as imminent | `SUPPORTED` | F46 |
+| 1.3 | ~~The evacuation was presented as imminent~~ | **WITHDRAWN** | not a commitment of this gloss. The gloss says "minutes away"; "imminent" is the EVIDENCE's word. Listing it as a unit double-counted 1.4 from the other side. |
 | 1.4 | **The evacuation was specifically minutes away** | **`NOT_ESTABLISHED`** | **none** |
-| 1.5 | Participants gathered a limited selection of belongings | `SUPPORTED` | F48 |
+| 1.5 | Participants were **asked to** gather a limited selection of belongings | `DISPUTED` | F48 says the project *focuses on* gathering; F46 says participants were asked *to dress*. No fact says they were asked to gather. Labelled `SUPPORTED` on the loose reading; the shadow returned `NOT_ESTABLISHED` on the strict one. Genuinely arguable, and the same instruction-vs-description shade as 1.4. |
 | 1.6 | Choices were recorded in a photoshoot and an accompanying survey | `SUPPORTED` | F46 |
 | 1.7 | Results were shown as life-size portraits | `SUPPORTED` | F47 |
 | 1.8 | It is a *research* project | `NOT_ESTABLISHED` | none in the declared set — F46/47/48 say "project", not "research project". Marked separately from 1.4 because it is a weaker, arguably non-material case and a detector may reasonably differ. |
@@ -86,8 +86,15 @@ Expected: **zero warnings.**
 Gloss:
 
 > the number of animals that licensed vessels are permitted to take in a given year under
-> national regulation; Norway is one of the few countries that still allows this for
-> commercial purposes
+> national regulation; Norway is one of the few countries that still allows this for minke
+> whales, and for 2026 the figure set was 1,641
+
+**Corrected 2026-09-23 during calibration.** This gloss was first recorded here ending
+"...still allows this for commercial purposes". That was a truncation of the real artifact,
+introduced the same way as the run-3 misdiagnosis in `README.md`: a display cut at 160
+characters. The real gloss continues with a species and a figure, and units 3.4-3.5 below
+exist because of it. Second instance of the same error in one day; the standing rule is in
+`README.md`.
 
 Declared evidence — `[F69, F70, F71]`:
 
@@ -103,6 +110,8 @@ Declared evidence — `[F69, F70, F71]`:
 | 3.1 | A quota is a number of animals licensed vessels may take | `SUPPORTED` | F70 |
 | 3.2 | It is set for a given year under national regulation | `SUPPORTED` | F70 |
 | 3.3 | Norway is one of few countries still permitting commercial whaling | `SUPPORTED` | F69 |
+| 3.4 | ...specifically for minke whales | `SUPPORTED` | F69, F70 |
+| 3.5 | The 2026 figure was 1,641 | `SUPPORTED` | F70 |
 
 Expected: **zero warnings.** Note 3.1–3.2 are partly general-knowledge framing of a term; a
 detector may reasonably return `NON_FACTUAL_OR_NOT_CHECKABLE` for them. That is acceptable.
@@ -164,7 +173,7 @@ the misreading came from a truncated 160-character display. See the correction s
 
 ## Size and honesty about it
 
-13 labelled units across 5 definitions, 3 of them from 2 natural current-contract
+14 labelled units across 5 definitions (13 live, 1 withdrawn), 3 of them from 2 natural current-contract
 architectures. Two are true `NOT_ESTABLISHED` targets; one of those is historical. This is
 enough to expose a detector that flags everything or nothing. It is **not** enough to
 establish precision. More natural runs are required before any promotion discussion.
