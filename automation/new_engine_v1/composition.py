@@ -1255,7 +1255,6 @@ ARCHITECT_SCHEMA = (
     ' "evidence_roles": {"F..": "LOAD_BEARING"},  every id in use_facts, one of: %(roles)s\n'
     ' "supports": {"F..": ["F.."]},               for each SUPPORTING id only: the\n'
     "                                            LOAD_BEARING id(s) it makes intelligible\n"
-    ' "use_quotes": [],\n'
     ' "definitions": {"term": "plain-words gloss, explained at first use"},\n'
     ' "definition_evidence": {"term": ["F.."]},   REQUIRED for any gloss that states a\n'
     "                                            number, names a person/place/body/\n"
@@ -1308,6 +1307,47 @@ def _sentence_initial(word: str, arch: dict) -> bool:
     return True
 
 
+def quote_requirement_errors(arch: dict) -> list:
+    """An architecture may not require a quotation this engine cannot deliver.
+
+    THE CONTRADICTION THIS REMOVES. `use_quotes` asked the architect to name quote ids.
+    build_packet resolves them against a `quotes` mapping -- and writer_packet() calls
+    build_packet with THREE arguments, so that mapping is always {}. Nothing in the engine
+    produces one: grep finds no Q-id producer in research, the ledger, or any stage. So
+    `packet["quotes"]` was always [], render()'s QUOTE EXACTLY block never fired, and a
+    quotation the architecture had decided the article needed vanished between the plan
+    and the prompt without a word.
+
+    Meanwhile the FAST_LANE writing contract told the Writer it could quote when a fact
+    granted `quote_permission: DIRECT_VERBATIM` -- a condition that cannot occur here.
+    One half of the engine planned quotations it could not deliver; the other half
+    described a permission system that does not exist.
+
+    The requirement is removed rather than wired, because wiring it would mean inventing
+    authority. A ledger fact's `support_span` is verbatim source text, but it is the span
+    that SUPPORTS a proposition, not a record of someone speaking, and the ledger has no
+    speaker structure to attribute it to. Turning spans into attributed quotations is a
+    new evidence contract, not a repair to this one.
+
+    It is refused loudly instead of dropped quietly. `use_quotes` is gone from
+    ARCHITECT_SCHEMA, so a compliant architect never emits it; one that emits it anyway is
+    answered by the repair loop, not silently ignored.
+
+    Note this is deliberately NOT in story.validate_architecture. That function is the
+    story-level contract and is called on frozen experiment artefacts -- `roman` carries
+    use_quotes ['Q01'] WITH its own hand-supplied quotes mapping, which is a legitimate
+    thing for an experiment to have done. What is broken is the production wiring, so the
+    check lives on the production path.
+    """
+    want = [q for q in (arch.get("use_quotes") or []) if str(q).strip()]
+    if not want:
+        return []
+    return ["use_quotes names %s, and this engine has no quote channel: writer_packet "
+            "builds the packet with no quotes mapping and nothing produces one, so the "
+            "quotation would be dropped between the plan and the prompt. Plan the article "
+            "without quotation, or HOLD." % want]
+
+
 def check_architecture(arch: dict, ledger: dict) -> list:
     """Every merged pre-Writer gate, called in one place.
 
@@ -1331,6 +1371,7 @@ def check_architecture(arch: dict, ledger: dict) -> list:
     # ST.validate_definition_support for the measured counterexample.
     errs += ["DEFINITION_SUPPORT: " + e
              for e in ST.validate_definition_support(arch, ledger)]
+    errs += ["QUOTE_CHANNEL: " + e for e in quote_requirement_errors(arch)]
     fl = arch.get("final_lens") or {}
     errs += ["FINAL_LENS: " + e for e in ST.validate_final_lens(fl, arch, ledger)]
     errs += ["LENS_EMBODIMENT: " + e for e in ST.validate_lens_embodiment(arch, fl)]
@@ -2633,17 +2674,26 @@ FAST_LANE_WRITER_DELTA = (
     "ATTRIBUTED, DISPUTED or UNCERTAIN written as if ESTABLISHED. Literary "
     "smoothness is never permission to remove a meaningful hedge or narrow a "
     "licensed either/or into one branch.\n"
-    "\n\nDIRECT_QUOTE_REQUIRES_EXACT_PERMISSION. Use quotation marks around a "
-    "speaker's words ONLY when a fact below explicitly grants quote_permission: "
-    "DIRECT_VERBATIM and gives its quote_text -- and then reproduce that quote_text "
-    "exactly, nothing added, nothing joined from elsewhere. You may NOT: "
-    "reconstruct a quote from fragments; combine two separated clauses into one "
-    "quotation; treat a secondary source's own editorial ellipsis ('X ... Y') as a "
-    "verified verbatim sentence and quote it as one; silently clean up or "
-    "strengthen a quote's wording; or paraphrase inside quotation marks. A fact "
-    "with quote_permission: ATTRIBUTED_PARAPHRASE_ONLY (or no quote_permission at "
-    "all) may be reported in your own words with the speaker named, but never "
-    "inside quotation marks.\n"
+    # THIS CLAUSE USED TO BE UNSATISFIABLE (fixed 2026-09-23). It read "use quotation
+    # marks ONLY when a fact below explicitly grants quote_permission: DIRECT_VERBATIM
+    # and gives its quote_text". No fact on this path has ever carried either field:
+    # writer_packet() calls build_packet() with three arguments, so `quotes` defaults to
+    # {} and render() emits nothing but propositions. The condition could never be met,
+    # so the instruction resolved to "never quote" while saying something else -- and
+    # saying it in the one register the Writer is known to transcribe. The rule is now
+    # written as what it actually is on this path. It is not a relaxation: the previous
+    # text permitted quoting under a condition that cannot occur, and this permits none.
+    "\n\nDO_NOT_QUOTE. Do not put quotation marks around anyone's words. Nothing "
+    "you are given below is verbatim source text -- every fact is a proposition "
+    "written for this article, not a transcript -- so any quotation you form would "
+    "be a reconstruction, however faithful it felt. Report what was said in your "
+    "own words with the speaker named ('her lawyer says...', 'a spokesperson "
+    "said...'). You may NOT: reconstruct a quote from fragments; combine two "
+    "separated clauses into one quotation; present an editorial ellipsis "
+    "('X ... Y') as a verified verbatim sentence; or paraphrase inside quotation "
+    "marks. Quotation marks around a title, a term being named, or a phrase the "
+    "article is examining are unaffected; this is about attributing words to a "
+    "speaker.\n"
     "\n\nEVENT_CONTEXT_BINDING. Some facts below may carry an event_id, date, "
     "location or participant list. ADJACENCY DOES NOT LICENSE EVENT MERGER: "
     "placing a fact from one event next to a fact from another in your prose "
@@ -2721,7 +2771,10 @@ def writer_packet(arch: dict, ledger: dict, cut_prohibitions=None) -> tuple:
                        if p not in (arch.get("prohibitions") or [])])
     packet = ST.build_packet(arch, arch.get("final_lens") or {},
                              LG.propositions(ledger))
-    errs = ST.validate_packet(packet)
+    # Fail-closed, the same way validate_packet keeps its own call here even though
+    # check_architecture already ran it: a quotation the plan required must never be
+    # dropped between the plan and the prompt in silence. See quote_requirement_errors.
+    errs = ST.validate_packet(packet) + quote_requirement_errors(arch)
     if errs:
         raise CompositionHold(WRITER, WRITER_HOLD,
                               ["the writer packet is not clean"] + errs)
