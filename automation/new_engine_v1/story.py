@@ -618,42 +618,59 @@ def validate_evidence_hierarchy(arch: dict, evidence_ids: set) -> list:
 # entity, no number and no relation, so they need no fact and are accepted unchanged.
 # Nothing here is a glossary policy, a jargon list or a readability rule.
 #
-# The rule is only this: a definition may not assert what the same words would not be
-# allowed to assert anywhere else. No new model, no challenger, no retry.
+# THE EVIDENCE MUST BE DECLARED PER DEFINITION. A first version of this check let an
+# undeclared definition inherit `use_facts`, on the reasoning that this gave a gloss the
+# same licence the crip turn gets. That was wrong, and its own acceptance control proved
+# it: the held-out architecture's "block group: the smallest area the survey publishes
+# figures for" asserts a SUPERLATIVE that nothing in its evidence states, and it PASSED
+# under the fallback -- because some unrelated fact among the 26 used ones happened to
+# carry a superlative somewhere. A broad pool does not license a specific sentence. It
+# only makes the check look like it ran.
 #
-# THE LICENSING SET IS THE SAME ONE THE TURN GETS, and that is measured rather than
-# chosen. validate_architecture licenses the crip turn against
-# `final_lens.evidence_basis or arch["use_facts"]` -- declared ids when the plan names
-# them, the used facts otherwise. Definitions inherit exactly that, so this check is
-# neither weaker nor stronger than the one the same sentence would meet in the turn.
+# So the licence is per-term and explicit. A definition acquires no authority from the
+# mere availability of facts elsewhere in the plan.
 #
-# The alternative -- an empty licensing set whenever `definition_evidence` is absent --
-# was written first and refuted against the held-out real architecture, the manual
-# baseline that produced the published article. Its gloss "block group: the smallest area
-# the survey publishes figures for" trips SUPERLATIVE on "smallest", and its 26 used facts
-# do license a SUPERLATIVE. Under the empty-set rule the proven architecture would have
-# been refused and the repair budget spent getting back to it -- the same mistake
-# check_architecture's own comment records about reading all five prose-audit channels.
+# WHY A PARALLEL MAP RATHER THAN `term -> {text, evidence_ids}`, which is the more obvious
+# way to make ownership intrinsic. Measured, not preferred: the packet carries
+# `definitions` straight through, and the per-term object breaks two things at once.
+# generated_packet_text guards on `isinstance(v, str)`, so dict values would SILENTLY stop
+# being leak-scanned -- the exact class of defect this whole pass exists to remove -- and
+# render() formats the value with %s, so the Writer's prompt would read
+# "servo -- {'text': 'a small motor', 'evidence_ids': ['F04']}". Fixing both would widen
+# the change for no gain in enforcement: with the parallel map REQUIRED and its key set
+# checked in both directions, a used definition without its evidence cannot pass the gate,
+# which is where ownership actually has to hold. The binding also belongs upstream of the
+# packet: the Writer is given the gloss, never the fact ids behind it.
 #
-# `definition_evidence` is therefore a NARROWING declaration: naming ids makes the licence
-# tighter than use_facts and says on the record which facts the explanation rests on. The
-# prompt asks for it whenever a gloss carries factual surface, because an explicit binding
-# is auditable and a fallback is not. The gate does not require it -- what the gate
-# requires is that the surface be licensed by evidence the Writer will actually be given.
-def validate_definition_support(arch: dict, ledger: dict) -> list:
-    """Factual surface in a definition must be licensed by usable facts."""
+# No new model, no challenger, no retry, no jargon list, no readability rule.
+def validate_definition_support(arch: dict, ledger: dict,
+                                legacy_replay: bool = False) -> list:
+    """Every used definition must name the usable facts that license its factual surface.
+
+    `legacy_replay` is the OLD-CONTRACT COMPATIBILITY PATH and nothing else. Replay
+    revalidates a stored architecture against its stored ledger, and architectures retained
+    before `definition_evidence` existed cannot have declared it. Those replay, because a
+    replay reproduces a past run rather than authorising a new one. It applies ONLY when
+    the field is absent altogether -- a partially-declared architecture was written by an
+    author who knew about the field, and is held to the current contract. The caller must
+    record that it used this path; see check_architecture's `contract` argument. Being
+    published once is not evidence, and it does not relax the contract for new work.
+    """
     if arch.get("article_type") in (HOLD_NO_STORY, HOLD_WRONG_PUBLICATION):
         return []
     defs = arch.get("definitions") or {}
     if not isinstance(defs, dict) or not defs:
         return []
 
-    errs = []
-    support = arch.get("definition_evidence") or {}
-    if not isinstance(support, dict):
+    declared = arch.get("definition_evidence")
+    if declared is None and legacy_replay:
+        return []
+    if declared is not None and not isinstance(declared, dict):
         return ["definition_evidence is %s, not an object mapping term -> fact ids"
-                % type(support).__name__]
+                % type(declared).__name__]
+    support = declared or {}
 
+    errs = []
     use = set(arch.get("use_facts") or [])
     cut = {c.get("evidence_id") for c in (arch.get("cut_evidence") or [])}
 
@@ -667,10 +684,16 @@ def validate_definition_support(arch: dict, ledger: dict) -> list:
             errs.append("the definition of %r is empty" % term)
             continue
 
-        ids = support.get(term) or []
+        ids = support.get(term)
         if isinstance(ids, str):
             ids = [ids]
-        ids = [str(i) for i in ids]
+        ids = [str(i) for i in (ids or [])]
+        if not ids:
+            errs.append("the definition of %r declares no evidence. A definition is prose "
+                        "the Writer is instructed to state, so name in definition_evidence "
+                        "the used fact ids that license it -- or drop the term and build "
+                        "the plan on material that can be explained" % term)
+            continue
 
         usable = []
         for fid in ids:
@@ -687,35 +710,42 @@ def validate_definition_support(arch: dict, ledger: dict) -> list:
                             "allows" % (term, fid))
             else:
                 usable.append(fid)
+        if not usable:
+            continue                      # already reported; nothing left to license with
 
-        # Declared ids narrow the licence; absent them the gloss is licensed against the
-        # facts the Writer is actually given, exactly as the turn is. Cut facts are in
-        # neither set: the Writer never sees one, so no explanation can be written from it.
-        basis = usable or sorted(use - cut)
         licensing = " ".join(str((ledger.get(f) or {}).get("proposition") or "")
-                             for f in basis)
+                             for f in usable)
 
         # Same two channels check_architecture reads as failures on the architect's other
         # prose fields, and read the same way round: sentence-initial capitals are not
         # evidence of a name, and the licensing side is built without that exemption.
-        whose = ("%s" % usable) if usable else "the used facts"
         unlicensed_n = sorted(_numbers(gloss) - _numbers(licensing))
         if unlicensed_n:
             errs.append("the definition of %r states a number %s do not carry: %s"
-                        % (term, whose, unlicensed_n))
+                        % (term, usable, unlicensed_n))
         unlicensed_e = sorted(_entities(gloss)
                               - _entities(licensing, skip_sentence_initial=False))
         if unlicensed_e:
             errs.append("the definition of %r names %s, which %s do not carry"
-                        % (term, unlicensed_e, whose))
+                        % (term, unlicensed_e, usable))
 
         # And the same relation licence the crip turn is held to. A gloss that says one
         # thing CAUSES, PRECEDES or EXCLUDES another is making the same kind of claim a
         # turn makes, and general knowledge is not a licence for it.
-        for e in validate_turn_support(gloss, basis, ledger):
+        for e in validate_turn_support(gloss, usable, ledger):
             errs.append("the definition of %r asserts %s (%r) -- %s"
                         % (term, e["relation"], e["carried_by"], e["why"]))
     return errs
+
+
+def definitions_predate_evidence_binding(arch: dict) -> bool:
+    """True for an architecture retained before `definition_evidence` existed.
+
+    Used to LABEL a replay that took the compatibility path, never to take it silently.
+    """
+    defs = (arch or {}).get("definitions") or {}
+    return bool(isinstance(defs, dict) and defs
+                and (arch or {}).get("definition_evidence") is None)
 
 
 # ── CARRIERS MAY NOT ASSERT AN OCCURRENCE THE LEDGER DOES NOT HOLD ───────────

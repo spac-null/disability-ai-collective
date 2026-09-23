@@ -1192,15 +1192,17 @@ ARCHITECT_SYSTEM = (
     "explanation of a term the article cannot do without, that is worth knowing NOW, "
     "while the plan can still be built on material that can be explained, rather than at "
     "the gate that refuses the sentence.\n"
-    "  SO SAY WHAT LICENSES IT. A gloss in plain words -- what the thing is, what it "
-    "does, what it costs -- needs no fact and should declare none. But the moment a gloss "
-    "states a NUMBER, names a PERSON, PLACE, BODY or PRODUCT, or asserts that one thing "
-    "CAUSES, PRECEDES or EXCLUDES another, it is making the same kind of claim a beat "
-    "makes, and it needs the same licence: list the fact ids in `definition_evidence` "
-    "under that term. They must be ids you also USE -- a fact you CUT is never given to "
-    "the Writer, so an explanation cannot be written from it. If the term cannot be "
-    "explained from usable evidence, build the plan on material that can be explained, "
-    "or return a HOLD. Do not hand the Writer an explanation and hope it finds one.\n"
+    "  SO SAY WHAT LICENSES IT, FOR EVERY TERM. `definition_evidence` needs one entry per "
+    "term in `definitions`, naming the fact ids that license that gloss. This is not "
+    "reserved for glosses that look risky: a definition is prose the Writer is instructed "
+    "to state, and what licenses a stated sentence is not a judgement call. The ids must "
+    "be ones you also USE -- a fact you CUT is never given to the Writer, so no "
+    "explanation can be written from it -- and they must carry the gloss's own numbers, "
+    "names and relations. Evidence sitting elsewhere in the plan licenses nothing here; "
+    "a superlative, a cause or a date needs a fact that states THAT, not a neighbouring "
+    "fact that happens to state something similar. If a term cannot be licensed, drop it "
+    "and build the plan on material that can be explained, or return a HOLD. Do not hand "
+    "the Writer an explanation and hope it finds one.\n"
     "\n"
     "WRITE MEANING, NOT PERFORMANCE. Your prose fields are read by the Writer as "
     "instructions and get copied. So state what is true and what it means; do not write "
@@ -1257,12 +1259,11 @@ ARCHITECT_SCHEMA = (
     ' "supports": {"F..": ["F.."]},               for each SUPPORTING id only: the\n'
     "                                            LOAD_BEARING id(s) it makes intelligible\n"
     ' "definitions": {"term": "plain-words gloss, explained at first use"},\n'
-    ' "definition_evidence": {"term": ["F.."]},   REQUIRED for any gloss that states a\n'
-    "                                            number, names a person/place/body/\n"
-    "                                            product, or asserts a causal, temporal\n"
-    "                                            or exclusive relation. Ids must be in\n"
-    "                                            use_facts, never cut. A plain-words\n"
-    "                                            gloss needs none.\n"
+    ' "definition_evidence": {"term": ["F.."]},   REQUIRED: one entry for EVERY term in\n'
+    "                                            definitions, naming the used fact ids\n"
+    "                                            that license that gloss. Ids must be in\n"
+    "                                            use_facts and never cut. A term you\n"
+    "                                            cannot license is a term to drop.\n"
     ' "cut_evidence": [{"evidence_id": "F..", "reason": "REDUNDANT_PROOF"}],\n'
     "                                            reasons: %(cuts)s\n"
     ' "prohibitions": ["Do not ..."],\n'
@@ -1349,7 +1350,19 @@ def quote_requirement_errors(arch: dict) -> list:
             "without quotation, or HOLD." % want]
 
 
-def check_architecture(arch: dict, ledger: dict) -> list:
+# The contract an architecture is judged against. CURRENT is the only value any NEW
+# architecture may be checked under; LEGACY_REPLAY exists solely because replay
+# revalidates a STORED architecture against its stored ledger, and one retained before
+# `definition_evidence` existed cannot have declared it. A replay reproduces a past run
+# rather than authorising a new one. The call site that uses it must record that it did --
+# see the REPLAYED branch in compose() -- because a compatibility path nobody can see in
+# the artifact is indistinguishable from a weaker contract.
+CONTRACT_CURRENT = "CURRENT"
+CONTRACT_LEGACY_REPLAY = "LEGACY_REPLAY"
+
+
+def check_architecture(arch: dict, ledger: dict,
+                       contract: str = CONTRACT_CURRENT) -> list:
     """Every merged pre-Writer gate, called in one place.
 
     This runs BEFORE the packet is built, which is the whole point: a Writer handed an
@@ -1371,7 +1384,8 @@ def check_architecture(arch: dict, ledger: dict) -> list:
     # fields, and rendered to the Writer under EXPLAIN AT FIRST USE. See
     # ST.validate_definition_support for the measured counterexample.
     errs += ["DEFINITION_SUPPORT: " + e
-             for e in ST.validate_definition_support(arch, ledger)]
+             for e in ST.validate_definition_support(
+                 arch, ledger, legacy_replay=(contract == CONTRACT_LEGACY_REPLAY))]
     errs += ["QUOTE_CHANNEL: " + e for e in quote_requirement_errors(arch)]
     fl = arch.get("final_lens") or {}
     errs += ["FINAL_LENS: " + e for e in ST.validate_final_lens(fl, arch, ledger)]
@@ -7751,7 +7765,16 @@ def run_story_architecture_composition(
         frozen_article = replay.get("article")
         if replay.get("architecture"):
             arch = replay["architecture"]
-            errs = check_architecture(arch, ledger)
+            # OLD-CONTRACT COMPATIBILITY, RECORDED RATHER THAN SILENT. An architecture
+            # retained before `definition_evidence` existed cannot have declared it, and a
+            # replay reproduces a past run rather than authorising a new one. The
+            # relaxation is named in the artifact so a later audit can tell a replayed
+            # legacy plan from a plan that met the current contract. It applies to replay
+            # only: `architect()` is always checked under CONTRACT_CURRENT.
+            legacy_defs = ST.definitions_predate_evidence_binding(arch)
+            errs = check_architecture(
+                arch, ledger,
+                contract=(CONTRACT_LEGACY_REPLAY if legacy_defs else CONTRACT_CURRENT))
             if errs:
                 raise CompositionHold(
                     ARCHITECTURE, ARCHITECTURE_HOLD,
@@ -7759,6 +7782,9 @@ def run_story_architecture_composition(
                      "ledger"] + errs[:8], {"architecture": arch, "failures": errs})
             st[ARCHITECTURE] = {"status": REPLAYED, "architecture": arch,
                                 "beats": len(arch.get("beats") or []),
+                                "contract": (CONTRACT_LEGACY_REPLAY if legacy_defs
+                                             else CONTRACT_CURRENT),
+                                "legacy_definitions_accepted": legacy_defs,
                                 "model_calls": 0, "repairs": 0}
             calls[ARCHITECTURE] = repairs[ARCHITECTURE] = 0
         else:

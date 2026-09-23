@@ -1,28 +1,36 @@
 #!/usr/bin/env python3
 """
-definition_support_test.py -- a definition may not assert what a beat could not.
+definition_support_test.py -- a definition may not assert what a beat could not, and it
+may not borrow its licence from evidence sitting elsewhere in the plan.
 
-`definitions` was the one architect-generated field with no factual screen anywhere. It
-is not in architect_prose_audit's field list, so its numbers and entities were never
-compared to the approved facts. It is not among the three fields validate_turn_support
-covers, so the relations it asserts were never licensed. And render() hands it to the
-Writer under EXPLAIN AT FIRST USE, which is an instruction to state it.
+`definitions` was the one architect-generated field with no factual screen anywhere. Not
+in architect_prose_audit's field list, so its numbers and entities were never compared to
+the approved facts. Not among validate_turn_support's three fields, so the relations it
+asserts were never licensed. And render() hands it to the Writer under EXPLAIN AT FIRST
+USE, which is an instruction to state it.
 
-Measured on 2026-09-23 against 2e96aa7: an architecture whose only change from a clean
-control was
+Measured on 2e96aa7: an architecture whose only change from a clean control was
 
     {"servo": "a small motor from Hitachi that turns to a commanded angle in 45
               milliseconds and holds there under 12 kg of load"}
 
-passed check_architecture with ZERO errors. The same brand and numbers in `story_spine`
-or a beat's `happens` are caught. A definition was the way round every gate in the engine.
+passed check_architecture with ZERO errors.
 
-THE ACCEPTANCE SIDE MATTERS AS MUCH AS THE REFUSAL SIDE, and it is not hypothetical here:
-the last test in this file runs the real held-out architecture -- the manual baseline that
-produced the published article -- against the real frozen evidence manifest. A first
-version of this check used an empty licensing set when no `definition_evidence` was
-declared, and that version refused it. That is how the licensing set came to be the same
-one the crip turn already gets.
+THE FIRST FIX WAS TOO WEAK AND ITS OWN ACCEPTANCE CONTROL PROVED IT. It let an undeclared
+definition inherit `use_facts`, reasoning that this gave a gloss the same licence the crip
+turn gets. The held-out architecture's "block group: the smallest area the survey publishes
+figures for" asserts a SUPERLATIVE nothing in its evidence states -- and it PASSED, because
+some unrelated fact among the 26 used ones carried a superlative somewhere. A broad pool
+does not license a specific sentence; it only makes the check look like it ran. The licence
+is per-term and explicit now.
+
+TWO CLASSES OF TEST BELOW, kept apart on purpose:
+
+  CURRENT_CONTRACT        what any new architecture must satisfy.
+  HISTORICAL_COMPATIBILITY  what a REPLAY of a stored pre-`definition_evidence`
+                          architecture does, and what the held-out artefact does under
+                          the current contract -- which is FAIL, diagnostically. Being
+                          published once is not evidence and does not relax the contract.
 
 Behavioural, no provider, no network.
 """
@@ -122,38 +130,80 @@ def support(a):
     return ST.validate_definition_support(a, LEDGER)
 
 
-# ── the measured counterexample ───────────────────────────────────────────────
-def test_the_control_is_clean():
-    check("the control architecture passes check_architecture whole",
+# ══ CURRENT_CONTRACT ══════════════════════════════════════════════════════════
+def test_CURRENT_CONTRACT_no_definitions_is_unchanged():
+    check("an architecture with no definitions passes whole",
           CP.check_architecture(arch(), LEDGER) == [],
           CP.check_architecture(arch(), LEDGER))
+    check("and the validator returns nothing to say", support(arch()) == [])
+    check("an empty definitions map is equally silent",
+          support(arch(definitions={})) == [])
 
 
-def test_an_unsupported_definition_is_refused():
+def test_CURRENT_CONTRACT_definition_with_valid_explicit_evidence_passes():
+    a = arch(definitions={"ranking sheet": "the list a council publishes in March"},
+             definition_evidence={"ranking sheet": ["F01"]})
+    check("a gloss licensed by the fact it declares is accepted", support(a) == [],
+          support(a))
+    check("and check_architecture accepts the architecture whole",
+          CP.check_architecture(a, LEDGER) == [], CP.check_architecture(a, LEDGER))
+
+
+def test_CURRENT_CONTRACT_missing_declaration_is_refused():
+    """The correction. A used definition must say what licenses it -- always, not only
+    when the gloss looks risky."""
+    a = arch(definitions={"ranking sheet": "the list a council publishes"})
+    check("a definition with no definition_evidence at all is refused",
+          any("declares no evidence" in e for e in support(a)), support(a))
+
+    a = arch(definitions={"ranking sheet": "the list a council publishes"},
+             definition_evidence={})
+    check("an empty definition_evidence map is refused",
+          any("declares no evidence" in e for e in support(a)), support(a))
+
+    a = arch(definitions={"ranking sheet": "the list a council publishes",
+                          "catalogue": "the printed book"},
+             definition_evidence={"ranking sheet": ["F01"]})
+    errs = support(a)
+    check("declaring one term but not the other refuses only the undeclared one",
+          any("'catalogue'" in e and "declares no evidence" in e for e in errs)
+          and not any("'ranking sheet'" in e for e in errs), errs)
+
+    a = arch(definitions={"ranking sheet": "the list a council publishes"},
+             definition_evidence={"ranking sheet": []})
+    check("an empty id list is refused",
+          any("declares no evidence" in e for e in support(a)), support(a))
+
+    a = arch(definitions={"ranking sheet": "the list a council publishes"},
+             definition_evidence={"nothing here": ["F01"]})
+    check("evidence declared for a term that is not defined is refused",
+          any("not defined" in e for e in support(a)), support(a))
+
+
+def test_CURRENT_CONTRACT_a_broad_pool_licenses_nothing():
+    """The exact hole the first fix left. F04 carries 'Hitachi'; it is CUT, and even a
+    USED neighbour would not license a gloss that does not declare it."""
     a = arch(definitions={
         "servo": "a small motor from Hitachi that turns to a commanded angle in 45 "
-                 "milliseconds and holds there under 12 kg of load"})
+                 "milliseconds and holds there under 12 kg of load"},
+        definition_evidence={"servo": ["F01"]})
     errs = support(a)
-    check("the invented numbers are named",
-          any("45" in e and "12" in e for e in errs), errs)
+    check("the invented numbers are named against the DECLARED fact",
+          any("45" in e and "12" in e and "['F01']" in e for e in errs), errs)
     check("the invented brand is named",
           any("Hitachi" in e for e in errs), errs)
     check("and check_architecture refuses the architecture",
           any("DEFINITION_SUPPORT" in e for e in CP.check_architecture(a, LEDGER)),
           CP.check_architecture(a, LEDGER))
 
-
-def test_a_plain_words_gloss_needs_no_fact():
-    """The legitimate and expected use. Nothing here is a glossary policy."""
-    a = arch(definitions={
-        "ranking sheet": "the list a council publishes to say which entries it rates",
-        "catalogue": "the printed book an entry has to appear in to be seen"})
-    check("a gloss with no number, name or relation is accepted", support(a) == [],
-          support(a))
+    # The superlative case the held-out gloss is made of, on the current contract.
+    a = arch(definitions={"block group": "the smallest area the survey publishes for"},
+             definition_evidence={"block group": ["F01"]})
+    check("a superlative no declared fact states is refused",
+          any("SUPERLATIVE" in e for e in support(a)), support(a))
 
 
-# ── the declared binding ──────────────────────────────────────────────────────
-def test_declared_ids_must_be_real_used_and_uncut():
+def test_CURRENT_CONTRACT_unusable_ids_are_refused():
     a = arch(definitions={"servo": "a part fitted to a display case"},
              definition_evidence={"servo": ["F99"]})
     check("a fact id that is not in the ledger is refused",
@@ -163,53 +213,83 @@ def test_declared_ids_must_be_real_used_and_uncut():
              definition_evidence={"servo": ["F04"]})
     check("a fact the architecture CUT is refused",
           any("which the architecture CUT" in e for e in support(a)), support(a))
+    check("  and a CUT fact cannot license the gloss's surface either",
+          not any("Hitachi" in e for e in support(a)), support(a))
 
     a = arch(definitions={"servo": "a part fitted to a display case"},
-             definition_evidence={"nothing here": ["F01"]})
-    check("evidence declared for a term that is not defined is refused",
-          any("not defined" in e for e in support(a)), support(a))
+             definition_evidence={"servo": ["F01", "F99"]})
+    check("one good id does not excuse an unresolvable one",
+          any("F99" in e for e in support(a)), support(a))
 
 
-def test_a_declared_id_narrows_the_licence():
-    """Naming ids is a NARROWING declaration: it must license the gloss by itself."""
-    a = arch(definitions={"firm": "the local firm that printed the catalogue"},
-             definition_evidence={"firm": ["F03"]})
-    check("a gloss licensed by the fact it declares is accepted", support(a) == [],
-          support(a))
-
-    # F02 carries the entry count; F03, the declared id, does not. Under the use_facts
-    # fallback this gloss would pass, because F02 is used. Declaring F03 narrows the
-    # licence to F03 alone, and the gloss then fails on a fact F03 does not carry.
-    a = arch(definitions={"firm": "the firm that printed the 10 photographed entries"},
-             definition_evidence={"firm": ["F03"]})
-    check("a gloss whose number the DECLARED fact does not carry is refused",
-          any("do not carry" in e for e in support(a)), support(a))
-    check("  and the message names the declared ids, not 'the used facts'",
-          any("['F03']" in e for e in support(a)), support(a))
-    check("  while the same gloss passes on the use_facts fallback",
-          ST.validate_definition_support(
-              arch(definitions={"firm": "the firm that printed the 10 photographed "
-                                        "entries"}), dict(LEDGER, F02=_fact(
-                                            "F02", "10 entries were photographed for "
-                                                   "the catalogue."))) == [],
-          "narrowing must be the strictly tighter option")
-
-
-def test_an_empty_gloss_is_refused():
+def test_CURRENT_CONTRACT_an_empty_gloss_is_refused():
     check("an empty definition is refused",
-          any("is empty" in e for e in support(arch(definitions={"servo": "  "}))))
+          any("is empty" in e for e in support(
+              arch(definitions={"servo": "  "},
+                   definition_evidence={"servo": ["F01"]}))))
 
 
-def test_a_hold_needs_no_definitions_licence():
+def test_CURRENT_CONTRACT_a_hold_needs_no_licence():
     a = arch(article_type=ST.HOLD_NO_STORY,
              definitions={"servo": "a motor from Hitachi rated at 12 kg"})
     check("a HOLD is exempt", support(a) == [], support(a))
 
 
-# ── the acceptance control that shaped the design ─────────────────────────────
-def test_the_held_out_real_architecture_is_still_accepted():
-    """The manual baseline that produced the published article, against its own frozen
-    evidence. If this ever goes red, the check has started refusing a proven plan."""
+def test_CURRENT_CONTRACT_architect_output_is_never_checked_as_legacy():
+    """check_architecture defaults to the current contract, so a NEW architecture that
+    omits the field is refused however it reached the gate."""
+    a = arch(definitions={"ranking sheet": "the list a council publishes"})
+    check("the default contract is CURRENT", CP.CONTRACT_CURRENT == "CURRENT")
+    check("an undeclared definition is refused under the default",
+          any("DEFINITION_SUPPORT" in e for e in CP.check_architecture(a, LEDGER)),
+          CP.check_architecture(a, LEDGER))
+    check("the schema demands one entry for every term",
+          "REQUIRED: one entry for EVERY term" in CP.ARCHITECT_SCHEMA)
+
+
+# ══ HISTORICAL_COMPATIBILITY ══════════════════════════════════════════════════
+# Replay only. These assert what a REPLAY of a stored pre-`definition_evidence`
+# architecture does. None of them is a statement about what new work may do.
+def test_HISTORICAL_COMPATIBILITY_replay_accepts_a_pre_field_architecture():
+    a = arch(definitions={"ranking sheet": "the list a council publishes"})
+    check("the architecture is recognised as predating the field",
+          ST.definitions_predate_evidence_binding(a))
+    check("replay accepts it",
+          ST.validate_definition_support(a, LEDGER, legacy_replay=True) == [],
+          ST.validate_definition_support(a, LEDGER, legacy_replay=True))
+    check("  and the SAME architecture is refused under the current contract",
+          any("declares no evidence" in e for e in support(a)), support(a))
+    check("check_architecture takes the path only when asked",
+          any("DEFINITION_SUPPORT" in e for e in CP.check_architecture(a, LEDGER))
+          and not any("DEFINITION_SUPPORT" in e for e in CP.check_architecture(
+              a, LEDGER, contract=CP.CONTRACT_LEGACY_REPLAY)))
+
+
+def test_HISTORICAL_COMPATIBILITY_is_not_a_way_back_to_the_fallback():
+    """The compatibility path applies ONLY where the field is absent altogether. An author
+    who declared the field knew about it and is held to the current contract."""
+    a = arch(definitions={"a": "gloss one", "b": "gloss two"},
+             definition_evidence={"a": ["F01"]})
+    check("a partially-declared architecture does not predate the field",
+          not ST.definitions_predate_evidence_binding(a))
+    check("and replay still refuses its undeclared term",
+          any("'b'" in e and "declares no evidence" in e
+              for e in ST.validate_definition_support(a, LEDGER, legacy_replay=True)),
+          ST.validate_definition_support(a, LEDGER, legacy_replay=True))
+
+    a = arch(definitions={"servo": "a motor from Hitachi rated at 12 kg"},
+             definition_evidence={"servo": ["F01"]})
+    check("replay does not excuse an unlicensed surface where evidence WAS declared",
+          ST.validate_definition_support(a, LEDGER, legacy_replay=True) != [],
+          ST.validate_definition_support(a, LEDGER, legacy_replay=True))
+
+
+def test_HISTORICAL_COMPATIBILITY_the_held_out_artefact_is_a_diagnostic():
+    """The manual baseline that produced the published article. It now FAILS the current
+    contract, and that is the correct result: its "block group" gloss asserts a superlative
+    its own frozen evidence never states. Kept as a diagnostic, not as an acceptance
+    control -- having been published once is not evidence, and it must not be able to force
+    the contract to accept an unsupported gloss."""
     d = (pathlib.Path(__file__).resolve().parents[1]
          / ".claude" / "story-architecture" / "held-out-real-article-1")
     af, mf = d / "ARCHITECTURE.json", d / "FINAL_EVIDENCE_MANIFEST.json"
@@ -220,24 +300,36 @@ def test_the_held_out_real_architecture_is_still_accepted():
     facts = json.loads(mf.read_text())["facts"]
     led = facts if isinstance(facts, dict) else {f["fact_id"]: f for f in facts}
 
-    check("it declares definitions at all", bool(a.get("definitions")),
-          a.get("definitions"))
-    errs = ST.validate_definition_support(a, led)
-    check("its definitions are accepted against its own frozen evidence", errs == [],
-          errs)
-    check("  and it declares no definition_evidence, so the fallback is what carried it",
-          not a.get("definition_evidence"), a.get("definition_evidence"))
+    check("it predates the field", ST.definitions_predate_evidence_binding(a))
+    cur = ST.validate_definition_support(a, led)
+    check("under the CURRENT contract it is refused, for want of a declaration",
+          all("declares no evidence" in e for e in cur) and len(cur) == 2, cur)
+    check("a replay of it is accepted",
+          ST.validate_definition_support(a, led, legacy_replay=True) == [])
+
+    # The diagnostic proper: declaring the most plausible ids does not rescue the gloss,
+    # because nothing in the frozen evidence states the superlative it asserts.
+    plausible = dict(a, definition_evidence={
+        "rent burden": ["F16", "F21"], "block group": ["F19"]})
+    errs = ST.validate_definition_support(plausible, led)
+    check("and declaring its own most plausible facts still refuses 'block group'",
+          any("'block group'" in e and "SUPERLATIVE" in e for e in errs), errs)
+    check("  while 'rent burden' is licensed by the facts it rests on",
+          not any("'rent burden'" in e for e in errs), errs)
 
 
 def main():
-    for fn in (test_the_control_is_clean,
-               test_an_unsupported_definition_is_refused,
-               test_a_plain_words_gloss_needs_no_fact,
-               test_declared_ids_must_be_real_used_and_uncut,
-               test_a_declared_id_narrows_the_licence,
-               test_an_empty_gloss_is_refused,
-               test_a_hold_needs_no_definitions_licence,
-               test_the_held_out_real_architecture_is_still_accepted):
+    for fn in (test_CURRENT_CONTRACT_no_definitions_is_unchanged,
+               test_CURRENT_CONTRACT_definition_with_valid_explicit_evidence_passes,
+               test_CURRENT_CONTRACT_missing_declaration_is_refused,
+               test_CURRENT_CONTRACT_a_broad_pool_licenses_nothing,
+               test_CURRENT_CONTRACT_unusable_ids_are_refused,
+               test_CURRENT_CONTRACT_an_empty_gloss_is_refused,
+               test_CURRENT_CONTRACT_a_hold_needs_no_licence,
+               test_CURRENT_CONTRACT_architect_output_is_never_checked_as_legacy,
+               test_HISTORICAL_COMPATIBILITY_replay_accepts_a_pre_field_architecture,
+               test_HISTORICAL_COMPATIBILITY_is_not_a_way_back_to_the_fallback,
+               test_HISTORICAL_COMPATIBILITY_the_held_out_artefact_is_a_diagnostic):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)
