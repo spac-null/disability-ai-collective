@@ -1191,6 +1191,15 @@ ARCHITECT_SYSTEM = (
     "explanation of a term the article cannot do without, that is worth knowing NOW, "
     "while the plan can still be built on material that can be explained, rather than at "
     "the gate that refuses the sentence.\n"
+    "  SO SAY WHAT LICENSES IT. A gloss in plain words -- what the thing is, what it "
+    "does, what it costs -- needs no fact and should declare none. But the moment a gloss "
+    "states a NUMBER, names a PERSON, PLACE, BODY or PRODUCT, or asserts that one thing "
+    "CAUSES, PRECEDES or EXCLUDES another, it is making the same kind of claim a beat "
+    "makes, and it needs the same licence: list the fact ids in `definition_evidence` "
+    "under that term. They must be ids you also USE -- a fact you CUT is never given to "
+    "the Writer, so an explanation cannot be written from it. If the term cannot be "
+    "explained from usable evidence, build the plan on material that can be explained, "
+    "or return a HOLD. Do not hand the Writer an explanation and hope it finds one.\n"
     "\n"
     "WRITE MEANING, NOT PERFORMANCE. Your prose fields are read by the Writer as "
     "instructions and get copied. So state what is true and what it means; do not write "
@@ -1248,6 +1257,12 @@ ARCHITECT_SCHEMA = (
     "                                            LOAD_BEARING id(s) it makes intelligible\n"
     ' "use_quotes": [],\n'
     ' "definitions": {"term": "plain-words gloss, explained at first use"},\n'
+    ' "definition_evidence": {"term": ["F.."]},   REQUIRED for any gloss that states a\n'
+    "                                            number, names a person/place/body/\n"
+    "                                            product, or asserts a causal, temporal\n"
+    "                                            or exclusive relation. Ids must be in\n"
+    "                                            use_facts, never cut. A plain-words\n"
+    "                                            gloss needs none.\n"
     ' "cut_evidence": [{"evidence_id": "F..", "reason": "REDUNDANT_PROOF"}],\n'
     "                                            reasons: %(cuts)s\n"
     ' "prohibitions": ["Do not ..."],\n'
@@ -1310,6 +1325,12 @@ def check_architecture(arch: dict, ledger: dict) -> list:
     # genuinely-optional `propositions` representation checked further down.
     errs += ["EVIDENCE_HIERARCHY: " + e
              for e in ST.validate_evidence_hierarchy(arch, set(ledger))]
+    # `definitions` was the one architect-generated field with no factual screen at all:
+    # not in architect_prose_audit's field list, not among validate_turn_support's three
+    # fields, and rendered to the Writer under EXPLAIN AT FIRST USE. See
+    # ST.validate_definition_support for the measured counterexample.
+    errs += ["DEFINITION_SUPPORT: " + e
+             for e in ST.validate_definition_support(arch, ledger)]
     fl = arch.get("final_lens") or {}
     errs += ["FINAL_LENS: " + e for e in ST.validate_final_lens(fl, arch, ledger)]
     errs += ["LENS_EMBODIMENT: " + e for e in ST.validate_lens_embodiment(arch, fl)]

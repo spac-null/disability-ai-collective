@@ -588,6 +588,136 @@ def validate_evidence_hierarchy(arch: dict, evidence_ids: set) -> list:
     return errs
 
 
+# ── A DEFINITION IS PROSE THE WRITER IS TOLD TO STATE ─────────────────────────
+# `definitions` was the one architect-generated field with no factual screen of any kind.
+# It is not in architect_prose_audit's field list, so its numbers and entities were never
+# compared to the approved facts; it is not among the three fields validate_turn_support
+# covers, so the relations it asserts were never licensed. And render() puts it in front
+# of the Writer under EXPLAIN AT FIRST USE, which is an instruction to state it.
+#
+# Measured on 2026-09-23 against current main: an architecture carrying
+#
+#   {"servo": "a small motor from Hitachi that turns to a commanded angle in 45
+#             milliseconds and holds there under 12 kg of load"}
+#
+# passed check_architecture with ZERO errors. The same brand and the same two numbers
+# placed in `story_spine` or a beat's `happens` are caught by the entity and number
+# channels. Putting them in a definition evaded every gate in the engine.
+#
+# It got worse downstream rather than better. composition's grounding adjudication clears
+# a TRUE_UNCERTAIN finding when the flagged sentence names a declared term and "adds no
+# factual surface the packet does not carry" -- and `approved_words` there is computed
+# from render(packet), which CONTAINS the definition. The gloss licenses the article
+# sentence that restates it. That is precisely the circularity ledger.py's own docstring
+# was written against: "an audit whose ground truth is itself generated cannot detect a
+# fabrication introduced upstream of it."
+#
+# WHAT THIS DOES NOT DO. It does not require every definition to be licensed. A plain-
+# language gloss is the legitimate and expected use -- the held-out real architecture's
+# two definitions ("rent burden", "block group") are exactly that, and they carry no
+# entity, no number and no relation, so they need no fact and are accepted unchanged.
+# Nothing here is a glossary policy, a jargon list or a readability rule.
+#
+# The rule is only this: a definition may not assert what the same words would not be
+# allowed to assert anywhere else. No new model, no challenger, no retry.
+#
+# THE LICENSING SET IS THE SAME ONE THE TURN GETS, and that is measured rather than
+# chosen. validate_architecture licenses the crip turn against
+# `final_lens.evidence_basis or arch["use_facts"]` -- declared ids when the plan names
+# them, the used facts otherwise. Definitions inherit exactly that, so this check is
+# neither weaker nor stronger than the one the same sentence would meet in the turn.
+#
+# The alternative -- an empty licensing set whenever `definition_evidence` is absent --
+# was written first and refuted against the held-out real architecture, the manual
+# baseline that produced the published article. Its gloss "block group: the smallest area
+# the survey publishes figures for" trips SUPERLATIVE on "smallest", and its 26 used facts
+# do license a SUPERLATIVE. Under the empty-set rule the proven architecture would have
+# been refused and the repair budget spent getting back to it -- the same mistake
+# check_architecture's own comment records about reading all five prose-audit channels.
+#
+# `definition_evidence` is therefore a NARROWING declaration: naming ids makes the licence
+# tighter than use_facts and says on the record which facts the explanation rests on. The
+# prompt asks for it whenever a gloss carries factual surface, because an explicit binding
+# is auditable and a fallback is not. The gate does not require it -- what the gate
+# requires is that the surface be licensed by evidence the Writer will actually be given.
+def validate_definition_support(arch: dict, ledger: dict) -> list:
+    """Factual surface in a definition must be licensed by usable facts."""
+    if arch.get("article_type") in (HOLD_NO_STORY, HOLD_WRONG_PUBLICATION):
+        return []
+    defs = arch.get("definitions") or {}
+    if not isinstance(defs, dict) or not defs:
+        return []
+
+    errs = []
+    support = arch.get("definition_evidence") or {}
+    if not isinstance(support, dict):
+        return ["definition_evidence is %s, not an object mapping term -> fact ids"
+                % type(support).__name__]
+
+    use = set(arch.get("use_facts") or [])
+    cut = {c.get("evidence_id") for c in (arch.get("cut_evidence") or [])}
+
+    stray = sorted(set(support) - set(defs))
+    if stray:
+        errs.append("definition_evidence names terms that are not defined: %s" % stray)
+
+    for term in sorted(defs):
+        gloss = str(defs.get(term) or "")
+        if not gloss.strip():
+            errs.append("the definition of %r is empty" % term)
+            continue
+
+        ids = support.get(term) or []
+        if isinstance(ids, str):
+            ids = [ids]
+        ids = [str(i) for i in ids]
+
+        usable = []
+        for fid in ids:
+            if fid not in ledger:
+                errs.append("the definition of %r cites %s, which is not in the ledger"
+                            % (term, fid))
+            elif fid in cut:
+                errs.append("the definition of %r rests on %s, which the architecture "
+                            "CUT -- the Writer is never given a cut fact, so the "
+                            "explanation cannot be written from it" % (term, fid))
+            elif fid not in use:
+                errs.append("the definition of %r rests on %s, which is not in "
+                            "use_facts -- the Writer is only given the facts a beat "
+                            "allows" % (term, fid))
+            else:
+                usable.append(fid)
+
+        # Declared ids narrow the licence; absent them the gloss is licensed against the
+        # facts the Writer is actually given, exactly as the turn is. Cut facts are in
+        # neither set: the Writer never sees one, so no explanation can be written from it.
+        basis = usable or sorted(use - cut)
+        licensing = " ".join(str((ledger.get(f) or {}).get("proposition") or "")
+                             for f in basis)
+
+        # Same two channels check_architecture reads as failures on the architect's other
+        # prose fields, and read the same way round: sentence-initial capitals are not
+        # evidence of a name, and the licensing side is built without that exemption.
+        whose = ("%s" % usable) if usable else "the used facts"
+        unlicensed_n = sorted(_numbers(gloss) - _numbers(licensing))
+        if unlicensed_n:
+            errs.append("the definition of %r states a number %s do not carry: %s"
+                        % (term, whose, unlicensed_n))
+        unlicensed_e = sorted(_entities(gloss)
+                              - _entities(licensing, skip_sentence_initial=False))
+        if unlicensed_e:
+            errs.append("the definition of %r names %s, which %s do not carry"
+                        % (term, unlicensed_e, whose))
+
+        # And the same relation licence the crip turn is held to. A gloss that says one
+        # thing CAUSES, PRECEDES or EXCLUDES another is making the same kind of claim a
+        # turn makes, and general knowledge is not a licence for it.
+        for e in validate_turn_support(gloss, basis, ledger):
+            errs.append("the definition of %r asserts %s (%r) -- %s"
+                        % (term, e["relation"], e["carried_by"], e["why"]))
+    return errs
+
+
 # ── CARRIERS MAY NOT ASSERT AN OCCURRENCE THE LEDGER DOES NOT HOLD ───────────
 # The held-out article said "the bike ... coasted through the block group with no published
 # figure". Nothing reports a ride through such a block group. The ledger holds only what the
