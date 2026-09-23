@@ -7544,6 +7544,39 @@ def run_prewrite_story_shadow(provider, pack: dict, ledger: dict, worth: dict,
         return None
 
 
+def run_definition_claim_shadow(provider, arch: dict, ledger: dict, out_dir=None,
+                                execution_id: str = "") -> dict | None:
+    """The definition claim-support shadow, or None. Never raises, never blocks, never
+    returns to a gate.
+
+    Same contract as the two shadows above: OFF unless its own flag is set, ONE bounded call
+    when on -- for every definition in the plan together, not one per definition -- and every
+    failure path returns None with the composition untouched. Nothing below reads its result.
+
+    It sits here, beside the prewrite story shadow, for the same reason: this is the last
+    point at which the plan is frozen and no prose exists. The difference is the question.
+    That one asks whether the plan was ready to be written at all; this one asks whether each
+    factual commitment in a definition actually follows from the evidence that definition
+    declared -- the gap PR #106 left open and rehearsal run 1 demonstrated.
+    """
+    from . import definition_claim_shadow as DCS
+    if not DCS.enabled():
+        return None
+    try:
+        meta = {}
+
+        def ask(system, user):
+            obj, ident = _ask(provider, system, user, 3_000, "DEFINITION_CLAIM_SHADOW",
+                              "DEFINITION_CLAIM_SHADOW_SKIPPED")
+            meta["physical_model_calls"] = (ident or {}).get("attempts", 1)
+            return obj
+        return DCS.run(ask, arch, ledger, out_dir=out_dir, execution_id=execution_id,
+                       call_meta=meta)
+    except Exception:                                             # noqa: BLE001
+        # Deliberately bare. A shadow that can end a publication day is not a shadow.
+        return None
+
+
 MATERIALITY_HOLD_REASON = ("unsupported factual surface judged MATERIAL: %s")
 
 
@@ -7803,6 +7836,10 @@ def run_story_architecture_composition(
         # reads its result. See new_engine_v1/prewrite_story_shadow.py for why it cannot
         # become a gate until natural current-contract runs exist to validate it.
         run_prewrite_story_shadow(P, pack, ledger, w, arch, out_dir)
+        # DEFINITION CLAIM SUPPORT SHADOW -- zero authority, OFF by default, one call for all
+        # definitions together. Same placement and the same reasons; nothing below reads it.
+        run_definition_claim_shadow(P, arch, ledger, out_dir,
+                                    execution_id=str(out_dir or ""))
 
         if frozen_article:
             # Resume at the grounder/repair boundary on prose that already passed the
