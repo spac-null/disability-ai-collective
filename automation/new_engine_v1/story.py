@@ -204,8 +204,10 @@ def leak_hits(text: str, where: str = "") -> list:
 # So the scan is scoped to the fields the ARCHITECT GENERATED. `facts` and `quotes` carry
 # verbatim evidence and are excluded. The vocabulary is unchanged, and the same scan still
 # runs over the finished article in the safety stack, where the prose IS model-written.
+# "lens" was removed from this tuple on 2026-09-23 with the packet key it scanned. See
+# build_packet: that key could only ever hold "", so this entry scanned nothing.
 _GENERATED_PACKET_FIELDS = ("story_spine", "opening", "reader_initial_state", "turn",
-                            "crip_turn", "lens", "ending_move")
+                            "crip_turn", "ending_move")
 _GENERATED_BEAT_FIELDS = ("happens", "carrier", "concept", "withhold")
 
 
@@ -969,6 +971,12 @@ def validate_turn_support(turn: str, fact_ids, ledger: dict) -> list:
 def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None) -> dict:
     """The minimal writing packet.
 
+    `lens` IS NO LONGER READ (2026-09-23). It is kept in the signature only because ~30
+    call sites pass it positionally, and dropping a positional parameter would silently
+    turn `build_packet(a, lens, facts)` into `facts=lens` at any site missed -- a quiet
+    wrong packet rather than a loud error. The lens reaches the architecture validators
+    directly; see the removed `lens` key below for why the packet does not carry it.
+
     What is deliberately ABSENT is the point: no research pack bodies, no source roles,
     no provenance, no evidence_gaps, no grounding-boundary prose. Prohibitions travel in
     `prohibitions`, which `render()` turns into imperatives ("Do not name...") rather
@@ -995,7 +1003,13 @@ def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None
                   for b in (arch.get("beats") or [])],
         "turn": arch.get("turn", ""),
         "crip_turn": arch.get("crip_turn", ""),
-        "lens": lens.get("lens_claim", "") if lens.get("verdict") in LENS_PUBLISHABLE else "",
+        # `lens` was REMOVED on 2026-09-23. It read `lens.get("verdict")`, a WORTH-stage
+        # field; every call site passes the ARCHITECTURE's `final_lens`, which has no
+        # `verdict` in ARCHITECT_SCHEMA. The condition was therefore never true and the
+        # key could only ever hold "". render() never read it, so nothing downstream
+        # loses anything -- and it is not re-added as `lens_claim`, because the packet is
+        # what reaches the Writer and the lens deliberately does not (see the crip_turn
+        # block in render(): the reader must ARRIVE at the lens, not be handed it).
         "ending_move": arch.get("ending_move", ""),
         "facts": [facts[f] for f in use if f in facts],
         # Telemetry only, same reasoning as "beat_function" above: which used fact is
@@ -1820,10 +1834,48 @@ GENERIC_SUBJECTS = [r"\banyone whose\b", r"\banyone who\b", r"\bpeople who\b",
                     r"\bwe all\b", r"\beveryone who\b"]
 
 
+def lens_evidence_ids(lens: dict) -> set:
+    """The fact ids a lens cites, in either of the two shapes that exist.
+
+    `evidence_basis` is the ARCHITECTURE's field name (ARCHITECT_SCHEMA) and wins.
+    `evidence_ids` is the WORTH stage's name for the same thing; it is still read because
+    the frozen loop-3 artefacts carry it and are live regression assets. A string is
+    accepted for the same reason validate_final_lens accepts one.
+    """
+    v = lens.get("evidence_basis")
+    if not v:
+        v = lens.get("evidence_ids")
+    if isinstance(v, str):
+        v = [v]
+    return set(v or [])
+
+
 def validate_lens_embodiment(arch: dict, lens: dict) -> list:
-    """The crip turn must land on something the reader has already been shown."""
+    """The crip turn must land on something the reader has already been shown.
+
+    WIRE CONTRACT (2026-09-23). This validated nothing in production for as long as it
+    existed. It was written against the WORTH-stage lens -- which carries `verdict` and
+    `evidence_ids` -- while `check_architecture` calls it with the ARCHITECTURE's
+    `final_lens`, which ARCHITECT_SCHEMA never gives a `verdict` and whose evidence field
+    is named `evidence_basis`. So `lens.get("verdict")` was always None, the guard on the
+    first line always fired, and the function returned [] before reading anything at all.
+    Every assertion covering it injected the Worth shape, so ten tests passed against a
+    path the production caller could not reach past line one. `crip_turn_rereads` has no
+    other validator anywhere, so it was entirely unchecked.
+
+    Two changes, both shape. No check below is stronger or weaker than the one the
+    original author wrote:
+
+      1. THE SKIP IS NOW THE ARCHITECTURE'S OWN. The guard existed to exempt a lens that
+         is not publishable. An architecture only exists once Worth has already approved
+         one, so what is left to exempt is a HOLD -- exempted here exactly as
+         validate_evidence_hierarchy exempts it.
+      2. THE EVIDENCE FIELD IS READ IN BOTH SHAPES, `evidence_basis` first. Reading only
+         the architecture's name would have quietly stopped exercising the frozen
+         Worth-shaped fixtures, which is the same class of failure as the one being fixed.
+    """
     errs = []
-    if lens.get("verdict") not in LENS_PUBLISHABLE:
+    if arch.get("article_type") in (HOLD_NO_STORY, HOLD_WRONG_PUBLICATION):
         return errs
     turn = (arch.get("crip_turn") or "").strip()
     if not turn:
@@ -1861,7 +1913,7 @@ def validate_lens_embodiment(arch: dict, lens: dict) -> list:
                     "re-read (expected one of %s)" % (rereads, sorted(tnouns)[:6]))
 
     # 1. the lens's evidence must be evidence the story actually showed
-    lens_ev = set(lens.get("evidence_ids") or [])
+    lens_ev = lens_evidence_ids(lens)
     if lens_ev and not (lens_ev & earlier_facts):
         errs.append("the lens cites evidence the beats never show: %s"
                     % sorted(lens_ev - earlier_facts))
