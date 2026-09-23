@@ -822,3 +822,52 @@ GAP (stated, not reconstructed): **PRs #52–#89 have no entry in this logbook a
 `MERGED: NO` line was left untouched rather than retro-edited.
 FOLLOW-UP: current phase is the bounded real-caption editorial-value check — decide whether any
 harvested caption carries value the prose does not, before anything consumes `figures[]`.
+
+## 2026-09-23 — PREWRITE CONTRACT REPAIR (PR #106) + REHEARSAL COHORT
+STATUS: MERGED and DEPLOYED. Seven commits repairing validators, schema fields and prompt
+clauses that described contracts the production wiring did not implement. Four were dead or
+unreachable for one shared reason: written against a shape the production caller does not
+supply, with tests that injected the shape the wire does not.
+
+DECISION: merged unchanged after three bounded FAST_LANE rehearsals on trident against PR HEAD
+`69c0bc5`. Two natural Architectures exercised the new `definition_evidence` and lens contracts;
+both passed; no patch produced a mechanical HOLD. 100% of 114 retained architectures declare
+definitions, so that contract is exercised on every run — this was the merge's largest risk.
+
+REPLAY: `CONTRACT_LEGACY_REPLAY` is compatibility, NOT validation under today's editorial
+contract. An architecture admitted through it stays tagged with `contract` and
+`legacy_definitions_accepted`, and must never later be counted as a current-contract PASS or
+control merely because replay execution succeeded.
+
+NOT DONE, deliberately: relation coverage for `story_spine` / beat `happens` / `ending_move`.
+Classified `VERIFIED_STRUCTURAL_HOLE / NOT_VALIDATED_FOR_AUTHORITY`. The gap is real; extending
+`validate_turn_support` to those fields would newly fail 91/114 retained plans (12/15
+current-era), 28 of 35 current-era findings manually verified FALSE_MECHANICAL_HOLD, 1 clearly
+true. The H.M. example cited as justification is itself supported by its frozen evidence
+(F99 states the relation as "Because"; the plan states it as "so" — same relation, opposite
+direction, two classes). Not adopted, not tuned, not narrowed to `story_spine`.
+
+TWO DEFECT CLASSES OPENED by the cohort, at different invention boundaries:
+  A `ARCHITECTURE_AUTHORED_UNSUPPORTED_SPECIFICITY` — 1 confirmed instance (run 1). A definition
+    with correct, usable, relevant evidence ids strengthened "imminent" to "minutes away".
+    Evidence OWNERSHIP does not guarantee ENTAILMENT. Cost of late detection, measured: 7 of 12
+    model calls and 239s of 726s spent after the defect was already fixed in the plan.
+  B `PACKAGE_AUTHORED_UNSUPPORTED_SPECIFICITY` — 1 confirmed instance (run 3). Architecture was
+    clean; `editorial_package()` invented "entrance gallery", which no fact carries. It receives
+    the article, `story_spine` and the Worth lens claim — never the Ledger. Not a prewrite
+    defect. Separate investigation.
+
+CORRECTION RECORDED: run 3 was first reported as a second instance of class A on the basis that
+`crip_turn` invented "cooperation, caregiving". Wrong — F18's full span licenses the triad; the
+misreading came from a 160-character truncated display. Standing rule: diagnostics inspect full
+propositions and support spans, never truncated display text.
+
+EVIDENCE: `.claude/experiments/pr106-rehearsal-cohort-2026-09-23/` (README + CLAIM_UNITS);
+artifacts frozen read-only at `/srv/data/cripminds-evidence/pr106-rehearsal-cohort-2026-09-23/`
+with SHA256SUMS; relation audit as a comment on PR #106.
+CODE: `1af066c`, `4059691`, `caab616`, `909801f`, `cd5e58b`, `0cf54cd`, `69c0bc5`; merge `5e2ae3d`.
+BASELINE: `LAST_RUNTIME_CHANGING_BASELINE` moves `34b1607` (PR #94) → `5e2ae3d` (PR #106).
+FOLLOW-UP: build a definitions-only, ZERO-AUTHORITY atomic-claim-support shadow and calibrate it
+on the labelled units in `CLAIM_UNITS.md`. Scope stays definitions-only — the evidence that would
+have justified broadening to `crip_turn`/lens fields was the corrected misreading. Sample is
+thin: 13 labelled units, 2 true NOT_ESTABLISHED targets, one of them historical.
