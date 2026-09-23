@@ -7400,6 +7400,29 @@ def run_semantic_claim_shadow(provider, article_text: str, claim_map, claim_map_
         return None
 
 
+def run_prewrite_story_shadow(provider, pack: dict, ledger: dict, worth: dict,
+                             arch: dict, out_dir=None) -> dict | None:
+    """The prewrite shadow, or None. Never raises, never blocks, never returns to a gate.
+
+    Same contract as run_semantic_claim_shadow above: OFF unless its own flag is set, one
+    bounded call when on, and every failure path returns None with the composition
+    untouched. The difference is only where it sits -- that one asks what the finished
+    prose claims, this one asks whether the plan was ready to be written at all.
+    """
+    from . import prewrite_story_shadow as PSS
+    if not PSS.enabled():
+        return None
+    try:
+        def ask(system, user):
+            obj, _ident = _ask(provider, system, user, 2_000, "PREWRITE_STORY_SHADOW",
+                               "PREWRITE_STORY_SHADOW_SKIPPED")
+            return obj
+        return PSS.run(ask, pack, ledger, worth, arch, out_dir=out_dir)
+    except Exception:                                             # noqa: BLE001
+        # Deliberately bare. A shadow that can end a publication day is not a shadow.
+        return None
+
+
 MATERIALITY_HOLD_REASON = ("unsupported factual surface judged MATERIAL: %s")
 
 
@@ -7638,6 +7661,15 @@ def run_story_architecture_composition(
             arch = a["architecture"]
 
         cut = record(CUT_TERMS, derive_cut_watch_terms(arch, ledger))
+
+        # PREWRITE STORY DESIGN SHADOW -- zero authority, OFF by default. Placed here
+        # because this is the last point at which everything the plan consists of is
+        # frozen and no prose exists yet: Research, Ledger, Worth, Architecture and the
+        # cut report are all decided, and write_article has not been called. It returns
+        # None when the flag is unset, makes no call, and records nothing; nothing below
+        # reads its result. See new_engine_v1/prewrite_story_shadow.py for why it cannot
+        # become a gate until natural current-contract runs exist to validate it.
+        run_prewrite_story_shadow(P, pack, ledger, w, arch, out_dir)
 
         if frozen_article:
             # Resume at the grounder/repair boundary on prose that already passed the
