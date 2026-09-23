@@ -34,7 +34,14 @@ LEDGER = {
     "F01": {"proposition": "The section gathers advertisements about fugitive slaves.",
             "support_span": "The section gathers advertisements about fugitive slaves."},
 }
-PACKET = {}
+# apply_grounding_repair reads the packet for its packet-wide permission, so the
+# minimum ST.render() needs is supplied. apply_local_grounding_repair ignores it.
+PACKET = {"story_spine": "A book leaves a gap in its printed text.",
+          "opening": "The gap between two words.",
+          "reader_initial_state": "A reader who has not seen the page.",
+          "turn": "", "crip_turn": "", "ending_move": "",
+          "definitions": {}, "prohibitions": [], "quotes": [],
+          "beats": []}
 
 
 def finding(fid="F1"):
@@ -122,6 +129,24 @@ print("\nD. PROVENANCE IS COMPLETE FOR EVERY ACCEPTED EDIT")
 for k in ("finding_id", "operation", "original", "repaired", "paragraph_index",
           "declared_span", "authorising_finding"):
     check("provenance carries %s" % k, k in (prov_c[0] if prov_c else {}))
+
+
+# ── E. THE SIBLING SAFETY'S ARTICLE REPAIR USES ─────────────────────────────
+# apply_grounding_repair carries the identical target-matching shape. No natural run is
+# retained where this path damaged prose -- Grounding's own repair got there first,
+# twice -- but it mutates published prose and the reproduction is deterministic.
+print("\nE. apply_grounding_repair (Safety's article repair) — same discipline")
+out_e, prov_e, errs_e = CP.apply_grounding_repair(
+    ARTICLE_A, edits_a, finding(), LEDGER, PACKET)
+check("a two-sentence span is refused here too", not prov_e and bool(errs_e))
+check("the article is left byte-identical", out_e.strip() == ARTICLE_A.strip())
+out_f, prov_f, errs_f = CP.apply_grounding_repair(
+    ARTICLE_B, edits_b, finding(), LEDGER, PACKET)
+check("emptying a paragraph is refused here too", not prov_f and bool(errs_f))
+check("no blank paragraph is produced", all(p.strip() for p in CP.CE.paragraphs(out_f)))
+out_g, prov_g, errs_g = CP.apply_grounding_repair(
+    ARTICLE_C, edits_c, finding(), LEDGER, PACKET)
+check("a legitimate local repair still applies here", len(prov_g) == 1 and not errs_g)
 
 print("\n" + "-" * 62)
 if FAILED:

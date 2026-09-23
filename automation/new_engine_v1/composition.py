@@ -3872,15 +3872,39 @@ def apply_grounding_repair(article_text: str, edits: list, findings: list,
             errs.append("edit %d cites fact ids not in the ledger: %s" % (i, unknown))
             continue
         idx = normalize_span(out).find(normalize_span(orig))
-        # Replace on the raw text by locating the sentence it belongs to.
+        # SAME TARGET AND STRUCTURE DISCIPLINE AS apply_local_grounding_repair. This
+        # function is the one Safety's article repair (Stage 9b) uses, and it carried
+        # the identical defect: a `normalize_span(s) in normalize_span(orig)` disjunct
+        # that matched when the declared span was longer than a sentence, took the first
+        # sentence inside it as the target, and left the remainder standing as a
+        # fragment. No natural run is retained where this path did it -- Grounding's own
+        # repair got there first, twice -- but the code is the same code, it mutates
+        # published prose, and the reproduction is deterministic.
         target = next((s for s in CE.sentences(out)
-                       if normalize_span(orig) in normalize_span(s)
-                       or normalize_span(s) in normalize_span(orig)), None)
+                       if normalize_span(orig) in normalize_span(s)), None)
         if target is None:
-            errs.append("edit %d: could not locate the sentence to replace" % i)
+            errs.append("edit %d: the span covers more than one sentence, or no "
+                        "sentence contains it -- not a local repair: %r"
+                        % (i, orig[:80]))
             continue
-        out = out.replace(target, rep, 1) if rep else out.replace(target, "", 1)
-        out = re.sub(r"[ \t]{2,}", " ", out)
+        candidate = out.replace(target, rep, 1) if rep else out.replace(target, "", 1)
+        candidate = re.sub(r"[ \t]{2,}", " ", candidate)
+        before_paras = CE.paragraphs(out)
+        after_paras = CE.paragraphs(candidate)
+        damage = ""
+        if len(after_paras) != len(before_paras):
+            damage = "the repair changed the paragraph structure"
+        else:
+            for _b, _a in zip(before_paras, after_paras):
+                if _b != _a:
+                    damage = repair_damage(_b, _a)
+                    if damage:
+                        break
+        if damage:
+            errs.append("edit %d refused: %s (the article is left unchanged)"
+                        % (i, damage))
+            continue
+        out = candidate
         prov.append({"finding_id": fid, "operation": op,
                      "original": target.strip(), "repaired": rep,
                      "what_was_removed": e.get("what_was_removed", ""),
