@@ -1,0 +1,993 @@
+{
+ "F01": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Royal College of Art",
+   "School of Communication & Design"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F01",
+  "proposition": "The Royal College of Art has announced the establishment of a new School of Communication & Design.",
+  "scope": "WORLD",
+  "support_span": "The Royal College of Art, the world\u2019s number one art and design university, has announced the establishment of a new School of Communication & Design ."
+ },
+ "F02": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "School of Communication & Design"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F02",
+  "proposition": "The new School brings communication and design disciplines together within a single, unified academic entity.",
+  "scope": "WORLD",
+  "support_span": "The new School brings together communication and design disciplines within a single, unified academic entity."
+ },
+ "F03": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Royal College of Art",
+   "School of Architecture",
+   "School of Arts & Humanities"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F03",
+  "proposition": "The new School will operate alongside the RCA's existing School of Architecture and School of Arts & Humanities, streamlining the university's academic framework into a three-School structure.",
+  "scope": "WORLD",
+  "support_span": "It will operate alongside the RCA\u2019s existing School of Architecture and School of Arts & Humanities, streamlining the university's academic framework into a three-School structure."
+ },
+ "F04": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F04",
+  "proposition": "The RCA's announcement of the new School is dated 1 September 2026.",
+  "scope": "WORLD",
+  "support_span": "Royal College of Art announces new School of Communication & Design\n\n Key details\n\n Date\n\n 1 September 2026"
+ },
+ "F05": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "RCA"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F05",
+  "proposition": "The RCA's announcement page lists its author as RCA and its read time as 1 minute.",
+  "scope": "WORLD",
+  "support_span": "Author\n\n RCA\n\n School, Centre or Area\n\n School of Communication & Design \n\n Read time\n\n 1 minute"
+ },
+ "F06": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F06",
+  "proposition": "The RCA describes the move as reflecting the increasingly interconnected nature of communication and design practices.",
+  "scope": "WORLD",
+  "support_span": "The strategic move reflects the increasingly interconnected nature of communication and design practices."
+ },
+ "F07": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F07",
+  "proposition": "The RCA says the School will provide increased opportunities for interdisciplinary working, shared learning and cross-School engagement, with collaboration supported through teaching, research and creative practice.",
+  "scope": "WORLD",
+  "support_span": "The School will provide increased opportunities for interdisciplinary working, shared learning and cross-School engagement with collaboration actively supported through teaching, research and creative practice."
+ },
+ "F08": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F08",
+  "proposition": "The RCA states the School will bring together material intelligence, making, emerging technologies and critical enquiry to address complex challenges facing society, culture and industry.",
+  "scope": "WORLD",
+  "support_span": "bringing together material intelligence, making, emerging technologies and critical enquiry to address the complex challenges facing society, culture and industry."
+ },
+ "F09": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F09",
+  "proposition": "The RCA describes the establishment of the School as a major step in its academic vision to champion progressive, collaborative education.",
+  "scope": "WORLD",
+  "support_span": "The establishment of the School of Communication & Design marks a major step in the RCA\u2019s academic vision to champion progressive, collaborative education fit for the future of global industry and culture."
+ },
+ "F10": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "School of Communication & Design"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F10",
+  "proposition": "The RCA announcement lists fifteen programmes to be delivered from the new School, including Intelligent Mobility (MA) and Service Design (MA).",
+  "scope": "WORLD",
+  "support_span": "Programmes which will be delivered from the new School of Communication & Design will be: Animation (MA) , Communication (MFA) , Communication (MPhil/PhD) , Creative Education (MEd) , Design (PGR) , Design Futures (MDes) , Design Products (MA) , Digital Direction (MA) , Fashion (MA) , Information Experience Design (MA) , Innovation Design Engineering (MA/MSc) , Intelligent Mobility (MA) , Service Design (MA) , Textiles (MA) , and Visual Communication (MA) ."
+ },
+ "F11": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Creative Boom",
+   "School of Communication & Design"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F11",
+  "proposition": "The programme list published by Creative Boom omits Intelligent Mobility (MA) and Service Design (MA), and gives Communication as MFA/PGR rather than as separate MFA and MPhil/PhD entries.",
+  "scope": "WORLD",
+  "support_span": "Programmes which will be delivered from the new School of Communication & Design will be: Animation (MA), Communication (MFA/PGR), Creative Education (MEd), Design (PGR), Design Futures (MDes), Design Products (MA), Digital Direction (MA), Fashion (MA), Information Experience Design (MA), Innovation Design Engineering MA/MSc, Textiles (MA), and Visual Communication (MA)."
+ },
+ "F12": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Kerry Curtis",
+   "School of Communication & Design"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F12",
+  "proposition": "Professor Kerry Curtis is Dean of the School of Communication & Design.",
+  "scope": "WORLD",
+  "support_span": "Kerry\n Curtis\n\n Dean, School of Communication & Design"
+ },
+ "F13": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Kerry Curtis"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F13",
+  "proposition": "Curtis is quoted saying that bringing together a dynamic community of creative disciplines creates new opportunities for collaboration, experimentation and innovation at a time when the world needs creative thinking more than ever.",
+  "scope": "WORLD",
+  "support_span": "Bringing together a dynamic community of creative disciplines creates new opportunities for collaboration, experimentation and innovation at a time when the world needs creative thinking more than ever."
+ },
+ "F14": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Kerry Curtis"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F14",
+  "proposition": "Curtis is quoted saying that as technologies like AI continue to transform how we communicate, design and make, the School's role is not just to respond to change but to shape it.",
+  "scope": "WORLD",
+  "support_span": "As technologies like AI continue to transform how we communicate, design and make, our role is not just to respond to change, but to shape it."
+ },
+ "F15": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Kerry Curtis"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F15",
+  "proposition": "Curtis is quoted saying that combining material intelligence with critical and creative practice equips students to become artists, designers and leaders who will define the future of communication and design.",
+  "scope": "WORLD",
+  "support_span": "By combining material intelligence, together with critical and creative practice, we&#x27;re equipping our students to become the artists, designers and leaders who will define the future of communication and design"
+ },
+ "F16": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Kerry Curtis",
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F16",
+  "proposition": "Curtis is quoted saying she is incredibly excited to introduce the new School.",
+  "scope": "WORLD",
+  "support_span": "I&#x27;m incredibly excited to introduce the Royal College of Art&#x27;s new School of Communication & Design."
+ },
+ "F17": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Christoph Lindner",
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F17",
+  "proposition": "Professor Christoph Lindner is President and Vice-Chancellor of the Royal College of Art.",
+  "scope": "WORLD",
+  "support_span": "Professor Christoph Lindner \n\n President and Vice-Chancellor of the Royal College of Art"
+ },
+ "F18": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Christoph Lindner",
+   "RCA"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F18",
+  "proposition": "Lindner is quoted saying the RCA has continuously adapted its academic model throughout its history to meet the changing needs of industry and culture, and that bringing communication and design together into one school is the next step in that evolution.",
+  "scope": "WORLD",
+  "support_span": "Throughout our history, the RCA has continuously adapted our academic model to meet the changing needs of industry and culture. Bringing communication and design together into one school is the next step in that evolution."
+ },
+ "F19": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Christoph Lindner"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F19",
+  "proposition": "Lindner is quoted saying that aligning these fields and creating conditions for greater interdisciplinary collaboration ensures staff and students remain at the forefront of answering complex, interconnected challenges facing society.",
+  "scope": "WORLD",
+  "support_span": "By aligning these fields and creating the conditions for greater interdisciplinary collaboration, we are ensuring our staff and students remain at the forefront of answering the complex, interconnected challenges facing society today."
+ },
+ "F21": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Royal College of Art",
+   "London",
+   "Creative Boom"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F21",
+  "proposition": "Creative Boom describes the Royal College of Art as the world's top-ranked art and design university, based in London.",
+  "scope": "WORLD",
+  "support_span": "the world's top-ranked art and design university, London's Royal College of Art, is clearly paying attention because it's just announced the establishment of a new School of Communication & Design"
+ },
+ "F22": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F22",
+  "proposition": "The RCA describes itself as the world's number one art and design university.",
+  "scope": "WORLD",
+  "support_span": "The Royal College of Art, the world\u2019s number one art and design university"
+ },
+ "F23": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Creative Boom"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F23",
+  "proposition": "Creative Boom writes that in the new setup Animation gets closer to Fashion, Visual Communication to Innovation Design Engineering, and Digital Direction to Textiles.",
+  "scope": "WORLD",
+  "support_span": "In the new setup, Animation gets closer to Fashion, Visual Communication to Innovation Design Engineering, and Digital Direction to Textiles."
+ },
+ "F24": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [
+   "Creative Boom"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F24",
+  "proposition": "Creative Boom asserts that these were previously courses that had nothing to do with each other.",
+  "scope": "WORLD",
+  "support_span": "These used to be courses that had nothing to do with each other."
+ },
+ "F25": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Creative Boom"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F25",
+  "proposition": "Creative Boom writes that the world of academia can be slow to catch up with developments like the blurring of designer job titles.",
+  "scope": "WORLD",
+  "support_span": "The world of academia can be slow to catch up with developments like this."
+ },
+ "F26": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Creative Boom"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F26",
+  "proposition": "Creative Boom writes that today it does not matter whether a practitioner's title is graphic designer, product designer or motion designer, because they are expected to do a bit of everything as the industry demands.",
+  "scope": "WORLD",
+  "support_span": "Today, it doesn't matter whether your title is graphic designer, product designer, motion designer or whatever: essentially you're expected to do a bit of everything, at the drop of a hat, because that's what the industry demands."
+ },
+ "F27": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Creative Boom",
+   "RCA"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F27",
+  "proposition": "Creative Boom writes that the change is not just about a neater organisational chart, and that the RCA is making clear the future of the creative industries is interdisciplinary.",
+  "scope": "WORLD",
+  "support_span": "And it's not just about a neater organisational chart. The RCA is making clear that the future of the creative industries is an interdisciplinary one, and is acting accordingly."
+ },
+ "F28": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "RCA Kensington",
+   "RCA Battersea",
+   "RCA White City"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F28",
+  "proposition": "The School of Communication & Design page lists its current locations as RCA Kensington, RCA Battersea and RCA White City.",
+  "scope": "WORLD",
+  "support_span": "Current Location\n\n RCA Kensington\n RCA Battersea\n RCA White City"
+ },
+ "F29": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F29",
+  "proposition": "The browser title of the School of Communication & Design web page reads \"School of Design | Royal College of Art\".",
+  "scope": "WORLD",
+  "support_span": "School of Design | Royal College of Art"
+ },
+ "F30": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "School of Communication & Design"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F30",
+  "proposition": "The School describes its teaching and research as grounded in material intelligence, craft and cultural richness, working across interconnected creative disciplines.",
+  "scope": "WORLD",
+  "support_span": "In the School of Communication & Design, we work across interconnected creative disciplines. Our teaching and research is grounded in material intelligence, craft and cultural richness."
+ },
+ "F31": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "School of Communication & Design"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F31",
+  "proposition": "The School says that as a community it questions established modes of making and creating, exploring how emerging methodologies, processes and mediums reshape experiences and perceptions of identities, publishing and product innovation.",
+  "scope": "WORLD",
+  "support_span": "we question established modes of making and creating, exploring how emerging methodologies, processes and mediums reshape experiences, perceptions of identities, publishing and product innovation to enable new forms of art and design."
+ },
+ "F32": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "School of Communication & Design"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F32",
+  "proposition": "The School says that in an era shaped by AI and rapid technological change it provides critical and creative frameworks for practices that are creative, inclusive and responsive to environmental, social and systemic concerns.",
+  "scope": "WORLD",
+  "support_span": "In an era shaped by AI and rapid technological change, we provide the critical and creative frameworks through which communication and design guide practices that are creative, inclusive and responsive to environmental, social and systemic concerns."
+ },
+ "F33": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "School of Communication & Design"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F33",
+  "proposition": "The School states that its framing addresses meaning-making processes: the symbolic and knowledge-making dimensions through which dialogue and innovation become culturally legible, desirable and legitimate.",
+  "scope": "WORLD",
+  "support_span": "Our framing addresses meaning-making processes \u2013 the symbolic and knowledge-making dimensions through which dialogue and innovation become culturally legible, desirable and legitimate."
+ },
+ "F34": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Snap Inc",
+   "CERN",
+   "Aardman",
+   "Sustainable Market Initiatives",
+   "Arup",
+   "Telefonica"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F34",
+  "proposition": "The School lists Snap Inc, CERN, Aardman, Sustainable Market Initiatives, Arup and Telefonica among organisations it has worked with.",
+  "scope": "WORLD",
+  "support_span": "Organisations we&#x27;ve worked with\n\n Snap Inc\n\n CERN\n\n Aardman\n\n Sustainable Market Initiatives\n\n Arup\n\n Telefonica"
+ },
+ "F35": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "School of Communication & Design"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F35",
+  "proposition": "The School says its research applies artist-, design- and craft-led methodologies to generate new knowledge and advance societal impact, justice and environmental resilience.",
+  "scope": "WORLD",
+  "support_span": "Research in the School of Communication & Design applies artist-, design- and craft-led methodologies to generate new knowledge and advance societal impact, justice and environmental resilience."
+ },
+ "F36": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Immersive Acts Research Group",
+   "School of Communication & Design"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F36",
+  "proposition": "The Immersive Acts Research Group is listed as a featured project of the School and challenges conventional approaches to XR, VR, AR and MR.",
+  "scope": "WORLD",
+  "support_span": "Immersive Acts Research Group\n\n Optimising immersive technologies as compelling mediums for communication, Immersive Acts challenges conventional approaches to XR, VR, AR, and MR by asking how they can equip communities to preserve their histories and prepare for climate futures."
+ },
+ "F37": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Munduruku",
+   "Cacique Domingos Munduruku"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F37",
+  "proposition": "A School featured project, Building a Library for the Future, concerns Munduruku craft practices and Indigenous knowledge and builds on words of Cacique Domingos Munduruku.",
+  "scope": "WORLD",
+  "support_span": "Building a Library for the Future: Munduruku Craft Practices and Indigenous Knowledge builds upon the words of [Chief] Cacique Domingos Munduruku"
+ },
+ "F38": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F38",
+  "proposition": "The School's news listing includes an item dated 16 September 2026 titled \"Royal College of Art launches innovative new academic programmes for 2027/28\".",
+  "scope": "WORLD",
+  "support_span": "Royal College of Art launches innovative new academic programmes for 2027/28\n\n 16 September 2026"
+ },
+ "F39": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Kerry Curtis"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F39",
+  "proposition": "Kerry Curtis holds the title Professor of Design Education.",
+  "scope": "WORLD",
+  "support_span": "Kerry is Professor of Design Education."
+ },
+ "F40": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Kerry Curtis",
+   "RCA Executive Board",
+   "Race Equality Charter"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F40",
+  "proposition": "Curtis is a member of the RCA Executive Board and co-chairs the Race Equality Charter Self Assessment Team.",
+  "scope": "WORLD",
+  "support_span": "A member of the RCA Executive Board, Kerry Co-Chairs the Race Equality Charter \u2013 Self Assessment Team."
+ },
+ "F41": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Kerry Curtis",
+   "School of Communication"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F41",
+  "proposition": "Curtis's staff page states she is responsible for the academic leadership, vision and strategic direction of the School of Communication, linking industry, innovation and research with taught postgraduate programmes, research degrees and the student experience.",
+  "scope": "WORLD",
+  "support_span": "Kerry is responsible for the academic leadership, vision and strategic direction of the School of Communication, linking industry, innovation and research with taught postgraduate programmes, research degrees and the student experience."
+ },
+ "F42": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Kerry Curtis",
+   "Alberta Ferretti",
+   "Valentino",
+   "Nina Ricci",
+   "Chlo\u00e9",
+   "Stella McCartney",
+   "Calvin Klein",
+   "Donna Karan",
+   "Givenchy",
+   "Dolce & Gabbana",
+   "Lanvin",
+   "Fendi"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F42",
+  "proposition": "Before working in higher education, Curtis worked as a designer for Alberta Ferretti, Valentino and Nina Ricci, and developed work for brands including Chlo\u00e9, Stella McCartney, Calvin Klein, Donna Karan, Givenchy, Dolce & Gabbana, Lanvin and Fendi.",
+  "scope": "WORLD",
+  "support_span": "Prior to working in higher education, Kerry worked as a designer for Alberta Ferretti, Valentino and Nina Ricci, and developed work for brands such as Chlo\u00e9, Stella McCartney, Calvin Klein, Donna Karan, Givenchy, Dolce & Gabbana, Lanvin and Fendi."
+ },
+ "F43": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Kerry Curtis"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F43",
+  "proposition": "Curtis's academic research creates fictional participatory scenarios responding to climate impacted emergencies.",
+  "scope": "WORLD",
+  "support_span": "In her current academic research, she creates fictional participatory scenarios responding to climate impacted emergencies."
+ },
+ "F44": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Kerry Curtis",
+   "Immersive Communication Research Group"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F44",
+  "proposition": "Curtis leads a cross-college Immersive Communication Research Group asking how recent technological advances, paired with traditions of immersivity, can ethically form connections between individuals, communities and organisations.",
+  "scope": "WORLD",
+  "support_span": "Kerry leads a cross-college Immersive Communication Research Group which positions itself at a technological forefront to ask how recent advances, paired with traditions of immersivity, can ethically form connections between individuals, communities and organisations, ensuring an intersectional approach."
+ },
+ "F45": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Kerry Curtis",
+   "Imagining Neutopia"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F45",
+  "proposition": "Curtis's research project Imagining Neutopia fabricates and documents fictional events to further climate change discourse.",
+  "scope": "WORLD",
+  "support_span": "Through participatory scenarios Kerry\u2019s research, Imagining Neutopia, fabricates and documents fictional events to further Climate Change discourse."
+ },
+ "F46": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Dressing for Evacuation"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F46",
+  "proposition": "In the project Dressing for Evacuation, participants were asked to dress as if alerted to an imminent large-scale evacuation, and responses were recorded in a photoshoot and accompanying survey.",
+  "scope": "WORLD",
+  "support_span": "Participants were asked to dress as if they had been alerted to an imminent large-scale evacuation, responses were recorded in a photoshoot and accompanying survey."
+ },
+ "F47": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Dressing for Evacuation",
+   "Feverish World Symposium",
+   "Vermont",
+   "University of Bolton"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F47",
+  "proposition": "Dressing for Evacuation culminated in life size photographic portraits shown at the Tentworks exhibition at the Feverish World Symposium in 2018 in Vermont, USA, and at the Fashion and Textiles FutureScan 4 Conference at the University of Bolton, UK, in 2019.",
+  "scope": "WORLD",
+  "support_span": "The project culminated in a series of life size photographic portraits, shown as part of the Tentworks exhibition at the Feverish World Symposium , 2018 in Vermont, USA, and the Fashion and Textiles FutureScan 4 Conference at the University of Bolton, UK in 2019."
+ },
+ "F48": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Dressing for Evacuation"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F48",
+  "proposition": "Dressing for Evacuation focuses on the human emergency response of getting dressed and gathering a limited selection of possessions.",
+  "scope": "WORLD",
+  "support_span": "Dressing for Evacuation focuses on and offers insight into the human emergency response of getting dressed and gathering a limited selection of possessions."
+ },
+ "F49": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Kerry Curtis"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F49",
+  "proposition": "Curtis's staff page lists a downloadable PDF titled The Future of Design Education.",
+  "scope": "WORLD",
+  "support_span": "Download \nPDF (2.3 MB) \n\n The Future of Design Education"
+ },
+ "F50": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Kerry Curtis",
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F50",
+  "proposition": "Curtis's personal website describes her as Dean of School of Communication at the Royal College of Art.",
+  "scope": "WORLD",
+  "support_span": "Kerry Curtis is Dean of School of Communication at the Royal College of Art."
+ },
+ "F51": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Kerry Curtis"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F51",
+  "proposition": "Curtis's personal website describes her as having previous experience as an international textile designer in the fashion industry, with a practice now placing environmental concerns central to design-led questions.",
+  "scope": "WORLD",
+  "support_span": "With previous experience as an international textile designer in the fashion industry, Curtis\u2019s practice is evolving, and now places environmental concerns central to design-led questions and the formation of narratives."
+ },
+ "F52": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Lucy Saunders",
+   "Dressing for Evacuation"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F52",
+  "proposition": "Photography for Dressing for Evacuation is credited to Lucy Saunders.",
+  "scope": "WORLD",
+  "support_span": "Photography for Dressing for Evacuation by Lucy Saunders"
+ },
+ "F53": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Paul Anderson",
+   "Royal College of Art",
+   "School of Design"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F53",
+  "proposition": "The RCA biographies document lists Kerry Curtis as Dean of the School of Communication and Professor Paul Anderson as Dean of the School of Design, as separate roles.",
+  "scope": "WORLD",
+  "support_span": "Professor Anderson is Dean of the School of Design at the Royal College of Art"
+ },
+ "F54": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Kerry Curtis",
+   "RCA",
+   "Bath Spa University",
+   "Bath School of Design"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F54",
+  "proposition": "Kerry Curtis joined the RCA in April 2021, having previously been Head of Bath School of Design at Bath Spa University.",
+  "scope": "WORLD",
+  "support_span": "Prior to joining the RCA in April 2021, she was Head of Bath School of Design at Bath Spa University, leading teaching and curriculum innovation in disciplines both within and beyond the School of Communication\u2019s portfolio."
+ },
+ "F55": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Kerry Curtis"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F55",
+  "proposition": "The RCA biographies document states Kerry Curtis has extensive leadership experience in higher education.",
+  "scope": "WORLD",
+  "support_span": "Kerry has extensive leadership experience in higher education."
+ },
+ "F56": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Paul Anderson",
+   "Royal College of Art",
+   "Glasgow School of Art"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F56",
+  "proposition": "Professor Paul Anderson received his MA in Industrial Design from the Royal College of Art in 1986 and joined Glasgow School of Art in 1993, where he launched the Digital Design Studio.",
+  "scope": "WORLD",
+  "support_span": "received his MA in Industrial Design from the Royal College of Art in 1986. He joined Glasgow School of Art in 1993 where he launched the Digital Design Studio (DDS)"
+ },
+ "F57": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Christoph Lindner",
+   "RCA",
+   "University College London"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F57",
+  "proposition": "Professor Christoph Lindner joined the RCA in April 2024 from his role as Dean of the Bartlett Faculty of the Built Environment at University College London.",
+  "scope": "WORLD",
+  "support_span": "Professor Lindner joined the RCA in April 2024 from his role as Dean of the Bartlett Faculty of \nthe Built Environment at University College London."
+ },
+ "F58": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Christoph Lindner",
+   "University of Oregon",
+   "University of Amsterdam"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F58",
+  "proposition": "Before UCL, Lindner served as Dean of the College of Design at the University of Oregon and, prior to that, Professor of Media and Culture at the University of Amsterdam.",
+  "scope": "WORLD",
+  "support_span": "Before joining UCL, he served as Dean of \nthe College of Design at the University of Oregon and, prior to that, Professor of Media and \nCulture at the University of Amsterdam."
+ },
+ "F60": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Jony Ive",
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F60",
+  "proposition": "Sir Jony Ive is Chancellor of the Royal College of Art.",
+  "scope": "WORLD",
+  "support_span": "Sir Jony Ive KBE, Chancellor, Royal College of Art"
+ },
+ "F62": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Beatrice Sangster"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F62",
+  "proposition": "The School's student stories include Visual Communication MA graduate Beatrice Sangster, whose practice centres on disability access in education and the inclusion of neurodiversity.",
+  "scope": "WORLD",
+  "support_span": "Disability access in education and the inclusion of neurodiversity are at the centre of Visual Communication MA graduate Beatrice Sangster\u2019s practice."
+ },
+ "F63": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Xiaoyao Ma",
+   "Sara Sahores"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F63",
+  "proposition": "The School's web page header image is credited as E llusion by Xiaoyao Ma, MA Digital Direction 2026, at RCA2026, photographed by Sara Sahores.",
+  "scope": "WORLD",
+  "support_span": "E llusion, Xiaoyao Ma (MA Digital Direction, 2026) at RCA2026. Photo: Sara Sahores"
+ },
+ "F64": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Royal College of Art",
+   "London"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F64",
+  "proposition": "The RCA's registered office is at Kensington Gore, South Kensington, London SW7 2EU.",
+  "scope": "WORLD",
+  "support_span": "Registered Office:\n Royal College of Art ,\n \n Kensington Gore ,\n South Kensington \n London \n SW7 2EU"
+ },
+ "F65": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F65",
+  "proposition": "The RCA site's schools navigation lists exactly three schools: School of Architecture, School of Arts & Humanities and School of Communication & Design.",
+  "scope": "WORLD",
+  "support_span": "Schools \n\n -->\n \n School of Architecture \n\n -->\n \n School of Arts & Humanities \n\n -->\n \n School of Communication & Design"
+ },
+ "F66": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Creative Boom",
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F66",
+  "proposition": "Creative Boom describes the Royal College of Art as a 107-year-old institution.",
+  "scope": "WORLD",
+  "support_span": "This is a big move for the 107-year-old institution, as it brings together communication and design disciplines for the first time within a single, unified academic entity."
+ },
+ "F67": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Christoph Lindner",
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F67",
+  "proposition": "Christoph Lindner holds the title of Professor of Visual Culture at the Royal College of Art.",
+  "scope": "WORLD",
+  "support_span": "Professor Christoph Lindner is President and Vice-Chancellor of the Royal College of Art, the \ninternationally renowned art and design postgraduate university, where he also holds the title \nof Professor of Visual Culture."
+ },
+ "F68": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Christoph Lindner"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F68",
+  "proposition": "Christoph Lindner's leadership work has focused on advancing educational access and equity, intercultural understanding, and environmental sustainability in the art and design fields.",
+  "scope": "WORLD",
+  "support_span": "His leadership work has \nfocused on advancing educational access and equity, intercultural understanding, and \nenvironmental sustainability in the art and design fields."
+ },
+ "F69": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Naren Barfield",
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F69",
+  "proposition": "Professor Naren Barfield is Deputy Vice-Chancellor and Provost at the Royal College of Art.",
+  "scope": "WORLD",
+  "support_span": "Professor Naren Barfield is Deputy Vice Chancellor and Provost at the Royal College of Art."
+ },
+ "F70": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Naren Barfield",
+   "Royal College of Art"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F70",
+  "proposition": "Naren Barfield has worked at the Royal College of Art since 2011.",
+  "scope": "WORLD",
+  "support_span": "Since 2011 he has worked at the Royal College of Art, and has led significant growth in postgraduate programmes, student enrolments, research intensity and quality, industry partnerships, executive education, and internationalisation."
+ }
+}

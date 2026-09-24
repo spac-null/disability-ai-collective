@@ -1,0 +1,651 @@
+{
+ "article_type": "NARRATIVE_ARTICLE",
+ "beats": [
+  {
+   "beat_function": "REVEAL",
+   "beat_id": "B1",
+   "concept_introduced": "dark current",
+   "concrete_carrier": "SCA 21816 in an unlit dewar at 95 K",
+   "facts_allowed": [
+    "F44",
+    "F51",
+    "F63",
+    "F69",
+    "F70",
+    "F71",
+    "F84"
+   ],
+   "happens": "A single flight detector, SCA 21816, is held at 95 K and read out unilluminated \u2014 39 read-noise exposures, and dark-current exposures of approximately 2 hours each \u2014 to measure the intrinsic dark current, the signal induced by thermal or quantum tunneling processes.",
+   "must_not_say_yet": "Do not yet name the survey science, the cadmium recipe, or the wide field.",
+   "why_reader_wants_next": "The reader wants to know what instrument this one component belongs to, and why anyone would spend hours photographing darkness with it."
+  },
+  {
+   "beat_function": "REVEAL",
+   "beat_id": "B2",
+   "concept_introduced": "",
+   "concrete_carrier": "the 18-detector, 300-megapixel focal plane of the Wide Field Instrument",
+   "facts_allowed": [
+    "F01",
+    "F02",
+    "F05",
+    "F17",
+    "F18",
+    "F20",
+    "F22",
+    "F38",
+    "F98"
+   ],
+   "happens": "The detector is one of 18 in the large focal plane NASA built as one modification to a telescope first developed by the National Reconnaissance Office: about 300 megapixels across the 18 detectors, an active area on the sky of 0.281 square degrees, roughly 100 times the area covered by JWST/NIRCam, for a survey of a billion galaxies, with launch aimed for as early as Aug. 30, 2026. Roman's camera has such a wide field because its spy-telescope origins give it unusually fast optics \u2014 a relatively short focal length for the diameter of its mirror.",
+   "must_not_say_yet": "Do not yet explain the detector material or the band limits.",
+   "why_reader_wants_next": "An instrument defined by field size has been introduced by way of an unilluminated exposure; the reader wants the connection."
+  },
+  {
+   "beat_function": "EXPLAIN",
+   "beat_id": "B3",
+   "concept_introduced": "cutoff wavelength",
+   "concrete_carrier": "the mercury-cadmium-telluride layer and its 0.445 cadmium fraction",
+   "facts_allowed": [
+    "F23",
+    "F78",
+    "F82",
+    "F83",
+    "F84",
+    "F86",
+    "F87",
+    "F100"
+   ],
+   "happens": "The detectors are hybrids: because it is not possible to have both photon detection and electronic readout on the same chip, a mercury cadmium telluride layer of 4096 by 4096 pixels is bonded to a silicon read-out integrated circuit, and that hybrid is connected to a mechanical mount with electrical connections as a Sensor Chip Assembly. The fraction of cadmium in the mixture can be varied to engineer a specific bandgap energy; for Roman, with a desired cutoff wavelength of approximately 2.5 microns, it was tuned to 0.445, and the WFI is sensitive from 0.48 to 2.3 microns, in infrared light of longer wavelengths than human eyes can see.",
+   "must_not_say_yet": "Do not yet name the anomalies, or the science targets.",
+   "why_reader_wants_next": "If the band was chosen by a recipe, the reader wants to know what else had to be established for the device to be trusted."
+  },
+  {
+   "beat_function": "EXPLAIN",
+   "beat_id": "B4",
+   "concept_introduced": "",
+   "concrete_carrier": "the dozens of flight detectors at the NASA GSFC Detector Characterization Laboratory",
+   "facts_allowed": [
+    "F24",
+    "F25",
+    "F43",
+    "F44",
+    "F77",
+    "F80"
+   ],
+   "happens": "Behind the flight part sits a decade-long program: dozens of detectors fabricated and screened, then characterised and tested at GSFC, with each SCA undergoing extensive testing by the NASA GSFC Detector Characterization Laboratory, since meeting Roman's science requirements requires calibration of these detectors to unprecedented precision. The author states that he worked with colleagues in the early 2000s to advance this detector technology, and that his team measured in the lab how the detectors performed in a simulated space environment.",
+   "must_not_say_yet": "Do not yet give the glow, the reference channel or the calibration ceilings.",
+   "why_reader_wants_next": "The reader wants to know what that precision was fighting \u2014 what the detectors do on their own."
+  },
+  {
+   "beat_function": "COMPLICATE",
+   "beat_id": "B5",
+   "concept_introduced": "",
+   "concrete_carrier": "the glow in the first ~300 darks and the four-pixel reference border",
+   "facts_allowed": [
+    "F52",
+    "F53",
+    "F60",
+    "F72",
+    "F95",
+    "F101"
+   ],
+   "happens": "The unilluminated exposures show the detector's own behaviour: significant glow in the first ~300 darks; anomalous detector behaviours including the WFI18 Transient; a border of four reference pixels on each side of the active pixels, used to correct for offset drifts, with the differential signal from a reference pixel digitised as a 33rd output, REFOUT, alongside the 32 output channels; and a slot in the Element Wheel Assembly holding a DARK element used for calibration purposes.",
+   "must_not_say_yet": "Do not yet connect the glow or the reference border to dark matter or rogue planets.",
+   "why_reader_wants_next": "A zero is in hand; the reader wants the scale that turns a count into a quantity."
+  },
+  {
+   "beat_function": "EXPLAIN",
+   "beat_id": "B6",
+   "concept_introduced": "",
+   "concrete_carrier": "the flat-field exposures from 625 to 2100 nm and the 80,000-electron linearity ceiling",
+   "facts_allowed": [
+    "F61",
+    "F67",
+    "F73",
+    "F100"
+   ],
+   "happens": "The illuminated tests supply the scale: linearity assessed up to signal levels of about 80,000 electrons, conversion gain measured by the photon transfer curve method, and flat fields taken at 625, 875, 1050, 1300, 1450, 1600, 1850 and 2100 nm with a 5-20 nm bandpass \u2014 a ladder of wavelengths laid across the band the cadmium fraction defined.",
+   "must_not_say_yet": "Do not report measured values for gain, noise or linearity.",
+   "why_reader_wants_next": "With the zero and the scale in place, the reader wants to see what Roman is supposed to do with them."
+  },
+  {
+   "beat_function": "REVERSE",
+   "beat_id": "B7",
+   "concept_introduced": "",
+   "concrete_carrier": "the light of stars near the center of the Milky Way galaxy",
+   "facts_allowed": [
+    "F06",
+    "F07",
+    "F08",
+    "F09",
+    "F10",
+    "F11"
+   ],
+   "happens": "The headline targets arrive as effects in other light. Roman was built to study the three-dimensional distribution of dark matter, which produces unseen effects on objects in the universe, similar to those produced by visible matter; dark matter and dark energy have not yet been directly observed, and their physical natures are unknown. Roman will see exploding stars called supernovas that allow astronomers to measure how fast the universe has been expanding. Rogue planets are inferred from small variations in light from stars near the center of the Milky Way galaxy: as a planet passes in front of a star, it briefly perturbs and magnifies the light from the star behind it.",
+   "must_not_say_yet": "Do not restate the focal plane's size or the cadmium recipe as new information.",
+   "why_reader_wants_next": "The targets arrive as disturbances in other light; the reader wants what that demands of the detector."
+  },
+  {
+   "beat_function": "RESOLVE",
+   "beat_id": "B8",
+   "concept_introduced": "",
+   "concrete_carrier": "SCA 21816's unilluminated exposures",
+   "facts_allowed": [
+    "F44",
+    "F63",
+    "F71",
+    "F11",
+    "F87",
+    "F09"
+   ],
+   "happens": "SCA 21816's unilluminated exposures: 39 read-noise exposures, and dark-current exposures of approximately 2 hours each. A rogue planet's presence is inferred from a brief perturbation and magnification of the light of the star it passes in front of. The instrument band runs 0.48 to 2.3 microns, with a cadmium fraction tuned to 0.445.",
+   "must_not_say_yet": "Do not close by restating the launch date, the megapixel count or the mission's origin.",
+   "why_reader_wants_next": ""
+  }
+ ],
+ "crip_turn": "Roman's window is a manufactured one: the cadmium fraction of 0.445 was tuned for a cutoff wavelength of approximately 2.5 microns, and the WFI is sensitive from 0.48 to 2.3 microns. Dark matter and dark energy have not yet been directly observed, and their physical natures are unknown. A rogue planet appears in the data as a brief perturbation and magnification of the light of a star, measured against the detector's own output in the dark.",
+ "crip_turn_rereads": "B3",
+ "cut_evidence": [
+  {
+   "evidence_id": "F03",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F04",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F12",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F13",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F14",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F15",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F16",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F19",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F21",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F26",
+   "reason": "BREAKS_STORY_MOMENTUM"
+  },
+  {
+   "evidence_id": "F27",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F28",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F29",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F30",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F31",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F32",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F33",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F34",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F35",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F36",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F37",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F39",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F40",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F41",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F42",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F45",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F46",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F47",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F48",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F49",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F50",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F54",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F56",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F57",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F58",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F59",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F62",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F64",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F65",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F66",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F68",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F74",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F75",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F76",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F79",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F81",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F85",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F88",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F89",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F90",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F91",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F92",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F93",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F94",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F96",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F97",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F99",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F102",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F103",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F104",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F105",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F106",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F107",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F108",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F109",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F110",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F111",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F112",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F113",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F114",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F115",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F116",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F117",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F118",
+   "reason": "PROVENANCE_ONLY"
+  }
+ ],
+ "definition_evidence": {
+  "cutoff wavelength": [
+   "F86",
+   "F87",
+   "F100"
+  ],
+  "dark current": [
+   "F69",
+   "F70"
+  ],
+  "sensor chip assembly (SCA)": [
+   "F78",
+   "F82",
+   "F83",
+   "F84"
+  ]
+ },
+ "definitions": {
+  "cutoff wavelength": "the long-wavelength edge of what the detector material will register, set by the bandgap energy engineered in the mercury cadmium telluride mixture \u2014 for Roman, approximately 2.5 microns, with the WFI sensitive from 0.48 to 2.3 microns.",
+  "dark current": "induced signal from thermal or quantum tunneling processes, measured in exposures taken without illumination.",
+  "sensor chip assembly (SCA)": "a photon-sensitive mercury cadmium telluride layer of 4096 by 4096 pixels bonded to a silicon Read-out Integrated Circuit \u2014 the combination is called a hybrid \u2014 connected to a mechanical mount with electrical connections."
+ },
+ "ending_move": "Lands on SCA 21816's unilluminated exposures beside the perturbation and magnification of a star's light by a passing planet.",
+ "evidence_roles": {
+  "F01": "LOAD_BEARING",
+  "F02": "SUPPORTING",
+  "F05": "LOAD_BEARING",
+  "F06": "LOAD_BEARING",
+  "F07": "LOAD_BEARING",
+  "F08": "SUPPORTING",
+  "F09": "LOAD_BEARING",
+  "F10": "LOAD_BEARING",
+  "F100": "LOAD_BEARING",
+  "F101": "LOAD_BEARING",
+  "F11": "LOAD_BEARING",
+  "F17": "LOAD_BEARING",
+  "F18": "SUPPORTING",
+  "F20": "LOAD_BEARING",
+  "F22": "LOAD_BEARING",
+  "F23": "SUPPORTING",
+  "F24": "SUPPORTING",
+  "F25": "LOAD_BEARING",
+  "F38": "SUPPORTING",
+  "F43": "SUPPORTING",
+  "F44": "LOAD_BEARING",
+  "F51": "SUPPORTING",
+  "F52": "SUPPORTING",
+  "F53": "LOAD_BEARING",
+  "F60": "LOAD_BEARING",
+  "F61": "LOAD_BEARING",
+  "F63": "LOAD_BEARING",
+  "F67": "SUPPORTING",
+  "F69": "LOAD_BEARING",
+  "F70": "SUPPORTING",
+  "F71": "LOAD_BEARING",
+  "F72": "LOAD_BEARING",
+  "F73": "LOAD_BEARING",
+  "F77": "LOAD_BEARING",
+  "F78": "LOAD_BEARING",
+  "F80": "LOAD_BEARING",
+  "F82": "SUPPORTING",
+  "F83": "LOAD_BEARING",
+  "F84": "SUPPORTING",
+  "F86": "LOAD_BEARING",
+  "F87": "LOAD_BEARING",
+  "F95": "LOAD_BEARING",
+  "F98": "LOAD_BEARING"
+ },
+ "final_lens": {
+  "after_reading": "An instrument with a manufactured window \u2014 a cadmium fraction of 0.445, a band of 0.48 to 2.3 microns \u2014 and a zero recorded in hours of darkness.",
+  "before_reading": "A 300-megapixel camera covering 0.281 square degrees, pointed at a billion galaxies.",
+  "crip_turn": "The band Roman perceives was mixed in a layer: the cadmium fraction of 0.445 in the mercury cadmium telluride, tuned for a desired cutoff wavelength of approximately 2.5 microns, with the WFI sensitive from 0.48 to 2.3 microns.",
+  "crip_turn_carrier": "the cadmium fraction of 0.445 in the mercury-cadmium-telluride layer",
+  "evidence_basis": [
+   "F86",
+   "F87",
+   "F100",
+   "F72",
+   "F95",
+   "F60",
+   "F09",
+   "F11",
+   "F63",
+   "F71"
+  ],
+  "lens_claim": "What Roman registers is bounded in two places. In the mixture: the fraction of cadmium tuned to 0.445 for a desired cutoff wavelength of approximately 2.5 microns, with the WFI sensitive from 0.48 to 2.3 microns. In the dark: the unilluminated exposures of SCA 21816 \u2014 39 read-noise exposures, dark-current exposures of approximately 2 hours each \u2014 with significant glow in the first ~300 darks, anomalous detector behaviours including the WFI18 Transient, and a border of four reference pixels on each side for correcting offset drifts. Dark matter and dark energy have not yet been directly observed, and their physical natures are unknown. A rogue planet appears in the data as a brief perturbation and magnification of the light of a star.",
+  "story_beat_after": "B7",
+  "story_beat_before": "B3",
+  "what_changes_for_the_reader": "The reader now reads the 0.445 cadmium fraction as the boundary of the instrument's band, and reads later claims about dark matter, expansion and rogue planets as measurements made inside that band against a zero recorded in the laboratory."
+ },
+ "lens_realization": "IMPLICIT",
+ "opening_object_or_event": "SCA 21816, a single flight detector held at 95 K in an unlit dewar for its unilluminated exposures",
+ "primary_carrier": "F44",
+ "prohibitions": [
+  "Do not invent a technician, engineer, astronomer, observer or visitor who is not in the facts; the only person available is the author, and only for the lab work stated.",
+  "Do not attribute feelings, hopes, frustration, pride or expectation to anyone, named or unnamed.",
+  "Do not merge the unilluminated read-noise exposures with the roughly two-hour dark-current exposures into one set; they are separate tests with separate purposes.",
+  "Do not report results for any detector other than SCA 21816, and do not state whether the other seventeen flight detectors were tested identically.",
+  "Do not give numerical values for read noise, dark current, conversion gain, quantum efficiency or noise performance; only the tests, their settings and their purposes are established.",
+  "Do not describe the colour, size, appearance, sound or smell of the laboratory, the dewar, the focal plane or the detectors.",
+  "Do not say the telescope has launched, is certain to launch, or will launch on a particular day; the date stated is a target of as early as Aug. 30, 2026.",
+  "Do not say Roman will see, image or photograph dark matter or dark energy directly.",
+  "Do not claim Roman has already observed a galaxy, supernova or rogue planet.",
+  "Do not claim any anomaly was corrected, eliminated, or will or will not degrade flight data, and do not state how glow, burn-in or the WFI18 Transient are removed.",
+  "Do not attribute a motive to the National Reconnaissance Office beyond the hardware being developed there and transferred to NASA.",
+  "Do not describe the author's colleagues, employer, career or credentials beyond the stated early-2000s work on this detector type.",
+  "Do not present the flat-field test wavelengths as the instrument's filter set or its observing bands.",
+  "Do not claim that anyone was unable to see, excluded from, or disadvantaged by any part of this instrument or its calibration.",
+  "Do not assert that the 0.445 cadmium fraction was the only option, a compromise, or a limitation imposed by cost or schedule.",
+  "Do not state a pixel count for the active area of the detector.",
+  "Do not attribute the architecture's framing to a source, document or release."
+ ],
+ "reader_initial_state": "That a flight component of a telescope built to survey the sky was read out unilluminated, for hours.",
+ "story_spine": "One flight detector, SCA 21816, is held at 95 K in an unlit dewar and read out unilluminated, one piece of a decade-long characterisation program behind the focal plane that will survey a billion galaxies.",
+ "supports": {
+  "F02": [
+   "F17",
+   "F05"
+  ],
+  "F08": [
+   "F09"
+  ],
+  "F18": [
+   "F17"
+  ],
+  "F23": [
+   "F100"
+  ],
+  "F24": [
+   "F25",
+   "F80"
+  ],
+  "F38": [
+   "F98"
+  ],
+  "F43": [
+   "F80",
+   "F44"
+  ],
+  "F51": [
+   "F44",
+   "F69"
+  ],
+  "F52": [
+   "F53"
+  ],
+  "F67": [
+   "F61"
+  ],
+  "F70": [
+   "F69"
+  ],
+  "F82": [
+   "F83"
+  ],
+  "F84": [
+   "F44",
+   "F83"
+  ]
+ },
+ "turn": "",
+ "use_facts": [
+  "F01",
+  "F02",
+  "F05",
+  "F06",
+  "F07",
+  "F08",
+  "F09",
+  "F10",
+  "F11",
+  "F17",
+  "F18",
+  "F20",
+  "F22",
+  "F23",
+  "F24",
+  "F25",
+  "F38",
+  "F43",
+  "F44",
+  "F51",
+  "F52",
+  "F53",
+  "F60",
+  "F61",
+  "F63",
+  "F67",
+  "F69",
+  "F70",
+  "F71",
+  "F72",
+  "F73",
+  "F77",
+  "F78",
+  "F80",
+  "F82",
+  "F83",
+  "F84",
+  "F86",
+  "F87",
+  "F95",
+  "F98",
+  "F100",
+  "F101"
+ ]
+}

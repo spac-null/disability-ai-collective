@@ -1,0 +1,380 @@
+{
+ "article_type": "NARRATIVE_ARTICLE",
+ "beats": [
+  {
+   "beat_function": "REVEAL",
+   "beat_id": "B1",
+   "concept_introduced": "",
+   "concrete_carrier": "the sentence on the speaker page about interpreters among the best in the world",
+   "facts_allowed": [
+    "F04",
+    "F07"
+   ],
+   "happens": "The guidance to speakers states that its interpreters are among the best in the world and that speakers can therefore speak at a natural pace, and encourages them to use the language they command best.",
+   "must_not_say_yet": "Nothing about interpreters' health, the 2022 protest, or any resolution.",
+   "why_reader_wants_next": "The reader wants to know what else the page asks of a speaker."
+  },
+  {
+   "beat_function": "EXPLAIN",
+   "beat_id": "B2",
+   "concept_introduced": "",
+   "concrete_carrier": "the speaker's three asks \u2014 speaking points, a recommended microphone, a booked connection test",
+   "facts_allowed": [
+    "F01",
+    "F02",
+    "F08",
+    "F09",
+    "F10"
+   ],
+   "happens": "The same page sets out what a speaker is asked to provide: speaking points, described as a tool for interpreters to prepare, forwarded through the meeting organiser at any moment, even last minute; a microphone recommended by the interpretation service for anyone online; a connection test booked in advance; and a statement that good sound is a prerequisite for good communication.",
+   "must_not_say_yet": "Do not yet characterise the obligation attached to these requests, or say that interpreters were harmed.",
+   "why_reader_wants_next": "Every one of these is phrased as a request; the reader wants to know what the record says about how they are met."
+  },
+  {
+   "beat_function": "COMPLICATE",
+   "beat_id": "B3",
+   "concept_introduced": "",
+   "concrete_carrier": "the interpreters' boycott of remote and hybrid interventions",
+   "facts_allowed": [
+    "F41",
+    "F42",
+    "F43"
+   ],
+   "happens": "In June 2022 interpreters at the European Parliament launched a protest over deteriorating working conditions that lasted until mid-October; more than a third of the professionals working in the Parliament claimed symptoms attributed to the strain of interpreting remotely connected speakers from noisy public environments, on poor connections and inadequate microphones; fearing permanent hearing damage they boycotted remote interventions and online and hybrid events, ending following an interim agreement.",
+   "must_not_say_yet": "Do not yet name the symptoms or the standards.",
+   "why_reader_wants_next": "The reader wants to know what the sound does to a person listening to it for a living."
+  },
+  {
+   "beat_function": "EXPLAIN",
+   "beat_id": "B4",
+   "concept_introduced": "",
+   "concrete_carrier": "the volume dial turned up on a half-covered ear",
+   "facts_allowed": [
+    "F45",
+    "F48",
+    "F36",
+    "F37"
+   ],
+   "happens": "Faced with poor signal quality, interpreters are often forced to raise the volume for extended periods to decipher what is being said, and many listen with one ear while leaving the other uncovered to control their own output, which may prompt them to go above recommended thresholds; an AIIC committee resolution reports an alarming increase, since the start of the pandemic and across multiple organisations, in staff interpreters with hearing-related issues ranging from temporary nausea, fatigue, disorientation, insomnia and ear pain to irreversible damage including hyperacusis, hearing loss, tinnitus, cochlear and endolymphatic hydrops and vestibular balance problems.",
+   "must_not_say_yet": "Do not yet state what the resolutions demand or declare.",
+   "why_reader_wants_next": "The reader wants to know what the resolutions say about the speaker's side of the chain."
+  },
+  {
+   "beat_function": "REVERSE",
+   "beat_id": "B5",
+   "concept_introduced": "ISO-compliant microphone",
+   "concrete_carrier": "the reserved right not to interpret a non-compliant speaker",
+   "facts_allowed": [
+    "F16",
+    "F17",
+    "F19",
+    "F20",
+    "F22",
+    "F23"
+   ],
+   "happens": "On 16 September 2022 a joint general assembly of staff and ACI interpreters working for the European Commission, supported by the Staff Interpreters' Delegation at the European Parliament (Delint) and the AIIC European Parliament Professional Delegation (EPPD), adopted a Resolution on Sound Quality: it records that a majority of meeting participants do not or will not use the recommended equipment, that there is no binding remote participation protocol applicable to participants in hybrid meetings and that it is not obligatory for them to carry out an advance test call \u2014 and declares that, effective immediately, interpreters reserve the right not to interpret speakers whose sound does not meet the required standards, listing speakers without an ISO-compliant lapel or uni-directional table microphone, speakers in spaces with significant background noise, speakers with device notification sounds on, speakers without video, and speakers on unstable connections.",
+   "must_not_say_yet": "Do not yet name ISO 24019 or the platform-side standards.",
+   "why_reader_wants_next": "The reader wants to know what the standards in force actually bind."
+  },
+  {
+   "beat_function": "COMPLICATE",
+   "beat_id": "B6",
+   "concept_introduced": "remote interpreting",
+   "concrete_carrier": "a platform feature that would block or flag a non-compliant microphone",
+   "facts_allowed": [
+    "F46",
+    "F25",
+    "F24",
+    "F26",
+    "F27"
+   ],
+   "happens": "The standards address the equipment and the platform: in 2022 ISO published 24019 on simultaneous interpreting delivery platforms, clarifying the responsibilities of service providers and remotely connected speakers, while the resolution records that wrong platform configuration and substandard equipment have left interpreters working with sound non-compliant with ISO 20108:2017 and ISO 20109:2016; the resolution holds co-location of the full team of interpreters and all meeting participants to be the standard and superior set-up, notes that the parties to the IIA-RI explicitly recognise remote interpretation as an inferior working method generating heightened cognitive load that may jeopardise auditory health, and asks that interpreters be given access to information on the microphones remote participants use, via a platform feature blocking or flagging non-compliant peripherals.",
+   "must_not_say_yet": "Do not yet state the individual right to stop.",
+   "why_reader_wants_next": "The platform and the peripheral can be certified and flagged; the reader wants to know what the record holds on the listener's side."
+  },
+  {
+   "beat_function": "RESOLVE",
+   "beat_id": "B7",
+   "concept_introduced": "",
+   "concrete_carrier": "the interpreter's individual right to stop, beside the page's statement about a natural pace",
+   "facts_allowed": [
+    "F31",
+    "F35",
+    "F04"
+   ],
+   "happens": "On 1 September 2022 the AIIC Staff Interpreters' Committee adopted a resolution on global threats to interpreters' auditory health, calling on individual interpreters not to hesitate to use their individual right to stop interpreting when they sense the sound is too poor or hazardous. The speaker page tells speakers they can speak at a natural pace.",
+   "must_not_say_yet": "Do not restate the symptom list or the three asks.",
+   "why_reader_wants_next": ""
+  }
+ ],
+ "crip_turn": "That the speaking points, the recommended microphone and the booked connection test on the speaker page are requests, standing beside the guidance's assurance that speakers can speak at a natural pace.",
+ "crip_turn_rereads": "B2",
+ "cut_evidence": [
+  {
+   "evidence_id": "F03",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F05",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F06",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F11",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F12",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F13",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F14",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F15",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F18",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F21",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F28",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F29",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F30",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F32",
+   "reason": "BREAKS_STORY_MOMENTUM"
+  },
+  {
+   "evidence_id": "F33",
+   "reason": "BREAKS_STORY_MOMENTUM"
+  },
+  {
+   "evidence_id": "F34",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F38",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F39",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F40",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F44",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F47",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F49",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F50",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F51",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F52",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F53",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F54",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F55",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  }
+ ],
+ "definition_evidence": {
+  "ISO-compliant microphone": [
+   "F23",
+   "F25"
+  ],
+  "remote interpreting": [
+   "F24",
+   "F26"
+  ]
+ },
+ "definitions": {
+  "ISO-compliant microphone": "a microphone meeting the international sound standards the interpreting services work to; the resolution names two acceptable kinds \u2014 a lapel microphone clipped to the speaker, or a uni-directional table microphone \u2014 and refers to ISO 20108:2017 and ISO 20109:2016 as the standards for the sound reaching interpreters.",
+  "remote interpreting": "interpreting a speaker whose voice arrives over a connection; the resolution treats co-location of the full team of interpreters and all meeting participants as the standard and superior set-up, and the parties to the IIA-RI recognise remote interpretation as an inferior working method that generates a heightened cognitive load and may jeopardise auditory health."
+ },
+ "ending_move": "The individual interpreter's right to stop interpreting when the sound is too poor, set beside the page's statement that the speaker may proceed at a natural pace.",
+ "evidence_roles": {
+  "F01": "LOAD_BEARING",
+  "F02": "SUPPORTING",
+  "F04": "LOAD_BEARING",
+  "F07": "SUPPORTING",
+  "F08": "LOAD_BEARING",
+  "F09": "SUPPORTING",
+  "F10": "LOAD_BEARING",
+  "F16": "LOAD_BEARING",
+  "F17": "SUPPORTING",
+  "F19": "SUPPORTING",
+  "F20": "LOAD_BEARING",
+  "F22": "LOAD_BEARING",
+  "F23": "SUPPORTING",
+  "F24": "SUPPORTING",
+  "F25": "SUPPORTING",
+  "F26": "LOAD_BEARING",
+  "F27": "LOAD_BEARING",
+  "F31": "SUPPORTING",
+  "F35": "LOAD_BEARING",
+  "F36": "SUPPORTING",
+  "F37": "LOAD_BEARING",
+  "F41": "LOAD_BEARING",
+  "F42": "SUPPORTING",
+  "F43": "LOAD_BEARING",
+  "F45": "LOAD_BEARING",
+  "F46": "LOAD_BEARING",
+  "F48": "SUPPORTING"
+ },
+ "final_lens": {
+  "after_reading": "A document that requests speaking points, a recommended microphone and an advance connection test, and assures speakers of a natural pace.",
+  "before_reading": "A public body giving sensible, courteous advice about how to be understood in a multilingual meeting.",
+  "crip_turn": "The speaking points, the recommended microphone and the booked test call named in B2 are requests on the speaker's side. The resolution records that there is no binding remote participation protocol applicable to participants in hybrid meetings, and that it is not obligatory for them to carry out an advance test call.",
+  "crip_turn_carrier": "the speaker's three asks \u2014 speaking points, a recommended microphone, a booked connection test",
+  "evidence_basis": [
+   "F04",
+   "F01",
+   "F08",
+   "F10",
+   "F20",
+   "F22",
+   "F27",
+   "F37",
+   "F45"
+  ],
+  "lens_claim": "The speaker guidance tells speakers that its interpreters are among the best in the world and that they may therefore speak at a natural pace. The inputs it names on the speaker's side \u2014 speaking points, a recommended microphone, an advance connection test \u2014 are asked for as courtesies.",
+  "story_beat_after": "B5",
+  "story_beat_before": "B2",
+  "what_changes_for_the_reader": "The reader now reads the three requests on the speaker page \u2014 speaking points, a recommended microphone, an advance connection test \u2014 beside the resolution's record that a majority of meeting participants do not or will not use the recommended equipment."
+ },
+ "lens_realization": "IMPLICIT",
+ "opening_object_or_event": "The sentence on the speaker guidance page telling speakers that its interpreters are among the best in the world and that they can therefore speak at a natural pace.",
+ "primary_carrier": "F04",
+ "prohibitions": [
+  "Do not invent a speaker, delegate, interpreter, meeting organiser or technician, and do not narrate a specific meeting, booth or incident that no fact records.",
+  "Do not attribute feelings, fatigue, irritation, resentment or satisfaction to any named or unnamed interpreter beyond the symptoms and fears the resolutions and the protest account state.",
+  "Do not claim that poor sound has been proven to cause the listed disorders; write what the resolutions and the academic account report, and no more.",
+  "Do not state that any speaker ignored the guidance, failed to send speaking points, or used a bad microphone in a particular meeting; the only statement available is that a majority of participants do not or will not use the recommended equipment.",
+  "Do not assert that the guidance was written in order to shift risk, or attribute any motive, intention or awareness to its drafters, to the European Parliament or to DG SCIC beyond what the guidance states.",
+  "Do not attribute the speaker page to a body no fact names as its author; the record says the guidance states, and that the European Parliament interpretation service tells speakers.",
+  "Do not say that anything was never done, never tested or never measured; where the record states an absence, state exactly the absence it states \u2014 no binding protocol, no obligation to test-call.",
+  "Do not describe the page's appearance, layout, colours, dates of publication, number of pages, or any microphone brand, model or price.",
+  "Do not claim the interim agreement resolved the problem, granted any specific term, or that the protest succeeded or failed.",
+  "Do not turn the closing into a policy recommendation, a call for regulation, or advice to meeting organisers.",
+  "Do not repeat the symptom list, the three requests, or the wording of the opening sentence in the final movement."
+ ],
+ "reader_initial_state": "That this is ordinary, courteous housekeeping for a multilingual meeting: speak your own language, at your own speed, and the booth will handle it.",
+ "story_spine": "A line of guidance on the speaker page tells speakers that its interpreters are among the best in the world and that they can therefore speak at a natural pace \u2014 and between June and mid-October 2022 interpreters at the European Parliament stop, boycotting remote and hybrid interventions, while interpreters working for the European Commission and in AIIC declare that they reserve the right not to interpret sound that does not meet the required standards.",
+ "supports": {
+  "F02": [
+   "F01"
+  ],
+  "F07": [
+   "F04"
+  ],
+  "F09": [
+   "F08",
+   "F10"
+  ],
+  "F17": [
+   "F16"
+  ],
+  "F19": [
+   "F20",
+   "F22"
+  ],
+  "F23": [
+   "F22"
+  ],
+  "F24": [
+   "F26"
+  ],
+  "F25": [
+   "F46"
+  ],
+  "F31": [
+   "F35"
+  ],
+  "F36": [
+   "F37"
+  ],
+  "F42": [
+   "F41",
+   "F43"
+  ],
+  "F48": [
+   "F45"
+  ]
+ },
+ "turn": "",
+ "use_facts": [
+  "F01",
+  "F02",
+  "F04",
+  "F07",
+  "F08",
+  "F09",
+  "F10",
+  "F16",
+  "F17",
+  "F19",
+  "F20",
+  "F22",
+  "F23",
+  "F24",
+  "F25",
+  "F26",
+  "F27",
+  "F31",
+  "F35",
+  "F36",
+  "F37",
+  "F41",
+  "F42",
+  "F43",
+  "F45",
+  "F46",
+  "F48"
+ ]
+}

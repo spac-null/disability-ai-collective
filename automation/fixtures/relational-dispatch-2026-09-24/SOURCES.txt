@@ -1,0 +1,38 @@
+Real frozen artifacts, copied byte for byte from trident on 2026-09-24. Nothing here is
+derived, reduced or reformatted: an absolute distinctiveness measure counts documents in a
+ledger, so a cut-down ledger would give a different answer than the wire does. The existing
+commitment_slice_repair_test.py embeds a six-fact cut-down of the bandgap ledger, which is
+fine for the tests it runs and wrong for these.
+
+sha256 (verified equal at both ends)
+
+4d7d8e98640abe955c40cfb73daa2c5a5f2be23608e0ad1418730a0c3daea1c4  b2-run1/ARCHITECTURE.json
+718e121e627a2ddc66889b3ee7c508b5e73f1e70d69e2dfd8c974c2016c228d0  b2-run1/LEDGER.json
+80bbe3d40d600736a15806c6c6eda801c2bd91cfacbc8c0f9e64e88379d54759  b2-run2/ARCHITECTURE.json
+95ffad82ccbb35c15bb3777dcc33287006988ac14ed79d72f4bee0a13971013d  b2-run2/LEDGER.json
+0814921f4c2848f2ad414b3fb2c4bfcdb4e4b751d2ebed8437569eb23302144c  held-out-block-group/ARCHITECTURE.json
+db718662d90f753f1c018cee28e4fe98838944dbb42b7d29f0ca5cdde85634a2  held-out-block-group/FINAL_EVIDENCE_MANIFEST.json
+fb760f6d55cbcb807a68caad3072acb53bc3652ad610829ee60498103960fbc5  iso-20260924/ARCHITECTURE.json
+d462badda95fcfece782d9f21ceece0a74d2d7f2d3ac6dec9ae775ec12c233d5  iso-20260924/LEDGER.json
+e950f3a8d94221fc92ed298e10bf4a515f40315bd3287d102a3a9d62c53295d7  pr106-run1/ARCHITECTURE.json
+ae94b2b14ffe2e3acba75191b89a4c87380e1007e27806dbc397f85ff4269025  pr106-run1/LEDGER.json
+
+origin on trident
+
+b2-run1/                /srv/data/cripminds-evidence/claim-shadow-batch2-2026-09-23/run1-20260923T210336Z/
+b2-run2/                /srv/data/cripminds-evidence/claim-shadow-batch2-2026-09-23/run2-20260923T212313Z/
+pr106-run1/             /srv/data/cripminds-evidence/pr106-rehearsal-cohort-2026-09-23/run1-20260923T193833Z/
+held-out-block-group/   /srv/data/cripminds-dcs-calibration/tree/.claude/story-architecture/held-out-real-article-1/
+iso-20260924/           /srv/data/cripminds-new-engine-v1/production-20260924T070701Z-3e62a182/
+
+The first four are inside frozen evidence sets whose SHA256SUMS verify. iso-20260924 is the
+single genuinely new post-#106 plan; it is a live production run directory, not frozen
+evidence, so it is pinned here by hash instead.
+
+The flagged commitments themselves come from the detector artifacts, unmodified:
+  shadow_run1.json / shadow_run2.json  in claim-shadow-batch2-2026-09-23  (sha256 verified)
+  calib.json                           04aae9f3434e3318ca3a3ddf01eba7da9ac4aca59b5e3030bb96f308a710ed2f
+The ISO commitment has no persisted detector artifact -- the one call spent in phase 6 was not
+written to disk. Its term and span are taken from the branch record at d36a61f, and the
+classifier's own inputs for it are re-derived here from the plan, which reproduces the
+published E1/E2/df exactly.

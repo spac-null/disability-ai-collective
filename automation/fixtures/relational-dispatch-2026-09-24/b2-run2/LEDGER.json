@@ -1,0 +1,1522 @@
+{
+ "F01": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "NASA"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F01",
+  "proposition": "NASA plans to soon launch a new space telescope that will survey a billion galaxies to trace how the universe evolved over time.",
+  "scope": "WORLD",
+  "support_span": "NASA plans to soon launch a new space telescope that will survey a billion galaxies to trace how the universe evolved over time"
+ },
+ "F02": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Nancy Grace Roman Space Telescope",
+   "National Reconnaissance Office"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F02",
+  "proposition": "The telescope known as the Nancy Grace Roman Space Telescope was first developed by the National Reconnaissance Office.",
+  "scope": "WORLD",
+  "support_span": "The telescope, known as the Nancy Grace Roman Space Telescope, was first developed by the National Reconnaissance Office"
+ },
+ "F03": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "NASA"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F03",
+  "proposition": "The telescope was transferred to NASA in 2012.",
+  "scope": "WORLD",
+  "support_span": "before being transferred to NASA in 2012"
+ },
+ "F04": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [
+   "NASA"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F04",
+  "proposition": "The intelligence agency no longer needed the hardware for its future missions, so it sent the unused telescope to NASA.",
+  "scope": "WORLD",
+  "support_span": "The intelligence agency no longer needed the hardware for its future missions, so it sent the unused telescope to NASA."
+ },
+ "F05": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "NASA"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F05",
+  "proposition": "NASA spent over a decade making modifications and aims to launch the telescope into space as early as Aug. 30, 2026.",
+  "scope": "WORLD",
+  "support_span": "The space agency spent over a decade making modifications and aims to launch the telescope into space as early as Aug. 30, 2026."
+ },
+ "F06": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F06",
+  "proposition": "The telescope was built to look across the universe and study the three-dimensional distribution of dark matter.",
+  "scope": "WORLD",
+  "support_span": "it was built to look across the universe and study the three-dimensional distribution of dark matter"
+ },
+ "F07": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F07",
+  "proposition": "Dark matter produces unseen effects on objects in the universe, similar to those produced by visible matter.",
+  "support_span": "dark matter produces unseen effects on objects in the universe, similar to those produced by visible matter."
+ },
+ "F08": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Roman"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F08",
+  "proposition": "Roman will see exploding stars called supernovas that allow astronomers to measure how fast the universe has been expanding.",
+  "scope": "WORLD",
+  "support_span": "Roman will see exploding stars called supernovas that allow astronomers to measure how fast the universe has been expanding."
+ },
+ "F09": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F09",
+  "proposition": "Dark matter and dark energy have not yet been directly observed, together are the source of the vast majority of energy in the universe, and their physical natures are unknown.",
+  "scope": "WORLD",
+  "support_span": "Dark matter and dark energy, also not yet directly observed, together are the source of the vast majority of energy in the universe, but their physical natures are unknown."
+ },
+ "F10": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Roman",
+   "Milky Way"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F10",
+  "proposition": "Roman will monitor small variations in light from stars near the center of the Milky Way galaxy in order to infer the presence of rogue planets drifting between the stars.",
+  "scope": "WORLD",
+  "support_span": "Roman will monitor small variations in light from stars near the center of the Milky Way galaxy in order to infer the presence of rogue planets drifting between the stars."
+ },
+ "F100": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "WFI"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F100",
+  "proposition": "The WFI is sensitive to wavelengths from 0.48 to 2.3 microns.",
+  "scope": "WORLD",
+  "support_span": "The WFI is sensitive to wavelengths from 0.48 to 2.3 microns."
+ },
+ "F101": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F101",
+  "proposition": "The Element Wheel Assembly has eleven spots, ten used for optical elements and one a DARK element used for calibration purposes.",
+  "scope": "WORLD",
+  "support_span": "The Element Wheel Assembly has eleven spots, ten of which are used for optical elements and one is a DARK element used for calibration purposes."
+ },
+ "F102": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F102",
+  "proposition": "The WFI optical elements comprise seven standard filters spaced by about 40% in central wavelength, an ultrawide filter, a medium-resolution grism (R ~ 460-890) and a low-resolution prism (R ~ 80-180).",
+  "scope": "WORLD",
+  "support_span": "The optical elements comprise seven standard filters, spaced by about 40% in central wavelength, an ultrawide filter, a medium-resolution grism (R ~ 460 - 890), and a low-resolution prism (R ~ 80-180)."
+ },
+ "F103": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "WFI"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F103",
+  "proposition": "The WFI was fully assembled in September 2023.",
+  "scope": "WORLD",
+  "support_span": "The inlay shows a photograph of the WFI after it was fully assembled in September 2023"
+ },
+ "F104": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "BAE Systems",
+   "Ball Aerospace"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F104",
+  "proposition": "An instrument-testing campaign for the WFI took place at BAE Systems, formerly Ball Aerospace, after integration of its subsystems and before it was wrapped in thermal insulation.",
+  "scope": "WORLD",
+  "support_span": "after integration of its subsystems for the instrument-testing campaign at BAE Systems (formerly Ball Aerospace) but before it was wrapped in its thermal insulation"
+ },
+ "F105": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Relative Calibration System"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F105",
+  "proposition": "An internal calibration system, the Relative Calibration System, can illuminate the detectors.",
+  "scope": "WORLD",
+  "support_span": "An internal calibration system, the Relative Calibration System (RCS) can illuminate the detectors."
+ },
+ "F106": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F106",
+  "proposition": "The instrument has three distinct thermal zones that are all passively cooled.",
+  "scope": "WORLD",
+  "support_span": "The instrument has three distinct thermal zones that are all passively cooled."
+ },
+ "F107": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Mosaic Plate Assembly"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F107",
+  "proposition": "The Mosaic Plate Assembly, on which the 18 detectors are mounted, is the coolest zone, operating around 90 K or cooler.",
+  "scope": "WORLD",
+  "support_span": "The Mosaic Plate Assembly (on which the 18 detectors are mounted) is the coolest, operating around ~90 K (or cooler)"
+ },
+ "F108": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F108",
+  "proposition": "The Sensor Control Electronics Assembly operates at about 140 K and the Focal Plane Electronics at about 190 K.",
+  "scope": "WORLD",
+  "support_span": "the Sensor Control Electronics Assembly is at about 140 K, and the Focal Plane Electronics at about 190 K"
+ },
+ "F109": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "WFI"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F109",
+  "proposition": "Three radiators help maintain the desired operating temperature for each thermal zone of the WFI.",
+  "scope": "WORLD",
+  "support_span": "three radiators help maintain the desired operating temperature for each zone of the WFI"
+ },
+ "F11": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F11",
+  "proposition": "As a planet passes in front of a star, it briefly perturbs and magnifies the light from the star behind it, confirming its presence.",
+  "scope": "WORLD",
+  "support_span": "As a planet passes in front of a star, it briefly perturbs and magnifies the light from the star behind it, confirming its presence."
+ },
+ "F110": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F110",
+  "proposition": "Light is relayed from the primary and secondary mirrors through a series of flat mirrors into the Element Wheel Assembly at an angle of about 10 degrees.",
+  "scope": "WORLD",
+  "support_span": "the light is relayed from the primary and secondary mirrors through a series of flat mirrors into the Element Wheel Assembly at an angle of about 10 degrees"
+ },
+ "F111": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F111",
+  "proposition": "Light hits the Focal Plane Array at nearly normal incidence (90 degrees).",
+  "scope": "WORLD",
+  "support_span": "Light hits the Focal Plane Array at nearly normal incidence (90 degrees)."
+ },
+ "F112": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F112",
+  "proposition": "The instrument has rather fast optics, with the angle of incidence of the light at each location in the focal plane having an opening of about 6 degrees.",
+  "scope": "WORLD",
+  "support_span": "The instrument has rather fast optics, with the angle of incidence of the light at each location in the focal plane having an opening of about 6 degrees."
+ },
+ "F113": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F113",
+  "proposition": "Because of the large field of view, the central angle changes by several degrees over the instrument field of view, which may induce variations in filter transmission.",
+  "scope": "WORLD",
+  "support_span": "Because of the large field-of-view, the central angle changes by several degrees over the instrument field of view and this may induce variations in the filter transmi"
+ },
+ "F114": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "WFI"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F114",
+  "proposition": "The WFI has a very simple optical structure.",
+  "scope": "WORLD",
+  "support_span": "The WFI has a very simple optical structure."
+ },
+ "F115": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Nancy Grace Roman Space Telescope"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F115",
+  "proposition": "The Roman user documentation includes a Galactic Bulge Time-Domain Survey.",
+  "support_span": "Galactic Bulge Time-Domain Survey"
+ },
+ "F116": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F116",
+  "proposition": "The WFI Focal Plane System houses the Focal Plane Array with the detectors, the Sensor Control Electronics Assembly and the Focal Plane Electronics.",
+  "scope": "WORLD",
+  "support_span": "the Focal Plane System (the location of the Focal Plane Array (FPA) that houses the detectors, the Sensor Control Electronics Assembly (SCEA), and the Focal Plane Electronics (FPE))"
+ },
+ "F117": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Alignment Compensation Mechanism"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F117",
+  "proposition": "All of the WFI optics are on an Optical Bench that can be finely adjusted with the Alignment Compensation Mechanism.",
+  "scope": "WORLD",
+  "support_span": "All of the optics are on an Optical Bench that can be finely adjusted with the Alignment Compensation Mechanism (ACM)."
+ },
+ "F118": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F118",
+  "proposition": "In the release figure of the Wide Field Instrument focal plane array, the colour is scaled with noise performance.",
+  "support_span": "The color is scaled with noise performance."
+ },
+ "F12": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Roman"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F12",
+  "proposition": "Roman has a coronagraph instrument that will test the technology for future missions that plan to detect Earth-like planets around other stars.",
+  "scope": "WORLD",
+  "support_span": "Roman has a coronagraph instrument that will test the technology for future missions that plan to detect Earth-like planets around other stars."
+ },
+ "F13": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F13",
+  "proposition": "A coronagraph blocks most of the light from a star so astronomers can detect the much fainter planets orbiting it.",
+  "scope": "WORLD",
+  "support_span": "A coronagraph blocks most of the light from a star so astronomers can detect the much fainter planets orbiting it."
+ },
+ "F14": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F14",
+  "proposition": "For an Earth-like planet around a Sun-like star, the host star can be 10 billion times brighter than the planet.",
+  "scope": "WORLD",
+  "support_span": "For an Earth-like planet around a Sun-like star, the host star can be 10 billion times brighter than the planet."
+ },
+ "F15": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F15",
+  "proposition": "The telescope has a wide field of view compared with most space telescopes made for astronomy, meaning it can see a large swath of the sky at once.",
+  "scope": "WORLD",
+  "support_span": "The telescope has a wide field of view, at least compared with most space telescopes made for astronomy. This means it can see a large swath of the sky at once."
+ },
+ "F16": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Hubble Space Telescope",
+   "Roman"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F16",
+  "proposition": "Telescopes like the Hubble Space Telescope see narrow fields very deeply, while Roman will be able to see much larger fields.",
+  "scope": "WORLD",
+  "support_span": "while telescopes like the Hubble Space Telescope see narrow fields very deeply, Roman will be able to see much larger fields"
+ },
+ "F17": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Roman"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F17",
+  "proposition": "Roman's camera has such a wide field because its spy telescope origins give it unusually fast optics.",
+  "scope": "WORLD",
+  "support_span": "Roman\u2019s camera has such a wide field because its spy telescope origins give it unusually fast optics."
+ },
+ "F18": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F18",
+  "proposition": "Fast optics means the telescope has a relatively short focal length \u2014 the distance between the mirror and the point where the light focuses \u2014 for the diameter of its mirror.",
+  "scope": "WORLD",
+  "support_span": "This means that it has a relatively short focal length \u2013 the distance between the mirror and the point where the light focuses \u2013 for the diameter of its mirror."
+ },
+ "F19": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Nancy Grace Roman Space Telescope",
+   "Hubble Space Telescope"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F19",
+  "proposition": "Roman's mirror is about the same diameter as Hubble's.",
+  "support_span": "Its mirror is about the same diameter as Hubble\u2019s"
+ },
+ "F20": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "NASA"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F20",
+  "proposition": "One modification NASA made included building a large focal plane, the component of the telescope that collects light, made up of 18 wide area near-infrared detectors.",
+  "scope": "WORLD",
+  "support_span": "One modification that NASA made included building a large focal plane, the component of the telescope that collects light, made up of 18 wide area near-infrared detectors."
+ },
+ "F21": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "James Webb Space Telescope"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F21",
+  "proposition": "Roman's detectors are almost identical to those in the James Webb Space Telescope but have four times the number of pixels.",
+  "scope": "WORLD",
+  "support_span": "These detectors are almost identical to those in the James Webb Space Telescope, but they have four times the number of pixels."
+ },
+ "F22": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Webb",
+   "Roman"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F22",
+  "proposition": "Each detector on Webb has 4 megapixels while Roman's detectors have about 16 megapixels, bringing the full coverage of the 18 detectors to around 300 megapixels.",
+  "scope": "WORLD",
+  "support_span": "while each one on Webb has 4 megapixels, or 4 million pixels, Roman\u2019s detectors have about 16 megapixels, bringing the full coverage of the 18 detectors to around 300 megapixels"
+ },
+ "F23": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F23",
+  "proposition": "The detectors will take in infrared light, which has longer wavelengths than the light that human eyes can see.",
+  "scope": "WORLD",
+  "support_span": "They will take in infrared light, which has longer wavelengths than the light that human eyes can see."
+ },
+ "F24": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Hubble",
+   "Webb"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F24",
+  "proposition": "The article's author states he worked with colleagues in the early 2000s to advance the technology used in this type of detector, versions of which have been used on Hubble and Webb.",
+  "scope": "WORLD",
+  "support_span": "I worked with colleagues in the early 2000s to advance the technology used in this type of detector \u2013 versions of which have been used on Hubble and Webb."
+ },
+ "F25": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F25",
+  "proposition": "The author states that his team measured in the lab how the detectors performed in a simulated space environment, to make sure they could still sense tiny signals in space.",
+  "scope": "WORLD",
+  "support_span": "We measured in the lab how the detectors performed in a simulated space environment. We needed to make sure that they could still sense even tiny signals out in space"
+ },
+ "F26": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F26",
+  "proposition": "The observatory has not yet left the ground, and the author asks how such high expectations can be held for it.",
+  "scope": "WORLD",
+  "support_span": "how can we have such high expectations of a space observatory that has not even left the ground?"
+ },
+ "F27": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Nobel Prize"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F27",
+  "proposition": "The team of physicists that inferred the existence of dark energy received a Nobel Prize in 2011.",
+  "scope": "WORLD",
+  "support_span": "The team of physicists that inferred the existence of dark energy received a Nobel Prize in 2011."
+ },
+ "F28": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F28",
+  "proposition": "The observations used in that dark energy work came from new families of sensitive digital imaging detectors called charge-coupled devices, or CCDs, invented in the early 1970s.",
+  "scope": "WORLD",
+  "support_span": "The observations they used came from new families of sensitive digital imaging detectors called charge-coupled devices, or CCDs, invented in the early 1970s."
+ },
+ "F29": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F29",
+  "proposition": "CCDs helped astronomers measure how fast stars moved through space, supporting the notion that space is permeated with some unknown dark matter.",
+  "scope": "WORLD",
+  "support_span": "These devices helped astronomers measure how fast stars moved through space, which supported the notion that space is permeated with some unknown \u201cdark\u201d matter."
+ },
+ "F30": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Roman"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F30",
+  "proposition": "Important validation of that Nobel-Prize-winning research came from near-infrared detectors that used the same technology as Roman.",
+  "scope": "WORLD",
+  "support_span": "Important validation of that Nobel-Prize-winning research came from near-infrared detectors that used the same technology as Roman."
+ },
+ "F31": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Nobel Prize",
+   "Milky Way"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F31",
+  "proposition": "The Nobel Prize for the discovery of the supermassive black hole in the center of the Milky Way galaxy was awarded to researchers who used a variety of infrared instruments on large ground-based telescopes.",
+  "scope": "WORLD",
+  "support_span": "the Nobel Prize for the discovery of the supermassive black hole in the center of the Milky Way galaxy was awarded to researchers who used a variety of infrared instruments on large ground-based telescopes"
+ },
+ "F32": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "INTERPRETATION",
+  "entities": [
+   "Nobel Prize"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F32",
+  "proposition": "That Nobel Prize highlights the impact of three technologies: infrared detectors, big telescopes and adaptive optics.",
+  "scope": "WORLD",
+  "support_span": "this Nobel Prize highlights the impact of three technologies: infrared detectors, big telescopes and adaptive optics"
+ },
+ "F33": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Galileo",
+   "Jupiter"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F33",
+  "proposition": "Galileo used a telescope to observe the previously unseen moons of Jupiter.",
+  "scope": "WORLD",
+  "support_span": "Galileo used a telescope to observe the previously unseen moons of Jupiter."
+ },
+ "F34": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F34",
+  "proposition": "The next technological iteration replaced the human eye with photographic plates in the 19th century, which led to the first sensitive all-sky surveys.",
+  "scope": "WORLD",
+  "support_span": "the next technological iteration replaced the human eye with photographic plates in the 19th century, which led to the first sensitive all-sky surveys"
+ },
+ "F35": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F35",
+  "proposition": "The 1970s saw electronic detectors take over for photographic plates, increasing detector sensitivity by an order of magnitude.",
+  "scope": "WORLD",
+  "support_span": "The 1970s saw electronic detectors take over for photographic plates, increasing the detector sensitivity by an order of magnitude."
+ },
+ "F36": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "NASA"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F36",
+  "proposition": "NASA is already designing the next space telescope.",
+  "support_span": "NASA is already designing the next space telescope."
+ },
+ "F37": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Habitable Worlds Observatory"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F37",
+  "proposition": "NASA is developing the Habitable Worlds Observatory, a future space mission with the goal of directly imaging Earth-like planets around nearby stars and identifying signs of life in the universe.",
+  "scope": "WORLD",
+  "support_span": "The agency is developing the Habitable Worlds Observatory, a future space mission with the goal of directly imaging Earth-like planets around nearby stars and identifying signs of life in the universe."
+ },
+ "F38": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Nancy Grace Roman Space Telescope"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F38",
+  "proposition": "Roman will perform infrared surveys of the universe using its Wide Field Instrument (WFI).",
+  "scope": "WORLD",
+  "support_span": "The Nancy Grace Roman Space Telescope (Roman) will perform infrared surveys of the universe using its "
+ },
+ "F39": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "WFI"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F39",
+  "proposition": "At the heart of the WFI is an array of 18 sensor chip assemblies (SCAs) in a focal plane.",
+  "scope": "WORLD",
+  "support_span": "At the heart of WFI is an array of 18 sensor chip assemblies (SCAs) in a "
+ },
+ "F40": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Teledyne"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F40",
+  "proposition": "Each SCA in the focal plane mosaic consists of a 4096x4096 pixel Teledyne H4RG-10 sensor.",
+  "scope": "WORLD",
+  "support_span": "Each SCA in the focal plane mosaic consists of a 4096x4096 pixel Teledyne H4RG-10 sensor."
+ },
+ "F41": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F41",
+  "proposition": "Each pixel is 10x10 micrometres in size.",
+  "scope": "WORLD",
+  "support_span": "Each pixel is 10x10 \u03bcm in size."
+ },
+ "F42": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F42",
+  "proposition": "Each SCA provides both science data and guide window functionality.",
+  "scope": "WORLD",
+  "support_span": "Each SCA provides both science data and guide window functionality."
+ },
+ "F43": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "NASA GSFC Detector Characterization Laboratory"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F43",
+  "proposition": "Each SCA has undergone extensive testing by the NASA GSFC Detector Characterization Laboratory.",
+  "scope": "WORLD",
+  "support_span": "Each SCA has undergone extensive testing by the NASA GSFC Detector Characterization Laboratory "
+ },
+ "F44": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F44",
+  "proposition": "The released triplet testing data is for a single detector, SCA 21816.",
+  "scope": "WORLD",
+  "support_span": "This release of triplet testing data is for SCA 21816"
+ },
+ "F45": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Nancy Grace Roman Space Telescope"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F45",
+  "proposition": "The Wide Field Instrument focal plane array consists of 18 sensor chip assemblies.",
+  "support_span": "The WFI focal plane array (FPA) consists of 18 SCAs."
+ },
+ "F46": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "NASA GSFC Project Science Office"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F46",
+  "proposition": "The triplet test data release notes state that the document is not intended to be exhaustive.",
+  "support_span": "This document is not intended to be an exhaustive"
+ },
+ "F47": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "ACADIA"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F47",
+  "proposition": "In triplet tests, 4 flight SCAs are connected to 4 flight-like sensor control electronics known as ACADIAs using flight-like electrical cables.",
+  "scope": "WORLD",
+  "support_span": "4 flight SCAs are connected to 4 flight-like sensor control electronics (SCEs, known as "
+ },
+ "F48": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F48",
+  "proposition": "A triplet is defined as an SCA, an SCE, and a flight-like cable.",
+  "scope": "WORLD",
+  "support_span": "A triplet is defined as an SCA, an SCE, and a flight-like cable."
+ },
+ "F49": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F49",
+  "proposition": "The triplet test setting used a detector reverse bias of -1.0 V.",
+  "scope": "WORLD",
+  "support_span": "Detector reverse bias -1.0 V "
+ },
+ "F50": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F50",
+  "proposition": "The triplet test setting used a readout speed of 200 kHz.",
+  "scope": "WORLD",
+  "support_span": "Readout speed 200 kHz "
+ },
+ "F51": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F51",
+  "proposition": "The triplet test setting held the SCA at a temperature of 95 K.",
+  "scope": "WORLD",
+  "support_span": "SCA Temperature 95 K "
+ },
+ "F52": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F52",
+  "proposition": "Each SCA is read out with 32 output channels.",
+  "scope": "WORLD",
+  "support_span": "Each SCA is readout with 32 output channels"
+ },
+ "F53": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F53",
+  "proposition": "The differential signal from a reference pixel on the H4RG-10 is read out and digitized as a 33rd output, commonly referred to as REFOUT.",
+  "scope": "WORLD",
+  "support_span": "on the H4RG-10 is readout and digitized as a 33rd output, commonly referred to as REFOUT."
+ },
+ "F54": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F54",
+  "proposition": "The sensor control electronics software used during the triplet tests was Version 3.4b.",
+  "scope": "WORLD",
+  "support_span": "software used during these triplet tests is Version 3.4b."
+ },
+ "F56": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F56",
+  "proposition": "Illumination in triplet testing came from an external Tungsten lamp feeding light through a window in the dewar into a monochromator.",
+  "scope": "WORLD",
+  "support_span": "Illumination in triplet testing is from an external Tungsten lamp that feeds light through a window in the "
+ },
+ "F57": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F57",
+  "proposition": "An integrating sphere provided uniform illumination across the 4 flight SCAs under test.",
+  "scope": "WORLD",
+  "support_span": "sphere that then provides uniform illumination across the 4 flight SCAs under test."
+ },
+ "F58": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F58",
+  "proposition": "The raw data are collected into FITS images with the coordinate system defined with the (0,0) pixel in the lower left corner.",
+  "scope": "WORLD",
+  "support_span": "collected into FITS images with the coordinate system defined with (0,0) pixel in the lower left corner."
+ },
+ "F59": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F59",
+  "proposition": "The pixel coordinate system used in the released test data is not consistent with SCA physical coordinates.",
+  "scope": "WORLD",
+  "support_span": "This specific pixel coordinate system is not consistent with SCA physical coordinates"
+ },
+ "F60": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Roman"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F60",
+  "proposition": "The raw data from Roman's H4RGs includes 4088x4088 active pixels and a border of 4 reference pixels on each side that can be used to correct for offset drifts.",
+  "scope": "WORLD",
+  "support_span": "The raw data from Roman\u2019s H4RGs includes 4088x4088 active pixels and a border of 4 reference pixels "
+ },
+ "F61": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F61",
+  "proposition": "The linearity data were taken to assess the linearity of the detector up to signal levels of about 80,000 electrons.",
+  "scope": "WORLD",
+  "support_span": "These data are taken to assess the linearity of the detector up to signal levels of ~80,000 e-."
+ },
+ "F62": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F62",
+  "proposition": "The linearity raw data consists of 30 exposures with flat field illumination at 1400 nm.",
+  "scope": "WORLD",
+  "support_span": "consists of 30 exposures with flat field illumination at 1400 nm."
+ },
+ "F63": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F63",
+  "proposition": "The read noise data were taken without illumination to assess the detector's read noise, and consist of 39 exposures.",
+  "scope": "WORLD",
+  "support_span": "These data are taken without illumination to assess the detector\u2019s read noise. The raw data consist of 39 "
+ },
+ "F64": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Roman"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F64",
+  "proposition": "Guide windows are used by Roman for attitude control.",
+  "scope": "WORLD",
+  "support_span": "Guide windows (GW) are used by Roman for attitude control."
+ },
+ "F65": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F65",
+  "proposition": "In normal operations each SCA will have a guide window enabled.",
+  "scope": "WORLD",
+  "support_span": "each SCA will have a guide window enabled."
+ },
+ "F66": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F66",
+  "proposition": "For each full science frame, 48 guide window samples are saved.",
+  "support_span": "For each full science frame, 48 GW samples are saved."
+ },
+ "F67": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F67",
+  "proposition": "The gain data were taken to measure the conversion gain of the detector using the photon transfer curve method.",
+  "scope": "WORLD",
+  "support_span": "These data are taken to measure the conversion gain of the detector using the photon transfer curve "
+ },
+ "F68": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F68",
+  "proposition": "The gain raw data consists of 21 exposures with flat field illumination at 1400 nm.",
+  "scope": "WORLD",
+  "support_span": "The raw data consists of 21 exposures with flat field illumination at 1400 nm."
+ },
+ "F69": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F69",
+  "proposition": "The dark current data were taken without illumination to measure the intrinsic dark current in the detectors.",
+  "scope": "WORLD",
+  "support_span": "These data are taken without illumination to measure the intrinsic dark current in the detectors."
+ },
+ "F70": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F70",
+  "proposition": "Dark current refers to induced signal from thermal or quantum tunneling processes.",
+  "scope": "WORLD",
+  "support_span": "current refers to induced signal from thermal or quantum tunneling processes."
+ },
+ "F71": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F71",
+  "proposition": "The total integration time of each dark current exposure is approximately 2 hours.",
+  "scope": "WORLD",
+  "support_span": "The total integration time of each of these exposures is approximately 2 hours."
+ },
+ "F72": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F72",
+  "proposition": "In the darks of the dark current test there is significant glow in the first ~300.",
+  "support_span": "darks of this test, there is significant glow in the first ~300."
+ },
+ "F73": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F73",
+  "proposition": "Flat field data were taken with SCAs illuminated at wavelengths of 625, 875, 1050, 1300, 1450, 1600, 1850 and 2100 nm with a 5-20 nm bandpass.",
+  "scope": "WORLD",
+  "support_span": "the wavelengths 625nm, 875nm, 1050nm, 1300nm, 1450nm, 1600nm, 1850nm, 2100nm with a 5-20 nm "
+ },
+ "F74": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F74",
+  "proposition": "More than one flat field exposure is taken at each wavelength.",
+  "scope": "WORLD",
+  "support_span": "More than one exposure is taken at each wavelength."
+ },
+ "F75": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Mosby",
+   "Nancy Grace Roman Space Telescope"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F75",
+  "proposition": "The release notes direct readers to Mosby et al. for additional information about the H4RG-10s of the Nancy Grace Roman Space Telescope.",
+  "support_span": "information about the H4RG-10s of the Nancy Grace Roman Space Telescope, please see Mosby et. Al "
+ },
+ "F76": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "WFI"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F76",
+  "proposition": "The WFI focal plane is populated by eighteen H4RG-10 detectors, described as representing the most advanced IR detector technology available for the mission.",
+  "scope": "WORLD",
+  "support_span": "The WFI focal plane is populated by eighteen H4RG-10 detectors, representing the most advanced IR detector technology available for the Mission."
+ },
+ "F77": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Roman"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F77",
+  "proposition": "Meeting Roman's science requirements requires calibration of these detectors to unprecedented precision, supported by an extensive ground-based characterization program.",
+  "scope": "WORLD",
+  "support_span": "Meeting Roman\u2019s science requirements requires calibration of these detectors to unprecedented precision, supported by an extensive ground-based characterization program."
+ },
+ "F78": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F78",
+  "proposition": "The H4RG-10 detectors are HgCdTe 4096 pixel by 4096 pixel photodiode arrays with a 10 micron pixel pitch.",
+  "scope": "WORLD",
+  "support_span": "The H4RG-10 detectors are HgCdTe 4096 pixel by 4096 pixel photodiode arrays with a 10 micron pixel pitch."
+ },
+ "F79": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Detector Characterization Laboratory",
+   "Goddard Space Flight Center"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F79",
+  "proposition": "Prototype detectors were extensively characterized at the Detector Characterization Laboratory at Goddard Space Flight Center under space-relevant environmental conditions including thermal vacuum, vibration, acoustic and radiation testing.",
+  "scope": "WORLD",
+  "support_span": "detectors were extensively characterized at the Detector Characterization Laboratory (DCL) at Goddard Space Flight Center under space-relevant environmental conditions (thermal vacuum, vibration, acoustic, and radiation testing)"
+ },
+ "F80": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "GSFC",
+   "Detector Technology Advancement Program"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F80",
+  "proposition": "Roman detector development was a decade-long program with key early investments, dozens of detectors fabricated and screened, then characterized and tested at GSFC through the Detector Technology Advancement Program.",
+  "scope": "WORLD",
+  "support_span": "Roman detector development was a decade-long program with key early investments, dozens of detectors fabricated and screened, then characterized and tested at GSFC through the Detector Technology Advancement Program (DTAP)."
+ },
+ "F81": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Roman"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F81",
+  "proposition": "The testing undertaken by the Roman project advanced the H4RG-10's technology readiness level to TRL-6.",
+  "scope": "WORLD",
+  "support_span": "The testing undertaken by the Roman project advanced the H4RG-10\u2019s technology readiness level (TRL) to TRL-6"
+ },
+ "F82": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F82",
+  "proposition": "Infrared detectors are fundamentally different from silicon CCD detectors because it is not possible to have both photon detection and electronic readout on the same chip.",
+  "scope": "WORLD",
+  "support_span": "Infrared detectors are fundamentally different from silicon CCD detectors because it is not possible to have both photon detection and electronic readout on the same chip."
+ },
+ "F83": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F83",
+  "proposition": "The photon-sensitive mercury cadmium telluride layer is bonded to a silicon Read-out Integrated Circuit, and the combination is referred to as a hybrid.",
+  "scope": "WORLD",
+  "support_span": "The photon-sensitive mercury cadmium telluride (HgCdTe) layer is bonded to a silicon Read-out Integrated Circuit (ROIC)"
+ },
+ "F84": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F84",
+  "proposition": "The hybrid is connected to a mechanical mount with electrical connections, and the combination is called a Sensor Chip Assembly.",
+  "scope": "WORLD",
+  "support_span": "The hybrid is connected to a mechanical mount with electrical connections"
+ },
+ "F85": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "WFI Handbook"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F85",
+  "proposition": "In the WFI Handbook the terms SCA and detector are used interchangeably.",
+  "scope": "WORLD",
+  "support_span": "the terms SCA and detector are used interchangeably"
+ },
+ "F86": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F86",
+  "proposition": "The precise mixture of HgCdTe, specifically the fraction of cadmium, can be varied to engineer a specific bandgap energy.",
+  "scope": "WORLD",
+  "support_span": "The precise mixture of HgCdTe, specifically the fraction of cadmium, can be varied to engineer a specific bandgap energy."
+ },
+ "F87": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Roman"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F87",
+  "proposition": "For Roman's desired cutoff wavelength of approximately 2.5 microns, the fraction of cadmium was tuned to 0.445.",
+  "scope": "WORLD",
+  "support_span": "For Roman's desired cutoff wavelength of approximately 2.5 microns, the fraction of cadmium was tuned to 0.445"
+ },
+ "F88": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F88",
+  "proposition": "Other characteristics in the HgCdTe layer induce an electric drift field within the layer that improves quantum efficiency and count rate non linearity.",
+  "scope": "WORLD",
+  "support_span": "Other characteristics in the HgCdTe layer induce an electric drift field within the layer that improves quantum efficiency (QE) and count rate non linearity (CRNL)."
+ },
+ "F89": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F89",
+  "proposition": "An anti-reflection coating acts as an interference filter and ensures that in-band light is transmitted with high efficiency.",
+  "scope": "WORLD",
+  "support_span": "An anti-reflection coating acts as an interference filter and ensures that in-band light is transmitted with high efficiency."
+ },
+ "F90": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F90",
+  "proposition": "A comparison table lists H4RG development as 2011-2021, a pixel array size of 4096 by 4096, and a physical pixel size of 10 microns, against 18 microns for the earlier H1R and H2RG generations.",
+  "scope": "WORLD",
+  "support_span": "Development 2000-2007 2002-2014 2011-2021 Pixel Array Size 1024 by 1024 2048 by 2048 4096 by 4096 Physical Pixel Size 18 microns 18 microns 10 microns"
+ },
+ "F91": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Teledyne",
+   "HST",
+   "JWST"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F91",
+  "proposition": "A Roman documentation table of Teledyne infrared detectors lists the detector generations H1R, H2RG and H4RG with mission and instrument uses including HST/WFC3-IR and JWST/NIRCam.",
+  "support_span": "Detector Generation H1R H2RG H4RG Mission/Instrument Use HST/WFC3-IR JWST/NIRCam"
+ },
+ "F92": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Roman Space Telescope Technical Information Repository"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F92",
+  "proposition": "Users seeking authoritative, versioned and quantitative performance metrics are directed to the Roman Space Telescope Technical Information Repository v1.2 (July 2025).",
+  "scope": "WORLD",
+  "support_span": "Users seeking authoritative, versioned, and quantitative performance metrics should consult the Roman Space Telescope Technical Information Repository v1.2 (July 2025)"
+ },
+ "F93": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "WFI"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F93",
+  "proposition": "The WFI Performance documentation is under active development and its content may evolve as ground testing and commissioning continue.",
+  "scope": "WORLD",
+  "support_span": "The WFI Performance documentation is under active development. Content may evolve as ground testing and commissioning continue."
+ },
+ "F94": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F94",
+  "proposition": "The technical repository includes the serial-ID mappings between the Sensor Control Unit and the Sensor Chip Assembly, useful for users working with ground test data.",
+  "scope": "WORLD",
+  "support_span": "The technical repository also includes the serial-ID mappings between the Sensor Control Unit (SCU) and the Sensor Chip Assembly (SCA), which are particularly useful for users working with ground test data."
+ },
+ "F95": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Brandt"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F95",
+  "proposition": "Planned documentation content includes other anomalous detector behaviors, including the WFI18 Transient described in Brandt (2025).",
+  "scope": "WORLD",
+  "support_span": "Other anomalous detector behaviors, including the WFI18 Transient described in Brandt (2025)"
+ },
+ "F96": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Wide Field Instrument"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F96",
+  "proposition": "The WFI performance documentation lists burn-in among non-ideal detector effects.",
+  "support_span": "Non-Ideal Detector Effects Burn-In"
+ },
+ "F97": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Wide Field Instrument",
+   "Roman Space Telescope"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F97",
+  "proposition": "The Wide Field Instrument has both imaging and slitless spectroscopy capabilities and a large field of view.",
+  "scope": "WORLD",
+  "support_span": "The Wide Field Instrument (WFI) of the Roman Space Telescope has both imaging and slitless spectroscopy capabilities, and a large field of view."
+ },
+ "F98": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "HST",
+   "JWST"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F98",
+  "proposition": "The WFI active area on the sky is 0.281 square degrees, roughly 100 times the area covered by HST/ACS or JWST/NIRCam and 200 times that of WFC3/IR.",
+  "scope": "WORLD",
+  "support_span": "The active area on the sky is 0.281 square degrees, roughly 100 times the area covered by HST/ACS or JWST/NIRCam, and 200 times that of WFC3/IR."
+ },
+ "F99": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "WFI"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F99",
+  "proposition": "The WFI has 18 H4RG-10 HgCdTe 4096 by 4096 pixel detectors for over 300 million active pixels with a plate scale of 0.11 arcseconds.",
+  "scope": "WORLD",
+  "support_span": "The WFI has 18 H4RG-10 (HgCdTe) 4096 pixel by 4096 pixel detectors for over 300 million active pixels with a plate scale of 0.11 arcseconds."
+ }
+}

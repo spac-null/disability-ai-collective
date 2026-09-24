@@ -1,0 +1,543 @@
+{
+ "article_type": "NARRATIVE_ARTICLE",
+ "beats": [
+  {
+   "beat_function": "REVEAL",
+   "beat_id": "B1",
+   "concept_introduced": "",
+   "concrete_carrier": "the lighting rig above six glass roof windows",
+   "facts_allowed": [
+    "F19",
+    "F18",
+    "F17",
+    "F01",
+    "F08"
+   ],
+   "happens": "The venue's theatre lights are not in the theatre. Six glass windows are set into the roof and the rig sits above them, shining down, because conventional theatre equipment placed inside would get too hot or would not withstand the temperature and moisture. Inside there are no windows at eye level and the room is blacked out.",
+   "must_not_say_yet": "Do not mention wheelchairs, assistance dogs, or any access provision.",
+   "why_reader_wants_next": "The reader wants to see the room that could do this to a lamp."
+  },
+  {
+   "beat_function": "REVEAL",
+   "beat_id": "B2",
+   "concept_introduced": "",
+   "concrete_carrier": "the horseshoe of Ayous benches around three stoves",
+   "facts_allowed": [
+    "F10",
+    "F02",
+    "F04"
+   ],
+   "happens": "The room itself: Ayous timber benches in a horseshoe around three large sauna stoves, seating eighty, designed by Lucy Osborne, director of Studio Three Sixty and co-creative director of the club that runs it, with lighting and surround sound built in.",
+   "must_not_say_yet": "Do not give the temperature or the act lengths.",
+   "why_reader_wants_next": "The reader has the room but not what a performance in it can possibly be."
+  },
+  {
+   "beat_function": "EXPLAIN",
+   "beat_id": "B3",
+   "concept_introduced": "acts measured by body tolerance rather than narrative",
+   "concrete_carrier": "the ten-minute section",
+   "facts_allowed": [
+    "F42",
+    "F43",
+    "F41",
+    "F44",
+    "F09",
+    "F32",
+    "F88",
+    "F50",
+    "F48"
+   ],
+   "happens": "The temperature in shows is hot, up to 90\u00b0C or more. Shows are made specifically for sauna, using heat, steam and aroma as storytelling \u2014 the Aufguss ritual among them \u2014 and are deliberately short so audiences cool down between acts: most are built in sections of around ten minutes, then a cool-down, then again. Leaving at any point is designed to be easy, and latecomers are brought in at the next interval. Anyone pregnant or with a pre-existing heart or medical condition is told to take GP advice before attending.",
+   "must_not_say_yet": "Do not yet describe the seating levels or who cannot enter.",
+   "why_reader_wants_next": "If ten minutes is the unit, the reader wants to know what happens when a show needs longer."
+  },
+  {
+   "beat_function": "REVEAL",
+   "beat_id": "B4",
+   "concept_introduced": "",
+   "concrete_carrier": "the sauna thermostat of the promenade show",
+   "facts_allowed": [
+    "F68",
+    "F71",
+    "F72"
+   ],
+   "happens": "The programme obeys the clock in the walls. A storytelling and ritual show runs as three acts of ten to twelve minutes with intervals. Where a show needs a longer continuous stay \u2014 a promenade piece that begins in the changing area and leads the audience inside \u2014 the temperature of the sauna is decreased so the audience can remain for around thirty minutes before being led out to cool down.",
+   "must_not_say_yet": "Do not name the wheelchair or the assistance dog.",
+   "why_reader_wants_next": "If length is set at the stove, the reader will ask what else in the room is a temperature in disguise."
+  },
+  {
+   "beat_function": "COMPLICATE",
+   "beat_id": "B5",
+   "concept_introduced": "bench height as dose",
+   "concrete_carrier": "the three bench levels",
+   "facts_allowed": [
+    "F61"
+   ],
+   "happens": "Seating is unreserved and arranged over three levels, with steps up from the bottom bench; the lowest bench is the coolest and the top bench the hottest. Where an audience member sits is therefore how much heat they take.",
+   "must_not_say_yet": "Do not state the reason no wheelchair is used.",
+   "why_reader_wants_next": "The reader now wants to know how a body that cannot climb, or cannot regulate, is placed in this scale."
+  },
+  {
+   "beat_function": "REVERSE",
+   "beat_id": "B6",
+   "concept_introduced": "",
+   "concrete_carrier": "the wheelchair at the 1100mm door",
+   "facts_allowed": [
+    "F59",
+    "F60",
+    "F62",
+    "F63",
+    "F64"
+   ],
+   "happens": "Access to the structure is via two ramps, one on each side; the main door is 1100mm wide and two further doors are 1070mm. The barrier is not the geometry: the organisers state they have not yet found a wheelchair that is sauna compatible, and their ambition is to have one. For this run there is a transfer-to-seat option \u2014 a dedicated seat on the bottom bench with a back rest and arm rests and a space beside it for a companion \u2014 after which a Sauna Host takes the wheelchair back outside the sauna and stands ready to return with it, the process and the emergency evacuation protocol having been discussed before the session.",
+   "must_not_say_yet": "Do not yet make the comparison with the lighting rig explicit.",
+   "why_reader_wants_next": "The reader wants to know whether anything else is held to this same specification."
+  },
+  {
+   "beat_function": "RESOLVE",
+   "beat_id": "B7",
+   "concept_introduced": "",
+   "concrete_carrier": "the threshold of the sauna door",
+   "facts_allowed": [
+    "F78",
+    "F51",
+    "F19"
+   ],
+   "happens": "Assistance dogs are welcome on the site but not in the Sauna Theatre itself, because it is too hot. The organisers write that they know saunas and theatres can often be inaccessible and excluding and that they want to change that. The lighting rig stays above the glass; the chair waits outside the door; the dog stops at the site's edge.",
+   "must_not_say_yet": "Do not close on a policy recommendation or on the venue's future plans.",
+   "why_reader_wants_next": ""
+  }
+ ],
+ "crip_turn": "The lighting rig sits above six glass roof windows and shines down into the space; Osborne states that many components of conventional theatre equipment would get too hot inside a sauna. The organisers state their ambition is to have a sauna-compatible wheelchair. A Sauna Host takes a guest's wheelchair back outside the sauna. Assistance dogs are welcome on the site; the Sauna Theatre itself is too hot for them.",
+ "crip_turn_rereads": "B1",
+ "cut_evidence": [
+  {
+   "evidence_id": "F03",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F05",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F07",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F11",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F12",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F13",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F14",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F15",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F16",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F20",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F21",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F22",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F23",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F24",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F25",
+   "reason": "BREAKS_STORY_MOMENTUM"
+  },
+  {
+   "evidence_id": "F26",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F27",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F29",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F30",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F31",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F33",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F34",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F35",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F36",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F37",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F38",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F39",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F40",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F45",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F46",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F47",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F49",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F52",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F53",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F54",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F55",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F56",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F57",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F58",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F65",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F66",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F67",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F69",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F70",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F73",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F74",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F75",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F76",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F77",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F79",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F80",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F81",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F82",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F83",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F84",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F85",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F86",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F87",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F89",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F90",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F91",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F92",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F93",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F94",
+   "reason": "BREAKS_STORY_MOMENTUM"
+  },
+  {
+   "evidence_id": "F95",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F96",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F97",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F98",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  }
+ ],
+ "definition_evidence": {
+  "Aufguss": [
+   "F32",
+   "F09"
+  ],
+  "transfer-to-seat": [
+   "F63",
+   "F64"
+  ]
+ },
+ "definitions": {
+  "Aufguss": "a sauna ritual in which a sauna master works the heat itself \u2014 steam, scent, music and choreographed towel-waving \u2014 to carry an audience through a story",
+  "transfer-to-seat": "an arrangement in which a guest moves out of their own wheelchair into a fixed seat on the lowest bench before the session, and the chair is taken back out of the room by a member of staff"
+ },
+ "ending_move": "Lands on the wheelchair taken back outside the sauna by a Sauna Host, on the rig above the glass, and on the assistance dog welcome on the site",
+ "evidence_roles": {
+  "F01": "LOAD_BEARING",
+  "F02": "SUPPORTING",
+  "F04": "SUPPORTING",
+  "F08": "SUPPORTING",
+  "F09": "SUPPORTING",
+  "F10": "LOAD_BEARING",
+  "F17": "SUPPORTING",
+  "F18": "LOAD_BEARING",
+  "F19": "LOAD_BEARING",
+  "F32": "SUPPORTING",
+  "F41": "LOAD_BEARING",
+  "F42": "LOAD_BEARING",
+  "F43": "LOAD_BEARING",
+  "F44": "SUPPORTING",
+  "F48": "LOAD_BEARING",
+  "F50": "LOAD_BEARING",
+  "F51": "SUPPORTING",
+  "F59": "SUPPORTING",
+  "F60": "SUPPORTING",
+  "F61": "LOAD_BEARING",
+  "F62": "LOAD_BEARING",
+  "F63": "LOAD_BEARING",
+  "F64": "LOAD_BEARING",
+  "F68": "SUPPORTING",
+  "F71": "SUPPORTING",
+  "F72": "LOAD_BEARING",
+  "F78": "LOAD_BEARING",
+  "F88": "SUPPORTING"
+ },
+ "final_lens": {
+  "after_reading": "A room with a stated thermal condition, and the provisions stated around it: ten-minute sections with intervals, three bench levels, admission at the next interval, a lighting rig above the glass windows.",
+  "before_reading": "An ingenious hybrid venue that solved a hard engineering problem and wrote a candid access statement about its limits.",
+  "crip_turn": "The lighting rig above the six glass roof windows sits outside the room and shines down into it; Osborne states that many components of conventional theatre equipment would get too hot in a sauna. The organisers state their ambition is to have a sauna-compatible wheelchair. A Sauna Host takes the wheelchair back outside the sauna through the 1100mm door. Assistance dogs are welcome on the site; the Sauna Theatre itself is too hot for them.",
+  "crip_turn_carrier": "the lighting rig above the six glass roof windows",
+  "evidence_basis": [
+   "F18",
+   "F19",
+   "F62",
+   "F63",
+   "F64",
+   "F78",
+   "F42",
+   "F61"
+  ],
+  "lens_claim": "Sauna Theatre's thermal conditions are stated for equipment, for furniture and for bodies. The lighting rig sits above six glass roof windows and shines down into the room. The organisers state their ambition is to have a sauna-compatible wheelchair; a Sauna Host takes a guest's wheelchair back outside the sauna. Assistance dogs are welcome on the site; the Sauna Theatre itself is too hot for them.",
+  "story_beat_after": "B7",
+  "story_beat_before": "B1",
+  "what_changes_for_the_reader": "The reader now sees the roof windows as one statement of the room's thermal conditions, beside the statements the organisers make about a wheelchair and an assistance dog."
+ },
+ "lens_realization": "IMPLICIT",
+ "opening_object_or_event": "The six glass windows cut into the roof, with the lighting rig sitting outside above them and shining down into the room",
+ "primary_carrier": "F19",
+ "prohibitions": [
+  "Do not invent an audience member, visitor, wheelchair user, dog handler, performer or staff member who is not named in the approved facts, and do not describe anyone using the venue.",
+  "Do not attribute a feeling, discomfort, embarrassment, frustration or relief to anyone; no one's experience of the room is recorded.",
+  "Do not claim that anyone was turned away, excluded, harmed, overheated or unable to attend.",
+  "Do not state or imply that the organisers intended to exclude anyone, or assign them a motive beyond the aims they are quoted as stating.",
+  "Do not say that a wheelchair, a dog or a lamp was tested, damaged or destroyed by the heat; the facts state only what will not withstand the conditions and what has not been found.",
+  "Do not invent dimensions, temperatures, colours, materials, prices, ticket numbers or dates, and do not state the year of the run.",
+  "Do not add shows, session times or programme items beyond the two described, and do not present the programme as a list.",
+  "Do not describe the interior appearance, smell, sound or lighting states beyond what the facts state.",
+  "Do not claim this venue is the first, the only, the largest or the most accessible of anything.",
+  "Do not write a sentence whose job is to tell the reader what the article is doing, and do not close on advice, recommendations or the venue's future plans.",
+  "Do not join the lighting rig, the wheelchair and the assistance dog with a word of cause, consequence or equivalence; state each as its own sentence."
+ ],
+ "reader_initial_state": "That the theatre lights for this venue hang outside the room they light, above six glass windows in the roof",
+ "story_spine": "A purpose-built sauna is used as a Fringe theatre, and its stated thermal conditions appear in the act lengths, the intervals, the bench levels, the timing of admission and the list of what may cross the door \u2014 a lighting rig above the glass, a wheelchair taken back outside, an assistance dog welcome on the site.",
+ "supports": {
+  "F02": [
+   "F10"
+  ],
+  "F04": [
+   "F10"
+  ],
+  "F08": [
+   "F01"
+  ],
+  "F09": [
+   "F41"
+  ],
+  "F17": [
+   "F19"
+  ],
+  "F32": [
+   "F41"
+  ],
+  "F44": [
+   "F43"
+  ],
+  "F51": [
+   "F78",
+   "F62"
+  ],
+  "F59": [
+   "F62"
+  ],
+  "F60": [
+   "F62"
+  ],
+  "F68": [
+   "F72"
+  ],
+  "F71": [
+   "F72"
+  ],
+  "F88": [
+   "F41"
+  ]
+ },
+ "turn": "",
+ "use_facts": [
+  "F01",
+  "F02",
+  "F04",
+  "F08",
+  "F09",
+  "F10",
+  "F17",
+  "F18",
+  "F19",
+  "F32",
+  "F41",
+  "F42",
+  "F43",
+  "F44",
+  "F48",
+  "F50",
+  "F51",
+  "F59",
+  "F60",
+  "F61",
+  "F62",
+  "F63",
+  "F64",
+  "F68",
+  "F71",
+  "F72",
+  "F78",
+  "F88"
+ ]
+}

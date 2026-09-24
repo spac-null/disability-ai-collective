@@ -1,0 +1,405 @@
+{
+ "article_type": "NARRATIVE_ARTICLE",
+ "beats": [
+  {
+   "beat_function": "REVEAL",
+   "beat_id": "B1",
+   "concept_introduced": "Dressing for Evacuation",
+   "concrete_carrier": "The life-size portraits from Dressing for Evacuation and the accompanying survey",
+   "facts_allowed": [
+    "F46",
+    "F48",
+    "F47",
+    "F52"
+   ],
+   "happens": "The portraits and the instrument that produced them: participants asked to dress as if alerted to an imminent large-scale evacuation and to gather a limited selection of possessions, their responses recorded in a photoshoot and an accompanying survey, the results shown life-size in Vermont in 2018 and Bolton in 2019, with photography credited to Lucy Saunders.",
+   "must_not_say_yet": "Do not say anything about the RCA, the new School, or Curtis's post.",
+   "why_reader_wants_next": "The emergency was invented, and the reader wants to know who invented it and what it was for."
+  },
+  {
+   "beat_function": "EXPLAIN",
+   "beat_id": "B2",
+   "concept_introduced": "fictional participatory scenario",
+   "concrete_carrier": "Kerry Curtis's fictional participatory scenarios for climate-impacted emergencies",
+   "facts_allowed": [
+    "F43",
+    "F45",
+    "F51"
+   ],
+   "happens": "The project belongs to a body of research that fabricates and documents fictional events to further climate change discourse, made by a former international textile designer whose practice now places environmental concerns central to design-led questions.",
+   "must_not_say_yet": "Do not mention the merger or the deanship yet.",
+   "why_reader_wants_next": "The reader now has a named researcher and a method, and wants to know where she has been placed."
+  },
+  {
+   "beat_function": "REVEAL",
+   "beat_id": "B3",
+   "concept_introduced": "",
+   "concrete_carrier": "The School of Communication & Design and its dean",
+   "facts_allowed": [
+    "F01",
+    "F04",
+    "F03",
+    "F12",
+    "F53",
+    "F25",
+    "F26"
+   ],
+   "happens": "On 1 September 2026 the RCA announces a School of Communication & Design, operating alongside the School of Architecture and the School of Arts & Humanities in a three-School structure. The RCA biographies document lists Kerry Curtis as Dean of the School of Communication and Professor Paul Anderson as Dean of the School of Design, as separate roles. Creative Boom writes that designer job titles have blurred and that practitioners are expected to do a bit of everything as the industry demands.",
+   "must_not_say_yet": "Do not quote or paraphrase the School's inclusion and justice language yet.",
+   "why_reader_wants_next": "A new School announces what it stands for, and the reader wants to hear it."
+  },
+  {
+   "beat_function": "COMPLICATE",
+   "beat_id": "B4",
+   "concept_introduced": "",
+   "concrete_carrier": "The School's founding statement of inclusive frameworks and justice",
+   "facts_allowed": [
+    "F32",
+    "F35"
+   ],
+   "happens": "The School's founding framing: critical and creative frameworks for practices that are creative, inclusive and responsive to environmental, social and systemic concerns, and research applying artist-, design- and craft-led methodologies to generate new knowledge and advance societal impact, justice and environmental resilience.",
+   "must_not_say_yet": "Do not yet state what the instrument records.",
+   "why_reader_wants_next": "The dean's own method is an available specimen of artist- and design-led climate research, and the reader has already seen how it works."
+  },
+  {
+   "beat_function": "REVERSE",
+   "beat_id": "B5",
+   "concept_introduced": "",
+   "concrete_carrier": "The photoshoot-and-survey instrument of Dressing for Evacuation",
+   "facts_allowed": [
+    "F46",
+    "F48",
+    "F32",
+    "F35"
+   ],
+   "happens": "The instrument from the first beat, read against that framing: it has a field for wardrobe, choice and self-directed haste, and no field for an evacuation that begins when somebody else arrives, or for possessions that are equipment, medication or a chair without which there is no evacuation at all. Its subject is whoever can get dressed in time.",
+   "must_not_say_yet": "Do not claim that anyone was excluded from the project, harmed by it, or unable to take part.",
+   "why_reader_wants_next": "The reader wants to know what the new School lists beside it."
+  },
+  {
+   "beat_function": "RESOLVE",
+   "beat_id": "B6",
+   "concept_introduced": "",
+   "concrete_carrier": "Dressing for Evacuation",
+   "facts_allowed": [
+    "F46",
+    "F12",
+    "F62"
+   ],
+   "happens": "Dressing for Evacuation sits at the head of the School, and the School's own student stories list a Visual Communication MA graduate whose practice centres on disability access in education and the inclusion of neurodiversity.",
+   "must_not_say_yet": "Do not state that the graduate has commented on, responded to or been affected by the dean's project.",
+   "why_reader_wants_next": ""
+  }
+ ],
+ "crip_turn": "The instrument the reader met in the first beat: dress as if alerted to an imminent large-scale evacuation, gather a limited selection of possessions, responses recorded in a photoshoot and an accompanying survey. Kerry Curtis is Dean of the School of Communication & Design, whose founding statement claims critical and creative frameworks for practices that are inclusive and responsive to environmental, social and systemic concerns.",
+ "crip_turn_rereads": "B1",
+ "cut_evidence": [
+  {
+   "evidence_id": "F02",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F05",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F06",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F07",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F08",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F09",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F10",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F11",
+   "reason": "MACHINE_BOUNDARY_ONLY"
+  },
+  {
+   "evidence_id": "F13",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F14",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F15",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F16",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F17",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F18",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F19",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F21",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F22",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F23",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F24",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F27",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F28",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F29",
+   "reason": "MACHINE_BOUNDARY_ONLY"
+  },
+  {
+   "evidence_id": "F30",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F31",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F33",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F34",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F36",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F37",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F38",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F39",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F40",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F42",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F44",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F49",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F50",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F54",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F55",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F56",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F57",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F58",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F60",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F63",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F64",
+   "reason": "PROVENANCE_ONLY"
+  },
+  {
+   "evidence_id": "F65",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F66",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F67",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F68",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F69",
+   "reason": "NAME_OVERLOAD"
+  },
+  {
+   "evidence_id": "F70",
+   "reason": "NAME_OVERLOAD"
+  }
+ ],
+ "definition_evidence": {
+  "Dressing for Evacuation": [
+   "F46",
+   "F48",
+   "F47"
+  ],
+  "fictional participatory scenario": [
+   "F43",
+   "F45",
+   "F46"
+  ]
+ },
+ "definitions": {
+  "Dressing for Evacuation": "A research project in which people were asked to put on what they would wear if told a large-scale evacuation were minutes away, and to gather a limited selection of belongings; what a person chose was recorded in a photoshoot and an accompanying survey, and shown as life-size portraits.",
+  "fictional participatory scenario": "Research that invents an emergency, asks people to act as though it were happening, and documents their responses as a way of pursuing climate change discourse."
+ },
+ "ending_move": "Dressing for Evacuation at the head of the new School, beside the School's own listing of a Visual Communication MA graduate whose practice centres on disability access in education and the inclusion of neurodiversity.",
+ "evidence_roles": {
+  "F01": "LOAD_BEARING",
+  "F03": "LOAD_BEARING",
+  "F04": "SUPPORTING",
+  "F12": "LOAD_BEARING",
+  "F25": "SUPPORTING",
+  "F26": "SUPPORTING",
+  "F32": "LOAD_BEARING",
+  "F35": "LOAD_BEARING",
+  "F43": "LOAD_BEARING",
+  "F45": "SUPPORTING",
+  "F46": "LOAD_BEARING",
+  "F47": "LOAD_BEARING",
+  "F48": "LOAD_BEARING",
+  "F51": "SUPPORTING",
+  "F52": "SUPPORTING",
+  "F53": "LOAD_BEARING",
+  "F62": "LOAD_BEARING"
+ },
+ "final_lens": {
+  "after_reading": "A School with founding language about inclusive frameworks and justice, led by a dean whose research project asks participants to dress for an invented evacuation.",
+  "before_reading": "A university announcing a new School under a dean whose research brings climate concern to design.",
+  "crip_turn": "The instrument that made those life-size portraits asks the participant to dress as if alerted to an imminent large-scale evacuation and to gather a limited selection of possessions; responses were recorded in a photoshoot and an accompanying survey.",
+  "crip_turn_carrier": "The life-size portraits from Dressing for Evacuation and the accompanying survey",
+  "evidence_basis": [
+   "F46",
+   "F48",
+   "F32",
+   "F35",
+   "F12"
+  ],
+  "lens_claim": "The new School's founding language claims critical and creative frameworks for practices that are creative, inclusive and responsive to environmental, social and systemic concerns, and research applying artist-, design- and craft-led methodologies to advance societal impact, justice and environmental resilience. Kerry Curtis is Dean of that School. Her academic research creates fictional participatory scenarios responding to climate impacted emergencies, and Dressing for Evacuation focuses on the human emergency response of getting dressed and gathering a limited selection of possessions.",
+  "story_beat_after": "B6",
+  "story_beat_before": "B1",
+  "what_changes_for_the_reader": "The reader now reads the photoshoot and survey of the first beat as a record of one emergency response: getting dressed and gathering a limited selection of possessions."
+ },
+ "lens_realization": "IMPLICIT",
+ "opening_object_or_event": "The life-size photographic portraits from Dressing for Evacuation, photography credited to Lucy Saunders, shown at Tentworks in Vermont in 2018 and at FutureScan 4 in Bolton in 2019 \u2014 people fully dressed for an invented evacuation.",
+ "primary_carrier": "F46",
+ "prohibitions": [
+  "Do not invent participants, visitors, students or staff who are not named in the facts, and do not describe anyone's reaction to the portraits or the exhibitions.",
+  "Do not attribute feelings, intentions or motives to Kerry Curtis, Paul Anderson or Beatrice Sangster beyond what the quoted and stated material says.",
+  "Do not claim that any disabled person was excluded from Dressing for Evacuation, refused entry, harmed by it, or unable to take part \u2014 say only what the instrument records.",
+  "Do not state that the RCA, the School or Curtis has never considered disability, access or assisted evacuation; do not assert that anything was omitted deliberately.",
+  "Do not describe the portraits' colours, sizes, poses, clothing or the contents of anyone's gathered possessions beyond what the facts state.",
+  "Do not invent survey questions, response numbers, participant counts or findings.",
+  "Do not say the merger was made to cut costs, reduce staff or close programmes, or assign any aim to it beyond the stated reasoning about interconnected practice and blurred job titles.",
+  "Do not present the School's inclusion and justice statements as a response to, or as knowingly about, the dean's project.",
+  "Do not describe the Tentworks or FutureScan 4 events beyond their names, places and years, and do not characterise their audiences."
+ ],
+ "reader_initial_state": "That a research project produced life-size photographs of people dressed and carrying possessions for an invented evacuation, and that the project recorded what they chose in a survey.",
+ "story_spine": "On 1 September 2026 the RCA announces a School of Communication & Design with Professor Kerry Curtis as Dean, and the research project Dressing for Evacuation \u2014 participants asked to dress as if alerted to an imminent large-scale evacuation, responses recorded in a photoshoot and survey \u2014 stands beside the School's founding language about inclusive frameworks and justice.",
+ "supports": {
+  "F04": [
+   "F01"
+  ],
+  "F25": [
+   "F01",
+   "F03"
+  ],
+  "F26": [
+   "F01",
+   "F03"
+  ],
+  "F45": [
+   "F43"
+  ],
+  "F51": [
+   "F43"
+  ],
+  "F52": [
+   "F47"
+  ]
+ },
+ "turn": "",
+ "use_facts": [
+  "F01",
+  "F03",
+  "F04",
+  "F12",
+  "F25",
+  "F26",
+  "F32",
+  "F35",
+  "F43",
+  "F45",
+  "F46",
+  "F47",
+  "F48",
+  "F51",
+  "F52",
+  "F53",
+  "F62"
+ ]
+}

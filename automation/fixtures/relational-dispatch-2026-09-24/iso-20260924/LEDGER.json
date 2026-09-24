@@ -1,0 +1,736 @@
+{
+ "F01": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "European Parliament"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F01",
+  "proposition": "The European Parliament interpretation service tells speakers that their speaking points are a tool for interpreters to prepare for the meeting.",
+  "scope": "WORLD",
+  "support_span": "Your speaking points are a powerful tool for interpreters to prepare for your meeting."
+ },
+ "F02": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F02",
+  "proposition": "Speakers are told to send speaking points at any moment, even last minute, to their meeting organiser, who forwards them to the interpretation team.",
+  "scope": "WORLD",
+  "support_span": "Send them at any moment, even last minute, to your meeting organiser who will forward them to the interpretation team."
+ },
+ "F03": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F03",
+  "proposition": "The guidance states that speaking points sent in will be treated in confidentiality.",
+  "scope": "WORLD",
+  "support_span": "They will be treated in confidentiality."
+ },
+ "F04": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F04",
+  "proposition": "The guidance says its interpreters are among the best in the world and that speakers can therefore speak at a natural pace.",
+  "scope": "WORLD",
+  "support_span": "Our interpreters are among the best in the world and therefore you can speak at a natural pace."
+ },
+ "F05": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F05",
+  "proposition": "Speakers who will be reading from a document are asked to send their speaking points in advance.",
+  "scope": "WORLD",
+  "support_span": "If you will be reading from a document, please send in your speaking points in advance."
+ },
+ "F06": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F06",
+  "proposition": "The guidance states that interpreters will interpret the speaker's message into the languages provided for in the meeting, no matter which official language the speaker uses.",
+  "scope": "WORLD",
+  "support_span": "Interpreters will interpret your message in the languages provided for in the meeting, no matter which official language you speak."
+ },
+ "F07": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F07",
+  "proposition": "Speakers are encouraged not to miss the opportunity to speak in the language they command best.",
+  "scope": "WORLD",
+  "support_span": "Do not miss out on the opportunity to speak in the language that you command best."
+ },
+ "F08": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Parliament interpretation service"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F08",
+  "proposition": "The guidance asks speakers who are online to use a microphone recommended by the Parliament interpretation service.",
+  "scope": "WORLD",
+  "support_span": "When online, use a microphone recommended by the Parliament interpretation service"
+ },
+ "F09": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F09",
+  "proposition": "The guidance states that good sound is a prerequisite for good communication in multilingual meetings.",
+  "scope": "WORLD",
+  "support_span": "Good sound is a prerequisite for good communication in multilingual meetings."
+ },
+ "F10": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F10",
+  "proposition": "Remote speakers are instructed to book an advance connection test.",
+  "scope": "WORLD",
+  "support_span": "BOOK your advance connection test now:"
+ },
+ "F11": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "EP"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F11",
+  "proposition": "Remote speakers are instructed to test their connection with EP services and to use a recommended microphone.",
+  "scope": "WORLD",
+  "support_span": "TEST your connection with EP services.\n- USE a recommended microphone."
+ },
+ "F12": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F12",
+  "proposition": "Remote speakers are instructed to connect well in advance on the day of the meeting for a final check with the support team.",
+  "scope": "WORLD",
+  "support_span": "CONNECT well in advance on the day of the meeting for a final check with the support team."
+ },
+ "F13": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F13",
+  "proposition": "The page offers materials including a remote speakers' checklist and a sound check for hybrid meetings.",
+  "scope": "WORLD",
+  "support_span": "Remote Speakers' Checklist\nA few quick tips on how to make an impact when speaking at hybrid meetings\nSound Check for Hybrid Meetings"
+ },
+ "F14": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F14",
+  "proposition": "The page includes a section listing recommended microphones for hybrid meetings.",
+  "scope": "WORLD",
+  "support_span": "Recommended microphones for hybrid meetings"
+ },
+ "F15": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "European Parliament"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F15",
+  "proposition": "The page includes a statement of requirements for remote participation in meetings of the European Parliament.",
+  "scope": "WORLD",
+  "support_span": "Requirements for remote participation in meetings of the European Parliament"
+ },
+ "F16": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "European Commission"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F16",
+  "proposition": "A joint general assembly of staff and ACI interpreters working for the European Commission met on 16 September 2022 and adopted a Resolution on Sound Quality.",
+  "scope": "WORLD",
+  "support_span": "Resolution on Sound Quality \nThe staff and ACI interpreters working for the European Commission, meeting in a Joint \nGeneral Assembly on 16 September 2022"
+ },
+ "F17": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "European Commission",
+   "Staff Interpreters' Delegation at the European Parliament",
+   "Delint",
+   "AIIC European Parliament Professional Delegation",
+   "EPPD"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F17",
+  "proposition": "A Joint General Assembly of staff and ACI interpreters working for the European Commission held on 16 September 2022 was supported by the Staff Interpreters' Delegation at the European Parliament (Delint) and the AIIC European Parliament Professional Delegation (EPPD).",
+  "scope": "WORLD",
+  "support_span": "The staff and ACI interpreters working for the European Commission, meeting in a Joint \nGeneral Assembly on 16 September 2022, supported by the Staff Interpreters\u2019 Delegation at the \nEuropean Parliament (Delint) and the AIIC European Parliament Professional Delegation \n(EPPD),"
+ },
+ "F18": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F18",
+  "proposition": "The resolution states that only equipment recommended by interpreter representatives, their experts and the interpreting services can bring the sound closer to the required level.",
+  "scope": "WORLD",
+  "support_span": "Only the equipment recommended by interpreters representatives, their experts and the \ninterpreting services can bring the sound closer to the required level."
+ },
+ "F19": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "DG SCIC"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F19",
+  "proposition": "The resolution states that, despite awareness-raising activities by DG SCIC, a majority of meeting participants do not or will not use the recommended equipment, resulting in inadequate conditions for quality interpreting.",
+  "scope": "WORLD",
+  "support_span": "Yet, in spite of the \nawareness-raising activities carried out by DG SCIC, a majority of meeting participants do not or will \nnot use it, resulting in inadequate conditions for quality interpreting"
+ },
+ "F20": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F20",
+  "proposition": "The resolution states that there is no binding remote participation protocol applicable to participants in hybrid meetings, and that it is not obligatory for them to carry out an advance test call to check the technical compliance and quality of their remote connections.",
+  "scope": "WORLD",
+  "support_span": "There is no binding remote participation protocol applicable to participants in hybrid meetings \nnor is it obligatory for them to carry out a test call in advance to check the technical compliance \nand quality of their remote connections;"
+ },
+ "F21": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "European Commission",
+   "DG SCIC"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F21",
+  "proposition": "The resolution calls on the European Commission and DG SCIC to make the recommended equipment and technical set-up a mandatory requirement for remote meeting participation.",
+  "scope": "WORLD",
+  "support_span": "Call upon the European Commission and DG SCIC to make the recommended equipment \nand technical set -up a mandatory requirement for remote meeting participation"
+ },
+ "F22": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F22",
+  "proposition": "The resolution declares that, effective immediately, interpreters reserve the right not to interpret speakers whose sound does not meet the standards required for high-quality conference interpreting.",
+  "scope": "WORLD",
+  "support_span": "Inform that effective immediately, interpreters reser ve the right not to interpret speakers \nwhose sound does not meet the standards required for high - quality conference interpreting."
+ },
+ "F23": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F23",
+  "proposition": "The resolution lists among the cases covered by that right speakers not using an ISO-compliant lapel or uni-directional table microphone, speakers in spaces with significant background noise, speakers with device notification sounds on, speakers without video, and speakers with an unstable internet connection.",
+  "scope": "WORLD",
+  "support_span": "\u25cf Speakers not using an ISO-compliant lapel or uni-directional table microphone; \n\u25cf Speakers taking the floor from spaces with significant background noise; \n\u25cf Speakers who leave device notification sounds on whilst taking the floor; \n\u25cf Speakers without video; \n\u25cf Speakers with an unstable internet connection;"
+ },
+ "F24": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F24",
+  "proposition": "The resolution states that co-location of the full team of interpreters and all meeting participants is the standard and superior set-up for interpretation.",
+  "scope": "WORLD",
+  "support_span": "Co-location of the full team of interpreters and all meeting participants is the standard and \nsuperior set-up for interpretation;"
+ },
+ "F25": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "ISO"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F25",
+  "jurisdiction_note": "an international instrument is not one country's law",
+  "proposition": "The resolution states that while working with simultaneous interpretation delivery platforms, wrong configuration of the platform and the use of substandard equipment have led to interpreters working with sound non-compliant with ISO 20108:2017 and ISO 20109:2016.",
+  "scope": "WORLD",
+  "standard": "ISO standard",
+  "standard_jurisdiction": null,
+  "standard_role": "INTERNATIONAL_INSTRUMENT",
+  "support_span": "a number of factors, among which the most salient are a wrong \nconfiguration of the SIDP and the use of substandard equipment, have led to interpreters being \nforced to work under conditions and with sound non-compliant with standards ISO 20108:2017 \nand ISO 20109:2016."
+ },
+ "F26": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "IIA-RI"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F26",
+  "proposition": "The resolution states that the parties to the IIA-RI explicitly recognise remote interpretation to be an inferior working method that generates a heightened cognitive load and may jeopardize auditory health.",
+  "scope": "WORLD",
+  "support_span": "Recall that the parties to the IIA -RI explicitly recognise remote interpretation to be an inferior \nworking method and that remote interpretation generates a heightened cognitive load and may \njeopardize their auditory health"
+ },
+ "F27": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F27",
+  "proposition": "The resolution asks that interpreters be given access to information on microphones used by remote participants, via a platform feature blocking or flagging non-compliant peripherals.",
+  "scope": "WORLD",
+  "support_span": "Insist that interpreters have access to the information on microphones used by remote \nparticipants with a new platform feature blocking or otherwise flagging non compliant \nperipherals."
+ },
+ "F28": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "DG SCIC"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F28",
+  "proposition": "The resolution asks DG SCIC to inform clients requesting meetings with remote participation that substandard sound quality has a direct negative effect on interpreter acoustic health, which can often be mitigated through a fit-for-purpose technical set-up and appropriate remote participation etiquette.",
+  "scope": "WORLD",
+  "support_span": "Call on DG SCIC to play an active role in informing all clients requesting meetings with \nremote participation that sub -standard sound qual ity has a direct, negative effect on interpreter \nacoustic health, which can be mitigated in many instances through a fit -for-purpose technical \nset-up and appropriate remote participation etiquette;"
+ },
+ "F29": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "European Parliament"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F29",
+  "proposition": "The resolution expresses full support for interpreters working for the European Parliament who were facing similar problems and applying a work-to-rule strategy to protect themselves from substandard sound of remote connections.",
+  "scope": "WORLD",
+  "support_span": "Express their full support for the interpreters working for the European Parliament facing \nsimilar problems and applying a work -to-rule strategy in order to protect themselves from \nsubstandard sound of remote connections."
+ },
+ "F30": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F30",
+  "proposition": "The resolution states that before Business Continuity Mode, the rare cases of contributions by video conferencing were notified in advance and allowed only for external participants on an ad hoc basis.",
+  "scope": "WORLD",
+  "support_span": "Before BCM, the rare cases of contributions by video confe rencing were notified in advance \nand were allowed only for external participants on an ad hoc basis;"
+ },
+ "F31": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "AIIC Staff Interpreters' Committee"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F31",
+  "proposition": "The AIIC Staff Interpreters' Committee adopted a resolution on global threats to interpreters' auditory health on 1 September 2022.",
+  "scope": "WORLD",
+  "support_span": "AIIC Staff Interpreters\u2019 Committee resolution of 01 September 2022"
+ },
+ "F32": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "AIIC"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F32",
+  "proposition": "The AIIC Staff Interpreters' Committee resolution acknowledges that remote participation in meetings with interpretation can have a number of advantages and should be made possible where necessary and unavoidable.",
+  "scope": "WORLD",
+  "support_span": "Acknowledges that remote participation in meetings with interpretation can have  a number of \nadvantages and should be made possible where necessary and unavoidable;"
+ },
+ "F33": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F33",
+  "proposition": "The resolution acknowledges that the precise causes of the auditory damage it describes are still the subject of ongoing scientific and medical research.",
+  "scope": "WORLD",
+  "support_span": "Also a cknowledges that the precise causes of the abovementioned auditory damage are still the \nsubject of ongoing scientific and medical research;"
+ },
+ "F34": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F34",
+  "proposition": "The resolution calls on organizations and institutions employing interpreters to continue, as a priority, raising awareness among users of remote simultaneous interpretation services regarding good speaking practice by remote participants and suitable audio equipment throughout the sound chain.",
+  "scope": "WORLD",
+  "support_span": "Further calls on organizations and institutions employing interpreters to continue , as a matter of \npriority, raising awareness among the users of remote simultaneous interpretation services regarding \ngood speaking practice by remote participants and suitable audio equipment throughout the sound \nchain"
+ },
+ "F35": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F35",
+  "proposition": "The resolution calls on individual interpreters not to hesitate to use their individual right to stop interpreting when they sense the sound is too poor or hazardous.",
+  "scope": "WORLD",
+  "support_span": "Calls on individual interpreters, staff and free-lance alike, not to hesitate to avail themselves of their \nindividual right to stop interpreting when they sense that the sound is too poor and/or hazardous;"
+ },
+ "F36": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "COVID-19"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F36",
+  "proposition": "The resolution reports an alarming increase in the number of staff interpreters suffering hearing-related issues since the start of the COVID-19 pandemic, across multiple organizations.",
+  "scope": "WORLD",
+  "support_span": "an alarming increase in the number of staff interpreters suffering hearing-related issues since the start \nof the COVID-19 pandemic, with worryingly high numbers of staff interpreters afflicted to a greater \nor lesser extent across multiple organizations;"
+ },
+ "F37": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F37",
+  "proposition": "The resolution describes the reported issues as ranging from temporary nausea, excessive fatigue, disorientation, insomnia and ear pain to irreversible hearing damage and disorders including hyperacusis, hearing loss, tinnitus, cochlear and endolymphatic hydrops, and vestibular balance problems.",
+  "scope": "WORLD",
+  "support_span": "such issues range from temporary sensations of nausea, excessive fatigue, \ndisorientation, insomnia and ear pain to irreversible hearing damage and related auditory disorders, \nsuch as potentially incapacitating hyperacusis, hearing loss , tinnitus, both cochlear an d \nendolymphatic hydrops, and vestibular balance problems;"
+ },
+ "F38": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F38",
+  "proposition": "The resolution recommends discontinuing the use of headset microphones and noise filters that aggressively compress and distort the audio signal.",
+  "scope": "WORLD",
+  "support_span": "discontinuing the use of \nheadset microphones7 and noise filters that aggressively compress and distort the audio signal;"
+ },
+ "F39": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "EXCLUSIVITY",
+  "entities": [
+   "AIIC",
+   "ISO"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F39",
+  "proposition": "A footnote to the resolution states that AIIC's testing has so far found that only a single headset model available on the market met ISO requirements, and that headsets are generally no longer recommended.",
+  "scope": "WORLD",
+  "support_span": "given that AIIC\u2019s testing has so far found that only a single \nheadset model available on the market met ISO requirements, headsets are generally no longer recommended."
+ },
+ "F40": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F40",
+  "proposition": "The footnote states that recommendations concerning the use of specific technical solutions in remote participation contexts will require periodical re-assessment because of the speed at which technology is evolving.",
+  "scope": "WORLD",
+  "support_span": "As \ntechnology evolves further, this recommendation, as well as other recommendations concerning the use of specific \ntechnical solutions in remote participation and/or interpretation contexts will require a periodical re-assessment."
+ },
+ "F41": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "European Parliament"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F41",
+  "proposition": "In June 2022 interpreters at the European Parliament launched a protest that lasted until mid-October over what were felt to be deteriorating working conditions.",
+  "scope": "WORLD",
+  "support_span": "where in June 2022 the interpreters launched a protest that lasted until mid-Oc-\ntober due to what were felt to be deteriorating working conditions"
+ },
+ "F42": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Parliament",
+   "CAPE"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F42",
+  "proposition": "More than one third of the professionals working in the Parliament claimed to suffer symptoms attributed to the strain of interpreting remotely-connected speakers from public environments with loud background noise, or with poor connections and inadequate microphones.",
+  "scope": "WORLD",
+  "support_span": "More than one \nthird of the professionals working in the Parliament claimed to suffer from symptoms \nsimilar to those described by CAPE, due to the strain of interpreting remotely-con -\nnected speakers from public environments with loud background noise, or with poor \nconnections and inadequate microphones"
+ },
+ "F43": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "VKD"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F43",
+  "proposition": "Fearing permanent hearing damage, the interpreters resorted to a boycott of remote interventions and online or hybrid events, which ended following an interim agreement with the parliament.",
+  "scope": "WORLD",
+  "support_span": "Fearing permanent \nhearing damage, the interpreters resorted to a boycott of remote interventions and \nonline or hybrid events (VKD 2022)"
+ },
+ "F44": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F44",
+  "proposition": "The academic account states that inadequate sound often occurred during the pandemic crisis and continues to occur today in many meetings.",
+  "scope": "WORLD",
+  "support_span": "Inadequate sound often occurred during the period of the pandemic crisis, with \ninterpreters having to work with distorted sounds transmitted via the internet (Bu-\nj\u00e1n/Collard 2023: 145); and it continues to occur today in many meetings."
+ },
+ "F45": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F45",
+  "proposition": "The academic account states that interpreters, faced with poor signal quality, are often forced to increase the volume for extended periods in order to decipher what is being said.",
+  "scope": "WORLD",
+  "support_span": "Often, to remedy the poor quality of the signal and to be able to deci-\npher what is being said \u2013 while at the same time producing an output with one\u2019s own \nvoice and monitoring this output \u2013 interpreters are forced to increase the volume for \nextended periods."
+ },
+ "F46": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "International Organisation for Standardisation"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F46",
+  "jurisdiction_note": "an international instrument is not one country's law",
+  "proposition": "In 2022 the International Organisation for Standardisation published standard ISO 24019:2022 on simultaneous interpreting delivery platforms, which clarifies the responsibilities of service providers and remotely connected speakers.",
+  "scope": "WORLD",
+  "standard": "ISO standard",
+  "standard_jurisdiction": null,
+  "standard_role": "INTERNATIONAL_INSTRUMENT",
+  "support_span": "In 2022 the International Organisation for Standardisation published the standard \nISO 24019:2022 concerning SIDP platforms (ISO 2022), which clarifies the responsi-\nbilities of service providers and remotely connected speakers"
+ },
+ "F47": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F47",
+  "proposition": "The academic account states that remote interpreting often involves audio input that is not qualitatively adequate because it is artificially altered, poor in frequencies and transmitted via insufficiently wideband connections.",
+  "scope": "WORLD",
+  "support_span": "the emergence of audio input, often encountered in \nremote interpreting, that is not qualitatively adequate because it is artificially altered, \npoor in terms of frequencies and transmitted via insufficiently wideband connections"
+ },
+ "F48": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F48",
+  "proposition": "The academic account notes that many interpreters listen with one ear and leave the other uncovered to better control their output, which may prompt them to turn up the volume above recommended thresholds.",
+  "scope": "WORLD",
+  "support_span": "many interpreters listen with one ear and leave the other uncovered to \nbetter control their output. This, and the need to hear simultaneously their own voice, \nmay prompt them to turn up the volume above recommended thresholds"
+ },
+ "F49": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F49",
+  "proposition": "The academic account states that fears about simultaneous interpreting damaging hearing are not new.",
+  "scope": "WORLD",
+  "support_span": "Fears about the practice of simultaneous interpreting damaging hearing are not new."
+ },
+ "F50": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Geneva"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F50",
+  "proposition": "In 2021, 60 per cent of interpreters in the Geneva office complained of some of the listed symptoms after a remote interpreting session via a platform, and appealed to the institution for a total return to face-to-face mode.",
+  "scope": "WORLD",
+  "support_span": "in 2021, 60 per cent of interpreters in the Geneva office complained of some of the \nsymptoms listed above after a remote interpreting session via a platform. Consequent-\nly, the professionals appealed to the institution for a total return to the face-to-face \nmode"
+ },
+ "F51": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "SCIC",
+   "Commission"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F51",
+  "proposition": "A DG HR official wrote that five years after the introduction of hybrid meetings and platforms within the Commission, SCIC continues to apply the precautionary principle by reducing the amount of interpreting work for remote speakers.",
+  "scope": "WORLD",
+  "support_span": "five years after the introduction of hybrid meetings and platforms within the Commission, the SCIC continues to apply the precautionary principle by reducing the amount of interpreting work for remote speakers."
+ },
+ "F52": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Christian Roques",
+   "DG HR",
+   "European Commission",
+   "U4U"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F52",
+  "proposition": "The administration's reply to U4U was signed by Christian Roques, Deputy Director General of DG HR in charge of Operations.",
+  "scope": "WORLD",
+  "support_span": "Christian Roques\n\n Deputy Director General DG HR in charge of Operations"
+ },
+ "F53": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "U4U",
+   "SCIC",
+   "Pasteur Institute"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F53",
+  "proposition": "U4U asked the administration to encourage SCIC colleagues to take part in a hearing health study by the Pasteur Institute.",
+  "scope": "WORLD",
+  "support_span": "U4U has asked the administration to encourage SCIC colleagues to participate in a hearing health study by the Pasteur Institute"
+ },
+ "F54": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Pasteur Institute"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F54",
+  "proposition": "The DG HR reply states that the Pasteur Institute study has no clinical value, as the Institute itself acknowledges, and is an experimental study contributing to research in hearing and interpreting health.",
+  "scope": "WORLD",
+  "support_span": "That said, this particular study has no clinical value, as the Pasteur Institute itself acknowledges. According to the medical department and the institute&#8217;s own statements, this is an experimental study that contributes to research in the field of hearing and interpreting health, among others."
+ },
+ "F55": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "European Commission",
+   "ISO"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F55",
+  "proposition": "The Commission interpreters' resolution on sound quality states that during the time the European Commission was operating in Business Continuity Mode interpreters routinely worked in remote mode, non co-located with the speakers, in substandard conditions which did not meet the ISO requirements.",
+  "scope": "WORLD",
+  "support_span": "A. During the time that the European Commission was operating in Business Continuity Mode \n(BCM), interpreters routinely worked \n- in remote mode (non co -located with the speakers), in subs tandard conditions which did \nnot meet the ISO requirements;"
+ }
+}

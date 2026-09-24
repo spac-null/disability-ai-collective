@@ -1,0 +1,1335 @@
+{
+ "F01": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Studio Three Sixty",
+   "Edinburgh",
+   "Fringe"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F01",
+  "proposition": "Studio Three Sixty has created a temporary sauna that is being used as a theatre during Edinburgh's Fringe festival for the performing arts.",
+  "scope": "WORLD",
+  "support_span": "Design practice Studio Three Sixty has created a temporary sauna that is being used as a theatre during Edinburgh's Fringe festival for the performing arts."
+ },
+ "F02": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Lucy Osborne",
+   "Studio Three Sixty",
+   "Sauna Sessions Arts Club"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F02",
+  "proposition": "The sauna was designed by Studio Three Sixty director Lucy Osborne, who is also co-creative director of Sauna Sessions Arts Club.",
+  "scope": "WORLD",
+  "support_span": "Designed by Studio Three Sixty director Lucy Osborne, who is also co-creative director of Sauna Sessions Arts Club"
+ },
+ "F03": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F03",
+  "proposition": "Dezeen reports the functioning sauna can seat up to 82 people for performances.",
+  "scope": "WORLD",
+  "support_span": "the functioning sauna can seat up to 82 people for performances"
+ },
+ "F04": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F04",
+  "proposition": "Sauna Sessions Arts Club's own website states that Sauna Theatre seats 80 people and features state-of-the-art lighting and surround sound.",
+  "scope": "WORLD",
+  "support_span": "It seats 80 people and features state-of-the-art lighting and surround sound."
+ },
+ "F05": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Lucy Osborne",
+   "Dezeen",
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F05",
+  "proposition": "Osborne told Dezeen that Sauna Theatre is conceived as a new kind of cultural space, the UK's first purpose-built sauna arts centre and the UK's largest sauna.",
+  "scope": "WORLD",
+  "support_span": "\"Sauna Theatre is conceived as a new kind of cultural space \u2013 the UK's first purpose-built sauna arts centre and the UK's largest sauna,\" Osborne told Dezeen."
+ },
+ "F07": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Lucy Osborne"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F07",
+  "proposition": "Osborne said the design disrupts the familiar architecture of sauna with the tools of theatre: lighting, surround sound and performance focus.",
+  "scope": "WORLD",
+  "support_span": "\"It disrupts the familiar architecture of sauna with the tools of theatre: lighting, surround sound and performance focus.\""
+ },
+ "F08": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Summerhall Arts",
+   "Edinburgh"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F08",
+  "proposition": "The venue is located within the rear courtyard of Summerhall Arts in central Edinburgh and will be hosting shows throughout the Fringe festival.",
+  "scope": "WORLD",
+  "support_span": "Located within the rear courtyard of Summerhall Arts in central Edinburgh, the venue will be hosting shows throughout the Fringe festival."
+ },
+ "F09": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Aufguss"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F09",
+  "proposition": "The performances will be based on the idea of Aufguss, a wellness ritual led by a sauna master, along with dance-based \"rave\" sessions.",
+  "scope": "WORLD",
+  "support_span": "The performances will be based on the idea of Aufguss \u2013 a wellness ritual led by a sauna master, along with dance-based \"rave\" sessions."
+ },
+ "F10": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F10",
+  "proposition": "The theatre space was designed to evoke a traditional sauna with Ayous timber benches arranged in a horseshoe shape around three large sauna stoves.",
+  "scope": "WORLD",
+  "support_span": "The theatre space was designed to evoke a traditional sauna with Ayous timber benches arranged in a horseshoe shape around three large sauna stoves."
+ },
+ "F11": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Lucy Osborne"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F11",
+  "proposition": "Osborne said Ayous was used for the sauna benches and interior surfaces because it is a dark wood with a soft and cool quality to touch.",
+  "scope": "WORLD",
+  "support_span": "We used Ayous for the sauna benches and interior surfaces because it is a dark wood with a soft and cool quality to touch."
+ },
+ "F12": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Lucy Osborne"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F12",
+  "proposition": "Osborne said the ambition was for the room to feel suited to the focus required by a performance but still unmistakably like a sauna, warm, social and collective rather than formal.",
+  "scope": "WORLD",
+  "support_span": "\"The ambition was for the room to feel suited to the focus required by a performance but still unmistakably like a sauna,\" said Osborne. \"We wanted the room to feel warm, social and collective rather than formal.\""
+ },
+ "F13": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Lucy Osborne",
+   "James Grieve",
+   "Sauna Sessions Arts Club"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F13",
+  "proposition": "The sauna was conceived by Sauna Sessions Arts Club founders Osborne and James Grieve after they observed numerous similarities between theatres and saunas.",
+  "scope": "WORLD",
+  "support_span": "The sauna was conceived by Sauna Sessions Arts Club founders Osborne and James Grieve after they observed numerous similarities between theatres and saunas."
+ },
+ "F14": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Lucy Osborne",
+   "Norway",
+   "Sweden"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F14",
+  "proposition": "Osborne attributed her enthusiasm for sauna in part to spending time working on various projects in Norway and Sweden.",
+  "scope": "WORLD",
+  "support_span": "\"We are massive sauna fans, thanks in part to spending so much time working on various projects in Norway and Sweden,\" said Osborne."
+ },
+ "F15": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Lucy Osborne"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F15",
+  "proposition": "Osborne said both saunas and theatres are communal spaces where strangers share an intense, live experience together in real time.",
+  "scope": "WORLD",
+  "support_span": "\"Both saunas and theatres are communal spaces where strangers share an intense, live experience together in real time,\" she continued."
+ },
+ "F16": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Lucy Osborne",
+   "James Grieve"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F16",
+  "proposition": "Theatre lighting was integrated into the design to allow the space to be transformed for each performance.",
+  "scope": "WORLD",
+  "support_span": "Osborne and Grieve wanted the venue to be more than a giant sauna, with theatre lighting integrated into the design to allow the space to be transformed for each performance."
+ },
+ "F17": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [
+   "Lucy Osborne"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F17",
+  "proposition": "Osborne said there are no windows and the space is blacked out and lit by theatre lights, giving complete control over atmosphere, emotional tone and colour.",
+  "scope": "WORLD",
+  "support_span": "\"There are no windows and the space is blacked out and lit by theatre lights, so we have complete control over atmosphere, emotional tone and colour,\" she continued."
+ },
+ "F18": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [
+   "Lucy Osborne"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F18",
+  "proposition": "Osborne said conventional theatre equipment cannot simply be placed inside a sauna, because many components would get too hot, or would not withstand the temperature and moisture levels.",
+  "scope": "WORLD",
+  "support_span": "\"Conventional theatre equipment cannot simply be placed inside a sauna \u2013 many components would get too hot, or would not withstand the temperature and moisture levels,\" said Osborne."
+ },
+ "F19": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Lucy Osborne"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F19",
+  "proposition": "Osborne said they had to find a hybrid solution combining fixtures that could cope with the sauna environment with six overhead glass windows, allowing a lighting rig above the room to shine down into the space.",
+  "scope": "WORLD",
+  "support_span": "\"We had to find a hybrid solution, combining fixtures that could cope with the sauna environment with six overhead glass windows, allowing a lighting rig above the room to shine down into the space,\" she continued."
+ },
+ "F20": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Lucy Osborne"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F20",
+  "proposition": "Osborne said keeping the heat in is a technical challenge, and the architecture also has to create the right conditions for a living and organic space managed by sauna masters, with an ebb and flow of heat, cool air, water and steam.",
+  "scope": "WORLD",
+  "support_span": "\"Keeping the heat in is a technical challenge in some ways, but the architecture also has to create the right conditions for a living and organic space which is managed by our sauna masters, with an ebb and flow of heat, cool air, water and steam.\""
+ },
+ "F21": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F21",
+  "proposition": "Externally, the sauna theatre was designed to be dismantled and moved from place to place, and features bright signage and numerous social and support spaces.",
+  "scope": "WORLD",
+  "support_span": "Externally, the sauna theatre, which was designed to be dismantled and moved from place to place, features bright signage and includes numerous social and support spaces."
+ },
+ "F22": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F22",
+  "proposition": "Along with showers, changing rooms and lockers, there is also a cold plunge pool.",
+  "scope": "WORLD",
+  "support_span": "Along with showers, changing rooms and lockers, there is also a cold plunge pool."
+ },
+ "F23": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Lucy Osborne"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F23",
+  "proposition": "Osborne said many audience members will be first-time sauna goers, which she called a thrilling responsibility.",
+  "scope": "WORLD",
+  "support_span": "\"We know many of our audience members will be first-time sauna goers, and that is a thrilling responsibility,\" said Osborne."
+ },
+ "F24": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Lucy Osborne",
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F24",
+  "proposition": "Osborne said Sauna Theatre was created in the belief that art and culture are good for human beings and that 'wellness' shouldn't exclude things like reading, going to the theatre, or listening to music.",
+  "scope": "WORLD",
+  "support_span": "\"We have created Sauna Theatre in the fundamental belief that art and culture are good for human beings \u2013 and that 'wellness' shouldn't exclude things like reading, going to the theatre, or listening to music,\" she continued."
+ },
+ "F25": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Lucy Osborne"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F25",
+  "proposition": "Osborne said the hope is that great artists can harness delicious heat to take audiences on magical journeys and leave them surprised, delighted and changed.",
+  "scope": "WORLD",
+  "support_span": "That great artists can harness delicious heat to take us on magical journeys and leave us surprised, delighted and changed."
+ },
+ "F26": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Paul Zanre",
+   "Dezeen"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F26",
+  "proposition": "The Dezeen article's photography is credited to Paul Zanre, unless stated.",
+  "scope": "WORLD",
+  "support_span": "The photography is by Paul Zanre, unless stated."
+ },
+ "F27": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre",
+   "Summerhall Arts",
+   "Edinburgh Festival Fringe"
+  ],
+  "evidence_ids": [
+   "S1"
+  ],
+  "fact_id": "F27",
+  "proposition": "The club's website states Sauna Theatre opened its doors for the first time in August 2026 as part of Summerhall Arts's Edinburgh Festival Fringe lineup, with a programme of Aufguss, rave, ritual, theatre, literature, music and more.",
+  "scope": "WORLD",
+  "support_span": "Sauna Theatre opened its doors for the first time in August 2026 as part of Summerhall Arts's Edinburgh Festival Fringe lineup with a programme of Aufguss , rave, ritual, theatre, literature, music and more."
+ },
+ "F29": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F29",
+  "proposition": "The venue opened every day from 9am to 11pm with a programme ranging from a morning sauna rave to ancient rituals, a literary salon and an evening Arts Club.",
+  "scope": "WORLD",
+  "support_span": "It opened every day from 9am - 11pm with an eclectic programme encompassing everything from a morning sauna rave to ancient rituals, a literary salon to our evening Arts Club \u2013 the hottest club in town."
+ },
+ "F30": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F30",
+  "proposition": "Sauna Theatre is modular, demountable and portable, meaning it can pop up anywhere.",
+  "scope": "WORLD",
+  "support_span": "Sauna Theatre is modular, demountable and portable meaning it can pop-up anywhere."
+ },
+ "F31": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Sauna Theatre",
+   "UK"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F31",
+  "proposition": "The organisers state that in the future Sauna Theatre will be the centre of an itinerant sauna arts festival popping up around the UK.",
+  "scope": "WORLD",
+  "support_span": "In the future it will be the centre of an itinerant sauna arts festival popping up around the UK."
+ },
+ "F32": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Aufguss"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F32",
+  "proposition": "Aufguss is described as a multisensory sauna ritual that involves storytelling through heat, steam, aromas, towel waving choreography, narrative and music.",
+  "scope": "WORLD",
+  "support_span": "Aufguss is a multisensory sauna ritual that involves storytelling through heat, steam, aromas, towel waving choreography, narrative and music."
+ },
+ "F33": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Aufguss",
+   "UK"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F33",
+  "proposition": "The organisers state that Aufguss is popular around the world but relatively undeveloped in the UK.",
+  "scope": "WORLD",
+  "support_span": "Aufguss is popular around the world but relatively undeveloped in the UK."
+ },
+ "F34": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "James Grieve",
+   "Lucy Osborne",
+   "Sauna Sessions Arts Club"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F34",
+  "proposition": "Sauna Sessions Arts Club is founded by director James Grieve and designer Lucy Osborne, who have collaborated on multiple award-winning theatre and musical productions over the past 20 years.",
+  "scope": "WORLD",
+  "support_span": "Sauna Sessions Arts Club is founded by director James Grieve and designer Lucy Osborne who have collaborated on multiple award - winning theatre and musical productions over the past 20 years."
+ },
+ "F35": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Lucy Osborne",
+   "James Grieve",
+   "George Perrin",
+   "Paines Plough",
+   "Roundabout"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F35",
+  "proposition": "Lucy Osborne designed the pop-up theatre Roundabout, which was conceived and launched by James Grieve and George Perrin when they were Joint Artistic Directors of Paines Plough in 2014.",
+  "scope": "WORLD",
+  "support_span": "Lucy designed iconic pop-up theatre Roundabout, which was conceived and launched by James and George Perrin when they were Joint Artistic Directors of Paines Plough in 2014."
+ },
+ "F36": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Meg Hopkinson",
+   "Summerhall",
+   "Ian Georgeson"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F36",
+  "proposition": "An Aufguss artist named Meg Hopkinson is pictured performing towel swirling at Summerhall, in a photo credited to Ian Georgeson.",
+  "scope": "WORLD",
+  "support_span": "Aufguss artist Meg Hopkinson performing some towel swirling magic at Summerhall. Photo: Ian Georgeson."
+ },
+ "F37": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Summerhall",
+   "Roundabout",
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F37",
+  "proposition": "Sauna Theatre resided in the rear courtyard at Summerhall where Roundabout used to live.",
+  "scope": "WORLD",
+  "support_span": "It resided in the rear courtyard at Summerhall where Roundabout used to live."
+ },
+ "F38": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F38",
+  "proposition": "The programme ran daily from 6-31 August, except the 18th and 25th, from 9am to 11pm.",
+  "scope": "WORLD",
+  "support_span": "Our programme ran daily from 6-31 August (except 18, 25) from 9am to 11pm."
+ },
+ "F39": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre",
+   "Summerhall Arts",
+   "Edinburgh Festival Fringe",
+   "Summerhall",
+   "Roundabout"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F39",
+  "proposition": "Sauna Theatre operated as part of Summerhall Arts's line-up at the Edinburgh Festival Fringe 2026, sited in the rear courtyard at Summerhall.",
+  "support_span": "Sauna Theatre fired up its stoves for the first time as part of Summerhall Arts\u2019s line-up at the Edinburgh Festival Fringe 2026. It resided in the rear courtyard at Summerhall where Roundabout used to live."
+ },
+ "F40": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Nils Frahm"
+  ],
+  "evidence_ids": [
+   "S3"
+  ],
+  "fact_id": "F40",
+  "proposition": "The Fringe programme listed comprises nine named shows: Get Set For The Day Sauna Session, Morning Sauna Rave, Mysteries of the Picts, Lunch Break Luxuriate Lit Salon, Aufguss x The Waves, Bubble Schmeisis (Remixed), International Aufguss Masters, Aufguss x Nils Frahm, and Sauna Sessions Arts Club.",
+  "scope": "WORLD",
+  "support_span": "Get Set For The Day Sauna Session \n\n Morning Sauna Rave \n\n Mysteries of the Picts \n\n LUNCH BREAK LUXURIATE LIT SALON \n\n AUFGUSS x THE WAVES \n\n BUBBLE SCHMEISIS (Remixed) \n\n INTERNATIONAL AUFGUSS MASTERS \n\n AUFGUSS x NILS FRAHM \n\n SAUNA SESSIONS ARTS CLUB"
+ },
+ "F41": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F41",
+  "proposition": "The organisers say shows are made specifically for sauna, designed to utilise heat, steam and aroma as part of their storytelling, and are short so audiences can cool down regularly between acts.",
+  "scope": "WORLD",
+  "support_span": "Our shows are made specifically for sauna so they are designed to utilise heat, steam and aroma as part of their storytelling. And they are short, so you can cool down regularly between acts."
+ },
+ "F42": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F42",
+  "proposition": "The FAQ states that the temperature in shows will vary but will be hot, up to 90\u00b0C or more.",
+  "scope": "WORLD",
+  "support_span": "So in our \u2018shows\u2019 the temperature will vary. But it will be hot! Up to 90\u00b0C\u2026 or more if we\u2019re feeling generous."
+ },
+ "F43": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F43",
+  "proposition": "Most of the shows are created in sections of around 10 minutes with intervals between each, so an audience member is in the heat for 10 minutes, then cools down, then repeats.",
+  "scope": "WORLD",
+  "support_span": "Most of our shows are created in sections (acts) of around 10 minutes with intervals between each. So you would be in the heat for 10 minutes, then cool down, then repeat."
+ },
+ "F44": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F44",
+  "proposition": "Audience members can leave the sauna at any time, and the venue is designed to make leaving easy.",
+  "scope": "WORLD",
+  "support_span": "You can leave the sauna at any time. This will be explicitly communicated to you in every session and Sauna Theatre is designed to make it easy for you to leave whenever you like."
+ },
+ "F45": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F45",
+  "proposition": "The organisers state there is no nakedness in Sauna Theatre and that swimwear is kept on at all times.",
+  "scope": "WORLD",
+  "support_span": "We keep our swimwear on at all times. So have no fear\u2026 no nakedness in Sauna Theatre."
+ },
+ "F46": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F46",
+  "proposition": "The venue has all-gender changing rooms featuring communal changing spaces and private cubicle changing spaces, secure lockers, mirrors and hairdryers.",
+  "scope": "WORLD",
+  "support_span": "We have all gender changing rooms on site which feature communal changing spaces and private cubicle changing spaces, secure lockers, and everything you need to look fabulous post sauna... mirrors, hairdryers etc."
+ },
+ "F47": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F47",
+  "proposition": "The venue sells water on tap plus a kiosk selling juices, electrolytes, snacks and 0% beers.",
+  "scope": "WORLD",
+  "support_span": "Water on tap to keep you hydrated, plus a little kiosk selling delicious, healthy juices, electrolytes, snacks and 0% beers."
+ },
+ "F48": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Sauna Theatre",
+   "Sauna Sessions Arts Club"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F48",
+  "proposition": "The organisers state that latecomers are allowed and that team members will show them into the sauna at the next appropriate interval.",
+  "support_span": "Unlike many other Edinburgh Fringe venues we allow latecomers so whenever you arrive you can get changed and our team will show you into the sauna at the next appropriate interval."
+ },
+ "F49": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F49",
+  "proposition": "Sauna Theatre is an 18+ venue for insurance reasons.",
+  "scope": "WORLD",
+  "support_span": "Yes, although we are an 18+ venue for insurance reasons. As long as you are over 18, everyone is welcome!"
+ },
+ "F50": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F50",
+  "proposition": "The FAQ advises that anyone pregnant or with a pre-existing heart or medical condition should take advice from their GP before attending the sauna.",
+  "scope": "WORLD",
+  "support_span": "If you are pregnant or have any pre-existing heart or medical condition, please take advice from your GP before attending the sauna."
+ },
+ "F51": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F51",
+  "proposition": "The accessibility document states the organisers know saunas and theatres can often be inaccessible and excluding, and that they want to change that.",
+  "scope": "WORLD",
+  "support_span": "We know saunas (and theatres) can often be inaccessible and excluding. We really want to change that."
+ },
+ "F52": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F52",
+  "proposition": "The accessibility document states this is the organisers' first time running Sauna Theatre and that they know they won't get everything right immediately.",
+  "scope": "WORLD",
+  "support_span": "This is our first time running Sauna Theatre and we know we won\u2019t get everything right immediately."
+ },
+ "F53": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F53",
+  "proposition": "Complimentary personal assistance tickets are available for guests who would otherwise be unable to attend the venue.",
+  "scope": "WORLD",
+  "support_span": "Complimentary personal assistance tickets are available for guests who would otherwise be unable to attend the venue."
+ },
+ "F54": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre",
+   "What3Words"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F54",
+  "proposition": "Sauna Theatre can be found via What3Words at ///image.drops.summer.",
+  "scope": "WORLD",
+  "support_span": "To find Sauna Theatre via What3Words: ///image.drops.summer"
+ },
+ "F55": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F55",
+  "proposition": "The changing rooms are a selection of sheds, like beach huts, all all-gender, with one large communal changing space and multiple individual changing spaces.",
+  "scope": "WORLD",
+  "support_span": "The changing rooms are a selection of sheds, like beach huts. All changing spaces are all-gender. There is one large communal changing space, and multiple individual changing spaces."
+ },
+ "F56": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F56",
+  "proposition": "There is one changing space which is ramped and large enough for a wheelchair user and a companion if necessary.",
+  "scope": "WORLD",
+  "support_span": "There is one changing space which is ramped and large enough for a wheelchair user and a companion if necessary."
+ },
+ "F57": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F57",
+  "proposition": "Access to the shower block is ramped and a shower chair is available on request.",
+  "scope": "WORLD",
+  "support_span": "Access to the shower block is ramped. We have a shower chair available for anyone who wishes to use it."
+ },
+ "F58": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F58",
+  "proposition": "There are cold plunge baths on site with the water temperature of each bath clearly displayed beside it.",
+  "scope": "WORLD",
+  "support_span": "We have cold plunge baths on site. The temperature of the water in each bath will be clearly displayed beside it."
+ },
+ "F59": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F59",
+  "proposition": "Access to Sauna Theatre is via two ramps, one on each side of the structure.",
+  "scope": "WORLD",
+  "support_span": "Access to Sauna Theatre is via two ramps, one on each side of the structure."
+ },
+ "F60": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F60",
+  "proposition": "The main entrance door is 1100mm wide and there are two further entrance/exit doors at the other end of the sauna which are both 1070 wide.",
+  "scope": "WORLD",
+  "support_span": "The main entrance door is 1100mm wide. There are two further entrance / exit doors at the other end of the sauna which are both 1070 wide."
+ },
+ "F61": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F61",
+  "proposition": "Seating in Sauna Theatre is unreserved and arranged over three levels, with steps up from the bottom bench to the middle and top benches; the lowest bench is the coolest and the top bench the hottest.",
+  "scope": "WORLD",
+  "support_span": "Seating in Sauna Theatre is unreserved, and arranged over three levels with steps up from the bottom bench to the middle and top benches. The lowest bench is the coolest temperature, the top bench is the highest temperature."
+ },
+ "F62": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F62",
+  "proposition": "The organisers state they have not yet found a wheelchair that is sauna compatible, and that their ambition is to have one in the future.",
+  "scope": "WORLD",
+  "support_span": "We have not yet found a wheelchair that is sauna compatible. Our ambition is to have one in the future."
+ },
+ "F63": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F63",
+  "proposition": "For this Fringe the venue offers a transfer-to-seat option, with a dedicated seat on the bottom bench that has a back rest and arm rests and a space adjacent for a companion.",
+  "scope": "WORLD",
+  "support_span": "For this Fringe, we are able to offer a transfer-to-seat option. There is a dedicated seat on the bottom bench for you to transfer to. The seat has a back rest and arm rests. There is a space adjacent for a companion."
+ },
+ "F64": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F64",
+  "proposition": "Once a guest has transferred to the seat, a Sauna Host takes the wheelchair back outside the sauna and is on hand to return with it, and the process and emergency evacuation protocol are discussed before the session.",
+  "scope": "WORLD",
+  "support_span": "Once you have transferred to your seat, a Sauna Host will take your wheelchair back outside the sauna, and be on hand to return with it whenever you need. We will discuss the process for this \u2013 and emergency evacuation protocol \u2013 before your sauna session."
+ },
+ "F65": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F65",
+  "proposition": "There are nine different sauna theatre sessions every day, all with different formats.",
+  "scope": "WORLD",
+  "support_span": "We have nine different sauna theatre sessions every day. They all have different formats."
+ },
+ "F66": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Aufguss"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F66",
+  "proposition": "The 0900 Get Set For The Day Sauna Session is a straight sauna session with music and ambient lighting in which visitors are free to come and go, with an Aufguss master entering at intervals to perform for approximately 3 minutes at a time.",
+  "scope": "WORLD",
+  "support_span": "This is a straight up sauna session. There will be music playing throughout, and ambient lighting. You are free to come and go from the sauna as you please. At intervals during the session an Aufguss master will enter the sauna and perform for approximately 3 minutes at the time."
+ },
+ "F67": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F67",
+  "proposition": "The 1030 Morning Sauna Rave has a DJ playing throughout from within a booth in the sauna.",
+  "scope": "WORLD",
+  "support_span": "This session has a DJ playing throughout from within a booth in the sauna."
+ },
+ "F68": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Mysteries of the Picts"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F68",
+  "proposition": "Mysteries of the Picts is a storytelling and sauna ritual show with actors speaking text and two sauna masters performing rituals involving scent, smoke and Aufguss towel waving, in three acts of 10-12 minutes each with intervals.",
+  "scope": "WORLD",
+  "support_span": "This is a storytelling and sauna ritual show performed by to actors speaking text and two sauna masters performing rituals involving scent, smoke and Aufguss towel waving. It happens in three \u2018acts\u2019 of 10-12 minutes each with intervals in between."
+ },
+ "F69": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F69",
+  "proposition": "The 1330 Lunch Break Luxuriate Lit Salon features authors, poets and actors reading and performing text, with three or four guest performers every day and each block of performance a maximum of 10 minutes.",
+  "scope": "WORLD",
+  "support_span": "This session features authors, poets and actors reading and performing text. There will be three of four guest performers every day. Aufguss masters will sometimes perform alongside the writers. Each block of performance will be a maximum of 10 minutes."
+ },
+ "F70": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "The Waves"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F70",
+  "proposition": "Aufguss x The Waves is akin to a radio play in which the audience listens to pre-recorded actors perform the text while Aufguss masters perform live in the space, divided into three acts of around 12 minutes each.",
+  "scope": "WORLD",
+  "support_span": "This is akin to a radio play. You will listen to pre-recorded actors perform the text. Aufguss masters will perform live in the space, interacting with the audio. The show is dvided into three acts of around 12 minutes each."
+ },
+ "F71": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Bubble Schmeisis",
+   "Nick",
+   "Josh",
+   "Dan"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F71",
+  "proposition": "Bubble Schmeisis (Remixed) is a promenade storytelling show in which Nick, the writer and performer, and two musicians Josh and Dan start the story in the changing area and lead the audience into the sauna.",
+  "scope": "WORLD",
+  "support_span": "This is a promenade storytelling show. Nick \u2013 the writer and performer \u2013 and two musicians Josh & Dan will start the story in the changing area. They will lead the audience into the sauna where the story will continue."
+ },
+ "F72": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Bubble Schmeisis",
+   "Nick"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F72",
+  "proposition": "For Bubble Schmeisis (Remixed) the temperature of the sauna is decreased to allow a longer stay of around 30 minutes before the audience is led outside to cool down.",
+  "scope": "WORLD",
+  "support_span": "The temperature of the sauna will be decreased to allow a longer stay in the sauna of around 30 minutes before Nick leads the audience outside to cool down."
+ },
+ "F73": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F73",
+  "proposition": "The International Aufguss Masters session consists of two different Aufguss performances every night, each lasting a maximum of 15 minutes, with an interval in between to cool down.",
+  "support_span": "This is two different Aufguss performances every night. Each will last a maximum of 15 minutes. There will be an interval in between the two performances to cool down."
+ },
+ "F74": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre",
+   "Nils Frahm"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F74",
+  "proposition": "The Aufguss x Nils Frahm session happens in four acts of 10 minutes each with intervals in between, with Aufguss masters performing to the music of Nils Frahm.",
+  "support_span": "This session happens in four \u2018acts\u2019 of 10 minutes each with intervals in between. Aufguss masters perform to the music of Nils Frahm."
+ },
+ "F75": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Sessions Arts Club"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F75",
+  "proposition": "The 2100 Sauna Sessions Arts Club session is an evening cabaret with a DJ and a different line-up of artists each night, involving entering and exiting the sauna multiple times to see every act.",
+  "scope": "WORLD",
+  "support_span": "This is our evening cabaret. Each night a DJ plays in the sauna and different line up of artists perform. There are multiple acts during the event so this will involve entering and exiting the sauna multiple times if you wish to see every act."
+ },
+ "F76": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ABSENCE",
+  "entities": [
+   "BSL"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F76",
+  "proposition": "In its first year of operation the venue regrets that it is not offering audio specific access performances with audio enhancement, BSL, captioning or audio description.",
+  "scope": "WORLD",
+  "support_span": "In this first year of operation we regret we are not offering audio specific access performances with audio enhancement, BSL, captioning or audio description."
+ },
+ "F77": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F77",
+  "proposition": "Certain sessions at Sauna Theatre will contain flashing lights.",
+  "support_span": "Certain sessions will contain flashing lights."
+ },
+ "F78": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F78",
+  "proposition": "Assistance dogs are welcome on the site but not in the Sauna Theatre itself, because it is too hot.",
+  "scope": "WORLD",
+  "support_span": "Assistance dogs are welcome on our site, but not in the Sauna Theatre itself. It\u2019s too hot for doggies!"
+ },
+ "F79": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F79",
+  "proposition": "The nearest accessible toilet is reached via the ramp from the central Courtyard into the Main Building, turning right at the Caf\u00e9 entrance and past the neon corridor.",
+  "scope": "WORLD",
+  "support_span": "The nearest accessible toilet is via the ramp, from the central Courtyard, into the Main Building (this brings you into the Caf\u00e9 corridor. Turn right at the Caf\u00e9 entrance, past the neon corridor \u2013 the accessible toilet is on the left."
+ },
+ "F80": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Polly Bullock-Anderson",
+   "James Grieve",
+   "Summerhall",
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F80",
+  "proposition": "The accessibility contacts given are Polly Bullock-Anderson and Summerhall Box Office staff, and James Grieve at Sauna Theatre, with an aim to respond within 24 hours.",
+  "scope": "WORLD",
+  "support_span": "You can contact Polly Bullock-Anderson and a team of helpful Box Office staff at Summerhall on boxoffice@summerhallarts.co.uk, or James Grieve at Sauna Theatre on james@saunasessionsartsclub.com. We will always be happy to hear from you and will aim to respond to you within 24 hours."
+ },
+ "F81": {
+  "claim_kind": "OCCURRENCE",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Sessions Arts Club",
+   "Edinburgh Fringe"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F81",
+  "proposition": "The Edinburgh Fringe listing for Sauna Sessions Arts Club \u2013 The Hottest Club in Town gives a start time of 21:00 and lists the genres as Dance and Immersive.",
+  "scope": "WORLD",
+  "support_span": "Genre: \n DANCE \n IMMERSIVE \n\n Sauna Sessions Arts Club \u2013 The Hottest Club in Town\n 21:00"
+ },
+ "F82": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Edinburgh Fringe"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F82",
+  "proposition": "The Fringe listing records the accessibility and enhanced performances fields for the show as Wheelchair Access and Wheelchair Accessible Toilets.",
+  "scope": "WORLD",
+  "support_span": "Accessibility and enhanced performances Wheelchair Access, Wheelchair Accessible Toilets"
+ },
+ "F83": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [
+   "Edinburgh Fringe"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F83",
+  "proposition": "The Fringe listing states that babies are not allowed in the venue, with the policy applying to children under 2 years.",
+  "scope": "WORLD",
+  "support_span": "Babes in arms policy: Babies are not allowed in the venue, please refer to the age suitability for the show"
+ },
+ "F84": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Edinburgh Fringe"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F84",
+  "proposition": "The Fringe listing warns that the show takes place in a sauna with high temperatures and requires all audience members to bring and change into swimwear and to walk or move around the space.",
+  "scope": "WORLD",
+  "support_span": "This show takes place in a sauna with high temperatures and requires all audience members to bring and change into swimwear, and to walk/move around the space"
+ },
+ "F85": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Edinburgh Fringe"
+  ],
+  "evidence_ids": [
+   "S5"
+  ],
+  "fact_id": "F85",
+  "proposition": "The Fringe listing describes the show as taking place in the UK's largest sauna with state-of-the-art lighting and surround sound for a fully immersive experience.",
+  "scope": "WORLD",
+  "support_span": "Aufguss and much more in the UK&#x27;s largest sauna with state-of-the-art lighting and surround sound for a fully immersive experience."
+ },
+ "F86": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F86",
+  "proposition": "The FAQ states that Sauna Theatre will feature top-grade sauna stoves tended by professional sauna masters to deliver l\u00f6yly and heat.",
+  "scope": "WORLD",
+  "support_span": "It will feature some top-grade sauna stoves tended by professional sauna masters to deliver delicious l\u00f6yly (steam) and soothing heat."
+ },
+ "F87": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F87",
+  "proposition": "The organisers state that in the sauna there are no phones and no distractions, just audience members and artists.",
+  "scope": "WORLD",
+  "support_span": "No phones, no distractions. Just you, your fellow audience members and extraordinary artists in beautiful communion."
+ },
+ "F88": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "NEGATIVE_EXISTENCE",
+  "entities": [],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F88",
+  "proposition": "The organisers state they are not just putting traditional theatre in an even hotter room.",
+  "scope": "WORLD",
+  "support_span": "Don\u2019t worry, we\u2019re not just putting traditional theatre in an even hotter room."
+ },
+ "F89": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Lucy Osborne"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F89",
+  "proposition": "Osborne said they are not just putting theatre in a hot room, but trying to create a new cultural space in which to experience art whilst feeling great.",
+  "scope": "WORLD",
+  "support_span": "\"We're not just putting theatre in a hot room,\" said Osborne. \"We're trying to create a new cultural space in which to experience art whilst feeling great.\""
+ },
+ "F90": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre",
+   "Summerhall"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F90",
+  "proposition": "Bulky items that will not fit in a locker can be left at the Sauna Theatre Welcome Desk at the entrance to the site in the rear courtyard at Summerhall, which is permanently manned.",
+  "scope": "WORLD",
+  "support_span": "you can leave anything too big to fit in a locker at Sauna Theatre Welcome Desk which you\u2019ll see at the entrance to the site in the rear courtyard at Summerhall and which is permanently manned"
+ },
+ "F91": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F91",
+  "proposition": "Sauna Hosts can be identified by their yellow T-shirts with the Sauna Theatre logo on the front and 'Team Sauna' on the back.",
+  "scope": "WORLD",
+  "support_span": "You can identify Sauna Hosts by their Yellow T-Shirts with the Sauna Theatre logo on the front and \u2018Team Sauna\u2019 on the back"
+ },
+ "F92": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F92",
+  "proposition": "Lockers in the changing area are locked by a key on a wristband which the guest keeps with them.",
+  "scope": "WORLD",
+  "support_span": "The lockers are locked by a key on a wristband which you can then keep with you."
+ },
+ "F93": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre",
+   "Summerhall",
+   "The Royal Dick"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F93",
+  "proposition": "Sauna Theatre is located in the rear courtyard at Summerhall, reached from the main courtyard by heading down the passage to the left as you face The Royal Dick.",
+  "scope": "WORLD",
+  "support_span": "Sauna Theatre is located in the rear courtyard at Summerhall. From the main courtyard head down the passage to the left as you are facing The Royal Dick."
+ },
+ "F94": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "ATTRIBUTION",
+  "entities": [
+   "Lucy Osborne",
+   "James Grieve"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F94",
+  "proposition": "Osborne and Grieve believe that by combining theatre and sauna they have created a space with a heightened communal state that is immersive and even transformative.",
+  "scope": "WORLD",
+  "support_span": "By combining the two, they believe they have created a space with \"a heightened communal state that is immersive and even transformative\"."
+ },
+ "F95": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S2"
+  ],
+  "fact_id": "F95",
+  "proposition": "Sauna Theatre has been brought to life thanks to the support of partners and suppliers, listed as Founding Partners and Official Suppliers.",
+  "scope": "WORLD",
+  "support_span": "Sauna Theatre has been brought to life thanks to the generous support of our brilliant partners and suppliers:\n\n Founding Partners\n\n Official Suppliers"
+ },
+ "F96": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Faith In Nature"
+  ],
+  "evidence_ids": [
+   "S4"
+  ],
+  "fact_id": "F96",
+  "proposition": "The FAQ names Faith In Nature as partners providing shower gel and shampoo at the showers.",
+  "scope": "WORLD",
+  "support_span": "thanks to our wonderful partners Faith In Nature, there will be lovely shower gel and shampoo to help you feel your best post sauna"
+ },
+ "F97": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Summerhall Arts",
+   "Sauna Theatre"
+  ],
+  "evidence_ids": [
+   "S6"
+  ],
+  "fact_id": "F97",
+  "proposition": "Tickets are to be booked via a Summerhall Arts festival page for the Sauna Theatre venue.",
+  "scope": "WORLD",
+  "support_span": "Please book tickets via this link https://festival.summerhallarts.co.uk/venues/sauna-theatre-summerhall-arts/."
+ },
+ "F98": {
+  "claim_kind": "DISPOSITION",
+  "claim_type": "POSITIVE_FACT",
+  "entities": [
+   "Dezeen",
+   "Sweden",
+   "Norway"
+  ],
+  "evidence_ids": [
+   "S0"
+  ],
+  "fact_id": "F98",
+  "proposition": "Recent saunas featured on Dezeen include a crystal-shaped sauna in Sweden and a floating timber sauna on a lake in rural Norway.",
+  "scope": "WORLD",
+  "support_span": "Recent saunas featured on Dezeen include a crystal-shaped sauna in Sweden and a floating timber sauna on a lake in rural Norway."
+ }
+}
