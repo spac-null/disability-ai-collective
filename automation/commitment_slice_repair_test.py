@@ -86,6 +86,16 @@ rep = C.anchor_report(TERM, "set by the bandgap energy", ARCH, LEDGER)
 ok(rep["candidates"] == {"bandgap": 1, "energy": 2},
    "both candidates and their document frequencies are reported, so the heuristic is inspectable")
 
+print("\n== a compound term does not become its own second concept ==")
+ok(C._term_words("transfer-to-seat") == {"transfer-to-seat", "transfer", "seat"},
+   "a hyphenated term contributes its parts as well as the whole")
+_e1, _e2 = C.endpoints("transfer-to-seat", "fixed seat",
+                       {"definition_evidence": {"transfer-to-seat": ["FA"]}},
+                       {"FA": {"proposition": "a dedicated seat on the bottom bench"}})
+ok(_e2 == set(),
+   "'fixed seat' has NO second concept -- 'fixed' is absent from the evidence and 'seat' "
+   "belongs to the term, so it refuses like 'minutes away' rather than inventing a relation")
+
 print("\n== affordance is ingredients AND duty, not mere co-occurrence ==")
 surf = C.affording_surfaces(ARCH, LEDGER, TERM, e1, e2)
 ids = {s["surface_id"]: s["affordance"] for s in surf}

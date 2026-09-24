@@ -95,6 +95,21 @@ def _content(s: str) -> set:
             if w.lower() not in DRC.FUNCTION_WORDS and len(w) > 2}
 
 
+def _term_words(term: str) -> set:
+    """The term's own vocabulary, INCLUDING the parts of a compound.
+
+    Without this, "transfer-to-seat" tokenises as one word, so the term's own head noun
+    "seat" survived the E2 subtraction and was treated as the far end of a relation with the
+    term itself. The slice then widened to every beat that mentioned a seat. The flagged span
+    was "fixed seat" -- an attribute overspecification with no second concept in it at all --
+    and it should have refused for the same reason "minutes away" does.
+    """
+    w = _content(term)
+    for part in re.split(r"[-/\u2013\u2014_]+", term or ""):
+        w |= _content(part)
+    return w
+
+
 def _ledger_df(ledger: dict, word: str) -> int:
     n = 0
     for f in (ledger or {}).values():
@@ -118,7 +133,7 @@ def endpoints(term: str, span: str, arch: dict, ledger: dict) -> tuple:
     the safe direction -- rather than to being wrong about what affordance is. Affordance is
     defined in affording_surfaces(), in terms of reach and duty, and never in terms of rarity.
     """
-    e1 = _content(term)
+    e1 = _term_words(term)
     ids = ((arch or {}).get("definition_evidence") or {}).get(term)
     if isinstance(ids, str):
         ids = [ids]
