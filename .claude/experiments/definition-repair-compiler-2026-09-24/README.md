@@ -760,3 +760,139 @@ supports — on one case — the contract shape:
 `facts_allowed` says what may be used. `required_commitments` says what must survive.
 `prohibitions` says what may not be joined. The Writer can no longer win by omission, because
 omission now violates something.
+
+---
+
+# Phase 5 — BOUNDED_MULTI_CASE_OBLIGATION_TEST
+
+Branch F frozen first at `/srv/data/cripminds-evidence/commitment-contract-F-reference-2026-09-24`
+(28 files, 0 verify failures). The policy was **written and committed at `d4bd9ea` before the
+cohort ran** — deterministic code, no model call, derived only from the shadow's per-span
+statuses and the repair's own edit plan, so it cannot be fitted to results it has not seen.
+
+## The policy
+
+| rule | selects | because |
+|---|---|---|
+| `EXPLANATORY` | every `NON_FACTUAL_OR_NOT_CHECKABLE` unit | branch B deleted exactly this |
+| `ADJACENT_SUPPORTED` | `SUPPORTED` units **immediately** bordering the flagged span | what a rewrite swallows is what borders it |
+| `DISPLACED_FACT` | any fact the repair MOVEd or REMOVEd | branch E dropped exactly this |
+
+Nothing else — not every supported commitment, not every `facts_allowed` entry.
+`MAX_OBLIGATION_SHARE = 0.5` is declared in advance as a **diagnostic**: it changes nothing the
+policy emits, it only reports over-selection.
+
+## The cohort — six cases, fixed in advance
+
+| case | commitments | flagged | calls | obligations | share | outcome |
+|---|---|---|---|---|---|---|
+| **C1** cutoff wavelength | 5 | 1 | 1 | 3 | 0.50 | **REPAIRED** |
+| **C2** Dressing for Evacuation | 6 | 2 | 0 | — | — | REFUSED — not relational |
+| **C3** transfer-to-seat | 6 | 1 | 0 † | — | — | REFUSED — not relational |
+| **C4** Aufguss | 6 | 1 | 0 | — | — | REFUSED — not relational |
+| **C5** dark current | 2 | 0 | 0 | 0 | — | NO REPAIR |
+| **C6** sensor chip assembly | 5 | 0 | 0 | 0 | — | NO REPAIR |
+
+**One model call across six cases.** († C3 cost one wasted call before the normalisation fix.)
+
+### Over-obligation: not observed
+
+Pre-repair shares 0.40 / 0.33 / 0.33 / 0.33; post-repair 0.50 on C1 — at the declared bound,
+never over. **C6 is the control that matters**: five supported commitments, none flagged, and
+the policy emitted nothing at all. A clean definition does not appear in the output as an empty
+entry; it does not appear.
+
+### Two type boundaries the cohort found
+
+C2, C3 and C4 refuse for the same reason, at zero cost: **the flagged commitment has no second
+concept.** "minutes away", "to carry an audience" and "fixed seat" are value and attribute
+overspecifications, not relations — "minutes", "audience" and "fixed" appear nowhere in the
+declared evidence, so there is no far end to separate from. The relation-oriented compiler
+refuses rather than forcing them into a fake relation. That is correct behaviour, not failure:
+the phase-1 definition-local editor already handles exactly these (it turned "minutes away"
+into "imminent" and "fixed seat" into "dedicated seat"). The cohort has discovered a taxonomy —
+at least `RELATION_NOT_ESTABLISHED` versus value/attribute overspecification — which is
+recorded and **not built**.
+
+### One implementation bug, fixed narrowly
+
+C3 originally spent a call it should not have. `transfer-to-seat` tokenises as one word, so the
+term's own head noun "seat" survived the E2 subtraction and was treated as the far end of a
+relation *with the term itself*; the slice widened to every beat mentioning a seat. Fix: the
+term's vocabulary now includes the parts of a compound. No synonym rule, nothing about seats,
+and `cutoff wavelength` is provably unchanged so C1 cannot move. Static re-analysis only, as
+directed: C3 now refuses at zero cost like C2 and C4.
+
+### One structural fix to the prohibition contract
+
+The cohort's first run produced a correct prohibition that the **packet validator rejected**:
+it said "the evidence reaches…", and `story.leaks()` catches `the evidence` as a provenance
+frame. It is right to: a house rule about where knowledge came from teaches the Writer to write
+about where knowledge came from. My instruction had literally asked for it. The contract now
+asks for the boundary in the material's own words, and `story.leaks()` is applied to the
+proposed prohibition before assembly — the engine's own list, no second definition. Applied
+uniformly; the obligation policy was untouched, because it was not what failed.
+
+## C1 — the fully automatic contract
+
+Nothing here was hand-authored. The compiler found the shared middle variable itself:
+
+> **Do not write that the cutoff wavelength is set, fixed or determined by the bandgap energy;
+> the fraction of cadmium in the mixture is tied to the bandgap energy, and the tuned fraction
+> of 0.445 is tied to the desired cutoff wavelength, but the two are never tied to each other.**
+
+Obligations, auto-selected — and **different from branch F's hand-authored set**: it obliges
+the adjacent supported clause I had not thought to, and skips F87, which nothing endangered.
+
+```
+EXPLANATORY         the long-wavelength edge of what the detector material will register
+ADJACENT_SUPPORTED  engineered in the mercury cadmium telluride mixture
+DISPLACED_FACT      The precise mixture of HgCdTe, specifically the fraction of cadmium,
+                    can be varied to engineer a specific bandgap energy
+```
+
+Validators CLEAN; packet renders with obligations and prohibition both present.
+
+## Replay G — the automatic contract downstream
+
+> "…The precise mixture of the mercury cadmium telluride, specifically the fraction of cadmium,
+> can be varied to engineer a specific bandgap energy. **A cutoff wavelength is the
+> long-wavelength edge of what the detector material will register, engineered in the mixture
+> itself**, and for Roman's desired cutoff of approximately 2.5 microns the fraction of cadmium
+> was tuned to 0.445. The Wide Field Instrument is sensitive to wavelengths from 0.48 to 2.3
+> microns…"
+
+**Outcome 1.** All three obligations realised — including the one that differed from the manual
+set, which reads naturally as "engineered in the mixture itself". Forbidden relation absent in
+every form. Explanation present as a clean declarative. No amputation. Not checklist prose: the
+Writer even wrote "a ladder of test wavelengths laid across the band the cadmium fraction
+defined", anchoring on the licensed variable unprompted.
+
+| | E | F | G |
+|---|---|---|---|
+| obligations | none | hand-authored | **auto-derived** |
+| bridge | absent | absent | **absent** |
+| explanation | present | present | **present** |
+| bandgap material | **absent** | present | **present** |
+| Writer calls | 6 | 6 | 5 |
+| SAFETY | MACHINE_LANGUAGE + CUT_LEAKAGE | same | **MACHINE_LANGUAGE only** |
+
+The F79/Goddard `CUT_LEAKAGE` present in E and F does not appear in G, which never mentions
+Goddard. Stated as an observation across single runs, not a claim of cause — and the F79/F80
+cut/used near-duplicate remains a separate pre-existing defect, untouched here as directed.
+
+Still HOLD at SAFETY on `MACHINE_LANGUAGE`, which every branch A–G has had. Grounding was
+never reached in any branch, so no gate has independently confirmed any of this.
+
+## What this does and does not establish
+
+On **one** relational case, the contract can be derived automatically rather than hand-authored:
+
+> **permissions + obligations + prohibitions**
+
+with obligations selected by a policy fixed in advance that did not over-select on any of six
+cases and cost nothing on the clean ones. Two clean controls held. Three cases correctly
+refused as out of type.
+
+It is one repaired case. The other three flagged cases were refusals, so the policy's selection
+was exercised end-to-end exactly once. That is the honest limit of this cohort.
