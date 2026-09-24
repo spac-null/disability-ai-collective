@@ -645,3 +645,118 @@ Not tuned, not retried, no second prohibition, no examples added, no Writer chan
 Detector calls 0 (frozen result reused, gloss byte-identical). Repair calls 0 (branch D reused
 unmodified). Static checks and packet render 0 — `writer_packet()` is pure. One downstream
 replay, 6 model calls, FAST_LANE, ~7 minutes wall clock. No cost saving claimed.
+
+---
+
+# Phase 4 — branch F: obligations alongside the prohibition
+
+A–E frozen read-only under `/srv/data/cripminds-evidence/commitment-repair-A-to-E-2026-09-24`,
+69 files, SHA256SUMS verifying 0 failures. No softer prohibition was tried.
+
+## The missing type
+
+The plan could say what the Writer **may** use (`facts_allowed`) and what it **may not** say
+(`prohibitions`). It could not say what must **still** be said. So in E the cheapest legal move
+was omission.
+
+The packet already had exactly one positive obligation — `explain plainly, once, here:` — and
+that obligation *held through branch E*: the cutoff-wavelength explanation survived the same
+run that lost bandgap. The shape was proven; it simply never covered facts. So this extends it
+rather than inventing a channel.
+
+`required_commitments` is **doubly inert**: off unless the flag is set **and** the architecture
+carries the field, and `ARCHITECT_SCHEMA` emits no such field. Tests assert the rendered prompt
+is byte-identical with the flag off even for a plan that *does* carry the field — because a
+model reply could invent one — and byte-identical with the flag on for a plan that does not.
+Not every `facts_allowed` entry becomes mandatory; only what the plan decided must survive.
+
+## Branch F = branch E + one field
+
+12 static checks, 0 model calls. Only delta: `required_commitments`. Prohibition unchanged
+(18), gloss unchanged (`7eebdcd9…`), B3 repaired form, F86 still at B4, validators CLEAN, no
+ids or field names in the prompt.
+
+R1 and R2 are listed **next to each other on purpose** — that adjacency is what started this,
+and the prohibition now stands between them:
+
+```
+THESE MUST REACH THE READER
+  Each of these has to appear in the article, in your own sentences, as
+  part of the story. They are not optional background.
+  - the fraction of cadmium in the mercury cadmium telluride mixture can be varied to
+    engineer a specific bandgap energy
+  - for Roman's desired cutoff wavelength of approximately 2.5 microns, the fraction of
+    cadmium was tuned to 0.445
+  - what a cutoff wavelength is: the long-wavelength edge of what the detector material
+    will register
+```
+
+Frozen packet `429b95ae…`.
+
+## Result — both sides satisfied
+
+> "The mixture itself is adjustable: **the fraction of cadmium in the mercury cadmium
+> telluride can be varied to engineer a specific bandgap energy.** Roman's desired cutoff
+> wavelength — **the long-wavelength edge of what the detector material will register** — was
+> approximately 2.5 microns, **and for that the fraction of cadmium was tuned to 0.445.**"
+
+Two sentences. The Writer anchored each fact on the cadmium fraction — their true shared middle
+variable — and never joined them at the endpoints. That is precisely what the frozen evidence
+licenses, and it is better prose than the baseline, where the explanation was a trailing
+apposition on an unsupported causal clause.
+
+| | |
+|---|---|
+| `TARGET_COMMITMENT_REMOVED_FROM_PLAN` | **True** — no bridge in gloss or B3; validators CLEAN |
+| `PACKET_SCOPED_PROHIBITION_PRESENT` | **True** — unchanged from E |
+| `POSITIVE_OBLIGATIONS_PRESENT` | **True** — all three in the packet, verbatim, no machine language |
+| `R1_REALISED` (cadmium → bandgap) | **True** — its own sentence |
+| `R2_REALISED` (0.445 for the cutoff) | **True** — same sentence as R3 |
+| `R3_REALISED` (the explanation) | **True** — as an apposition on the term |
+| `WRITER_REGENERATION` | **False** — no bridge, no semantic equivalent, in draft, article or package |
+| `WRITER_OBEYED_WITHOUT_CONTENT_AMPUTATION` | **True** — bandgap is back and stated in full |
+| `EXPLANATORY_USEFULNESS_PRESERVED` | **True** |
+| `UNRELATED_FACT_PRESERVED` | **True** — F86 realised in prose, not merely present in the plan |
+
+Success condition **R1 + R2 + R3 present and X1 absent: met.**
+
+## Six branches
+
+| | plan delta | bridge | explanation | bandgap material |
+|---|---|---|---|---|
+| **A** baseline | — | explicit *"which sets…"* | present | present |
+| **B** free repair | gloss regenerated | absent | **destroyed** | present |
+| **C** definition-only | gloss span | explicit *"which sets…"* | present | present |
+| **D** cross-plan slice | gloss + B3 + F86→B4 | ambiguous *"and with it…"* | present | present |
+| **E** + prohibition | +1 prohibition | **absent** | present | **absent** |
+| **F** + obligations | +1 field | **absent** | **present** | **present** |
+
+Only F has all three columns right. Each branch changed one thing, so each column is readable.
+
+## What did not change, and is not claimed
+
+Still HOLD at SAFETY on the same two defects as E: `MACHINE_LANGUAGE` (every branch has it) and
+`CUT_LEAKAGE` on F79/Goddard. That leakage is **not** caused by this work: F79 (cut) and F80
+(used, in B4) are near-duplicates about the same Goddard testing, so writing B4's licensed F80
+material fully collides with a cut fact. D avoided it only by spending that region on the
+bridge instead. A distinct, pre-existing defect class these runs surfaced rather than created.
+
+Grounding was never reached in any of the six branches, so no gate independently confirmed the
+factual outcome — the bridge analysis here is direct reading of the prose, not a Grounding
+verdict.
+
+One case, one run, no cohort, no retries, no prompt tuning. Flag off, nothing merged, nothing
+published, production untouched at `b806008`.
+
+## Conclusion
+
+For this frozen commitment, the Writer satisfied a positive obligation and a negative
+constraint simultaneously where either alone failed: prohibition alone bought closure by
+deleting the concept, and positive plan surgery alone did not prevent reconstruction. That
+supports — on one case — the contract shape:
+
+> **permissions + obligations + prohibitions**
+
+`facts_allowed` says what may be used. `required_commitments` says what must survive.
+`prohibitions` says what may not be joined. The Writer can no longer win by omission, because
+omission now violates something.
