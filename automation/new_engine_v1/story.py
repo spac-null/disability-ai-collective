@@ -1128,6 +1128,18 @@ def validate_turn_support(turn: str, fact_ids, ledger: dict) -> list:
 
 
 # ── WRITER PACKET ─────────────────────────────────────────────────────────────
+REQUIRED_COMMITMENTS_FLAG = "CRIPMINDS_REQUIRED_COMMITMENTS"
+
+
+def required_commitments_enabled(env=None) -> bool:
+    """OFF unless explicitly switched on. Zero authority, zero production effect: with the
+    flag unset build_packet() drops the field and render() emits nothing, so the prompt is
+    byte-identical to today's for every plan, with or without the field present."""
+    import os as _os
+    v = (env if env is not None else _os.environ).get(REQUIRED_COMMITMENTS_FLAG, "")
+    return v.strip().lower() in ("1", "on", "true", "yes")
+
+
 def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None) -> dict:
     """The minimal writing packet.
 
@@ -1180,6 +1192,12 @@ def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None
         "quotes": [quotes[q] for q in (arch.get("use_quotes") or []) if q in quotes],
         "definitions": arch.get("definitions") or {},
         "prohibitions": list(arch.get("prohibitions") or []),
+        # POSITIVE OBLIGATION -- experimental, OFF unless both the flag is set and the
+        # architecture actually carries the field. ARCHITECT_SCHEMA does not emit it, so no
+        # production plan has one; the doubled gate exists so that a stray field in a model
+        # reply still cannot change a prompt. See required_commitments_enabled().
+        "required_commitments": (list(arch.get("required_commitments") or [])
+                                 if required_commitments_enabled() else []),
         "_cut_count": len(arch.get("cut_evidence") or []),
     }
 
@@ -1267,6 +1285,24 @@ def render(packet: dict) -> str:
         L.append("EXPLAIN AT FIRST USE")
         for k, v in packet["definitions"].items():
             L.append("  %s -- %s" % (k, v))
+        L.append("")
+    # The plan can say what the Writer MAY use (facts under each beat) and what it may NOT
+    # say (prohibitions). Until now it could not say what it MUST still say. Branch E showed
+    # why that matters: told not to connect two ideas, the Writer satisfied the constraint by
+    # dropping one of them, because omission was the cheapest legal move. An obligation of
+    # this exact shape already exists and already works -- "explain plainly, once, here" kept
+    # the cutoff-wavelength explanation alive through that same run -- it simply did not cover
+    # facts. This extends the shape rather than inventing a channel.
+    if packet.get("required_commitments"):
+        L.append("THESE MUST REACH THE READER")
+        L.append("  Each of these has to appear in the article, in your own sentences, as")
+        L.append("  part of the story. They are not optional background.")
+        for r in packet["required_commitments"]:
+            # Only a dict carrying text. Anything else is skipped rather than stringified --
+            # a malformed entry must not become a line of the prompt reading "- None".
+            t = (r.get("must_realize") or "").strip() if isinstance(r, dict) else ""
+            if t:
+                L.append("  - %s" % t)
         L.append("")
     L.append("END ON")
     L.append("  " + packet["ending_move"])
