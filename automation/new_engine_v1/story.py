@@ -208,7 +208,7 @@ def leak_hits(text: str, where: str = "") -> list:
 # build_packet: that key could only ever hold "", so this entry scanned nothing.
 _GENERATED_PACKET_FIELDS = ("story_spine", "opening", "reader_initial_state", "turn",
                             "crip_turn", "ending_move")
-_GENERATED_BEAT_FIELDS = ("happens", "carrier", "concept", "withhold")
+_GENERATED_BEAT_FIELDS = ("happens", "carrier", "concept", "withhold", "wants_next")
 
 
 def generated_packet_text(packet: dict) -> list:
@@ -432,6 +432,34 @@ def validate_architecture(arch: dict, evidence_ids: set, ledger: dict | None = N
         for f in (b.get("facts_allowed") or []):
             if f not in evidence_ids:
                 errs.append("%s allows fact %s that is not in the frozen evidence" % (bid, f))
+    # THE ENTRY BEAT EXPLAINS NOTHING (2026-09-24).
+    #
+    # Measured, not asserted. Seven articles were read blind by the human editor. Four of
+    # the seven plans put a `concept_introduced` in their FIRST beat -- a statute's time
+    # limit, a coroner's report identity, a surgical measurement, a notation's definition
+    # -- and those four are the ones the editor abandoned soonest, each with the same
+    # note: why should I read this, who is this, what am I reading. The three whose first
+    # concept arrived at B2 or later are the three the editor read furthest into. The
+    # defect is not how MANY facts the entry carries: the Lombardy plan opened on three,
+    # and they were three legal instruments.
+    #
+    # So the rule is about the KIND of work the opening does, read off an existing field.
+    # An explanation in beat one arrives before the reader has a question for it. The
+    # repair is cheap and touches no fact: the same concept, in the beat whose material
+    # needs it.
+    #
+    # It applies only from three beats up, because "move it later" needs a later to move
+    # to; a two-beat BRIEF may legitimately have nowhere else to put it.
+    if len(beats) >= 3:
+        opening = beats[0]
+        concept = (opening.get("concept_introduced") or "").strip()
+        if concept:
+            errs.append(
+                "%s is the entry beat and also introduces a concept (%r). The opening "
+                "shows the reader one thing and makes them want the next; an explanation "
+                "there arrives before the reader has any question for it. Move the "
+                "concept to the beat whose material actually needs it and leave the "
+                "facts where they are." % (opening.get("beat_id"), concept[:70]))
     if not (arch.get("ending_move") or "").strip():
         errs.append("ending_move missing")
     # USE/CUT honesty
@@ -1168,6 +1196,19 @@ def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None
                    "facts": [facts[f] for f in (b.get("facts_allowed") or []) if f in facts],
                    "concept": b.get("concept_introduced", ""),
                    "withhold": b.get("must_not_say_yet", ""),
+                   # THE REASON TO READ ON, carried to the Writer (2026-09-24). The
+                   # architect has always had to earn every beat -- validate_architecture
+                   # refuses a plan whose beat does not say why the reader wants the next
+                   # one -- and that answer then stopped at the plan. render() showed the
+                   # Writer what happens, what is withheld and what to explain, and
+                   # nothing about what pulls a reader forward, so the one field holding
+                   # the engine's account of momentum never reached the prose. A human
+                   # editor reading seven articles blind stopped inside the first
+                   # paragraph of most of them asking exactly what this field answers.
+                   # It is leak-scanned (_GENERATED_BEAT_FIELDS) and screened by
+                   # architect_prose_audit like every other generated field that reaches
+                   # the Writer; it licenses no fact, the same as `happens`.
+                   "wants_next": b.get("why_reader_wants_next", ""),
                    # Not read by render() -- the Writer's prompt is unchanged. Carried
                    # for the audit bundle and for validate_evidence_hierarchy's own
                    # replay against the built packet, the same way _cut_count already is.
@@ -1257,6 +1298,8 @@ def render(packet: dict) -> str:
             L.append("     - %s" % f)
         if b["concept"]:
             L.append("     explain plainly, once, here: %s" % b["concept"])
+        if b.get("wants_next"):
+            L.append("     what carries the reader on from here: %s" % b["wants_next"])
         if b["withhold"]:
             L.append("     not yet: %s" % b["withhold"])
     L.append("")
@@ -1275,6 +1318,10 @@ def render(packet: dict) -> str:
         L.append("  contrast, or an earlier detail whose meaning has changed. Do not")
         L.append("  state it as a general principle unless that is genuinely the most")
         L.append("  natural sentence available. The reader should arrive at it.")
+        L.append("  Arriving is not the same as hiding. Readers have rejected articles")
+        L.append("  here for asserting this in one late abstract paragraph, and other")
+        L.append("  articles for carrying no legible reading at all. If the material")
+        L.append("  will not land it on its own, say it once, plainly and concretely.")
         L.append("")
     if packet["quotes"]:
         L.append("QUOTE EXACTLY, OR NOT AT ALL")
@@ -2154,7 +2201,12 @@ def architect_prose_audit(arch: dict, facts: dict, quotes: dict | None = None) -
                       "turn", "crip_turn", "ending_move"))
     for b in (arch.get("beats") or []):
         prose += " " + " ".join(str(b.get(k) or "") for k in
-                                ("happens", "concrete_carrier", "concept_introduced"))
+                                ("happens", "concrete_carrier", "concept_introduced",
+                                 # Added when this field began reaching the Writer
+                                 # (2026-09-24). Anything render() puts in the packet is
+                                 # already-approved surface as far as every later audit is
+                                 # concerned, so it is screened here first.
+                                 "why_reader_wants_next"))
     terms = {w for w in _content_words(prose)
              if w not in e_words and _stem(w) not in e_words}
     return {"unapproved_numbers": sorted(_numbers(prose) - e_nums),

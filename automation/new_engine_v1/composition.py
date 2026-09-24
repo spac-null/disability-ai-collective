@@ -853,6 +853,33 @@ WORTH_SYSTEM = (
     "If NONE of your evidence is a particular, the honest verdict is not a publishable "
     "one -- say WEAK_ANALOGY or GREAT_GENERAL_STORY_WRONG_PUBLICATION and cost nothing.\n"
     "\n"
+    "\n"
+    "4. THE REASON TO READ. A subject can be real, a lens can be sound, and there can "
+    "still be no reason for anyone to begin. An editor read seven of this pipeline's "
+    "articles blind and stopped inside the first paragraph of most of them, asking the "
+    "same three questions: why should I read this, what is this about, where am I "
+    "heading. Every one of those had passed this gate. So answer it HERE, in the fields "
+    "you are already filling, before an architecture is built on a story that has "
+    "nothing to want.\n"
+    "  `opening_possibility` is not simply the first fact in the chronology. It is the "
+    "one thing a curious non-specialist can SEE, PICTURE OR HOLD without being taught "
+    "anything first: a person doing something recorded, an object, an image, one "
+    "sentence someone wrote, one event, one consequence, one surprising condition. A "
+    "statute, a reference number, a report's own identity, a measurement or a procedure "
+    "can be the SUBJECT of the article and still be the wrong thing to hand the reader "
+    "first.\n"
+    "  `tension` is what makes that thing worth a second look -- what is unresolved, "
+    "surprising, contradictory or consequential about it. 'This topic exists and there "
+    "is information about it' is not a tension, and a subject offering nothing else is "
+    "not yet an editorial story: say so rather than passing it.\n"
+    "  `reader_first_sees` and `reader_later_discovers` are the promise. The distance "
+    "between them is what the reader is being invited to travel. If they are the same "
+    "thing said twice, there is no article here yet.\n"
+    "  THIS IS NOT A DEMAND FOR DRAMA. Do not manufacture stakes, do not write a "
+    "promotional sentence, and do not refuse a story because nothing anecdotal "
+    "happened. A quiet, exact, genuinely strange particular is a strong reason to read; "
+    "an absent one is not made present by a livelier verb.\n"
+    "\n"
     "Cite fact ids for everything. You may not use a fact id that is not in the ledger."
 )
 
@@ -878,10 +905,16 @@ WORTH_SCHEMA = (
     '                                     a paraphrase, summary, tone or disability-impact\n'
     '                                     restatement\n'
     ' "story_candidate": {"story_id": "kebab-slug", "carrier_type": "object",\n'
-    '                 "opening_possibility": "the concrete thing to open on",\n'
+    '                 "opening_possibility": "the one concrete thing a reader can see,\n'
+    '                                  picture or hold first, before being taught\n'
+    '                                  anything -- not the apparatus the piece is about",\n'
     '                 "real_event_or_change": "what happens or changes",\n'
-    '                 "tension": "...", "reader_first_sees": "...",\n'
-    '                 "reader_later_discovers": "...",\n'
+    '                 "tension": "what is unresolved, surprising, contradictory or\n'
+    '                                  consequential about it -- not that the topic\n'
+    '                                  exists and has information",\n'
+    '                 "reader_first_sees": "...",\n'
+    '                 "reader_later_discovers": "... -- the distance from\n'
+    '                                  reader_first_sees is the promise",\n'
     '                 "causal_chain": [{"kind": "SUPPORTED_CAUSAL", "link": "...",\n'
     '                                  "evidence_ids": ["F.."]}],\n'
     '                 "evidence_ids": ["F.."]}}\n'
@@ -1089,6 +1122,18 @@ ARCHITECT_SYSTEM = (
     "that matters and cut the list.\n"
     "  Facts stay in the frozen ledger either way. Cutting is not losing evidence, and a "
     "shorter article carrying fewer claims further is the better one.\n"
+    "  THE STORY SELECTS THE FACTS; THE RESEARCH DOES NOT SELECT THE STORY. The ledger "
+    "is a space of what MAY be said, not a contents list, and nothing in it is owed a "
+    "place. Decide what the story is and what the reader has to see, then take only the "
+    "facts that carry it. A fact earns its place by doing at least one of these: "
+    "carrying the concrete carrier; answering a question the reader already has; making "
+    "a necessary explanation possible; supporting the turn; creating or settling a real "
+    "tension; keeping an important claim checkable, or keeping the piece from misleading. "
+    "NEVER USE A FACT MERELY BECAUSE THE RESEARCH FOUND IT. An article is complete when "
+    "its story and its claims are sufficiently supported -- not when the ledger has been "
+    "used up. Forty facts gathered to be sure of twelve is a healthy run, not a debt the "
+    "article has to repay, and the same holds for sources: five that establish one "
+    "sentence are five the reader never needs to meet.\n"
     "\n"
     "ORDER. Beats, in reading order. Each beat carries ONE concrete carrier -- a NOUN "
     "PHRASE naming the thing the reader holds onto, with no verb clause in it. A carrier "
@@ -1123,6 +1168,56 @@ ARCHITECT_SYSTEM = (
     "buys that confidence and cut the rest with PROVENANCE_ONLY. This is a judgement about "
     "what the reader needs in order to believe the finding -- not a word count, not a "
     "quota, and not a reason to leave a method unnamed.\n"
+    "\n"
+    "  THE FIRST BEATS ARE THE READER'S ENTRY, AND THEY ARE NOT EXPOSITION. An editor "
+    "read seven of this pipeline's articles blind and stopped inside the first paragraph "
+    "of most of them. The plans were not thin; they were sound plans that opened on their "
+    "own apparatus. Three of the seven opened on a statute's time limit, on a report's "
+    "date and reference number, and on a surgical measurement, and the editor stopped in "
+    "the first paragraph of all three. The ones read furthest into opened on a blank "
+    "printed between two words, a photograph of a class, and one sentence somebody had "
+    "written for speakers. Same engine, same contracts, same gates. The difference was "
+    "what the first beat put in the reader's hands.\n"
+    "    ENTRY -- your first beat. ONE thing the reader can see, picture or hold with "
+    "nothing taught first, AND a reason to keep looking at it. Concrete alone is not "
+    "enough: an object set in front of a reader who does not know why it is there is "
+    "still a stop, and the editor said so in those words about a photograph they "
+    "otherwise liked. This beat's `why_reader_wants_next` is where that reason is "
+    "written, and it now reaches the Writer -- so write a real editorial answer there, "
+    "not a note to yourself.\n"
+    "    ORIENTATION -- normally your second. The MINIMUM context that makes the entry "
+    "strange, consequential or unresolved. Not the institutional history, not the whole "
+    "legal frame, not the study design: the least a reader needs in order to see what is "
+    "odd here.\n"
+    "    THE QUESTION -- normally your third. The point where the reader wants something "
+    "they cannot yet answer. Heavy explanation normally begins after this beat.\n"
+    "    These are FUNCTIONS, not a template, and a story that earns its question in two "
+    "beats should use two. What is not negotiable is the order: DO NOT GIVE THE READER AN "
+    "ANSWER BEFORE THE ARTICLE HAS CREATED THE QUESTION THAT MAKES THE ANSWER "
+    "DESIRABLE.\n"
+    "\n"
+    "  EXPOSITION MUST HAVE A CUSTOMER. Law names, regulation and reference numbers, "
+    "institutional titles, methodology, anatomy, chronology and background are NOT banned "
+    "and never were -- more than one of them has been the whole subject. They are placed "
+    "where a live reader question needs them. Before you put one in a beat, name the "
+    "question it answers; if the reader cannot yet have that question, the material "
+    "belongs later. The facts are identical either way. Only the order changes, and the "
+    "order is the thing you control.\n"
+    "    So an explanation does not open the piece merely because everything else depends "
+    "on it. A reader who has met a person, an object or a consequence will take a "
+    "statute, a reference number or an anatomy gladly two beats later; the same material "
+    "in beat one is where they stop.\n"
+    "\n"
+    "  ONE MENTAL OBJECT AT A TIME. The article must not move faster than relaxed "
+    "reading. A reader has to be allowed to finish forming one thing before the next "
+    "arrives. This is a rule about the SEQUENCE of information, not about length: one "
+    "short sentence can already be too much. In the entry especially, do not stack an "
+    "unfamiliar person, an institution, a law, an article number, an anatomical "
+    "structure, a study design, a technical term, a definition, a jump in time and an "
+    "abstract thesis into the same passage. That is measured rather than felt: of the "
+    "seven blind cases, the plans whose FIRST beat also carried a `concept_introduced` "
+    "are the ones the editor abandoned soonest. An entry beat explains nothing. It shows "
+    "one thing and makes the reader want the next.\n"
     "\n"
     "TIME. Each beat says what the reader must NOT be told yet, and why they will want the "
     "next one.\n"
@@ -1162,6 +1257,18 @@ ARCHITECT_SYSTEM = (
     "  It must be CARRIED BY CONCRETE STORY MATERIAL -- the object, event, rule, "
     "measurement or requirement the reader has already held. Not by an abstraction, and "
     "not by a summarising paragraph.\n"
+    "  THE TURN IS THE ENGINE, NOT THE MORAL. `before_reading` and `after_reading` are "
+    "not only where the article ends up. The DISTANCE between them is what moves the "
+    "piece: what the thing first appears to be, and what the reader will later understand "
+    "it measures, requires, excludes, assumes or makes possible. Plan that distance from "
+    "the first beat, so the reader is already travelling it before they could name it. An "
+    "article whose early beats are not yet moving toward the turn has an ending attached "
+    "to a description.\n"
+    "  AND SUBTLETY IS NOT INVISIBILITY. Readers have rejected articles here for "
+    "asserting the reading in one late abstract paragraph. They have also rejected "
+    "articles in which no reading was legible at all -- \"not earned, not even asserted\". "
+    "Both are failures. Make the turn CLEAR and make the path to it surprising; hiding the "
+    "argument is not sophistication, it is an article with nothing in it.\n"
     "  THIS IS NOT A LICENCE TO INVENT A PERSON. You may not add a witness, visitor, "
     "resident or caller nobody recorded, attribute a feeling or a difficulty to anyone "
     "unreported, or claim anyone was excluded, harmed or unable. Keep writing the "
@@ -1236,7 +1343,9 @@ ARCHITECT_SCHEMA = (
     "Reply with ONE JSON object:\n"
     '{"article_type": "NARRATIVE_ARTICLE",       one of: %(types)s\n'
     ' "story_spine": "ONE sentence: what happens",\n'
-    ' "opening_object_or_event": "the concrete thing the article opens on",\n'
+    ' "opening_object_or_event": "the ONE thing the reader can see, picture or hold\n'
+    "                                            first, with nothing taught before it --\n"
+    "                                            not the apparatus the piece is about\",\n"
     ' "reader_initial_state": "the only thing the reader should understand first",\n'
     ' "lens_realization": "IMPLICIT",            IMPLICIT, EXPLICIT or EITHER\n'
     ' "crip_turn_rereads": "B5",                 the beat_id the turn re-reads\n'
@@ -1247,7 +1356,11 @@ ARCHITECT_SCHEMA = (
     '            "concrete_carrier": "a noun phrase, no verb clause",\n'
     '            "facts_allowed": ["F.."], "concept_introduced": "",\n'
     '            "beat_function": "REVEAL",         one of: %(beat_fns)s\n'
-    '            "why_reader_wants_next": "...", "must_not_say_yet": "..."}],\n'
+    '            "why_reader_wants_next": "the unresolved thing that carries the\n'
+    "                       reader into the next beat. This REACHES THE WRITER: write\n"
+    "                       the editorial answer, not a note to yourself, and never\n"
+    '                       merely that more information follows",\n'
+    '            "must_not_say_yet": "..."}],\n'
     ' "use_facts": ["F.."],                      every fact used in any beat\n'
     ' "primary_carrier": "F..",                  ONE used fact: the CONCRETE thing the\n'
     "                                            reader follows -- person, object,\n"
@@ -2530,7 +2643,29 @@ WRITER_CRAFT_DELTA = (
     "published prose and this pipeline's drafts, so it matters more than it looks: write "
     "the thing, not a note about the thing. One-sentence paragraphs are fine and normal.\n"
     "  Write in your own plain register. Do not imitate a named writer or reach for a "
-    "recognisable style."
+    "recognisable style.\n"
+    "  THE OPENING IS THE READER'S ENTRY, AND THE PLAN'S ORDER IS AN EDITORIAL DECISION. "
+    "Write the first beat as what it is: one object, person, image, sentence or "
+    "consequence the reader can hold, and a reason to keep looking at it. Do not promote "
+    "institutional, legal, methodological or anatomical background into the opening "
+    "because it feels like the thing that ought to come first. Where the plan places that "
+    "material later, later is where it belongs.\n"
+    "  ONE MENTAL OBJECT AT A TIME. Let the reader finish forming one thing before the "
+    "next arrives. Do not move faster than relaxed reading -- this is about how quickly "
+    "new things arrive, not about how long a sentence is.\n"
+    "  PROVENANCE IS NOT NARRATION. Say the supported thing instead of reporting that it "
+    "is supported: not \"the source says\", \"the record establishes\", \"the available "
+    "evidence shows\", \"the reviewer noted\". Name a speaker where the naming is part of "
+    "the claim. Otherwise write the world, not the paperwork.\n"
+    "  MAKE THE POINT LAND. A reader should be able to tell early what they are being "
+    "invited to notice, and should reach the turn by the end -- through the material, "
+    "never through an announcement, and never through \"this article will\". If the "
+    "reading would otherwise disappear, state it once, plainly and concretely. Subtlety "
+    "is not invisibility, and an unreadable point is not a subtle one.\n"
+    "  NO COMPLIANCE PARAGRAPH. A limit belongs beside the claim it limits, once. Do not "
+    "close by reciting what cannot be claimed.\n"
+    "  THE LAST PARAGRAPH ADDS. Deepen, turn, land, or show a consequence. Never restate "
+    "the opening."
 )
 
 WRITER_SYSTEM = (
@@ -6700,6 +6835,9 @@ PROSE_FINISH_SYSTEM = (
     "evidence shows', 'the record states', 'according to'. Say the thing, or name who "
     "said it if the naming matters\n"
     "  - explanatory repetition: if a point is made twice, keep the better one\n"
+    "  - the overloaded paragraph: where one paragraph is carrying several distinct "
+    "jobs, split it where the job changes. A split is a paragraph break, not a rewrite "
+    "-- keep the sentences and keep their order\n"
     "  - manufactured clinchers: an epigram at the end of a paragraph that summarises "
     "what the paragraph just said is a tic. Cut it and let the paragraph end on its "
     "material\n"
