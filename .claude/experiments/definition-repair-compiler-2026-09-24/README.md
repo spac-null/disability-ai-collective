@@ -296,3 +296,140 @@ module. The prototype contract was written once and not revised.
 
 `LOCAL_EDIT_REPAIR_NEEDS_REDESIGN` — the mechanism is sound and proven at the level it
 operates on; its scope is wrong for this defect.
+
+---
+
+# Phase 2 — repairing the commitment across the plan
+
+The definition repair worked and the article did not change, because the definition was not
+the only surface that could produce the claim. So the repair unit moves from *a span inside
+one field* to *a commitment across the plan*, keeping everything from phase 1 that held:
+exact anchoring, protected text copied rather than regenerated, one call, fail closed, zero
+authority, detector untouched.
+
+## The invariant, stated carefully
+
+Not "the two concepts never co-occur in one field". That condition is satisfiable only by
+deleting one of them — it would prevent regeneration by removing half the article, which is
+what branch B did by accident and what made it a failure rather than a fix.
+
+> **No single Writer instruction context may combine the INGREDIENTS with the RHETORICAL DUTY
+> that makes the unsupported claim the natural completion.**
+
+So surfaces are classified:
+
+| class | meaning | must close? |
+|---|---|---|
+| `FULL` | both ends of the relation reachable **and** the first-use duty for the term | **yes** |
+| `INGREDIENTS_ONLY` | both ends reachable, no duty | no — this is where legitimate material about the second concept may keep living |
+
+That distinction is what makes `MOVE` a real option rather than a fig leaf.
+
+**A fact in `facts_allowed` affords even when the prose never mentions it** — the Writer Packet
+prints fact propositions under the beat, so removing only the prose leaves the route open. A
+static test asserts that exact shortcut fails to close the route.
+
+## Retroactive validation — the check predicts the failure we already paid for
+
+Run backwards over the three frozen branches, anchored identically:
+
+| branch | FULL affording surfaces | article outcome |
+|---|---|---|
+| A baseline | `definition:cutoff wavelength`, `beat:B3` | bridge present |
+| B free rewrite | `beat:B3` | bridge absent (explanation destroyed) |
+| **C constrained repair** | **`beat:B3`** | **bridge present — the failure** |
+
+It flags B3 in C *before* the Writer is consulted. That is the point: it would have predicted
+the phase-1 failure without paying for the replay.
+
+Honest limit: B also shows `FULL` and B's Writer did not take the route — because that branch
+had destroyed the apposition the bridge attaches to. **Affordance present does not mean the
+claim will be written; affordance closed means the route is gone.** A conservative
+over-approximation is the right shape: it can cost an unnecessary repair, it cannot miss the
+carrier.
+
+## Rarity selects the anchor; it is not the semantics
+
+`set by the bandgap energy` yields candidates `{bandgap: df 1, energy: df 4}`. Unfiltered,
+"energy" matches F09 — *dark energy* — in a beat about cosmology, a clear false positive.
+Taking the rarest tier gives `{bandgap}` and the false positive disappears.
+
+This is a **search heuristic for locating the concept in plan text**, not the truth condition.
+Affordance is defined in terms of reach and duty and never in terms of rarity. `anchor_report()`
+prints every candidate with its document frequency so the heuristic stays inspectable. If a
+future relation joins two common concepts, this degrades to keeping several anchors and
+repairing more conservatively — the safe direction — rather than to being wrong about what
+affordance means.
+
+## The slice, and the repair it produced
+
+One call. `code=1a21093`, `system_sha256=f49c5638…`, `slice_sha256=dd142b26…`,
+`edit_plan_sha256=484313ab…`, authority ZERO.
+
+```
+COMMITMENT  'set by the bandgap energy'  NOT_ESTABLISHED
+  anchors   E1={cutoff, wavelength}   E2={bandgap}   (candidates: bandgap df1, energy df4)
+
+AFFORDING (before)
+  FULL  definition:cutoff wavelength   [gloss]
+  FULL  beat:B3                        [happens, facts_allowed, FIRST_USE_SITE]
+
+SLICE
+  definition:cutoff wavelength
+    PROTECTED U1  'the long-wavelength edge of what the detector material will register'
+    REPAIR    U2  'set by the bandgap energy'
+    PROTECTED U3  'engineered in the mercury cadmium telluride mixture'
+    PROTECTED U4  'for Roman, approximately 2.5 microns'
+    PROTECTED U5  'the WFI sensitive from 0.48 to 2.3 microns'
+  beat:B3
+    PROTECTED B3.C1  'The detectors are hybrids: …as a Sensor Chip Assembly.'
+    AFFORDING B3.C2  'The fraction of cadmium … can be varied to engineer a specific bandgap energy;'
+    PROTECTED B3.C3  'for Roman, with a desired cutoff wavelength … human eyes can see.'
+    facts routing the second idea in: [F86]
+```
+
+The model chose, in one call and without being told the strategy:
+
+* `DROP U2` — the bridge leaves the gloss; the explanatory clause survives byte for byte;
+* `REPLACE B3.C2` → *"The precise mixture of HgCdTe, specifically the fraction of cadmium, can
+  be varied;"* — keeping the cadmium-fraction antecedent that C3's *"it was tuned to 0.445"*
+  needs, and dropping only the bandgap consequent;
+* `MOVE F86 → B4`, the fabrication-and-screening beat.
+
+Its own reason: *"the beat prose retains only the cadmium-fraction antecedent needed for the
+cutoff sentence, while the bandgap fact is now offered in the fabrication beat, so no beat
+holds both ideas together."*
+
+That is the target shape — separation, not deletion.
+
+## Static outcome
+
+| line | result |
+|---|---|
+| `TARGET_COMMITMENT_REMOVED` | **True** |
+| `AFFORDANCE_REMOVED` | **True** — affording surfaces after: none at all |
+| `PROTECTED_CONTENT_PRESERVED` | **True** — U1,U3,U4,U5,B3.C1,B3.C3 verbatim; 0 lost; 0 orthographic adjustments; plan outside the slice byte-identical |
+| `UNRELATED_FACT_PRESERVED_OR_EXPLICITLY_DROPPED` | **True** — F86 `OFFERED_IN_B4`, declared `MOVE`, explicit |
+| `WRITER_REGENERATION` | pending the paired replay |
+
+`use_facts` unchanged; only B3 and B4 differ from baseline; the engine's own
+`validate_architecture`, `validate_definition_support` and `validate_evidence_hierarchy` all
+return CLEAN.
+
+## A residual this does not fix, and is not allowed to chase
+
+B3's repaired prose says the cadmium fraction *"can be varied"* — a dispositional generality
+whose licence was F86, which B3 no longer offers. B3's remaining F87 licenses only the
+specific *"was tuned to 0.445"*. So the beat prose reaches very slightly past the beat's own
+facts: the same defect class, one level down.
+
+It is a reduction in claim strength rather than a regression, no current check covers it, and
+covering it is exactly the relation-coverage work recorded as
+`VERIFIED_STRUCTURAL_HOLE / NOT_VALIDATED_FOR_AUTHORITY` and explicitly out of scope. Recorded,
+not pursued.
+
+Also worth saying plainly: `MOVE` preserves a fact's **availability**, not its appearance. B4's
+prose is about screening at GSFC and does not mention the recipe, so the Writer may simply not
+use F86. If bandgap vanishes from the article that way, it vanished by editorial choice with
+the material still on the table — which is different from having been deleted from the plan,
+but is not the same as having been kept.
