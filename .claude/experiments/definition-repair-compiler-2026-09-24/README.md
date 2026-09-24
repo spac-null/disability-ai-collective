@@ -983,3 +983,164 @@ independent factual gate has confirmed any repaired case.
    pipeline deliberately on fresh candidates to raise supply.
 
 No cohort was declared and none was run. One detector call was spent measuring supply.
+
+---
+
+# Phase 7 — the dispatch layer, fixed against the cases before it was trusted
+
+Zero model calls. Branch `fix/relational-dispatch-2026-09-24`, off `d36a61f`. Production
+untouched, detector untouched, `d4bd9ea` untouched, no Writer, no replay.
+
+## Verified before any work
+
+| Thing | Verified |
+|---|---|
+| Production HEAD | `b806008` on `main` at `/srv/data/hermes/workspace/disability-ai-collective`, trident |
+| Runtime diff | `git diff 5e2ae3d b806008 -- automation/` is **empty**; `b806008` touches `.claude/` only |
+| Working tree there | no tracked modifications; untracked drafts and probe output only |
+| Detector | `automation/new_engine_v1/definition_claim_shadow.py` byte-identical to `80554bd` |
+| Obligation policy | `automation/new_engine_v1/obligation_policy.py` byte-identical to `d4bd9ea` |
+| Frozen evidence | **nine** sets, all present, every content file verifies |
+
+On integrity: five of the nine report exactly one `FAILED` line, and in every case it is
+`./SHA256SUMS.txt` listing **itself** — a hash written before the file contained its own line.
+The four later sets exclude themselves and report zero. 425 content files verify across all
+nine. Not corruption.
+
+## The corpus, before touching code
+
+Every flagged commitment in the frozen evidence, with what the dispatcher actually sees.
+`df` is over the plan's own ledger; `df/N` is the share of that ledger.
+
+| case | term | flagged span | candidates after self-term subtraction | df | old dispatch | human type |
+|---|---|---|---|---|---|---|
+| bandgap→cutoff | cutoff wavelength | `set by the bandgap energy` | bandgap, energy | 1/117, 4/117 | RELATIONAL | RELATIONAL |
+| minutes away | Dressing for Evacuation | `were minutes away` | — | — | refuse | VALUE |
+| **belongings** | Dressing for Evacuation | `and to gather a limited selection of belongings` | gather, limited, selection | 1/67 each | **RELATIONAL** | ATTRIBUTION/INFERENCE |
+| fixed seat | transfer-to-seat | `fixed seat` | — | — | refuse | ATTRIBUTE |
+| carry an audience | Aufguss | `to carry an audience` | — | — | refuse | ATTRIBUTE/INFERENCE |
+| smallest block group | block group | `the smallest` | — | — | refuse | SUPERLATIVE |
+| ISO attribution | ISO-compliant microphone | `the interpreting services work to` | work | 9/55 | **RELATIONAL** | ATTRIBUTION |
+
+**Two mis-dispatches, not one.** Phase 6 recorded ISO. Reading the rest of the corpus found
+the second warning on Dressing for Evacuation — the one phase 1 deliberately left unrepaired
+and never typed — also dispatching relational, on three candidates **all at df 1**.
+
+That killed the fix phase 6 proposed. An absolute distinctiveness floor cannot catch
+`belongings`: df 1 is exactly bandgap's. A number was never going to be the answer.
+
+## What separates the classes
+
+`bandgap` is licensed by F86, which says nothing about cutoff wavelength. `cutoff wavelength`
+is licensed by F87. Both hang off the cadmium fraction; nothing ties them to each other. Two
+concepts, each standing on its own, and an unlicensed link between them.
+
+`limited` and `selection` are licensed by F48 and by nothing else — and F48 is a statement
+*about the term*: "Dressing for Evacuation focuses on … gathering a limited selection of
+possessions." There is no concept at the far end. There is a description of the near one.
+
+`work` is not in the declared evidence at all. F25 says "interpreters **working** with sound
+non-compliant"; the old membership test was a substring, so `work` inside `working` was enough
+to make it a concept. `gather` got in the same way, inside `gathering`.
+
+## The rule
+
+A candidate is an endpoint only if **all four** hold:
+
+| | requirement | rejects |
+|---|---|---|
+| **R1** | not part of the term, compound parts included *(unchanged, `606db5a`)* | `seat` in transfer-to-seat |
+| **R2** | **named** in the declared evidence as a whole token, not as a fragment | `work`, `gather`, `set`, `minutes`, `fixed`, `audience`, `smallest` |
+| **R3** | licensed by ≥1 declared proposition that says nothing about the term | `limited`, `selection` |
+| **R4** | word-form df ≤ **1/8** of the ledger | `work` again, at 0.164 |
+
+Then E1 = the term's vocabulary, which must be non-empty; E2 = the **rarest tier of the
+qualified**. Rarity ranks; it no longer qualifies. That is the whole defect phase 6 found:
+with one candidate, "rarest" discriminates nothing.
+
+**Two counting rules, opposite directions, on purpose.** Membership is exact-token, because an
+inflection is not the concept. Genericness is substring, because loose counting can only make
+a word look *more* generic. Both biases point at refusal.
+
+**The 1/8 bound is a property of corpus language, not a fitted number.** Across the five
+frozen ledgers it removes 0.6%–3.2% of each vocabulary, and what it removes is what each
+corpus is *about*: detectors(21/117), sauna(62/96), resolution(24/55), school(27/67),
+housing(10/36). Nothing reviewed sits near it from below — the highest accepted is 0.034. It
+implies a ledger under 8 documents can never produce an endpoint; real ones here run 36–117.
+
+**AMBIGUOUS is now load-bearing.** A candidate passing R1–R3 and failing only R4 is the case
+the old docstring anticipated and never met: a relation between two concepts the corpus talks
+about constantly. It may be true. It refuses **and says which word and why**, instead of being
+filed silently as non-relational. Only RELATIONAL builds a slice, so both refusals fail closed.
+
+## Deliberately not built
+
+**No part-of-speech rule.** No deterministic parser is present, and a hand-written verb list
+would be the lexical special-casing this layer exists to avoid — it would also read as fitting
+to `work`, which R2 and R4 each reject on their own, for reasons that generalise. Residual and
+stated: a *rare* verb named exactly in independent declared evidence would still qualify.
+
+**No shared-middle requirement**, though the one repaired case has one (cadmium fraction ties
+separately to bandgap and to cutoff). Exactly one positive exhibits it and no negative is
+separated by it, so requiring it would be fitting the rule to its single success.
+
+## Result
+
+| case | expected (frozen at `bf83428`) | got | |
+|---|---|---|---|
+| bandgap→cutoff | RELATIONAL | RELATIONAL | |
+| minutes away | NON_RELATIONAL | NON_RELATIONAL | |
+| belongings | NON_RELATIONAL | NON_RELATIONAL | newly reviewed |
+| fixed seat | NON_RELATIONAL | NON_RELATIONAL | |
+| carry an audience | NON_RELATIONAL | NON_RELATIONAL | |
+| smallest block group | NON_RELATIONAL | NON_RELATIONAL | |
+| ISO attribution | NON_RELATIONAL | NON_RELATIONAL | |
+
+7/7. No AMBIGUOUS among them. Labels were committed at `bf83428`, the rule at `1ee91de`.
+
+bandgap dispatches **for the stated reason**: `bandgap` *and* `energy` each qualify on their
+own off F86, and rarity only chooses between two things that already qualified. No case name
+or target word appears in the code.
+
+**Branch G rebuilds byte for byte.** Not merely "still relational" — running `build_slice` and
+`build_user` under the new rule against the architecture and detector output G ran against
+reproduces `slice_sha256 = dd142b26…` and `user_prompt_sha256 = 87066c95…`, the values
+recorded when G actually ran at code `dc97f6e`. The repair call would receive the same prompt.
+
+## One fixture had to go
+
+`commitment_slice_repair_test.py` embedded a six-fact cut-down of the bandgap ledger. Fine
+while nothing counted documents; R4 counts them, and bandgap is 1 in 117 on the wire against
+1 in 6 in the cut-down — 0.9% against 17%, opposite sides of any bound. The test reads the
+real ledger now. Ten real artifacts are vendored under
+`automation/fixtures/relational-dispatch-2026-09-24/`, each verified byte-identical to its
+source on trident, with `SOURCES.txt` recording path and sha256.
+
+## Supply, re-measured independently
+
+Not taken from the phase 6 note. Counting by definition-set hash across every `cripminds-*`
+directory, which deduplicates repaired and replayed copies of the same plan:
+
+| | |
+|---|---|
+| architectures with an evidence file | 188 |
+| carrying `definition_evidence` | 41 |
+| **distinct definition-sets** | **10** |
+| **distinct source plans behind them** | **7** — the Roman plan alone accounts for 26 copies under 3 hashes |
+| distinct definitions | 14, plus `block group` (historical, hand-assigned evidence) |
+| already exhausted by calibration and the cohort | 12 |
+| **genuinely new** | **1 plan** — `production-20260924T070701Z-3e62a182`, 2 definitions, 1 already probed |
+
+Slightly worse than phase 6 reported, in the same direction. Observed rate across ~14
+definitions: 7 flagged commitments, **1** relational. 3–5 relational cases therefore need on
+the order of 40–70 further definitions.
+
+## Status
+
+The classifier agrees with every reviewed case and refuses both known mis-dispatches for
+structural reasons. That is **agreement with a set it was built against**, not generalisation:
+ISO and belongings are now known, so neither can be evidence that the rule transfers. The
+evidence for transfer is future genuinely-new cases, and there are none yet.
+
+`CONCEPT_ANCHOR_CLASSIFIER_READY_FOR_FRESH_REPLICATION` — the dispatch blocker is cleared.
+The supply blocker is not, and was not touched.

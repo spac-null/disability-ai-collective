@@ -1,0 +1,138 @@
+{
+ "run2-20260923T212313Z": {
+  "schema_version": "definition-claim-shadow-v1",
+  "authority": "ZERO",
+  "article_not_written_yet": true,
+  "definitions_observed": [
+   "cutoff wavelength",
+   "dark current",
+   "sensor chip assembly (SCA)"
+  ],
+  "execution": {
+   "execution_id": "offline-run2-20260923T212313Z",
+   "code": {
+    "git_sha": "80554bd9c62a2a18f30b01153deed2e09baa647f",
+    "engine_source_sha256": "becc2ab8c721411cecab7ddae50deabe5477847f912642da1ffadd486e136b3b"
+   },
+   "architecture_sha256": "96f4adc695bf5b124e00b7ff6ece359f53c470f57f1dd0566074ac9bba9a61de",
+   "evidence_sha256": "f510bae91624b91475c4a824ce14c662539c5061d9a10ce56221454b12133424",
+   "system_sha256": "a3740409a0c41e0102e72034d5af2efa51e95725a67c87d77ebd05a29a0e0214",
+   "user_prompt_sha256": "1cc74ebf70836ef78549674c494a623eb5f8f0c66aae38e4629c1f3cac3f7ddf"
+  },
+  "definitions": [
+   {
+    "term": "cutoff wavelength",
+    "claims": [
+     {
+      "commitment": "the long-wavelength edge of what the detector material will register",
+      "status": "NON_FACTUAL_OR_NOT_CHECKABLE",
+      "evidence_ids": [],
+      "reason": "ordinary definitional framing of what the term means"
+     },
+     {
+      "commitment": "set by the bandgap energy",
+      "status": "NOT_ESTABLISHED",
+      "evidence_ids": [],
+      "reason": "evidence links cadmium fraction to bandgap and separately to cutoff wavelength, but never states bandgap determines the cutoff"
+     },
+     {
+      "commitment": "engineered in the mercury cadmium telluride mixture",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F86",
+       "F87"
+      ],
+      "reason": "the HgCdTe mixture's cadmium fraction is varied and was tuned for Roman's cutoff"
+     },
+     {
+      "commitment": "for Roman, approximately 2.5 microns",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F87"
+      ],
+      "reason": "stated directly as Roman's desired cutoff wavelength"
+     },
+     {
+      "commitment": "the WFI sensitive from 0.48 to 2.3 microns",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F100"
+      ],
+      "reason": "matches the stated WFI sensitivity range"
+     }
+    ]
+   },
+   {
+    "term": "dark current",
+    "claims": [
+     {
+      "commitment": "induced signal from thermal or quantum tunneling processes",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F70"
+      ],
+      "reason": "restates the definition given"
+     },
+     {
+      "commitment": "measured in exposures taken without illumination",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F69"
+      ],
+      "reason": "data taken without illumination to measure intrinsic dark current"
+     }
+    ]
+   },
+   {
+    "term": "sensor chip assembly (SCA)",
+    "claims": [
+     {
+      "commitment": "a photon-sensitive mercury cadmium telluride layer",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F83"
+      ],
+      "reason": "named as such in the evidence"
+     },
+     {
+      "commitment": "of 4096 by 4096 pixels",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F78"
+      ],
+      "reason": "detectors stated as HgCdTe 4096 by 4096 pixel arrays"
+     },
+     {
+      "commitment": "bonded to a silicon Read-out Integrated Circuit",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F83"
+      ],
+      "reason": "stated directly"
+     },
+     {
+      "commitment": "the combination is called a hybrid",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F83"
+      ],
+      "reason": "stated directly"
+     },
+     {
+      "commitment": "connected to a mechanical mount with electrical connections",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F84"
+      ],
+      "reason": "stated directly, and that combination is the Sensor Chip Assembly"
+     }
+    ]
+   }
+  ],
+  "status": "OK",
+  "wall_seconds": 24.5,
+  "physical_model_calls": null,
+  "_calls_made": 1,
+  "_definitions_in_plan": 3
+ }
+}

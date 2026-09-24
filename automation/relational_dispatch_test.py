@@ -118,6 +118,31 @@ ok(hashlib.sha256(C.SYSTEM.encode()).hexdigest()[:16] == "a31d665c592c15da",
 ok(hashlib.sha256(C.SCHEMA.encode()).hexdigest()[:16] == "c0d9ad5a4ae58885",
    "the repair reply SCHEMA is unchanged")
 
+# Branch G, rebuilt. Not "bandgap is still relational" -- the repair call would receive the
+# SAME BYTES. These four hashes are read out of
+# /srv/data/cripminds-evidence/relational-contract-G-reference-2026-09-24/cohort2/C1_bandgap/
+# COMMITMENT_SLICE_REPAIR.json, recorded when G actually ran at code dc97f6e.
+print("\n  branch G rebuilds identically")
+from new_engine_v1 import definition_repair_compiler as DRC  # noqa: E402
+from new_engine_v1 import provenance as PV                   # noqa: E402
+G_ARCH = json.loads((RC.FIX / "b2-run2/ARCHITECTURE.json").read_text(encoding="utf-8"))
+G_LED = RC._ledger(RC.FIX / "b2-run2/LEDGER.json")
+G_SHADOW = json.loads((RC.FIX / "shadow_run2.json").read_text(
+    encoding="utf-8"))["run2-20260923T212313Z"]
+ok(DRC._h(G_ARCH) == "96f4adc695bf5b124e00b7ff6ece359f53c470f57f1dd0566074ac9bba9a61de",
+   "the architecture G ran against")
+ok(DRC._h(G_SHADOW) == "9726dcb1154f82acc420a069ee2337bbc8aa96dee84e168b8e2b384191e4d802",
+   "the detector output G ran against")
+G_SL = C.build_slice(G_ARCH, G_LED, G_SHADOW, "cutoff wavelength")
+ok(not G_SL.get("refusals") and G_SL.get("defect_type") == C.RELATIONAL,
+   "G's case still dispatches")
+ok(DRC._h(G_SL.get("affording")) ==
+   "dd142b267386c203627cd05e9f1545dc84652b6e640f828bac687d34333f9333",
+   "slice_sha256 identical to the one G recorded")
+ok(PV.sha256_text(C.build_user(G_SL, G_LED)) ==
+   "87066c95cdbb4cc9f41d7e2f6997b243ba3faa34ab0a723bf074ea8ddaab5ad9",
+   "user_prompt_sha256 identical -- the repair call gets byte-for-byte the same prompt")
+
 
 # ------------------------------------------------------------- the structural contract --
 

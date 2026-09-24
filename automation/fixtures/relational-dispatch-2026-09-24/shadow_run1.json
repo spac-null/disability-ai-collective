@@ -1,0 +1,133 @@
+{
+ "run1-20260923T210336Z": {
+  "schema_version": "definition-claim-shadow-v1",
+  "authority": "ZERO",
+  "article_not_written_yet": true,
+  "definitions_observed": [
+   "Aufguss",
+   "transfer-to-seat"
+  ],
+  "execution": {
+   "execution_id": "offline-run1-20260923T210336Z",
+   "code": {
+    "git_sha": "80554bd9c62a2a18f30b01153deed2e09baa647f",
+    "engine_source_sha256": "becc2ab8c721411cecab7ddae50deabe5477847f912642da1ffadd486e136b3b"
+   },
+   "architecture_sha256": "d7505f695e2c08c88bf70e2ed1081b6ea68e37fe401313a52cc6f77b59916691",
+   "evidence_sha256": "2a58c82e88493cbc2dc4791e9e5a12bc0a321963ba5b31f45767a80876aceb93",
+   "system_sha256": "a3740409a0c41e0102e72034d5af2efa51e95725a67c87d77ebd05a29a0e0214",
+   "user_prompt_sha256": "d738e6284e4375b57faa45b7fe37d52e9c15a63a8075a5108d68a7e09eb34c7c"
+  },
+  "definitions": [
+   {
+    "term": "Aufguss",
+    "claims": [
+     {
+      "commitment": "a sauna ritual",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F32",
+       "F09"
+      ],
+      "reason": "both items describe Aufguss as a sauna/wellness ritual"
+     },
+     {
+      "commitment": "a sauna master",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F09"
+      ],
+      "reason": "evidence states the ritual is led by a sauna master"
+     },
+     {
+      "commitment": "works the heat itself",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F32"
+      ],
+      "reason": "heat is listed among the ritual's means"
+     },
+     {
+      "commitment": "steam, scent, music and choreographed towel-waving",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F32"
+      ],
+      "reason": "steam, aromas, music and towel waving choreography are each listed"
+     },
+     {
+      "commitment": "through a story",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F32"
+      ],
+      "reason": "storytelling and narrative are named as elements"
+     },
+     {
+      "commitment": "to carry an audience",
+      "status": "NOT_ESTABLISHED",
+      "evidence_ids": [],
+      "reason": "evidence names a sauna master and storytelling but does not establish spectators being taken through it"
+     }
+    ]
+   },
+   {
+    "term": "transfer-to-seat",
+    "claims": [
+     {
+      "commitment": "a guest moves out of their own wheelchair into a",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F63",
+       "F64"
+      ],
+      "reason": "the option is transferring to a dedicated seat, after which the guest's wheelchair is removed"
+     },
+     {
+      "commitment": "fixed seat",
+      "status": "NOT_ESTABLISHED",
+      "evidence_ids": [],
+      "reason": "evidence calls the seat dedicated and describes back and arm rests but does not state it is fixed"
+     },
+     {
+      "commitment": "on the lowest bench",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F63"
+      ],
+      "reason": "evidence places the seat on the bottom bench"
+     },
+     {
+      "commitment": "before the session",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F64"
+      ],
+      "reason": "the transfer and its discussion precede the sauna session"
+     },
+     {
+      "commitment": "the chair is taken back out of the room",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F64"
+      ],
+      "reason": "the wheelchair is taken back outside the sauna"
+     },
+     {
+      "commitment": "by a member of staff",
+      "status": "SUPPORTED",
+      "evidence_ids": [
+       "F64"
+      ],
+      "reason": "a Sauna Host performs this"
+     }
+    ]
+   }
+  ],
+  "status": "OK",
+  "wall_seconds": 23.5,
+  "physical_model_calls": null,
+  "_calls_made": 1,
+  "_definitions_in_plan": 2
+ }
+}
