@@ -131,7 +131,8 @@ e = C.validate({"edits": [{"unit_id": "nope", "operation": "DROP"}]}, S, LEDGER)
 ok(e and "not a piece of this slice" in e[0], "editing an unknown unit is rejected")
 
 print("\n== a new beat may not be invented ==")
-base = {"edits": [{"unit_id": aff[0]["unit_id"], "operation": "DROP"}]}
+PRO = ("Do not state or imply that the bandgap energy sets the cutoff wavelength; the cadmium fraction relates to each separately, and the step between them is not established.")
+base = {"edits": [{"unit_id": aff[0]["unit_id"], "operation": "DROP"}], "prohibition": PRO}
 e = C.validate(dict(base, facts=[{"fact_id": "F86", "operation": "MOVE", "to_beat": "B99"}]), S, LEDGER)
 ok(e and "does not exist" in e[0], "MOVE to a non-existent beat is rejected")
 e = C.validate(dict(base, facts=[{"fact_id": "F86", "operation": "MOVE", "to_beat": "B3"}]), S, LEDGER)
@@ -142,10 +143,10 @@ ok(e == [], "MOVE to an existing untouched beat validates")
 print("\n== evidence discipline on generated replacement text ==")
 uid = aff[0]["unit_id"]
 ok(C.validate({"edits": [{"unit_id": uid, "operation": "REPLACE",
-                          "replacement": "the cadmium fraction was tuned to 0.61"}]}, S, LEDGER) != [],
+                          "replacement": "the cadmium fraction was tuned to 0.61"}], "prohibition": PRO}, S, LEDGER) != [],
    "a number the beat's facts do not state is rejected")
 ok(C.validate({"edits": [{"unit_id": uid, "operation": "REPLACE",
-                          "replacement": "engineers at Teledyne chose the recipe"}]}, S, LEDGER) != [],
+                          "replacement": "engineers at Teledyne chose the recipe"}], "prohibition": PRO}, S, LEDGER) != [],
    "an entity the beat's facts do not name is rejected")
 
 print("\n== DROP the bandgap clause + MOVE the fact: the target shape ==")
@@ -153,6 +154,7 @@ DEFU = S["definition_target"]
 reply = {"edits": [{"unit_id": DEFU, "operation": "DROP", "left_glue": ", ", "right_glue": ""},
                    {"unit_id": uid, "operation": "DROP"}],
          "facts": [{"fact_id": "F86", "operation": "MOVE", "to_beat": "B4"}],
+         "prohibition": PRO,
          "reason": "bandgap no longer shares the beat that must explain cutoff wavelength"}
 ok(C.validate(reply, S, LEDGER) == [], "the reply validates")
 out = C.compile_repair(ARCH, S, reply)
@@ -185,7 +187,7 @@ print("\n== deleting the concept instead is allowed, but RECORDED as a loss ==")
 reply2 = {"edits": [{"unit_id": DEFU, "operation": "DROP", "left_glue": ", ", "right_glue": ""},
                     {"unit_id": uid, "operation": "DROP"}],
           "facts": [{"fact_id": "F86", "operation": "REMOVE"}],
-          "reason": "no other beat is about detector material"}
+          "prohibition": PRO, "reason": "no other beat is about detector material"}
 out2 = C.compile_repair(ARCH, S, reply2)
 pr2 = C.prove(ARCH, out2, S, LEDGER, TERM, reply2)
 ok(pr2["AFFORDANCE_REMOVED"], "removing the fact also closes the route")
@@ -196,12 +198,29 @@ ok(pr2["second_concept_facts"]["F86"]["explicit"], "the loss was an explicit dec
 print("\n== keeping the fact does NOT close the route ==")
 reply3 = {"edits": [{"unit_id": DEFU, "operation": "DROP", "left_glue": ", ", "right_glue": ""},
                     {"unit_id": uid, "operation": "DROP"}],
-          "facts": [{"fact_id": "F86", "operation": "KEEP"}], "reason": "x"}
+          "facts": [{"fact_id": "F86", "operation": "KEEP"}], "prohibition": PRO, "reason": "x"}
 out3 = C.compile_repair(ARCH, S, reply3)
 pr3 = C.prove(ARCH, out3, S, LEDGER, TERM, reply3)
 ok(not pr3["AFFORDANCE_REMOVED"],
    "dropping the prose while leaving F86 in the beat leaves the route OPEN -- the exact "
    "shortcut this experiment was warned against")
+
+print("\n== the prohibition must forbid a statement, not a subject ==")
+def withpro(p):
+    return C.validate({"edits": [{"unit_id": uid, "operation": "DROP"}], "prohibition": p}, S, LEDGER)
+ok(withpro(PRO) == [], "a well-formed prohibition validates")
+ok(withpro("") != [], "a missing prohibition is rejected")
+ok(withpro("Avoid linking them.") != [], "one not beginning 'Do not' is rejected")
+ok(any("bans the subject" in e for e in withpro("Do not mention the bandgap energy at all.")),
+   "'Do not mention <concept>' is rejected -- that is how branch E lost the concept")
+ok(any("bans the subject" in e for e in withpro("Do not discuss bandgap energy here.")),
+   "'Do not discuss <concept>' is rejected")
+ok(any("world-falsity" in e for e in withpro(
+    "Do not say the bandgap sets the cutoff wavelength; that claim is false.")),
+   "asserting the relation is FALSE is rejected -- NOT_ESTABLISHED is not CONTRADICTED")
+ok(any("does not name what was flagged" in e for e in withpro("Do not overstate the physics.")),
+   "a prohibition that never names the flagged material is rejected")
+ok(withpro("Do not " + "x" * 420) != [], "an over-long prohibition is rejected")
 
 print("\n== failure is always closed ==")
 def boom(system, user):

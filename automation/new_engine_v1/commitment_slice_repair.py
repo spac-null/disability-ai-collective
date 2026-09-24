@@ -359,6 +359,12 @@ SYSTEM = (
     "Do not invent a new beat. If nothing in the plan is a natural home for a fact, REMOVE it "
     "and say that no location existed -- that is a real answer, not a failure.\n"
     "\n"
+    "FINALLY, write ONE house rule that stops the same thing being said again further "
+    "downstream. It must forbid the STATEMENT, never the subject: the writer has to stay free "
+    "to name both ideas and to explain the term. Say what may not be asserted, then say what "
+    "the evidence does and does not reach -- not that the statement is false. It may well be "
+    "true; this article simply cannot show it. Begin it with \"Do not\".\n"
+    "\n"
     "You may adjust the small connecting text around a piece you changed -- punctuation, an "
     "article, a preposition, a conjunction -- and nothing else: no nouns, verbs, adjectives or "
     "numbers.\n"
@@ -376,6 +382,7 @@ SCHEMA = (
     '            "right_glue": "..."}],       optional\n'
     ' "facts": [{"fact_id": "F..", "operation": "MOVE" | "REMOVE" | "KEEP",\n'
     '             "to_beat": "B.."}],        MOVE only; an EXISTING beat id\n'
+    ' "prohibition": "Do not ...; <what the evidence reaches, and what it does not>",\n'
     ' "reason": "one clause: how the route is now closed"}\n'
     "No prose outside the JSON."
 )
@@ -508,6 +515,32 @@ def validate(reply, sl: dict, ledger: dict) -> list:
                     errs.append("%s: replacement introduces the number %r" % (uid, num))
         elif op == DROP and str(e.get("replacement") or "").strip():
             errs.append("%s: DROP carrying replacement text" % uid)
+
+    pro = str(reply.get("prohibition") or "").strip()
+    if not pro:
+        errs.append("no prohibition was written")
+    else:
+        if not pro.lower().startswith("do not"):
+            errs.append("the prohibition must begin with 'Do not': %r" % pro[:60])
+        if len(pro) > 400:
+            errs.append("the prohibition is %d chars, over the 400 allowed" % len(pro))
+        # it must forbid a STATEMENT, not a subject. "Do not mention X" bans the concept,
+        # which is how branch E lost bandgap altogether.
+        for bad in ("do not mention", "do not name", "do not refer to", "do not use the word",
+                    "do not discuss", "do not write about"):
+            if pro.lower().startswith(bad):
+                errs.append("the prohibition bans the subject rather than the statement: %r" % pro[:60])
+        # it must not assert the relation is false in the world -- the evidence is silent,
+        # and NOT_ESTABLISHED is not CONTRADICTED.
+        for bad in ("is false", "is untrue", "is incorrect", "is wrong", "does not in fact",
+                    "is not true"):
+            if bad in pro.lower():
+                errs.append("the prohibition asserts world-falsity rather than an evidence "
+                            "boundary: %r" % pro[:80])
+        tgt_words = {w.lower() for w in _WORD.findall(sl["commitment"]["span"])
+                     if w.lower() not in DRC.FUNCTION_WORDS and len(w) > 3}
+        if tgt_words and not (tgt_words & {w.lower() for w in _WORD.findall(pro)}):
+            errs.append("the prohibition does not name what was flagged (%s)" % sorted(tgt_words))
 
     known = {f for s in sl["surfaces"] for f in (s.get("e2_facts") or [])}
     for f in (reply.get("facts") or []):
@@ -764,6 +797,7 @@ def run(ask, arch: dict, ledger: dict, shadow: dict, term: str, unit_id: str = "
         if stolen:
             art["tool_fields_ignored"] = stolen
         art["edit_plan"] = {"edits": reply.get("edits"), "facts": reply.get("facts"),
+                            "prohibition": str(reply.get("prohibition") or "").strip(),
                             "reason": reply.get("reason")}
         art["execution"]["edit_plan_sha256"] = DRC._h(art["edit_plan"])
 
