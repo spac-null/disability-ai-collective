@@ -92,7 +92,9 @@ def main() -> int:
     plans = [a for a in st["attempts"] if a["outcome"] == "ARCHITECTURE"]
     print("\n%d plans reached ARCHITECTURE; one detector call each\n" % len(plans))
     for a in plans:
-        d = pathlib.Path(a["plan_dir"])
+        # the attempt record names the run; plan_dir lives on its definition rows
+        d = pathlib.Path((a["definitions"] or [{}])[0].get("plan_dir")
+                         or (BATCH / "runs" / a["run_id"]))
         arch = json.loads((d / "ARCHITECTURE.json").read_text(encoding="utf-8"))
         ledger, lname = load_ledger(d)
         prec = {"run_id": a["run_id"], "seed_id": a["seed_id"], "rank": a["rank"],

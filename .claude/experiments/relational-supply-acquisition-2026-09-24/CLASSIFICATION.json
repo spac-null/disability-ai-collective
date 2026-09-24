@@ -1,0 +1,580 @@
+{
+ "schema": "relational-supply-classification-v1",
+ "started_at": "2026-09-24T11:43:50.687597+00:00",
+ "detector_blob": "3384f8bbc8d96e04437131eae6f7de83ca8e9226",
+ "classifier_blob": "4666b84c6c08489a50e13759c019f9492e9e7017",
+ "detector_code_identity": "80554bd",
+ "classifier_commit": "1ee91de",
+ "plans": [
+  {
+   "run_id": "r05-seed1d2e086adb3d55a3e99669a06809a939",
+   "seed_id": "1d2e086adb3d55a3e99669a06809a939",
+   "rank": 5,
+   "source_name": "arXiv cs.HC",
+   "url": "https://arxiv.org/abs/2609.04125v1",
+   "ledger_file": "FINAL_EVIDENCE_MANIFEST.json",
+   "ledger_facts": 50,
+   "definitions": [
+    "association rule mining",
+    "peer help-seeking"
+   ],
+   "shadow_status": "OK",
+   "shadow_calls": null
+  },
+  {
+   "run_id": "r07-seed97e2847c1ee094e66855c41fedf40529",
+   "seed_id": "97e2847c1ee094e66855c41fedf40529",
+   "rank": 7,
+   "source_name": "The Conversation",
+   "url": "https://theconversation.com/why-poetry-is-a-powerful-form-of-climate-communication-287116",
+   "ledger_file": "FINAL_EVIDENCE_MANIFEST.json",
+   "ledger_facts": 78,
+   "definitions": [
+    "goosecam",
+    "speculative climate poem"
+   ],
+   "shadow_status": "OK",
+   "shadow_calls": null
+  },
+  {
+   "run_id": "r08-seede88e85fb43ae67b176789b7961b96b3b",
+   "seed_id": "e88e85fb43ae67b176789b7961b96b3b",
+   "rank": 8,
+   "source_name": "Hyperallergic",
+   "url": "https://hyperallergic.com/dazed-and-confused-at-the-new-museum/",
+   "ledger_file": "FINAL_EVIDENCE_MANIFEST.json",
+   "ledger_facts": 54,
+   "definitions": [
+    "commercial corridor",
+    "merchant organization"
+   ],
+   "shadow_status": "OK",
+   "shadow_calls": null
+  },
+  {
+   "run_id": "r10-seedd292df6baab644390393215a05a2b3e4",
+   "seed_id": "d292df6baab644390393215a05a2b3e4",
+   "rank": 10,
+   "source_name": "The Conversation",
+   "url": "https://theconversation.com/your-brain-may-be-doing-its-most-important-work-when-you-think-youre-doing-nothing-291190",
+   "ledger_file": "FINAL_EVIDENCE_MANIFEST.json",
+   "ledger_facts": 48,
+   "definitions": [
+    "memory consolidation",
+    "reduced interference"
+   ],
+   "shadow_status": "OK",
+   "shadow_calls": null
+  },
+  {
+   "run_id": "r11-seedbb84640589e695fe65ad403a3bdc74bc",
+   "seed_id": "bb84640589e695fe65ad403a3bdc74bc",
+   "rank": 11,
+   "source_name": "The Conversation",
+   "url": "https://theconversation.com/googles-ai-overviews-reinforce-some-conspiracy-theories-new-research-287959",
+   "ledger_file": "FINAL_EVIDENCE_MANIFEST.json",
+   "ledger_facts": 75,
+   "definitions": [
+    "AI Overview",
+    "direct interferer liability"
+   ],
+   "shadow_status": "OK",
+   "shadow_calls": null
+  },
+  {
+   "run_id": "r15-seedbd4d630f596e5395a48b9da3ce0a1430",
+   "seed_id": "bd4d630f596e5395a48b9da3ce0a1430",
+   "rank": 15,
+   "source_name": "bioRxiv Neuroscience",
+   "url": "https://www.biorxiv.org/content/10.64898/2026.09.05.745822v1?rss=1",
+   "ledger_file": "FINAL_EVIDENCE_MANIFEST.json",
+   "ledger_facts": 75,
+   "definitions": [
+    "quasistatic cavity resonance (QSCR)",
+    "tether"
+   ],
+   "shadow_status": "OK",
+   "shadow_calls": null
+  },
+  {
+   "run_id": "r17-seed7c9f5695720ff753e86cc3c31fd8e2af",
+   "seed_id": "7c9f5695720ff753e86cc3c31fd8e2af",
+   "rank": 17,
+   "source_name": "Hyperallergic",
+   "url": "https://hyperallergic.com/cosmo-whyte-returns-to-the-university-of-michigan-with-a-powerful-new-exhibition-at-stamps-gallery/",
+   "ledger_file": "FINAL_EVIDENCE_MANIFEST.json",
+   "ledger_facts": 89,
+   "definitions": [
+    "keloid",
+    "the archive (as Whyte uses it)"
+   ],
+   "shadow_status": "OK",
+   "shadow_calls": null
+  }
+ ],
+ "definitions": [
+  {
+   "run_id": "r05-seed1d2e086adb3d55a3e99669a06809a939",
+   "seed_id": "1d2e086adb3d55a3e99669a06809a939",
+   "rank": 5,
+   "source_name": "arXiv cs.HC",
+   "plan_dir": "runs/r05-seed1d2e086adb3d55a3e99669a06809a939",
+   "term": "association rule mining",
+   "claims": 5,
+   "flagged": 1,
+   "has_definition_evidence": true,
+   "dispatches": [
+    {
+     "span": "lower reported distraction",
+     "status": "NOT_ESTABLISHED",
+     "detector_reason": "evidence says lower digital distractions without specifying self-reported measurement",
+     "dispatch": "RELATIONAL",
+     "reason": "two ends: association mining rule <-> lower",
+     "E1": [
+      "association",
+      "mining",
+      "rule"
+     ],
+     "E2": [
+      "lower"
+     ],
+     "qualified_endpoints": [
+      "lower"
+     ],
+     "blocked_only_by_distinctiveness": [
+      "distraction"
+     ],
+     "candidates": {
+      "distraction": {
+       "in_term": false,
+       "named_in_declared_evidence": [
+        "F09"
+       ],
+       "licensed_independently_of_the_term": [
+        "F09"
+       ],
+       "df": 22,
+       "df_share": 0.44,
+       "distinctive": false,
+       "qualified": false,
+       "why": "R4 -- df 22 of 50 documents is 0.440 of the plan's evidence, over the 0.125 bound: this is what the corpus is made of"
+      },
+      "lower": {
+       "in_term": false,
+       "named_in_declared_evidence": [
+        "F06",
+        "F09"
+       ],
+       "licensed_independently_of_the_term": [
+        "F06",
+        "F09"
+       ],
+       "df": 5,
+       "df_share": 0.1,
+       "distinctive": true,
+       "qualified": true,
+       "why": "named by F06,F09, licensed independently by F06,F09, df 5 of 50"
+      },
+      "reported": {
+       "in_term": false,
+       "named_in_declared_evidence": [],
+       "licensed_independently_of_the_term": [],
+       "df": 0,
+       "df_share": 0.0,
+       "distinctive": true,
+       "qualified": false,
+       "why": "R2 -- the declared evidence does not name it; it only occurs inside a longer word"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "run_id": "r05-seed1d2e086adb3d55a3e99669a06809a939",
+   "seed_id": "1d2e086adb3d55a3e99669a06809a939",
+   "rank": 5,
+   "source_name": "arXiv cs.HC",
+   "plan_dir": "runs/r05-seed1d2e086adb3d55a3e99669a06809a939",
+   "term": "peer help-seeking",
+   "claims": 3,
+   "flagged": 0,
+   "has_definition_evidence": true,
+   "dispatches": []
+  },
+  {
+   "run_id": "r07-seed97e2847c1ee094e66855c41fedf40529",
+   "seed_id": "97e2847c1ee094e66855c41fedf40529",
+   "rank": 7,
+   "source_name": "The Conversation",
+   "plan_dir": "runs/r07-seed97e2847c1ee094e66855c41fedf40529",
+   "term": "goosecam",
+   "claims": 4,
+   "flagged": 1,
+   "has_definition_evidence": true,
+   "dispatches": [
+    {
+     "span": "the researchers pointed at participants' skin",
+     "status": "NOT_ESTABLISHED",
+     "detector_reason": "evidence does not state where the camera was aimed or that it was trained on skin",
+     "dispatch": "RELATIONAL",
+     "reason": "two ends: goosecam <-> researchers",
+     "E1": [
+      "goosecam"
+     ],
+     "E2": [
+      "researchers"
+     ],
+     "qualified_endpoints": [
+      "researchers"
+     ],
+     "blocked_only_by_distinctiveness": [],
+     "candidates": {
+      "participants'": {
+       "in_term": false,
+       "named_in_declared_evidence": [],
+       "licensed_independently_of_the_term": [],
+       "df": 0,
+       "df_share": 0.0,
+       "distinctive": true,
+       "qualified": false,
+       "why": "R2 -- the declared evidence does not name it; it only occurs inside a longer word"
+      },
+      "pointed": {
+       "in_term": false,
+       "named_in_declared_evidence": [],
+       "licensed_independently_of_the_term": [],
+       "df": 0,
+       "df_share": 0.0,
+       "distinctive": true,
+       "qualified": false,
+       "why": "R2 -- the declared evidence does not name it; it only occurs inside a longer word"
+      },
+      "researchers": {
+       "in_term": false,
+       "named_in_declared_evidence": [
+        "F52",
+        "F53"
+       ],
+       "licensed_independently_of_the_term": [
+        "F52"
+       ],
+       "df": 7,
+       "df_share": 0.0897,
+       "distinctive": true,
+       "qualified": true,
+       "why": "named by F53,F52, licensed independently by F52, df 7 of 78"
+      },
+      "skin": {
+       "in_term": false,
+       "named_in_declared_evidence": [],
+       "licensed_independently_of_the_term": [],
+       "df": 0,
+       "df_share": 0.0,
+       "distinctive": true,
+       "qualified": false,
+       "why": "R2 -- the declared evidence does not name it; it only occurs inside a longer word"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "run_id": "r07-seed97e2847c1ee094e66855c41fedf40529",
+   "seed_id": "97e2847c1ee094e66855c41fedf40529",
+   "rank": 7,
+   "source_name": "The Conversation",
+   "plan_dir": "runs/r07-seed97e2847c1ee094e66855c41fedf40529",
+   "term": "speculative climate poem",
+   "claims": 5,
+   "flagged": 2,
+   "has_definition_evidence": true,
+   "dispatches": [
+    {
+     "span": "into a changed climate",
+     "status": "NOT_ESTABLISHED",
+     "detector_reason": "the imagining exercise is not described as positing an altered climate",
+     "dispatch": "NON_RELATIONAL",
+     "reason": "no qualified second endpoint: changed: R2 -- the declared evidence does not name it; it only occurs inside a longer word; climate: R1 -- part of the term being defined, compound parts included",
+     "E1": [
+      "climate",
+      "poem",
+      "speculative"
+     ],
+     "E2": [],
+     "qualified_endpoints": [],
+     "blocked_only_by_distinctiveness": [],
+     "candidates": {
+      "changed": {
+       "in_term": false,
+       "named_in_declared_evidence": [],
+       "licensed_independently_of_the_term": [],
+       "df": 2,
+       "df_share": 0.0256,
+       "distinctive": true,
+       "qualified": false,
+       "why": "R2 -- the declared evidence does not name it; it only occurs inside a longer word"
+      },
+      "climate": {
+       "in_term": true,
+       "qualified": false,
+       "why": "R1 -- part of the term being defined, compound parts included"
+      }
+     }
+    },
+    {
+     "span": "of living there",
+     "status": "NOT_ESTABLISHED",
+     "detector_reason": "evidence does not tie those feelings to inhabiting the imagined place",
+     "dispatch": "NON_RELATIONAL",
+     "reason": "no qualified second endpoint: living: R2 -- the declared evidence does not name it; it only occurs inside a longer word",
+     "E1": [
+      "climate",
+      "poem",
+      "speculative"
+     ],
+     "E2": [],
+     "qualified_endpoints": [],
+     "blocked_only_by_distinctiveness": [],
+     "candidates": {
+      "living": {
+       "in_term": false,
+       "named_in_declared_evidence": [],
+       "licensed_independently_of_the_term": [],
+       "df": 1,
+       "df_share": 0.0128,
+       "distinctive": true,
+       "qualified": false,
+       "why": "R2 -- the declared evidence does not name it; it only occurs inside a longer word"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "run_id": "r08-seede88e85fb43ae67b176789b7961b96b3b",
+   "seed_id": "e88e85fb43ae67b176789b7961b96b3b",
+   "rank": 8,
+   "source_name": "Hyperallergic",
+   "plan_dir": "runs/r08-seede88e85fb43ae67b176789b7961b96b3b",
+   "term": "commercial corridor",
+   "claims": 4,
+   "flagged": 1,
+   "has_definition_evidence": true,
+   "dispatches": [
+    {
+     "span": "the block and neighborhood a business sits on",
+     "status": "NOT_ESTABLISHED",
+     "detector_reason": "evidence names corridors and neighborhoods as paired objects of investment but never defines a corridor as a block",
+     "dispatch": "NON_RELATIONAL",
+     "reason": "no qualified second endpoint: block: R2 -- the declared evidence does not name it; it only occurs inside a longer word; business: R2 -- the declared evidence does not name it; it only occurs inside a longer word; neighborhood: R2 -- the declared evidence does not name it; it only occurs inside a lon",
+     "E1": [
+      "commercial",
+      "corridor"
+     ],
+     "E2": [],
+     "qualified_endpoints": [],
+     "blocked_only_by_distinctiveness": [],
+     "candidates": {
+      "block": {
+       "in_term": false,
+       "named_in_declared_evidence": [],
+       "licensed_independently_of_the_term": [],
+       "df": 2,
+       "df_share": 0.037,
+       "distinctive": true,
+       "qualified": false,
+       "why": "R2 -- the declared evidence does not name it; it only occurs inside a longer word"
+      },
+      "business": {
+       "in_term": false,
+       "named_in_declared_evidence": [],
+       "licensed_independently_of_the_term": [],
+       "df": 19,
+       "df_share": 0.3519,
+       "distinctive": false,
+       "qualified": false,
+       "why": "R2 -- the declared evidence does not name it; it only occurs inside a longer word"
+      },
+      "neighborhood": {
+       "in_term": false,
+       "named_in_declared_evidence": [],
+       "licensed_independently_of_the_term": [],
+       "df": 5,
+       "df_share": 0.0926,
+       "distinctive": true,
+       "qualified": false,
+       "why": "R2 -- the declared evidence does not name it; it only occurs inside a longer word"
+      },
+      "sits": {
+       "in_term": false,
+       "named_in_declared_evidence": [],
+       "licensed_independently_of_the_term": [],
+       "df": 0,
+       "df_share": 0.0,
+       "distinctive": true,
+       "qualified": false,
+       "why": "R2 -- the declared evidence does not name it; it only occurs inside a longer word"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "run_id": "r08-seede88e85fb43ae67b176789b7961b96b3b",
+   "seed_id": "e88e85fb43ae67b176789b7961b96b3b",
+   "rank": 8,
+   "source_name": "Hyperallergic",
+   "plan_dir": "runs/r08-seede88e85fb43ae67b176789b7961b96b3b",
+   "term": "merchant organization",
+   "claims": 4,
+   "flagged": 0,
+   "has_definition_evidence": true,
+   "dispatches": []
+  },
+  {
+   "run_id": "r10-seedd292df6baab644390393215a05a2b3e4",
+   "seed_id": "d292df6baab644390393215a05a2b3e4",
+   "rank": 10,
+   "source_name": "The Conversation",
+   "plan_dir": "runs/r10-seedd292df6baab644390393215a05a2b3e4",
+   "term": "memory consolidation",
+   "claims": 2,
+   "flagged": 0,
+   "has_definition_evidence": true,
+   "dispatches": []
+  },
+  {
+   "run_id": "r10-seedd292df6baab644390393215a05a2b3e4",
+   "seed_id": "d292df6baab644390393215a05a2b3e4",
+   "rank": 10,
+   "source_name": "The Conversation",
+   "plan_dir": "runs/r10-seedd292df6baab644390393215a05a2b3e4",
+   "term": "reduced interference",
+   "claims": 3,
+   "flagged": 0,
+   "has_definition_evidence": true,
+   "dispatches": []
+  },
+  {
+   "run_id": "r11-seedbb84640589e695fe65ad403a3bdc74bc",
+   "seed_id": "bb84640589e695fe65ad403a3bdc74bc",
+   "rank": 11,
+   "source_name": "The Conversation",
+   "plan_dir": "runs/r11-seedbb84640589e695fe65ad403a3bdc74bc",
+   "term": "AI Overview",
+   "claims": 5,
+   "flagged": 0,
+   "has_definition_evidence": true,
+   "dispatches": []
+  },
+  {
+   "run_id": "r11-seedbb84640589e695fe65ad403a3bdc74bc",
+   "seed_id": "bb84640589e695fe65ad403a3bdc74bc",
+   "rank": 11,
+   "source_name": "The Conversation",
+   "plan_dir": "runs/r11-seedbb84640589e695fe65ad403a3bdc74bc",
+   "term": "direct interferer liability",
+   "claims": 5,
+   "flagged": 0,
+   "has_definition_evidence": true,
+   "dispatches": []
+  },
+  {
+   "run_id": "r15-seedbd4d630f596e5395a48b9da3ce0a1430",
+   "seed_id": "bd4d630f596e5395a48b9da3ce0a1430",
+   "rank": 15,
+   "source_name": "bioRxiv Neuroscience",
+   "plan_dir": "runs/r15-seedbd4d630f596e5395a48b9da3ce0a1430",
+   "term": "quasistatic cavity resonance (QSCR)",
+   "claims": 7,
+   "flagged": 0,
+   "has_definition_evidence": true,
+   "dispatches": []
+  },
+  {
+   "run_id": "r15-seedbd4d630f596e5395a48b9da3ce0a1430",
+   "seed_id": "bd4d630f596e5395a48b9da3ce0a1430",
+   "rank": 15,
+   "source_name": "bioRxiv Neuroscience",
+   "plan_dir": "runs/r15-seedbd4d630f596e5395a48b9da3ce0a1430",
+   "term": "tether",
+   "claims": 6,
+   "flagged": 1,
+   "has_definition_evidence": true,
+   "dispatches": [
+    {
+     "span": "carried on the animal",
+     "status": "NOT_ESTABLISHED",
+     "detector_reason": "evidence does not state the battery is carried on an animal",
+     "dispatch": "NON_RELATIONAL",
+     "reason": "no qualified second endpoint: animal: R2 -- the declared evidence does not name it; it only occurs inside a longer word; carried: R2 -- the declared evidence does not name it; it only occurs inside a longer word",
+     "E1": [
+      "tether"
+     ],
+     "E2": [],
+     "qualified_endpoints": [],
+     "blocked_only_by_distinctiveness": [],
+     "candidates": {
+      "animal": {
+       "in_term": false,
+       "named_in_declared_evidence": [],
+       "licensed_independently_of_the_term": [],
+       "df": 5,
+       "df_share": 0.0667,
+       "distinctive": true,
+       "qualified": false,
+       "why": "R2 -- the declared evidence does not name it; it only occurs inside a longer word"
+      },
+      "carried": {
+       "in_term": false,
+       "named_in_declared_evidence": [],
+       "licensed_independently_of_the_term": [],
+       "df": 0,
+       "df_share": 0.0,
+       "distinctive": true,
+       "qualified": false,
+       "why": "R2 -- the declared evidence does not name it; it only occurs inside a longer word"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "run_id": "r17-seed7c9f5695720ff753e86cc3c31fd8e2af",
+   "seed_id": "7c9f5695720ff753e86cc3c31fd8e2af",
+   "rank": 17,
+   "source_name": "Hyperallergic",
+   "plan_dir": "runs/r17-seed7c9f5695720ff753e86cc3c31fd8e2af",
+   "term": "keloid",
+   "claims": 4,
+   "flagged": 0,
+   "has_definition_evidence": true,
+   "dispatches": []
+  },
+  {
+   "run_id": "r17-seed7c9f5695720ff753e86cc3c31fd8e2af",
+   "seed_id": "7c9f5695720ff753e86cc3c31fd8e2af",
+   "rank": 17,
+   "source_name": "Hyperallergic",
+   "plan_dir": "runs/r17-seed7c9f5695720ff753e86cc3c31fd8e2af",
+   "term": "the archive (as Whyte uses it)",
+   "claims": 5,
+   "flagged": 0,
+   "has_definition_evidence": true,
+   "dispatches": []
+  }
+ ],
+ "warnings": [],
+ "detector_calls": 7,
+ "totals": {
+  "plans_probed": 7,
+  "definitions": 14,
+  "flagged_commitments": 6,
+  "dispatch": {
+   "RELATIONAL": 2,
+   "NON_RELATIONAL": 4
+  },
+  "distinct_plans": 7
+ },
+ "finished_at": "2026-09-24T11:45:32.751622+00:00"
+}
