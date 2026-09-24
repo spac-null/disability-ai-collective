@@ -199,3 +199,100 @@ instead of equality: **no supported content lost in any case.**
 
 A clean re-check is necessary and not sufficient — the bandgap free rewrite was already clean
 by this measure. That is why preservation is proven separately and mechanically.
+
+## Paired downstream replay — and the finding that changes the verdict
+
+One replay, frozen Research / Ledger / Worth, repaired Architecture, current contracts,
+FAST_LANE, fresh namespace, nothing published. `replay-C-20260924T065921Z`.
+
+The plan reached the Writer with the repaired gloss — `WRITER_PACKET.txt` line 99 carries it
+verbatim, with no `bandgap` in it. The run HOLDs at SAFETY on
+`MACHINE_LANGUAGE: provenance frames [('the source', 1)]`, the same unrelated defect that
+stopped both comparison branches, so Grounding did not run in any of the three.
+
+**The Writer put the bridge back.**
+
+| branch | definition gloss | article: `bandgap → cutoff` bridge | article: explanation |
+|---|---|---|---|
+| A baseline | explanation + bridge | **present** | present |
+| B free rewrite | circular, no explanation | **gone** | **gone** |
+| C constrained repair | explanation, no bridge | **present** | present |
+
+> **C, `WRITER_DRAFT.md`:** "The mixture is the design parameter. Varying the fraction of
+> cadmium engineers a specific bandgap energy, **which sets the cutoff wavelength**, the
+> long-wavelength edge of what the material will register."
+
+It is in the Writer draft, so Continuity did not add it. And the controls are exact: **all
+three branches have byte-identical `beats` and `use_facts`** — the free rewrite, though handed
+the whole architecture, changed only the definition too. The gloss is the single variable
+across A, B and C.
+
+So the honest reading is uncomfortable and worth having:
+
+1. **The repair did what it was contracted to do, provably.** The bridge is gone from the
+   definition, the explanation survives byte for byte, the detector re-check is clean, and the
+   architecture passes `validate_definition_support`.
+2. **The definition was not the article's only route to the claim.** Beat B3's `happens` —
+   never touched, identical in all three branches — reads: *"The fraction of cadmium in the
+   mixture can be varied to engineer a specific bandgap energy; for Roman, with a desired
+   cutoff wavelength of approximately 2.5 microns, it was tuned to 0.445."* That sentence is
+   faithful to F86 and F87 and asserts no bridge, but it places bandgap and cutoff wavelength
+   either side of a semicolon. The Writer, told to explain `cutoff wavelength` at first use in
+   exactly that stretch of prose, closed the gap with `which sets`.
+3. **B removed the bridge downstream only as collateral damage.** Killing the explanatory
+   apposition removed the Writer's landing place for it. In the finished sentence the bridge
+   and the explanation are one construction —
+   `which sets the cutoff wavelength, the long-wavelength edge of what the material will
+   register` — so the rewrite that destroyed the article is also the only branch that removed
+   the defect. Preserving the explanation preserved the route back to the bridge.
+
+That coupling is the actual discovery, and nothing short of running the paired replay with
+identical beats would have shown it.
+
+## Against the success criteria
+
+| # | criterion | result |
+|---|---|---|
+| 1 | unsupported bridge absent | **in the definition yes; in the article NO** |
+| 2 | useful explanation of `cutoff wavelength` survives | yes |
+| 3 | protected explanatory content demonstrably preserved | yes — mechanically, 1/1 |
+| 4 | supported factual content survives | yes — 3/3, verbatim |
+| 5 | no new unsupported commitment | yes |
+| 6 | **Writer does not recreate the bridge** | **NO — this is the failure** |
+| 7 | article still explains the concept | yes |
+| 8 | package does not recreate the bridge | yes — package is clean |
+| 9 | no materially equivalent defect replaces it | yes — the *same* defect persists by another route |
+
+Criterion 6 fails, so the hard case is not proven end to end.
+
+## What the representation got wrong
+
+Not preservation — that held, and held against a hostile reply. Not the edit boundary — only
+permitted spans changed, 10.6% / 4.2% / 1.6% of each gloss. Not anchoring, not glue, not
+evidence discipline, not the call budget.
+
+**The IR's scope is one Architecture field. The commitment's licence in the finished article
+is distributed across the gloss and the beat that supplies its context.** Repairing the gloss
+changes what the plan *says* without changing what the plan *affords*. Nothing in the IR
+represents the beat that keeps the two concepts adjacent with both facts allowed, so nothing
+noticed that the repair left the inference reachable.
+
+The next representation has to make the unit of repair the **commitment across the plan**, not
+the span inside one field — while keeping this module's one real achievement, which is that
+protected text is copied rather than regenerated and therefore cannot be lost. The detector
+would have to see beats to find the second carrier, and §2 records exactly why it does not
+yet: the evidence that would have justified reaching beats was a misreading of a truncated
+proposition. That widening needs its own calibration, not an assumption.
+
+## Stop rules
+
+None of §24's stop conditions fired. Anchoring held 54/54; no protected content disappeared
+without validator failure; the minutes-away regression still works; clean positive controls
+triggered nothing; no retries were needed — 3 flagged commitments, 3 calls, 3 accepted first
+answers; and no lexical special case for bandgap, minutes or fixed-seat exists anywhere in the
+module. The prototype contract was written once and not revised.
+
+## Decision
+
+`LOCAL_EDIT_REPAIR_NEEDS_REDESIGN` — the mechanism is sound and proven at the level it
+operates on; its scope is wrong for this defect.
