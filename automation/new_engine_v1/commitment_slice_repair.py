@@ -361,9 +361,18 @@ SYSTEM = (
     "\n"
     "FINALLY, write ONE house rule that stops the same thing being said again further "
     "downstream. It must forbid the STATEMENT, never the subject: the writer has to stay free "
-    "to name both ideas and to explain the term. Say what may not be asserted, then say what "
-    "the evidence does and does not reach -- not that the statement is false. It may well be "
-    "true; this article simply cannot show it. Begin it with \"Do not\".\n"
+    "to name both ideas and to explain the term. Say what may not be asserted, then name what "
+    "DOES stand on its own -- not that the statement is false. It may well be true; it simply "
+    "cannot be shown here.\n"
+    "\n"
+    "Write it as a house rule about the WRITING, in the material's own words. Do not mention "
+    "evidence, sources, records, documents, data, facts, findings, reports or what is known, "
+    "established or supported -- a rule that talks about where knowledge came from is a rule "
+    "that teaches the writer to write about where knowledge came from. Compare:\n"
+    "  NO   'Do not say X causes Y; the evidence does not establish that relation.'\n"
+    "  YES  'Do not say X causes Y; each is tied separately to Z, and nothing ties them "
+    "to each other.'\n"
+    "Begin it with \"Do not\".\n"
     "\n"
     "You may adjust the small connecting text around a piece you changed -- punctuation, an "
     "article, a preposition, a conjunction -- and nothing else: no nouns, verbs, adjectives or "
@@ -537,6 +546,15 @@ def validate(reply, sl: dict, ledger: dict) -> list:
             if bad in pro.lower():
                 errs.append("the prohibition asserts world-falsity rather than an evidence "
                             "boundary: %r" % pro[:80])
+        try:
+            from . import story as _ST
+            frames = _ST.leaks(pro)
+        except Exception:                                         # noqa: BLE001
+            frames = []
+        if frames:
+            errs.append("the prohibition carries provenance language %s -- the packet "
+                        "validator rejects it and the Writer would learn to write it"
+                        % [f[0] if isinstance(f, (list, tuple)) else f for f in frames][:3])
         tgt_words = {w.lower() for w in _WORD.findall(sl["commitment"]["span"])
                      if w.lower() not in DRC.FUNCTION_WORDS and len(w) > 3}
         if tgt_words and not (tgt_words & {w.lower() for w in _WORD.findall(pro)}):

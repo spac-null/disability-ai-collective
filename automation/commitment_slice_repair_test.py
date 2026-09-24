@@ -221,6 +221,13 @@ ok(any("world-falsity" in e for e in withpro(
 ok(any("does not name what was flagged" in e for e in withpro("Do not overstate the physics.")),
    "a prohibition that never names the flagged material is rejected")
 ok(withpro("Do not " + "x" * 420) != [], "an over-long prohibition is rejected")
+ok(any("provenance language" in e for e in withpro(
+    "Do not say the bandgap sets the cutoff wavelength; the evidence does not reach that.")),
+   "provenance framing is rejected BEFORE assembly -- the packet validator would reject it "
+   "anyway, and a rule about where knowledge came from teaches the Writer to write that")
+ok(withpro("Do not say the bandgap energy sets the cutoff wavelength; the cadmium fraction "
+           "is tied separately to each, and nothing ties those two to one another.") == [],
+   "the same rule in the material's own words passes")
 
 print("\n== failure is always closed ==")
 def boom(system, user):
