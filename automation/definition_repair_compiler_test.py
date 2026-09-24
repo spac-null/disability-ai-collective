@@ -233,10 +233,14 @@ print("\n== flag is OFF by default and nothing is wired to production ==")
 ok(R.enabled({}) is False, "disabled with no env")
 ok(R.enabled({"CRIPMINDS_DEFINITION_REPAIR_COMPILER": "1"}) is True, "enabled explicitly")
 src = pathlib.Path(__file__).resolve().parent / "new_engine_v1"
-importers = [p.name for p in src.glob("*.py")
+# The only module allowed to import this one is the other zero-authority experiment built on
+# top of it. Nothing on the production path may, and composition.py is checked separately.
+EXPERIMENTAL = {"commitment_slice_repair.py"}
+importers = {p.name for p in src.glob("*.py")
              if "definition_repair_compiler" in p.read_text(encoding="utf-8")
-             and p.name != "definition_repair_compiler.py"]
-ok(importers == [], "no engine module imports the repair compiler (found: %s)" % importers)
+             and p.name != "definition_repair_compiler.py"}
+ok(importers <= EXPERIMENTAL,
+   "only the sibling experiment imports the repair compiler (found: %s)" % sorted(importers))
 comp = (src / "composition.py").read_text(encoding="utf-8")
 ok("definition_repair_compiler" not in comp, "composition.py is untouched")
 
