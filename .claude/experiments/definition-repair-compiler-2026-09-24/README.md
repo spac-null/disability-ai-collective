@@ -433,3 +433,92 @@ prose is about screening at GSFC and does not mention the recipe, so the Writer 
 use F86. If bandgap vanishes from the article that way, it vanished by editorial choice with
 the material still on the table — which is different from having been deleted from the plan,
 but is not the same as having been kept.
+
+## Paired replay D — the Writer reached across beats
+
+One replay, frozen Research/Ledger/Worth, repaired Architecture, FAST_LANE, fresh namespace,
+nothing published. `replay-D-20260924T072443Z`. HOLD at SAFETY on the same unrelated
+`MACHINE_LANGUAGE` defect as every other branch, so Grounding did not run here either.
+
+**The bridge came back.**
+
+> "The mixture of mercury cadmium telluride can be varied — specifically the fraction of
+> cadmium — to engineer a specific bandgap energy, **and with it the cutoff wavelength**, the
+> long-wavelength edge of what the material will register."
+
+In the Writer draft, so not Continuity. And the plan it came from was exactly what was
+intended:
+
+```
+PACKET beat 3   -- carries "explain plainly, once, here: cutoff wavelength"
+                -- prose: no bandgap
+                -- its seven facts: F23 F78 F82 F83 F84 F87 F100 -- no bandgap in any of them
+
+PACKET beat 4   -- ten lines further down the same packet
+                -- "The precise mixture of HgCdTe, specifically the fraction of cadmium,
+                    can be varied to engineer a specific bandgap energy."   <- F86, moved here
+```
+
+bandgap occurs at **exactly one line of the whole packet**, under beat 4. The Writer pulled it
+up into beat 3's paragraph and completed the link there.
+
+### What that means
+
+The per-beat model of affordance is wrong about the unit. It assumed the Writer composes a
+beat from that beat's facts. It does not — not when it needs to explain a term and the missing
+connective is available anywhere on the page.
+
+> **The single Writer instruction context is the PACKET, not the beat.**
+
+So `MOVE` cannot close a packet-scoped affordance. Relocating a fact changes which beat offers
+it and leaves it fully readable. The only plan-level closure that per-beat reasoning permits is
+`REMOVE` — deleting one side of the problem, which is the outcome already identified as
+"prevented regeneration but not solved cross-plan repair".
+
+### Four-way comparison
+
+| branch | plan change | bridge in article | explanation |
+|---|---|---|---|
+| A baseline | none | explicit — "which sets the cutoff wavelength" | present |
+| B free rewrite | gloss regenerated | **absent** | **destroyed** |
+| C definition-only repair | gloss span repaired | explicit — "which sets the cutoff wavelength" | present |
+| D commitment slice | gloss + beat prose + fact relocated | **ambiguous — "and with it the cutoff wavelength"** | present |
+
+D is a real improvement and not a success. "and with it" can be read as the *variation*
+bringing both — which the evidence licenses — or as the *bandgap* bringing the cutoff, which it
+does not. The unsupported reading is still the more natural one, so the commitment is
+weakened, not closed. The package is clean of it in D.
+
+### The five lines
+
+| line | result |
+|---|---|
+| `TARGET_COMMITMENT_REMOVED` | True |
+| `AFFORDANCE_REMOVED` | True **per beat** — and the per-beat model is the thing that was wrong |
+| `PROTECTED_CONTENT_PRESERVED` | True — 6/6 KEEP units verbatim, plan outside the slice byte-identical |
+| `UNRELATED_FACT_PRESERVED_OR_EXPLICITLY_DROPPED` | True — F86 relocated, explicit, and the Writer did use it |
+| `WRITER_REGENERATION` | **True — weakened but still present** |
+
+### The next lever, which exists already
+
+`prohibitions` is an existing Architecture field, and it reaches the Writer **packet-scoped**,
+verbatim, in the RULES block — the same scope the affordance actually lives at. This plan
+already carries seventeen, several of the same shape, e.g.
+
+> "Do not assert that the 0.445 cadmium fraction was the only option, a compromise, or a
+> limitation imposed by cost or schedule."
+
+A prohibition naming the unlicensed relation would act where the Writer actually reads, without
+deleting F86, without touching beats, and without inventing structure. That is the obvious next
+bounded experiment. It is **not** run here: this phase was scoped to one commitment slice and
+one cross-plan repair, and extending it silently after a negative result is how a checker gets
+tuned into agreement with itself.
+
+### Decision
+
+`LOCAL_EDIT_REPAIR_NEEDS_REDESIGN` still holds, and the redesign is now much better specified.
+Three things are established and reusable: the detector finds the atomic claim; affordance
+analysis finds the surfaces that can rebuild it; constrained editing changes only those while
+proving everything else byte-identical. What is not yet established is the **scope** at which
+affordance must be closed, and this replay answers that: the packet, not the field and not the
+beat.
