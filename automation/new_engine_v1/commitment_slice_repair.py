@@ -111,6 +111,13 @@ def _term_words(term: str) -> set:
 
 
 def _ledger_df(ledger: dict, word: str) -> int:
+    """How pervasive the WORD-FORM is in the plan's evidence, counted loosely on purpose.
+
+    Substring, so "work" is also counted in "working" and "works". That is the right counting
+    for the question this answers -- is this word part of what the corpus is generally made of
+    -- and counting loosely can only ever make a candidate look MORE generic, never less. It is
+    the opposite discipline from _named_in(), and deliberately so: see classify().
+    """
     n = 0
     for f in (ledger or {}).values():
         if word in str((f or {}).get("proposition", "")).lower():
@@ -118,47 +125,193 @@ def _ledger_df(ledger: dict, word: str) -> int:
     return n
 
 
+# A candidate carried by more than this share of the plan's own evidence is that plan's
+# subject matter, not one end of a relation inside one definition. Measured over the five
+# frozen ledgers, the bound removes 0.6%-3.2% of each vocabulary, and what it removes is
+# exactly what each corpus is about: detectors, sauna, resolution, school, housing. It is
+# declared as a property of corpus language, not fitted to a case -- no reviewed candidate
+# sits near it from below (the highest accepted is 0.034) and the one above it, at 0.164, is
+# independently rejected for not being named in the evidence at all.
+MAX_ENDPOINT_DF_SHARE = 0.125
+
+RELATIONAL = "RELATIONAL"
+NON_RELATIONAL = "NON_RELATIONAL"
+AMBIGUOUS = "AMBIGUOUS"
+
+
+def _declared_propositions(term: str, arch: dict, ledger: dict) -> list:
+    ids = ((arch or {}).get("definition_evidence") or {}).get(term)
+    if isinstance(ids, str):
+        ids = [ids]
+    return [(str(i), str(((ledger or {}).get(str(i)) or {}).get("proposition", "")))
+            for i in (ids or [])]
+
+
+def _named_in(word: str, text: str) -> bool:
+    """Whether `text` NAMES `word`, as a whole token rather than as a fragment.
+
+    The strict half of the pair with _ledger_df(). "work" inside "working" and "gather" inside
+    "gathering" are morphological accidents, and both were enough, under the old substring
+    test, to promote a word into a concept endpoint. A concept endpoint has to be the thing the
+    evidence actually names.
+
+    DRC._unlicensed_words() allows a stem match in the other direction, and that is not an
+    inconsistency: there the looseness PERMITS a word the repair wants to write, here the same
+    looseness would MANUFACTURE an endpoint out of an inflection. Different direction, so the
+    strictness goes the other way.
+
+    The cost is real and accepted: a gloss saying "energies" where the evidence says "energy"
+    loses that candidate. §15 -- a false refusal costs one repair opportunity, a false
+    relational dispatch costs a plausible but wrong repair plan.
+    """
+    return word in _content(text)
+
+
+def classify(term: str, span: str, arch: dict, ledger: dict) -> dict:
+    """Is this flagged commitment a RELATION between two licensed concepts, or something local?
+
+    A relational defect has a shape: two substantive concepts, each licensed on its own by the
+    evidence, and a link between them that is not. A value, attribute, attribution or
+    superlative overspecification has only one concept -- the term -- with an unsupported
+    modifier, quantity, actor or degree hanging off it. Only the first shape can be repaired by
+    separating two things. Applying the relational compiler to the second builds a slice around
+    a word that is not a concept, and nothing downstream would catch it.
+
+    RARITY NO LONGER DECIDES ANYTHING. It used to: the old rule kept the rarest tier of
+    whatever survived, so a single surviving candidate was always "the rarest" and always
+    dispatched. On the first genuinely out-of-sample case that promoted 'work' -- a common verb
+    form, df 9 of 55 -- to an endpoint by nothing but being alone. Rarity is now what RANKS
+    already-qualified endpoints; it cannot qualify one.
+
+    A candidate is a qualified endpoint only if ALL of:
+
+      R1  DISTINCT FROM THE TERM.  Not in the term's own vocabulary, compound parts included,
+          so a term's head noun cannot be the far end of a relation with the term itself.
+      R2  NAMED IN THE DECLARED EVIDENCE.  Present as a whole token in a proposition the
+          definition declares, not as a fragment of a longer word.
+      R3  LICENSED INDEPENDENTLY OF THE TERM.  At least one of those propositions names it
+          while saying nothing about the term. If every licence for the candidate is a
+          statement about the term, the evidence has already tied the two together and there is
+          no separate concept at the far end -- there is a description of the term.
+      R4  DISTINCTIVE IN ABSOLUTE TERMS.  Word-form document frequency at or under
+          MAX_ENDPOINT_DF_SHARE of the ledger.
+
+    And E1 -- the term's own vocabulary -- must be non-empty, because a relation needs two ends
+    and the near end is the term.
+
+    Verdicts:
+      RELATIONAL      at least one candidate qualified. E2 is the rarest tier of those.
+      AMBIGUOUS       a candidate is term-distinct, named, and independently licensed, and
+                      fails only R4. That is the case the old docstring anticipated and never
+                      met -- a relation between two concepts the corpus talks about constantly.
+                      It may be real. It is not safe to dispatch unsupervised, so it refuses
+                      and says why, rather than being quietly filed as non-relational.
+      NON_RELATIONAL  everything else.
+
+    Only RELATIONAL builds a slice. AMBIGUOUS and NON_RELATIONAL both refuse, so uncertainty
+    fails closed.
+
+    WHAT IS DELIBERATELY NOT HERE. No part-of-speech rule: there is no deterministic parser in
+    this environment, and a hand-written list of verbs would be the lexical special-casing this
+    layer exists to avoid -- it would also read as fitting to 'work', which R2 and R4 each
+    reject on their own for reasons that generalise. No requirement that the two endpoints
+    share a middle variable, even though the one repaired case has one (cadmium fraction ties
+    separately to bandgap and to cutoff): exactly one positive case exhibits it and no negative
+    case is separated by it, so requiring it would be fitting the rule to its single success.
+    Both are recorded as available and not built.
+    """
+    e1 = _term_words(term)
+    declared = _declared_propositions(term, arch, ledger)
+    n_docs = max(1, len(ledger or {}))
+
+    rep = {"E1": sorted(e1), "declared_evidence": [i for i, _ in declared], "candidates": {},
+           "ledger_documents": len(ledger or {}),
+           "max_endpoint_df_share": MAX_ENDPOINT_DF_SHARE}
+
+    if not e1:
+        rep.update({"dispatch": NON_RELATIONAL, "E2": [],
+                    "reason": "the term contributes no vocabulary of its own, so the near end "
+                              "of the relation cannot be located"})
+        return rep
+
+    for w in sorted(_content(span)):
+        c = {"in_term": w in e1}
+        if not c["in_term"]:
+            named = [i for i, p in declared if _named_in(w, p)]
+            indep = [i for i, p in declared if _named_in(w, p) and not (e1 & _content(p))]
+            df = _ledger_df(ledger, w)
+            c.update({"named_in_declared_evidence": sorted(named),
+                      "licensed_independently_of_the_term": sorted(indep),
+                      "df": df, "df_share": round(df / n_docs, 4),
+                      "distinctive": df / n_docs <= MAX_ENDPOINT_DF_SHARE})
+            c["qualified"] = bool(named) and bool(indep) and c["distinctive"]
+            if c["qualified"]:
+                c["why"] = "named by %s, licensed independently by %s, df %d of %d" % (
+                    ",".join(named), ",".join(indep), df, n_docs)
+            elif not named:
+                c["why"] = "R2 -- the declared evidence does not name it; it only occurs " \
+                           "inside a longer word"
+            elif not indep:
+                c["why"] = "R3 -- every declared proposition naming it is itself about the " \
+                           "term, so it is part of the term's description, not a concept " \
+                           "standing at the far end"
+            else:
+                c["why"] = "R4 -- df %d of %d documents is %.3f of the plan's evidence, over " \
+                           "the %.3f bound: this is what the corpus is made of" % (
+                               df, n_docs, df / n_docs, MAX_ENDPOINT_DF_SHARE)
+        else:
+            c["qualified"] = False
+            c["why"] = "R1 -- part of the term being defined, compound parts included"
+        rep["candidates"][w] = c
+
+    qualified = {w: c["df"] for w, c in rep["candidates"].items() if c.get("qualified")}
+    generic_only = sorted(w for w, c in rep["candidates"].items()
+                          if not c.get("qualified")
+                          and c.get("named_in_declared_evidence")
+                          and c.get("licensed_independently_of_the_term")
+                          and not c.get("distinctive"))
+    rep["qualified_endpoints"] = sorted(qualified)
+    rep["blocked_only_by_distinctiveness"] = generic_only
+
+    if qualified:
+        lo = min(qualified.values())
+        rep.update({"dispatch": RELATIONAL,
+                    "E2": sorted(w for w, d in qualified.items() if d == lo),
+                    "ranked_by": "rarest document frequency among the QUALIFIED endpoints -- a "
+                                 "search heuristic for locating the concept in plan text, "
+                                 "which no longer decides whether there is a concept at all",
+                    "reason": "two ends: %s <-> %s" % (
+                        " ".join(sorted(e1)),
+                        " ".join(sorted(w for w, d in qualified.items() if d == lo)))})
+    elif generic_only:
+        rep.update({"dispatch": AMBIGUOUS, "E2": [],
+                    "reason": "%s is independently licensed but is corpus-generic language "
+                              "(over %.3f of the ledger); a relation between two common "
+                              "concepts may be real, and is not safe to dispatch unsupervised"
+                              % (", ".join(generic_only), MAX_ENDPOINT_DF_SHARE)})
+    else:
+        rep.update({"dispatch": NON_RELATIONAL, "E2": [],
+                    "reason": "no qualified second endpoint: %s" % (
+                        "; ".join("%s: %s" % (w, c["why"])
+                                  for w, c in sorted(rep["candidates"].items()))
+                        or "the flagged span contributes no content word at all")})
+    return rep
+
+
 def endpoints(term: str, span: str, arch: dict, ledger: dict) -> tuple:
     """The two ends of the unsupported relation, as words the plan can be searched for.
 
-    E1 is the term being defined. E2 is what the flagged span brings to it.
-
-    RARITY IS HOW THE ANCHOR IS CHOSEN, NOT WHAT AFFORDANCE MEANS. Un-filtered, "set by the
-    bandgap energy" yields {bandgap, energy}, and "energy" matches F09 -- dark energy -- in a
-    beat with nothing to do with detector physics. bandgap has df=1 in that 117-fact ledger and
-    energy df=4, so taking the rarest tier gives {bandgap} and the false positive disappears.
-    That is a search heuristic for locating the concept in the plan text. It is NOT the truth
-    condition: a future unsupported relation may join two common concepts, and then this
-    selection degrades to keeping several anchors and repairing more conservatively -- which is
-    the safe direction -- rather than to being wrong about what affordance is. Affordance is
-    defined in affording_surfaces(), in terms of reach and duty, and never in terms of rarity.
+    E1 is the term being defined. E2 is the far end, empty unless classify() says RELATIONAL.
+    Affordance itself is defined in affording_surfaces(), in terms of reach and duty, and never
+    in terms of rarity.
     """
-    e1 = _term_words(term)
-    ids = ((arch or {}).get("definition_evidence") or {}).get(term)
-    if isinstance(ids, str):
-        ids = [ids]
-    ev = " ".join(str(((ledger or {}).get(str(i)) or {}).get("proposition", ""))
-                  for i in (ids or [])).lower()
-    cand = {w for w in _content(span) if w in ev} - e1
-    if not cand:
-        return e1, set()
-    dfs = {w: _ledger_df(ledger, w) for w in cand}
-    lo = min(dfs.values())
-    return e1, {w for w, d in dfs.items() if d == lo}
+    r = classify(term, span, arch, ledger)
+    return set(r["E1"]), set(r["E2"])
 
 
 def anchor_report(term: str, span: str, arch: dict, ledger: dict) -> dict:
-    """What was considered and what was selected -- so the heuristic is inspectable."""
-    e1 = _content(term)
-    ids = ((arch or {}).get("definition_evidence") or {}).get(term)
-    if isinstance(ids, str):
-        ids = [ids]
-    ev = " ".join(str(((ledger or {}).get(str(i)) or {}).get("proposition", ""))
-                  for i in (ids or [])).lower()
-    cand = {w for w in _content(span) if w in ev} - e1
-    return {"candidates": {w: _ledger_df(ledger, w) for w in sorted(cand)},
-            "selected_by": "rarest document frequency in the ledger (a search heuristic for "
-                           "locating the concept, not the definition of affordance)"}
+    """What was considered, what qualified, and why the rest did not."""
+    return classify(term, span, arch, ledger)
 
 
 # -------------------------------------------------------------------------- surfaces --
@@ -287,17 +440,18 @@ def build_slice(arch: dict, ledger: dict, shadow: dict, term: str, unit_id: str 
                               % ir.get("repairable_candidates"))
         return sl
 
-    e1, e2 = endpoints(term, target["text"], arch, ledger)
-    if not e2:
-        sl["refusals"].append("the flagged span shares no distinctive word with the declared "
-                              "evidence, so its other end cannot be located in the plan")
+    cls = classify(term, target["text"], arch, ledger)
+    sl["defect_type"] = cls["dispatch"]
+    sl["anchor_report"] = cls
+    if cls["dispatch"] != RELATIONAL:
+        sl["refusals"].append("%s -- %s" % (cls["dispatch"], cls["reason"]))
         return sl
+    e1, e2 = set(cls["E1"]), set(cls["E2"])
 
     sl.update({"commitment": {"span": target["text"], "status": target["status"],
                               "reason": target.get("reason", ""), "unit_id": target["unit_id"]},
                "endpoints": {"E1": sorted(e1), "E2": sorted(e2)},
                "definition_ir": ir, "definition_target": target["unit_id"],
-               "anchor_report": anchor_report(term, target["text"], arch, ledger),
                "_arch_beats": [{"beat_id": b.get("beat_id"), "happens": b.get("happens"),
                                 "facts_allowed": list(b.get("facts_allowed") or [])}
                                for b in (arch.get("beats") or [])],

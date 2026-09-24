@@ -38,18 +38,18 @@ B3H = ("The detectors are hybrids: because it is not possible to have both photo
        "was tuned to 0.445, and the WFI is sensitive from 0.48 to 2.3 microns, in infrared "
        "light of longer wavelengths than human eyes can see.")
 
-LEDGER = {
-    "F86": {"proposition": "The precise mixture of HgCdTe, specifically the fraction of "
-                           "cadmium, can be varied to engineer a specific bandgap energy."},
-    "F87": {"proposition": "For Roman's desired cutoff wavelength of approximately 2.5 "
-                           "microns, the fraction of cadmium was tuned to 0.445."},
-    "F100": {"proposition": "The WFI is sensitive to wavelengths from 0.48 to 2.3 microns."},
-    "F78": {"proposition": "A photon-sensitive layer is bonded to a silicon Read-out "
-                           "Integrated Circuit; the combination is called a hybrid."},
-    "F09": {"proposition": "Dark matter and dark energy have not yet been directly observed, "
-                           "together are the source of the vast majority of energy."},
-    "F24": {"proposition": "Dozens of flight detectors were characterised at NASA Goddard."},
-}
+# THE WHOLE LEDGER, not a cut-down of it. This used to be six hand-abbreviated facts, which
+# was fine while nothing in the module counted documents. The dispatch classifier does: it
+# asks what share of the plan's evidence a candidate word occupies, and bandgap is 1 fact in
+# 117 on the wire and 1 in 6 in a cut-down -- 0.9% against 17%, opposite sides of any bound.
+# A fixture that changes the answer is not a fixture, so the real file is read instead.
+LEDGER = json.loads((pathlib.Path(__file__).resolve().parent / "fixtures" /
+                     "relational-dispatch-2026-09-24" / "b2-run2" / "LEDGER.json")
+                    .read_text(encoding="utf-8"))
+if isinstance(LEDGER, dict) and "facts" in LEDGER:
+    LEDGER = LEDGER["facts"]
+if not isinstance(LEDGER, dict):
+    LEDGER = {f["fact_id"]: f for f in LEDGER}
 ARCH = {
     "definitions": {"cutoff wavelength": GLOSS},
     "definition_evidence": {"cutoff wavelength": ["F86", "F87", "F100"]},
@@ -78,13 +78,17 @@ def sl():
     return C.build_slice(ARCH, LEDGER, SHADOW, TERM)
 
 
-print("\n== anchors: rarity selects, it does not define ==")
+print("\n== anchors: rarity ranks qualified endpoints, it does not qualify them ==")
 e1, e2 = C.endpoints(TERM, "set by the bandgap energy", ARCH, LEDGER)
 ok(e2 == {"bandgap"}, "the rarest tier selects 'bandgap', not 'energy' (dark energy)")
 rep = C.anchor_report(TERM, "set by the bandgap energy", ARCH, LEDGER)
-# df here is over this 6-fact fixture; in the real 117-fact ledger it is bandgap=1, energy=4
-ok(rep["candidates"] == {"bandgap": 1, "energy": 2},
-   "both candidates and their document frequencies are reported, so the heuristic is inspectable")
+ok(rep["dispatch"] == C.RELATIONAL, "and the case is typed RELATIONAL")
+ok(sorted(rep["qualified_endpoints"]) == ["bandgap", "energy"],
+   "BOTH ends qualify on their own before rarity picks between them -- bandgap dispatches "
+   "because two concepts are independently licensed, not because one word is rare")
+ok({w: c["df"] for w, c in rep["candidates"].items() if "df" in c} ==
+   {"bandgap": 1, "energy": 4, "set": 4},
+   "every candidate and its document frequency is reported, so the heuristic is inspectable")
 
 print("\n== a compound term does not become its own second concept ==")
 ok(C._term_words("transfer-to-seat") == {"transfer-to-seat", "transfer", "seat"},
