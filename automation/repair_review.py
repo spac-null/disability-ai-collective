@@ -35,6 +35,7 @@ Commands
                              never saw. Read this, do not act on it.
 """
 import argparse
+import copy
 import datetime
 import json
 import os
@@ -183,8 +184,21 @@ def cmd_route(a) -> int:
         print("This is a refusal, not a crash, and the route you chose is already recorded.")
         return 0
 
-    repaired = art.get("repaired_architecture") or {}
-    new_gloss = (repaired.get("definitions") or {}).get(f["term"], "")
+    # THE TWO REPAIRS RETURN DIFFERENT SHAPES, and reading only one of them made a good
+    # LOCAL repair display as an empty definition. definition_repair_compiler edits ONE
+    # gloss and returns `repaired_gloss`, a string; commitment_slice_repair edits across
+    # the plan and returns `repaired_architecture`. Both are normalised here to a whole
+    # architecture, so everything downstream -- the replay especially -- has one shape.
+    if route == STORE.LOCAL:
+        new_gloss = art.get("repaired_gloss") or ""
+        repaired = copy.deepcopy(arch)
+        repaired.setdefault("definitions", {})[f["term"]] = new_gloss
+    else:
+        repaired = art.get("repaired_architecture") or {}
+        new_gloss = (repaired.get("definitions") or {}).get(f["term"], "")
+    if not new_gloss.strip():
+        print("  the repair returned an empty definition -- refusing to propose it")
+        return 0
     print("\n  BEFORE  %s" % f["gloss"])
     print("  AFTER   %s" % new_gloss)
     if route == STORE.RELATIONAL:
