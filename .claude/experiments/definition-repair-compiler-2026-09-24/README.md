@@ -896,3 +896,90 @@ refused as out of type.
 
 It is one repaired case. The other three flagged cases were refusals, so the policy's selection
 was exercised end-to-end exactly once. That is the honest limit of this cohort.
+
+---
+
+# Phase 6 — replication is blocked, and not by the mechanism
+
+G frozen at `/srv/data/cripminds-evidence/relational-contract-G-reference-2026-09-24`
+(33 files, 0 verify failures). `d4bd9ea` is the experimental constant and was not touched.
+
+`BOUNDED_RELATIONAL_REPAIR_REPLICATION` needs 3–5 **new relational** NOT_ESTABLISHED cases.
+Before declaring a cohort I measured whether the corpus can supply one. It cannot, for two
+independent reasons.
+
+## Blocker 1 — evidence supply
+
+The detector requires `definition_evidence`, which PR #106 introduced on 2026-09-23. Across
+every `cripminds-*` directory on trident:
+
+| | |
+|---|---|
+| plans with an architecture and a ledger | 129 |
+| distinct plans | 71 |
+| **plans carrying `definition_evidence`** | **10** |
+| definitions in those | 22 |
+| of which already exhausted by the calibration set | 12 (6 plans) |
+| the rest | repaired/replayed duplicates of those same plans |
+| **genuinely new plans since PR #106** | **1** — `production-20260924T070701Z-3e62a182`, 2 definitions |
+
+Production emits roughly two definitions a day. The observed flag rate across everything seen
+so far is 6 flagged commitments in 23 definitions, of which **one** was relational. At that
+rate, 3–5 new relational cases need on the order of 40–60 further definitions — roughly three
+to four weeks of ordinary publishing. The cohort cannot be assembled today, and assembling it
+from repaired or replayed copies of plans already used would not be replication.
+
+## Blocker 2 — the type classifier is not reliable enough to dispatch unsupervised
+
+The one new plan was probed with the unchanged detector (system sha `a3740409…`, one call). It
+returned 11 commitments, 1 flagged — consistent with the established rate — and the flagged one
+classified **RELATIONAL**, which would have sent it to a repair call. It should not have:
+
+```
+TERM  ISO-compliant microphone
+SPAN  'the interpreting services work to'          NOT_ESTABLISHED
+  E1 = {iso-compliant, microphone}
+  E2 = {work}          <-- anchor candidates: {"work": df 9}
+```
+
+The span is an attribution overspecification — who adheres to the standard — of the same family
+as "minutes away" and "fixed seat". It has no second concept. But `work` is the only content
+word of the span appearing in the declared evidence, so the rarest-tier rule selected it
+**vacuously**: "rarest of one" is not a discriminator. `bandgap` had df 1; `work` has df 9, and
+the rule cannot tell them apart because it is relative, not absolute.
+
+The slice would then have been built around a common verb. Nothing downstream would have caught
+it — the affording-surfaces search finds only the definition itself, which looks like a
+well-formed degenerate slice rather than an error.
+
+This is the weakness already flagged as a risk: *rarity selects the anchor, it is not the
+semantics*. On the one case where the anchor choice was genuinely tested out of sample, it
+failed. The classifier needs an absolute distinctiveness floor and probably a part-of-speech
+constraint — a verb is not a concept endpoint — but **that has not been changed here**, because
+the defect was found by looking at an outcome, and fixing it now would be fitting the rule to
+the case it failed on. It is recorded as the next thing to fix, before any cohort.
+
+## State
+
+| | |
+|---|---|
+| Detector | established enough for continued zero-authority work; unchanged since `80554bd` |
+| Local repair (value/attribute defects) | works — minutes-away, fixed-seat |
+| Relational compiler | **one** automatic end-to-end success (G) |
+| Contract shape | no longer speculative |
+| Replication | **blocked**: corpus supplies one new plan, and the dispatch classifier mis-types |
+
+Two things remain deliberately untouched, as separate defect classes: `MACHINE_LANGUAGE`
+(persistent across A–G, therefore not evidence about this mechanism) and the F79/F80
+`CUT_LEAKAGE` cut/use collision. Grounding has still never been reached in any branch, so no
+independent factual gate has confirmed any repaired case.
+
+## What would unblock replication
+
+1. Fix the concept-anchor layer first — absolute distinctiveness floor, and exclude verbs from
+   being concept endpoints — then re-probe the plans already seen to confirm the classifier
+   agrees with the six hand-typed cases before it is trusted to type new ones.
+2. Accumulate new post-#106 plans, either by waiting on ordinary publishing or by running the
+   pipeline deliberately on fresh candidates to raise supply.
+
+No cohort was declared and none was run. One detector call was spent measuring supply.
