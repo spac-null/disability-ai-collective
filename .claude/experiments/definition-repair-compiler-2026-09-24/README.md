@@ -522,3 +522,126 @@ analysis finds the surfaces that can rebuild it; constrained editing changes onl
 proving everything else byte-identical. What is not yet established is the **scope** at which
 affordance must be closed, and this replay answers that: the packet, not the field and not the
 beat.
+
+---
+
+# Phase 3 — branch E: one packet-scoped prohibition
+
+Starting point: branch D's repaired architecture, unmodified. `branch-D/ARCHITECTURE.json`
+sha256 `a74033e6…` — byte-identical to `slice1/REPAIRED_ARCHITECTURE.json`, the artifact the
+slice repair produced. No detector call, no repair call: both results reused frozen.
+
+## The one prohibition
+
+```
+Do not state or imply that the bandgap energy sets, determines, controls or produces the
+cutoff wavelength; the cadmium fraction's relation to each is established separately, and
+the step between them is not.
+```
+
+Modelled on the plan's own canonical form — imperative, semicolon, boundary clause — after the
+existing *"Do not merge the unilluminated read-noise exposures with the roughly two-hour
+dark-current exposures into one set; they are separate tests with separate purposes."*
+
+It forbids the **relation** only. Both concepts may still be named, the term may still be
+explained, F86, F87 and the cadmium-fraction material all remain permitted. The boundary clause
+says the step is *not established*, never that it is false — the evidence is silent on it, and
+telling the Writer otherwise would be inventing a negative fact.
+
+## Static checks — all pass, zero model calls
+
+`writer_packet()` takes no provider, so the exact prompt was rendered and hashed **before**
+paying for anything.
+
+| # | check | result |
+|---|---|---|
+| 1 | definition bridge still absent | PASS |
+| 2 | protected explanation byte-identical | PASS — gloss sha `7eebdcd9…` |
+| 3 | F86 still at its MOVE location (B4) | PASS |
+| 4 | B3 unchanged from its repaired form | PASS |
+| 5 | every other Architecture field byte-identical | PASS — sha `ffafa0ed…` |
+| 6 | exactly one prohibition added | PASS — 17 → 18, appended |
+| 7 | prohibition reaches the packet verbatim | PASS |
+| 8 | current Architecture validators | PASS — CLEAN |
+| 9 | definition_evidence untouched | PASS — `[F86, F87, F100]` |
+| 10 | Claim Support Shadow clean | PASS — reused frozen, gloss byte-identical, 0 flagged |
+
+Frozen packet sha256 `7138955595058a70…`. The as-run packet (`e9a4ec69…`) is that packet plus
+six CUT-derived prohibition lines the compiler appends after the architect's own — a strict
+suffix, with our line at 131 in both.
+
+Packet inspection: bandgap available (one line, F86 under beat 4); the explanation available;
+the relation nowhere positively asserted; the prohibition present in the packet-scoped RULES
+block; scoped to the relation, with both concepts still nameable.
+
+## Result — the prohibition was obeyed
+
+> **"The precise mixture of mercury cadmium telluride can be varied, specifically the fraction
+> of cadmium. The cutoff wavelength is the long-wavelength edge of what the material will
+> register, and for Roman's desired cutoff of approximately 2.5 microns the fraction of cadmium
+> was tuned to 0.445. The Wide Field Instrument is sensitive to wavelengths from 0.48 to 2.3
+> microns…"**
+
+No bridge, in any form. Every sentence naming either concept was read, not grepped; zero
+pattern-flagged candidates and none on reading. The explanation is present, clear and
+non-circular — arguably better than baseline, where it was a trailing apposition.
+
+**But the word bandgap does not appear in the article at all.**
+
+And branch D is the exact control: same plan, same F86-in-B4 routing, same B3 prose, differing
+only by this one string. D's Writer *did* reach for bandgap — across beats — and wrote the
+bridge. E's did not write it at all. So the prohibition is what removed the concept, not the
+fact routing.
+
+## New defect introduced
+
+E holds at SAFETY on `CUT_LEAKAGE: [('F79', 'Goddard', 'proposition_identity')]` **plus** the
+`MACHINE_LANGUAGE` defect every branch has. D had only the latter, and D's article never
+mentions Goddard. E's does — in the beat-4 paragraph, the same beat whose bandgap material the
+Writer had just been forbidden to connect. Plausible that the Writer re-weighted toward the
+screening material and collided with a cut fact; stated as an observation, not a proven chain.
+Different defect class from the target, and not a materially equivalent replacement for it.
+
+## The seven flags
+
+| flag | value | evidence |
+|---|---|---|
+| `TARGET_COMMITMENT_REMOVED_FROM_PLAN` | **True** | gloss carries no bridge, B3 carries no bandgap, all three validators CLEAN |
+| `PACKET_SCOPED_PROHIBITION_PRESENT` | **True** | line 131 of the as-run packet, inside the RULES block, verbatim |
+| `PROTECTED_CONTENT_PRESERVED` | **True** | gloss, B3 and every other Architecture field byte-identical to D; explanation intact in the article |
+| `UNRELATED_FACT_PRESERVED` | **False** | F86 survives in the plan at B4, but its distinctive content — bandgap — is absent from the article entirely |
+| `WRITER_REGENERATION` | **False** | no bridge and no semantic equivalent in draft, article or package |
+| `WRITER_OBEYED_WITHOUT_CONTENT_AMPUTATION` | **False** | obeyed by dropping the concept; the D control proves the prohibition caused it |
+| `EXPLANATORY_USEFULNESS_PRESERVED` | **True** | "The cutoff wavelength is the long-wavelength edge of what the material will register" |
+
+## Five branches
+
+| | plan delta | bridge in article | explanation | bandgap material |
+|---|---|---|---|---|
+| **A** baseline | — | explicit: *"which sets the cutoff wavelength"* | present | present |
+| **B** free whole-definition repair | gloss regenerated | **absent** | **destroyed** (circular) | present |
+| **C** constrained definition-only | gloss span repaired | explicit: *"which sets…"* | present | present |
+| **D** cross-plan slice | gloss + B3 prose + F86 → B4 | ambiguous: *"and with it the cutoff wavelength"* | present | present |
+| **E** D + one prohibition | **+1 prohibition only** | **absent** | **present** | **absent** |
+
+Each constraint changed exactly one thing. B removed the bridge by destroying the explanation.
+C and D left it reachable. E removed it while keeping the explanation — and paid for it by
+losing the concept.
+
+## Classification
+
+`PACKET_PROHIBITION_ONLY_SUPPRESSES_CONTENT`
+
+The prohibition was neither ignored nor bypassed: the Writer respected a packet-scoped semantic
+constraint that positive plan surgery alone could not enforce, and the explanation survived.
+But the required "legitimate bandgap content remains" is false, and the D control shows the
+prohibition caused that. Compliance came from omitting the concept, not from stating the
+licensed half of it without the unlicensed step.
+
+Not tuned, not retried, no second prohibition, no examples added, no Writer change.
+
+## Economics
+
+Detector calls 0 (frozen result reused, gloss byte-identical). Repair calls 0 (branch D reused
+unmodified). Static checks and packet render 0 — `writer_packet()` is pure. One downstream
+replay, 6 model calls, FAST_LANE, ~7 minutes wall clock. No cost saving claimed.
