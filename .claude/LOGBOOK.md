@@ -871,3 +871,38 @@ FOLLOW-UP: build a definitions-only, ZERO-AUTHORITY atomic-claim-support shadow 
 on the labelled units in `CLAIM_UNITS.md`. Scope stays definitions-only — the evidence that would
 have justified broadening to `crip_turn`/lens fields was the corrected misreading. Sample is
 thin: 13 labelled units, 2 true NOT_ESTABLISHED targets, one of them historical.
+
+## 2026-09-24 — HUMAN-ROUTED REPAIR MODE ships; the automatic dispatcher does not
+
+WHAT SHIPS. The Definition Claim Support detector (`80554bd`), local value/attribute repair,
+relational slice repair, and the obligation policy (`d4bd9ea`) go to production as a
+**human-routed, human-approved** workflow. On a NOT_ESTABLISHED finding an editor chooses
+LOCAL, RELATIONAL or IGNORE; the chosen path builds the repair in one call; the editor accepts
+or rejects. Every choice is stored as ground truth.
+
+WHAT DOES NOT SHIP. The automatic concept-anchor dispatcher is FROZEN and routes nothing —
+`CONCEPT_ANCHOR_CLASSIFIER_NEEDS_REDESIGN`. It agreed with all seven hand-reviewed cases, but
+those were the cases it was built against. On the first genuinely out-of-sample findings —
+14 fresh definitions from a pre-registered acquisition batch — it produced two relational
+dispatches and **both were wrong**, in the dangerous direction. Root cause: R1–R4 are all
+negative filters, so when they strip out the subject-matter noun and the actually-unsupported
+word, whatever weak token survives becomes the endpoint. "Rarest of one" became "last one
+standing". Recorded, not patched: it was found by looking at an outcome.
+
+NO PUBLICATION AUTHORITY. The detector runs as a **sweep over finished run directories**, not
+inside composition, so the job that publishes the site cannot be broken by it and no finding
+can hold publication. Nothing in this mode names `publish_best`, `publish_candidate`,
+`_posts`, `publication_eligible` or git — asserted by test over tokenised source.
+
+THE LABELS ARE THE POINT. Each finding stores what frozen R1–R4 would have said and shows it
+to nobody. An editor shown a machine suggestion agrees with it more often; hidden, every human
+decision becomes a held-out evaluation case. `repair_review.py score` reads them; nothing else
+does. That is the data the eventual redesign gets built from — real daily labels instead of
+another synthetic cohort.
+
+CODE: `bf83428` (labels frozen first), `1ee91de` (dispatch rule), `489acfb` (pool frozen),
+`a248576` (batch runner), `0159010` (batch result, verdict withdrawn), `f4f62c3` (repair mode).
+EVIDENCE: `/srv/data/cripminds-relational-supply-2026-09-24` (176 files), nine frozen sets
+under `/srv/data/cripminds-evidence` intact.
+FOLLOW-UP: collect editor labels. Redesign the dispatcher only when there are enough of them,
+and score the frozen rule against them first. Do not retune the 1/8 bound in the meantime.
