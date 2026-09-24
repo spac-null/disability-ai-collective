@@ -432,34 +432,6 @@ def validate_architecture(arch: dict, evidence_ids: set, ledger: dict | None = N
         for f in (b.get("facts_allowed") or []):
             if f not in evidence_ids:
                 errs.append("%s allows fact %s that is not in the frozen evidence" % (bid, f))
-    # THE ENTRY BEAT EXPLAINS NOTHING (2026-09-24).
-    #
-    # Measured, not asserted. Seven articles were read blind by the human editor. Four of
-    # the seven plans put a `concept_introduced` in their FIRST beat -- a statute's time
-    # limit, a coroner's report identity, a surgical measurement, a notation's definition
-    # -- and those four are the ones the editor abandoned soonest, each with the same
-    # note: why should I read this, who is this, what am I reading. The three whose first
-    # concept arrived at B2 or later are the three the editor read furthest into. The
-    # defect is not how MANY facts the entry carries: the Lombardy plan opened on three,
-    # and they were three legal instruments.
-    #
-    # So the rule is about the KIND of work the opening does, read off an existing field.
-    # An explanation in beat one arrives before the reader has a question for it. The
-    # repair is cheap and touches no fact: the same concept, in the beat whose material
-    # needs it.
-    #
-    # It applies only from three beats up, because "move it later" needs a later to move
-    # to; a two-beat BRIEF may legitimately have nowhere else to put it.
-    if len(beats) >= 3:
-        opening = beats[0]
-        concept = (opening.get("concept_introduced") or "").strip()
-        if concept:
-            errs.append(
-                "%s is the entry beat and also introduces a concept (%r). The opening "
-                "shows the reader one thing and makes them want the next; an explanation "
-                "there arrives before the reader has any question for it. Move the "
-                "concept to the beat whose material actually needs it and leave the "
-                "facts where they are." % (opening.get("beat_id"), concept[:70]))
     if not (arch.get("ending_move") or "").strip():
         errs.append("ending_move missing")
     # USE/CUT honesty
@@ -506,6 +478,38 @@ def validate_architecture(arch: dict, evidence_ids: set, ledger: dict | None = N
                 errs.append("%s: %s asserts %s (%r) -- %s"
                             % (e["code"], field, e["relation"], e["carried_by"], e["why"]))
     return errs
+
+
+def entry_beat_explains(arch: dict) -> dict:
+    """OBSERVATION ONLY. Does the first beat also introduce a concept?
+
+    NOT A GATE, and deliberately not called from validate_architecture. The pattern
+    behind it is real but not yet evidence: across the seven articles the human editor
+    read blind, the four plans carrying a `concept_introduced` in their FIRST beat are
+    the four abandoned soonest, and the three that introduce their first concept later
+    are the three read furthest into. That correlation was measured on the same seven
+    cases it was derived from. Nothing held out has tested it, n is seven, and the
+    editor's stopping points were free text rather than a scored instrument.
+
+    A correlation of that provenance may not refuse an architecture. Blocking on it
+    would spend a repair -- and eventually a whole day's article -- on a rule whose only
+    support is the sample that suggested it. So it is recorded on the stage payload and
+    read by nobody: if a later held-out batch shows the same relation, the rule can be
+    proposed then, on evidence that is not its own origin.
+
+    Note what is NOT here, because measuring it was the useful part: a cap on how many
+    facts the entry beat may carry. The Lombardy plan opened on three facts and all
+    three were legal instruments, so a count would have called that opening clean.
+    """
+    beats = arch.get("beats") or []
+    if not beats:
+        return {"beats": 0, "entry_beat_introduces_concept": False}
+    opening = beats[0]
+    concept = (opening.get("concept_introduced") or "").strip()
+    return {"beats": len(beats),
+            "entry_beat_id": opening.get("beat_id"),
+            "entry_beat_introduces_concept": bool(concept),
+            "entry_beat_concept": concept[:160]}
 
 
 def validate_evidence_hierarchy(arch: dict, evidence_ids: set) -> list:

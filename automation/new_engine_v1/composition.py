@@ -1932,7 +1932,11 @@ def architect(provider, ledger: dict, worth: dict, subject: str,
             "visual_context_chars": len(visual_context),
             "beats": len(obj.get("beats") or []),
             "used": len(obj.get("use_facts") or []),
-            "cut": len(obj.get("cut_evidence") or [])}
+            "cut": len(obj.get("cut_evidence") or []),
+            # Observation, never a verdict: see ST.entry_beat_explains. Recorded so a
+            # later held-out batch can test the relation on evidence that is not the
+            # sample it came from. No stage reads it and no status depends on it.
+            "entry_beat": ST.entry_beat_explains(obj)}
 
 
 # ══════════════════════════════════════════════════════════════════════════════
