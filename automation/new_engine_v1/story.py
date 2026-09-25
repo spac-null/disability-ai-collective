@@ -1236,6 +1236,23 @@ def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None
         "evidence_roles": dict(arch.get("evidence_roles") or {}),
         "quotes": [quotes[q] for q in (arch.get("use_quotes") or []) if q in quotes],
         "definitions": arch.get("definitions") or {},
+        # THE GLOSS TRAVELS WITH ITS LICENCE (2026-09-25). `definitions` is architect
+        # prose and reached the Writer alone, under an instruction to explain it -- so a
+        # gloss that had invented a mechanism arrived looking exactly like one that had
+        # not, and the Writer could not tell the difference because it had never been
+        # shown the evidence the gloss was supposed to restate. In
+        # production-20260925T070817Z-8ad3b4be the ledger said the models "include
+        # postural control functions for human-like pre-crash responses" and the gloss
+        # said "simulated muscle behaviour ... holding the digital body erect"; the
+        # Grounder refused the article on the Writer's faithful rendering of the gloss.
+        #
+        # These are LEDGER propositions, already approved and already in `facts`. Nothing
+        # new is licensed by showing them -- the packet simply stops hiding the boundary
+        # the Writer is being asked to stay inside.
+        "definition_evidence": {
+            term: [facts[f] for f in ids if f in facts]
+            for term, ids in (arch.get("definition_evidence") or {}).items()
+            if term in (arch.get("definitions") or {})},
         "prohibitions": list(arch.get("prohibitions") or []),
         # POSITIVE OBLIGATION -- experimental, OFF unless both the flag is set and the
         # architecture actually carries the field. ARCHITECT_SCHEMA does not emit it, so no
@@ -1334,8 +1351,15 @@ def render(packet: dict) -> str:
         L.append("")
     if packet["definitions"]:
         L.append("EXPLAIN AT FIRST USE")
+        ev = packet.get("definition_evidence") or {}
         for k, v in packet["definitions"].items():
             L.append("  %s -- %s" % (k, v))
+            for prop in ev.get(k) or []:
+                L.append("      licensed by: %s" % prop)
+        L.append("  The wording after the dash is editorial guidance, not a fact you may")
+        L.append("  assert. Explain each term inside what its licensed lines establish;")
+        L.append("  where the guidance reaches further than they do, write the narrower")
+        L.append("  thing they carry.")
         L.append("")
     # The plan can say what the Writer MAY use (facts under each beat) and what it may NOT
     # say (prohibitions). Until now it could not say what it MUST still say. Branch E showed

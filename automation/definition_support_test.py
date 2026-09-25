@@ -318,8 +318,64 @@ def test_HISTORICAL_COMPATIBILITY_the_held_out_artefact_is_a_diagnostic():
           not any("'rent burden'" in e for e in errs), errs)
 
 
+def test_a_gloss_reaches_the_writer_beside_the_evidence_it_must_restate():
+    """AUTHORITY LAUNDERING (2026-09-25). A definition is architect prose, and it reached
+    the Writer alone under an instruction to explain it -- so a gloss that had invented a
+    mechanism arrived looking exactly like one that had not.
+
+    Measured on production-20260925T070817Z-8ad3b4be: the ledger said the models
+    "include postural control functions for human-like pre-crash responses" and the gloss
+    said "simulated muscle behaviour ... holding the digital body erect or seated".
+    Muscle, holding and erect are in no fact. The Writer explained what it was told to
+    explain, and the Grounder refused the article.
+
+    The packet now carries each gloss's own `definition_evidence` as propositions and
+    render() prints them under the term. These are approved ledger facts already in the
+    packet: nothing new is licensed, the boundary simply stops being invisible.
+    """
+    facts = {"F1": "The model was developed in the project.",
+             "F2": "The models are intended to include postural control functions for "
+                   "human-like pre-crash responses."}
+    arch = {"article_type": "NARRATIVE_ARTICLE", "story_spine": "A model is specified.",
+            "opening_object_or_event": "the model", "reader_initial_state": "",
+            "ending_move": "it lands", "use_facts": ["F1", "F2"], "prohibitions": [],
+            "cut_evidence": [],
+            "beats": [{"beat_id": "B1", "happens": "x", "concrete_carrier": "the model",
+                       "facts_allowed": ["F1"], "why_reader_wants_next": "what it is for"},
+                      {"beat_id": "B2", "happens": "y", "concrete_carrier": "the spec",
+                       "facts_allowed": ["F2"], "why_reader_wants_next": ""}],
+            "definitions": {"postural control functions":
+                            "simulated muscle behaviour holding the body erect"},
+            "definition_evidence": {"postural control functions": ["F2"]}}
+    pk = ST.build_packet(arch, {}, facts)
+    check("the packet carries the gloss's licensing propositions",
+          pk["definition_evidence"]["postural control functions"] == [facts["F2"]],
+          str(pk.get("definition_evidence")))
+    r = ST.render(pk)
+    block = r.split("EXPLAIN AT FIRST USE", 1)[1].split("\n\n", 1)[0]
+    check("the licence is rendered beside the term it bounds",
+          "licensed by: " + facts["F2"] in block, block[:300])
+    check("the Writer is told the gloss is guidance, not a fact it may assert",
+          "editorial guidance, not a fact you may" in block)
+    check("and is told to write the narrower thing when the gloss overreaches",
+          "write the narrower" in block)
+    # A gloss with no declared evidence must not silently gain an empty licence block.
+    bare = copy.deepcopy(arch)
+    bare["definition_evidence"] = {}
+    pk2 = ST.build_packet(bare, {}, facts)
+    check("a gloss with no declared evidence carries none",
+          pk2["definition_evidence"] == {}, str(pk2["definition_evidence"]))
+    check("and the term is still rendered",
+          "postural control functions --" in ST.render(pk2))
+    # The propositions shown are the ledger's own, never the architect's wording.
+    check("the rendered licence is the ledger's proposition, not the gloss",
+          "simulated muscle behaviour" not in
+          " ".join(pk["definition_evidence"]["postural control functions"]))
+
+
 def main():
-    for fn in (test_CURRENT_CONTRACT_no_definitions_is_unchanged,
+    for fn in (test_a_gloss_reaches_the_writer_beside_the_evidence_it_must_restate,
+               test_CURRENT_CONTRACT_no_definitions_is_unchanged,
                test_CURRENT_CONTRACT_definition_with_valid_explicit_evidence_passes,
                test_CURRENT_CONTRACT_missing_declaration_is_refused,
                test_CURRENT_CONTRACT_a_broad_pool_licenses_nothing,
