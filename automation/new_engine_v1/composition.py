@@ -6910,7 +6910,38 @@ def prose_finish(provider, article_text: str, arch: dict) -> dict:
         return {"status": SKIPPED, "article_text": incoming, "applied": False,
                 "reason": reason, "words_in": inw, "words_out": outw,
                 "provider": ident, "model_calls": 1, "repairs": 0}
+
+    # A SURFACE EDITOR, NOT A SEMANTIC AUTHOR (2026-09-25).
+    #
+    # The identical gate Continuity has carried since it was written, applied one stage
+    # later, because the asymmetry cost a publishable article. In
+    # production-20260925T070817Z-8ad3b4be the Writer and Continuity were clean --
+    # WRITER -> CONTINUITY added no relation at all -- and this stage split one sentence
+    # in two, turning "The project aimed to provide open tools ... and to bridge the gap"
+    # into "... It also aimed to bridge the gap". No new noun, no new number, no new
+    # name: `new_content_words` was empty. One extra INTENT predication, which is a
+    # factual claim about somebody's purpose, and Safety correctly refused the article.
+    # Re-auditing the incoming text afterwards returned PASS with no blocking findings,
+    # so the run lost an article the pipeline was still holding a clean version of.
+    #
+    # The remedy is the one this function already applies four times above: discard the
+    # edit whole and carry the incoming text. No retry, no second call, no repair -- a
+    # polish is an optional improvement and may never cost the run. The check is free and
+    # deterministic, and it is deliberately the SAME validator Continuity uses rather
+    # than a new one, so the two post-editors cannot drift apart in what they are allowed
+    # to do.
+    delta_errs = CE.validate_semantic_delta(incoming, out)
+    if delta_errs:
+        return {"status": SKIPPED, "article_text": incoming, "applied": False,
+                "reason": "the polish added meaning rather than surface: %s"
+                          % "; ".join(delta_errs)[:240],
+                "semantic_delta": CE.semantic_delta(incoming, out),
+                "semantic_delta_errors": delta_errs,
+                "words_in": inw, "words_out": outw, "provider": ident,
+                "model_calls": 1, "repairs": 0}
     return {"status": PASS, "article_text": out, "applied": True, "reason": "",
+            "semantic_delta": CE.semantic_delta(incoming, out),
+            "semantic_delta_errors": [],
             "words_in": inw, "words_out": outw, "provider": ident,
             "model_calls": 1, "repairs": 0}
 
@@ -8161,8 +8192,19 @@ def run_story_architecture_composition(
         # publish, and publishing the two together would be a mixed-version bundle. So the
         # package is discarded with the polish and rewritten from the surface that is
         # actually shipping, and the whole bundle is audited again.
-        if (compose_mode != COMPOSE_FAST_LANE and sa["status"] != PASS
-                and pre_polish is not None):
+        #
+        # AND IT APPLIES ON THE FAST LANE TOO (2026-09-25). This clause used to read
+        # `compose_mode != COMPOSE_FAST_LANE`, which is the mode every scheduled
+        # production run uses (CRIPMINDS_FAST_LANE_COMPOSE=1 on the cron line), so the
+        # fallback existed and never ran where articles are actually made. On
+        # production-20260925T070817Z-8ad3b4be the polished prose failed Safety and the
+        # preserved pre-polish artifact passed it with no blocking findings -- the run
+        # was lost holding a clean article. The fast lane's other exclusions are about
+        # not spending a model call on a repair; this one spends none to decide, because
+        # `audit` is deterministic. It re-reads a preserved artifact and never asks a
+        # model for a better answer, which is the difference between reverting an edit
+        # and shopping a gate.
+        if sa["status"] != PASS and pre_polish is not None:
             probe = audit(pre_polish, None)
             if probe["status"] == PASS:
                 st[PROSE_FINISH]["discarded_at_safety"] = sa["blocking"][:6]

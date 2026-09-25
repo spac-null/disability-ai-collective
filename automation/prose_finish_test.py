@@ -129,6 +129,78 @@ check("the polish resets the Writer's per-sentence negative lineage",
       src[i_pf:i_pf + 900],
       "a sentence map from before a rewrite no longer points at those sentences")
 
+print("\ntest_the_polish_may_not_author_a_factual_relation")
+# THE THREE CASES THE FIX WAS BUILT FROM. One live, one historical, one ordinary.
+#
+# 1. production-20260925T070817Z-8ad3b4be. The Writer and Continuity added nothing; this
+#    stage split one sentence and wrote "It also aimed to", a second INTENT predication.
+#    Safety refused the article; re-auditing the incoming text returned PASS.
+INTENT_IN = ("# The dummy\n\nThe project aimed to provide open tools and testing "
+             "protocols for evaluating new safety systems, covering more types of road "
+             "user than traditional physical crash safety tests do, and to bridge the "
+             "gap between virtual testing and standardised safety assessments.")
+INTENT_OUT = ("# The dummy\n\nThe project aimed to provide open tools and testing "
+              "protocols for evaluating new safety systems, covering more types of road "
+              "user than traditional physical crash safety tests do. It also aimed to "
+              "bridge the gap between virtual testing and standardised safety "
+              "assessments.")
+r = CP.prose_finish(Prov(reply=INTENT_OUT), INTENT_IN, ARCH)
+check("the live INTENT drift is discarded", r["applied"] is False)
+check("  and the exact incoming prose is carried forward",
+      r["article_text"] == INTENT_IN)
+check("  and it is reported as meaning, not as a length or shape problem",
+      "INTENT" in " ".join(r.get("semantic_delta_errors") or []), str(r.get("reason")))
+check("  and the discard costs no extra model call", r["model_calls"] == 1)
+check("  and there is no retry", r["repairs"] == 0)
+
+# 2. production-20260922T070219Z-adb08587 drifted by one NEGATION relation post-Writer.
+#    The class differs; the rule may not.
+NEG_IN = ("# The survey\n\nThe register records a reading for each of the nine rooms, "
+          "and the report sets those readings beside the measured range.")
+NEG_OUT = ("# The survey\n\nThe register records a reading for each of the nine rooms. "
+           "The report sets those readings beside the measured range, which no earlier "
+           "survey had done.")
+r = CP.prose_finish(Prov(reply=NEG_OUT), NEG_IN, ARCH)
+check("the historical NEGATION-class drift is discarded too", r["applied"] is False)
+check("  and that text never reaches a downstream stage",
+      r["article_text"] == NEG_IN)
+
+# 3. An ordinary polish: same relations, better surface. It must still survive, or the
+#    guard has simply turned the stage off.
+CLEAN_IN = ("# The room\n\nThe classroom has no locks, and the architects describe it as "
+            "open to all, and the directory entry records an accessibility field, and "
+            "the field is one the survey counted.")
+CLEAN_OUT = ("# The room\n\nThe classroom has no locks. The architects describe it as "
+             "open to all. The directory entry records an accessibility field, one the "
+             "survey counted.")
+r = CP.prose_finish(Prov(reply=CLEAN_OUT), CLEAN_IN, ARCH)
+check("an ordinary polish that adds no relation still applies",
+      r["applied"] is True and r["status"] == CP.PASS, str(r.get("reason")))
+check("  and it is the polished text that is carried",
+      r["article_text"] == CLEAN_OUT)
+check("  and a clean polish records an empty delta, not a missing one",
+      r.get("semantic_delta_errors") == [])
+
+check("the guard is the SAME validator Continuity uses, not a second one",
+      "CE.validate_semantic_delta(incoming, out)" in src,
+      "two post-editors must not drift apart in what they may do")
+
+print("\ntest_a_polish_may_not_cost_a_run_the_unpolished_text_would_have_won")
+i_fb = src.index("probe = audit(pre_polish, None)")
+window = src[i_fb - 1400:i_fb + 400]
+# Asserted on the CONDITION, not on the surrounding prose: the comment above it quotes
+# the clause it removed, and an earlier version of this check matched that quotation.
+check("the pre-polish fallback no longer excludes the fast lane",
+      'if (compose_mode != COMPOSE_FAST_LANE and sa["status"] != PASS' not in src,
+      "every scheduled production run is FAST_LANE, so the gated fallback never ran")
+check("  and it still only fires when Safety actually failed",
+      'if sa["status"] != PASS and pre_polish is not None:' in src)
+check("  and it re-audits the preserved artifact rather than asking for new prose",
+      "probe = audit(pre_polish, None)" in window
+      and "prose_finish(" not in window)
+check("  and it only continues if that preserved version passes",
+      'if probe["status"] == PASS:' in src)
+
 print("\n" + "-" * 60)
 if FAILURES:
     print("PROSE FINISH: %d of %d CHECKS FAILED" % (len(FAILURES), CHECKS[0]))
