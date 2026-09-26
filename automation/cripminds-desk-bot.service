@@ -1,3 +1,20 @@
+# Crip Minds editorial desk -- a systemd USER unit.
+#
+# Installed as ~/.config/systemd/user/cripminds-desk-bot.service rather than a system
+# unit because passwordless sudo is not available on trident, and `Linger=yes` is set
+# for this account: user units start at boot without a login, which is the property a
+# system unit was wanted for. Seven services already run this way here (cloudflared,
+# goatcounter, tong-web and others), so this follows the host's own established
+# pattern rather than inventing one.
+#
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now cripminds-desk-bot
+#   systemctl --user status cripminds-desk-bot
+#   journalctl --user -u cripminds-desk-bot -f
+#
+# If passwordless sudo ever exists, the same file works as a system unit with User= and
+# Group=jascha added and WantedBy=multi-user.target.
+
 [Unit]
 Description=Crip Minds Editorial Desk (@cripminds_bot)
 After=network-online.target
@@ -5,8 +22,6 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=jascha
-Group=jascha
 EnvironmentFile=/srv/secrets/cripminds/desk-bot.env
 WorkingDirectory=/srv/data/hermes/workspace/disability-ai-collective
 ExecStart=/usr/bin/python3 /srv/data/hermes/workspace/disability-ai-collective/automation/editorial_desk_bot.py
@@ -21,4 +36,4 @@ ReadWritePaths=/srv/data/cripminds-editorial-desk /srv/data/hermes/workspace/dis
 ReadOnlyPaths=/srv/data/cripminds-new-engine-v1 /srv/secrets/cripminds
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
