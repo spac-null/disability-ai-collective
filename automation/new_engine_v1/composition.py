@@ -8262,7 +8262,25 @@ def run_story_architecture_composition(
         # rule and the mechanical guarantee (the SAME apply_grounding_repair() Stage 8b
         # uses). A category this stage does not recognise makes the whole attempt
         # ineligible, and the run falls straight through to the unchanged HOLD below.
-        if sa["status"] != PASS and compose_mode != COMPOSE_FAST_LANE:
+        #
+        # AND IT RUNS ON THE FAST LANE TOO (2026-09-26). The clause here used to read
+        # `compose_mode != COMPOSE_FAST_LANE`, which is the mode every scheduled
+        # production run uses, so this repair had never once executed where articles are
+        # actually made. production-20260926T072441Z-66967ce4 is what that costs: a
+        # finished 917-word article held on exactly two findings, UNSUPPORTED_NEGATIVES
+        # (one sentence) and MACHINE_LANGUAGE (the phrase "this reading", once) -- both
+        # of them named in SAFETY_REPAIRABLE_PREFIXES, the second added by owner
+        # direction on 2026-09-09 for precisely this situation.
+        #
+        # THIS BUYS NO NEW AUTHORITY. Every guarantee above still holds unchanged: the
+        # attempt is refused outright unless EVERY blocking finding is a repairable
+        # category (_safety_locate_findings returns None otherwise, so a mixed set never
+        # repairs), there is exactly one call, the package is rebuilt from the repaired
+        # text, and Safety is re-audited from scratch on the result. A second failure
+        # falls through to the same terminal HOLD it reaches today -- there is no loop
+        # and no second attempt. The cost is at most one model call, and only on a
+        # Safety HOLD that was already eligible.
+        if sa["status"] != PASS:
             sfindings = safety_repair_findings(sa, final, package_prose(pkg),
                                               draft_text=draft)
             if sfindings:
