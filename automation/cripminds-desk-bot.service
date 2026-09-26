@@ -1,0 +1,24 @@
+[Unit]
+Description=Crip Minds Editorial Desk (@cripminds_bot)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=jascha
+Group=jascha
+EnvironmentFile=/srv/secrets/cripminds/desk-bot.env
+WorkingDirectory=/srv/data/hermes/workspace/disability-ai-collective
+ExecStart=/usr/bin/python3 /srv/data/hermes/workspace/disability-ai-collective/automation/editorial_desk_bot.py
+Restart=always
+RestartSec=10
+
+# The desk reads retained runs and writes only its own append-only store. It publishes
+# through publish_retained_fast_lane, which needs the repo writable for _drafts/ and the
+# git commit the publisher makes -- the same access the 09:00 article run already has.
+ProtectSystem=strict
+ReadWritePaths=/srv/data/cripminds-editorial-desk /srv/data/hermes/workspace/disability-ai-collective
+ReadOnlyPaths=/srv/data/cripminds-new-engine-v1 /srv/secrets/cripminds
+
+[Install]
+WantedBy=multi-user.target
