@@ -616,9 +616,16 @@ def handle_callback(cb):
             answer_callback(cb["id"], "I can't place that passage")
             log("REFUSED reaction %r: no block %r in session %s" % (kind, block_id, sid))
             return
-        ACT.react(session_id=sid, run_id=s["run_id"], version_sha=sha, event_type=kind,
-                  user_id=user_id, chat_id=chat, block=blk,
-                  dedupe_key="cb:%s" % cb["id"])
+        recorded = ACT.react(session_id=sid, run_id=s["run_id"], version_sha=sha,
+                             event_type=kind, user_id=user_id, chat_id=chat,
+                             block=blk, dedupe_key="cb:%s" % cb["id"])
+        if recorded is None:
+            # A REDELIVERED PRESS IS THE SAME PRESS. The reaction was already deduped,
+            # but the advance below was not, so a Telegram retry silently moved the
+            # reader a block forward -- a paragraph they never asked to skip, and one
+            # that then carries no reaction of its own. Found by the route audit,
+            # 2026-09-26.
+            return
         if kind in ADVANCING:
             send_block(s, sha, len(sent_blocks(sid, sha)) + 1, chat=chat)
         else:
@@ -676,7 +683,7 @@ def handle_message(msg):
     ACT.react(session_id=target["session_id"], run_id=target["run_id"],
               version_sha=sha, event_type="FREE_TEXT_FEEDBACK", user_id=user_id,
               chat_id=chat, message_id=msg.get("message_id"), block=blk,
-              raw_feedback=text,
+              raw_feedback=text, reply_to_message_id=reply_to,
               dedupe_key="msg:%s:%s" % (chat, msg.get("message_id")),
               metadata={"binding": binding})
     send("Got it.", chat=chat)
