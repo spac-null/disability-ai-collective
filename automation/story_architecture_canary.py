@@ -323,6 +323,13 @@ def main() -> int:
         source_sha=anchor["sha256"], subject=pack["subject"],
         fact_check=not a.no_fact_check,
         fact_check_fn=FCB.fact_check, out_dir=out_dir, frozen=frozen,
+        # The canary took the COMPOSE_NORMAL default while every scheduled production
+        # run sets CRIPMINDS_FAST_LANE_COMPOSE=1, so it exercised a Writer contract
+        # production does not use -- and the fast-lane delta is exactly where
+        # ATTRIBUTION_AND_STATUS_MUST_SURVIVE and DO_NOT_QUOTE live, which decide how
+        # attributed speech reaches the page. A canary that does not match the
+        # production contract cannot observe the production article.
+        compose_mode=CP.COMPOSE_FAST_LANE,
         stop_after=CP.WORTH if a.worth_only else "")
     report(result, out_dir)
     if isinstance(provider, CCP.ClaudeCLIProvider):
