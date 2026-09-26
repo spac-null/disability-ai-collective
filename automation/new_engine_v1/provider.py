@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 import urllib.error
 import urllib.request
@@ -202,6 +203,11 @@ class Provider:
         raise ProviderError("all providers failed -- " + " | ".join(attempts))
 
 
+# An apostrophe escaped the Python way. Never valid JSON, so never present in a reply
+# that parses; the lookbehind leaves a real escaped backslash alone. See parse_json_object.
+_PY_ESCAPED_QUOTE = re.compile(r"(?<!\\)\\'")
+
+
 def parse_json_object(text: str) -> dict:
     """Parse a model reply expected to be one JSON object.
 
@@ -219,10 +225,33 @@ def parse_json_object(text: str) -> dict:
     start, end = s.find("{"), s.rfind("}")
     if start == -1 or end <= start:
         raise ProviderError("reply contains no JSON object: %r" % text[:200])
+    body = s[start:end + 1]
     try:
-        obj = json.loads(s[start:end + 1])
+        obj = json.loads(body)
     except json.JSONDecodeError as e:
-        raise ProviderError("reply is not valid JSON (%s): %r" % (e, text[:200]))
+        # A PYTHON ESCAPE IS A FORMATTING HABIT, NOT A SEMANTIC FAILURE (2026-09-26).
+        #
+        # Same judgement as the code fence above, on the same kind of defect. On
+        # production-20260926T070235Z-852aa31b the research reply carried
+        # "The support group\'s own page for the 総索引集", and \' is a Python escape
+        # that JSON does not allow. The whole day's article was lost to one backslash,
+        # five minutes into the run, before any stage had made an editorial decision.
+        #
+        # The repair is deliberately the narrowest thing that answers the observed
+        # failure -- \' only, never a general "strip unknown escapes" -- because one
+        # sample does not license a broad rule. It is safe by construction: \' inside a
+        # JSON string is ALWAYS invalid and outside one is invalid too, so no document
+        # that parses today contains it, and this runs only on input json.loads has
+        # already rejected. The lookbehind keeps a genuinely escaped backslash (\\')
+        # intact.
+        #
+        # If the repair does not parse either, the ORIGINAL error is raised: a stage
+        # that cannot be parsed must still fail, and the diagnostic must describe what
+        # the model actually sent rather than what this function tried to make of it.
+        try:
+            obj = json.loads(_PY_ESCAPED_QUOTE.sub("'", body))
+        except json.JSONDecodeError:
+            raise ProviderError("reply is not valid JSON (%s): %r" % (e, text[:200]))
     if not isinstance(obj, dict):
         raise ProviderError("reply JSON is %s, expected object" % type(obj).__name__)
     return obj

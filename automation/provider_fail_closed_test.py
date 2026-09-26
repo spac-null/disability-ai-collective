@@ -220,6 +220,39 @@ check("CLIProxy stays classifiable so it cannot return unnoticed",
       transport.classify("http://127.0.0.1:8317/v1") == transport.CLIPROXY)
 
 
+print("\ntest_a_python_escape_is_a_formatting_habit_not_a_semantic_failure")
+# production-20260926T070235Z-852aa31b lost a whole day's article five minutes in: the
+# research reply carried "The support group\'s own page for the 総索引集", and \' is a
+# Python escape JSON does not allow. Repaired the same way the code fence already is.
+from new_engine_v1.provider import parse_json_object as _pj, ProviderError as _PE
+
+LIVE = ('{"sources": [{"source_id": "S1", "why_relevant": "The support group\\\'s own '
+        'page for the 総索引集 covering all 2,136 jōyō kanji"}]}')
+try:
+    _o = _pj(LIVE)
+    check("the live \\' failure now parses",
+          _o["sources"][0]["why_relevant"].startswith("The support group's own page"),
+          _o["sources"][0]["why_relevant"][:60])
+    check("  and the non-ASCII payload survives intact",
+          "総索引集" in _o["sources"][0]["why_relevant"])
+except _PE as _e:
+    check("the live \\' failure now parses", False, str(_e)[:90])
+
+check("a fenced reply still parses", _pj('```json\n{"a": 1}\n```')["a"] == 1)
+check("prose either side still parses",
+      _pj('Here you go:\n{"a": 2}\nhope that helps')["a"] == 2)
+# The repair may never touch a document that already parses: \' cannot occur in one.
+check("an escaped backslash beside a quote is untouched",
+      _pj('{"a": "ends \\\\", "b": "q \'x\'"}')["b"] == "q 'x'")
+
+for _bad, _why in (("not json at all", "no object"), ('{"a": }', "malformed"),
+                   ("[1,2,3]", "array, not object")):
+    try:
+        _pj(_bad)
+        check("still refuses %s" % _why, False, "parsed %r" % _bad)
+    except _PE:
+        check("still refuses %s" % _why, True)
+
 print("\n" + "-" * 60)
 if FAILURES:
     print("PROVIDER FAIL-CLOSED: %d of %d CHECKS FAILED" % (len(FAILURES), CHECKS[0]))
