@@ -123,6 +123,9 @@ def test_today_does_not_reoffer():
               len(STORE.sessions()) == 1, STORE.sessions())
         check("the second /today says nothing new",
               any("Nothing new" in t for t in h.texts()[before:]), h.texts()[before:])
+        check("and points at the unopened card rather than claiming nothing waits",
+              any("haven't opened" in t for t in h.texts()[before:]),
+              h.texts()[before:])
 
 
 def test_upstream_failure_is_not_offered_as_a_draft():
@@ -137,10 +140,12 @@ def test_upstream_failure_is_not_offered_as_a_draft():
 # ── reading ─────────────────────────────────────────────────────────────────────────
 
 def _open_and_read(h):
+    """Deliver one article and open it THROUGH ITS OWN BUTTON, as a reader does."""
     h.make_run()
     BOT.cmd_today(CHAT)
-    BOT.cmd_read(CHAT)
-    return STORE.sessions()[0]
+    s = STORE.sessions()[0]
+    BOT.handle_callback(cb("read:%s" % s["session_id"], cid="open-%s" % s["session_id"]))
+    return s
 
 
 def test_read_sends_one_block_with_buttons():
@@ -232,7 +237,7 @@ def test_reading_position_survives_a_restart():
         BOT.handle_callback(cb("CONTINUE:%s:%s" % (sid, blk["block_id"])))
         # Nothing in the bot process carries the cursor -- it is re-derived from the
         # blocks already sent, so simply calling /read again is the restart case.
-        BOT.cmd_read(CHAT)
+        BOT.cmd_read(CHAT, BOT.reading_session())
         check("reading resumes at the next unsent block",
               h.texts()[-1].startswith("3/"), h.texts()[-1][:20])
 
@@ -278,7 +283,7 @@ def test_a_stranger_gets_nothing():
 def test_a_stranger_cannot_publish():
     with Harness() as h:
         s = _open_and_read(h)
-        BOT.cmd_publish(CHAT, STRANGER)
+        BOT.cmd_publish(CHAT, STRANGER, s)
         check("publish refuses an unlisted user",
               any("Not authorized" in t for t in h.texts()), h.texts()[-1])
         check("no approval was recorded",
@@ -288,7 +293,7 @@ def test_a_stranger_cannot_publish():
 def test_publish_reports_the_publishers_refusal():
     with Harness() as h:
         s = _open_and_read(h)
-        BOT.cmd_publish(CHAT, OWNER)
+        BOT.cmd_publish(CHAT, OWNER, s)
         last = h.texts()[-1]
         check("publish refuses and says why", last.startswith("Not published:"), last)
         check("the reason is the validator's, not the desk's",
@@ -296,6 +301,251 @@ def test_publish_reports_the_publishers_refusal():
               last)
         check("nothing was published",
               STORE.published_version(s["origin_version_sha256"]) is None)
+
+
+# ── article identity: the 2026-09-26 incident and its perimeter ─────────────────────
+#
+# On 2026-09-26 five cards were delivered at 17:00:17 and every READ button opened the
+# fifth. These tests fix the shape of that failure, not one instance of it: each asserts
+# that a button resolves to the article it was built for under conditions that would let
+# a positional, latest-wins or title-based resolver look correct.
+
+def _five_cards(h):
+    """Five distinct articles, delivered in one /today, oldest last -- the exact shape
+    of the failed smoke."""
+    bodies = {}
+    for i, day in enumerate(("26", "25", "24", "23", "22"), start=1):
+        body = "\n\n".join(
+            "Article %s paragraph %d. %s" % (day, n, "word " * 40) for n in range(1, 10))
+        bodies[day] = body
+        T.make_run(h.ev.name, "production-202609%sT070000Z-aaaaaaa%d" % (day, i),
+                   body=body)
+    BOT.cmd_today(CHAT)
+    return bodies
+
+
+def test_multi_card_identity():
+    """A: five cards on screen at once; READ on each opens its own article."""
+    with Harness() as h:
+        bodies = _five_cards(h)
+        sessions = STORE.sessions()
+        check("A: five sessions were created", len(sessions) == 5, len(sessions))
+        for s in sessions:
+            before = len(h.messages())
+            BOT.handle_callback(cb("read:%s" % s["session_id"],
+                                   cid="read-%s" % s["session_id"]))
+            sent = "\n".join(h.texts()[before:])
+            day = s["run_id"][17:19]
+            check("A: READ on the %s card opens the %s article" % (day, day),
+                  ("Article %s paragraph 1." % day) in sent,
+                  sent[:160])
+            check("A: and opens no other article's text",
+                  sum(("Article %s paragraph 1." % d) in sent for d in bodies) == 1,
+                  sent[:160])
+        starts = [e for e in STORE.events() if e["event_type"] == "READ_STARTED"]
+        check("A: each article recorded its own READ_STARTED",
+              len({e["session_id"] for e in starts}) == 5, len(starts))
+
+
+def test_reordering_does_not_move_a_button():
+    """B: the queue changes after the cards were sent; old buttons still resolve."""
+    with Harness() as h:
+        _five_cards(h)
+        first = STORE.sessions()[0]
+        # A newer run arrives and would sort to the top of any positional resolver.
+        T.make_run(h.ev.name, "production-20260927T070000Z-ffffffff",
+                   body="\n\n".join("Interloper paragraph %d. %s" % (n, "word " * 40)
+                                    for n in range(1, 8)))
+        BOT.cmd_today(CHAT)
+        before = len(h.messages())
+        BOT.handle_callback(cb("read:%s" % first["session_id"], cid="reorder"))
+        sent = "\n".join(h.texts()[before:])
+        check("B: the old button still opens its own article",
+              "Article 26 paragraph 1." in sent, sent[:160])
+        check("B: and not the newly arrived one", "Interloper" not in sent, sent[:160])
+
+
+def test_identity_survives_a_restart():
+    """C: nothing in the process carries identity, so a restart changes nothing."""
+    with Harness() as h:
+        _five_cards(h)
+        target = STORE.sessions()[1]
+        # A restart is exactly this: no in-process state, everything re-read from the
+        # store. Re-importing would be theatre; the assertion is that the handler reads
+        # identity from the button and the store, which a fresh process also does.
+        BOT.handle_callback(cb("read:%s" % target["session_id"], cid="restart-1"))
+        first_open = "\n".join(h.texts()[-2:])
+        before = len(h.messages())
+        BOT.handle_callback(cb("read:%s" % target["session_id"], cid="restart-2"))
+        check("C: the button resolves the same article before and after",
+              "Article 25 paragraph 1." in first_open, first_open[:160])
+        check("C: a second press continues that same article",
+              h.texts()[-1].startswith("2/"), h.texts()[-1][:20])
+        check("C: it did not jump to another article",
+              "Article 25" in h.texts()[-1], h.texts()[-1][:80])
+        _ = before
+
+
+def test_identical_titles_cannot_collide():
+    """D: two articles that look the same to a human still have different identities."""
+    with Harness() as h:
+        same = "# The Same Headline\n\n"
+        a = same + "\n\n".join("Alpha paragraph %d. %s" % (n, "word " * 40)
+                               for n in range(1, 8))
+        b = same + "\n\n".join("Beta paragraph %d. %s" % (n, "word " * 40)
+                               for n in range(1, 8))
+        T.make_run(h.ev.name, "production-20260926T070000Z-aaaa1111", body=a)
+        T.make_run(h.ev.name, "production-20260925T070000Z-bbbb2222", body=b)
+        BOT.cmd_today(CHAT)
+        s_a, s_b = STORE.sessions()[0], STORE.sessions()[1]
+        check("D: same title, different session ids",
+              s_a["session_id"] != s_b["session_id"])
+        check("D: same title, different version hashes",
+              s_a["origin_version_sha256"] != s_b["origin_version_sha256"])
+        before = len(h.messages())
+        BOT.handle_callback(cb("read:%s" % s_b["session_id"], cid="dup-title"))
+        sent = "\n".join(h.texts()[before:])
+        check("D: the button opens the right one of the two",
+              "Beta paragraph 1." in sent and "Alpha paragraph" not in sent, sent[:160])
+
+
+def test_duplicate_callback_opens_the_same_article():
+    """E: a redelivered press is the same press, not a different article."""
+    with Harness() as h:
+        _five_cards(h)
+        target = STORE.sessions()[2]
+        c = cb("read:%s" % target["session_id"], cid="dedupe-same")
+        BOT.handle_callback(c)
+        first = "\n".join(h.texts()[-2:])
+        BOT.handle_callback(c)
+        check("E: both presses concern the same article",
+              "Article 24" in first and "Article 24" in h.texts()[-1],
+              (first[:80], h.texts()[-1][:80]))
+        starts = [e for e in STORE.events()
+                  if e["event_type"] == "READ_STARTED"
+                  and e["session_id"] == target["session_id"]]
+        check("E: READ_STARTED was recorded once", len(starts) == 1, len(starts))
+
+
+def test_version_mismatch_fails_closed():
+    """F: if the stored bytes no longer match the version, nothing is sent."""
+    with Harness() as h:
+        _five_cards(h)
+        target = STORE.sessions()[0]
+        sha = target["origin_version_sha256"]
+        # Corrupt the stored bytes the way a damaged store would.
+        (pathlib.Path(h.st.name) / "versions" / ("%s.md" % sha)).write_text(
+            "something else entirely", encoding="utf-8")
+        before = len(h.messages())
+        BOT.handle_callback(cb("read:%s" % target["session_id"], cid="mismatch"))
+        sent = "\n".join(h.texts()[before:])
+        check("F: a version mismatch refuses", "can't open that article safely" in sent,
+              sent[:200])
+        check("F: and sends no article text", "paragraph 1." not in sent, sent[:200])
+        check("F: and no block was recorded",
+              STORE.session_blocks(target["session_id"], sha) == [])
+
+
+def test_unknown_card_refuses_rather_than_substituting():
+    with Harness() as h:
+        _five_cards(h)
+        before = len(h.messages())
+        BOT.handle_callback(cb("read:deadbeefdeadbeef", cid="unknown"))
+        check("an unidentifiable card sends nothing at all",
+              len(h.messages()) == before, h.texts()[before:])
+        check("and starts no reading",
+              [e for e in STORE.events() if e["event_type"] == "READ_STARTED"] == [])
+
+
+def test_g_feedback_binds_to_the_article_displayed():
+    """G: feedback lands on the version and block that were actually on screen."""
+    with Harness() as h:
+        _five_cards(h)
+        third = STORE.sessions()[2]
+        BOT.handle_callback(cb("read:%s" % third["session_id"], cid="g-read"))
+        blk = STORE.session_blocks(third["session_id"],
+                                   third["origin_version_sha256"])[0]
+        # A newer card is opened afterwards: a resolver keyed on "current" would file
+        # the reply that follows against this one instead.
+        newest = STORE.sessions()[4]
+        BOT.handle_callback(cb("read:%s" % newest["session_id"], cid="g-read2"))
+        BOT.handle_message(msg("hier raak ik je kwijt", mid=4242,
+                               reply_to=blk["telegram_message_id"]))
+        ev = [e for e in STORE.events() if e["event_type"] == "FREE_TEXT_FEEDBACK"]
+        check("G: one feedback event", len(ev) == 1, ev)
+        check("G: filed against the article the passage belongs to",
+              ev[0]["session_id"] == third["session_id"], ev[0]["session_id"])
+        check("G: and against that article's version",
+              ev[0]["version_sha256"] == third["origin_version_sha256"])
+        check("G: and against the exact block replied to",
+              ev[0]["block_id"] == blk["block_id"])
+        check("G: recorded as a true reply", ev[0]["metadata"]["binding"] == "REPLY")
+
+
+def test_callback_payloads_fit_telegram():
+    """Telegram truncates callback_data over 64 bytes, and a truncated token would
+    collide across cards. Assert the real payloads, not an estimate."""
+    with Harness() as h:
+        _five_cards(h)
+        s = STORE.sessions()[0]
+        BOT.handle_callback(cb("read:%s" % s["session_id"], cid="len"))
+        payloads = []
+        for m in h.messages():
+            for row in (m.get("reply_markup") or {}).get("inline_keyboard", []):
+                payloads += [b["callback_data"] for b in row]
+        check("callback payloads were produced", len(payloads) >= 8, len(payloads))
+        longest = max(payloads, key=len)
+        check("every callback payload is within Telegram's 64-byte limit",
+              all(len(p.encode("utf-8")) <= 64 for p in payloads),
+              "%r (%d bytes)" % (longest, len(longest.encode("utf-8"))))
+        check("every payload names a session id",
+              all(len(p.split(":")) >= 2 and len(p.split(":")[1]) == 16
+                  for p in payloads), payloads[:3])
+
+
+def test_the_incident_conditions_are_reproduced():
+    """Proof the fixture above really recreates 2026-09-26, so test A is not green by
+    accident: the REMOVED resolver, run against exactly this state, picks card five for
+    every card -- while the shipped handler picks each card's own article."""
+    with Harness() as h:
+        _five_cards(h)
+
+        def latest_wins():
+            """The deleted active_session(), behaviour preserved for this proof only."""
+            closed = BOT.closed_sessions()
+            for s in reversed(STORE.sessions()):
+                if s["session_id"] not in closed:
+                    return s
+            return None
+
+        wrong = latest_wins()
+        check("the old resolver picks the last-delivered card for every button",
+              wrong["run_id"].startswith("production-20260922"), wrong["run_id"])
+        first = STORE.sessions()[0]
+        check("which is NOT the first card", wrong["session_id"] != first["session_id"])
+        before = len(h.messages())
+        BOT.handle_callback(cb("read:%s" % first["session_id"], cid="proof"))
+        sent = "\n".join(h.texts()[before:])
+        check("the shipped handler picks the card that was pressed",
+              "Article 26 paragraph 1." in sent and "Article 22" not in sent, sent[:160])
+
+
+def test_no_latest_wins_resolver_remains():
+    """Structural guard: identity must be a parameter, never something re-derived."""
+    import inspect
+    src = (HERE / "editorial_desk_bot.py").read_text()
+    check("the latest-wins resolver is gone from the module",
+          "def active_session" not in src)
+    for name in ("cmd_read", "cmd_hold", "cmd_brief", "cmd_status", "cmd_debug",
+                 "cmd_rewrite", "cmd_publish"):
+        params = inspect.signature(getattr(BOT, name)).parameters
+        check("%s takes an explicit session" % name, "session_row" in params,
+              list(params))
+    cbsrc = src[src.index("def handle_callback"):src.index("def handle_message")]
+    check("the callback handler never falls back to another article",
+          "reading_session()" not in cbsrc)
+    check("and refuses an unknown card",
+          "I can't identify that card" in cbsrc)
 
 
 def main():

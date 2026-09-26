@@ -132,7 +132,7 @@ def brief_for(session_id: str, version_sha: str, root=None) -> str:
     holds two readings, and feeding v0's complaints into a rewrite of v1 would ask the
     writer to fix things it has already fixed.
     """
-    evs = [e for e in STORE.session_events(session_id, root)
+    evs = [e for e in STORE.clean_events(STORE.session_events(session_id, root), root)
            if e.get("version_sha256") == version_sha]
     row = STORE.version_row(version_sha, root) or {}
     return DESK.edit_brief(evs, words=row.get("words", 0))

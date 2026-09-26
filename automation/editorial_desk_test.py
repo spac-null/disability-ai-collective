@@ -484,6 +484,36 @@ def test_r_no_learned_production_change_exists():
               and "import composition" not in src)
 
 
+def test_quarantined_feedback_never_reaches_a_rewrite():
+    """A row recorded under a defect stays in the log and stops being evidence."""
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+        run, d, blocks = _deliver_with_blocks(tmp, sroot)
+        blk = STORE.block_for_message(7, 1001, root=sroot)
+        good = ACT.react(session_id=d["session_id"], run_id=run["run_id"],
+                         version_sha=d["version_sha256"],
+                         event_type="FREE_TEXT_FEEDBACK", user_id=4242, chat_id=7,
+                         block=blk, raw_feedback="this one is real",
+                         dedupe_key="ok", root=sroot)
+        bad = ACT.react(session_id=d["session_id"], run_id=run["run_id"],
+                        version_sha=d["version_sha256"],
+                        event_type="FREE_TEXT_FEEDBACK", user_id=4242, chat_id=7,
+                        block=blk, raw_feedback="said about the wrong article",
+                        dedupe_key="contaminated", root=sroot)
+        STORE.quarantine([bad["event_id"]], reason="identity-contaminated",
+                         incident="test", actor="test", root=sroot)
+        brief = ACT.brief_for(d["session_id"], d["version_sha256"], sroot)
+        check("quarantined feedback is excluded from the rewrite brief",
+              "said about the wrong article" not in brief, brief[:300])
+        check("clean feedback still reaches the brief", "this one is real" in brief)
+        check("the quarantined row is NOT deleted from the log",
+              any(e["event_id"] == bad["event_id"] for e in STORE.events(sroot)))
+        check("and its raw words are still readable as evidence",
+              any(e.get("raw_feedback") == "said about the wrong article"
+                  for e in STORE.events(sroot)))
+        check("quarantine is recorded with its reason and incident",
+              STORE.quarantine_rows(sroot)[0]["reason"] == "identity-contaminated")
+
+
 def main():
     for fn in sorted((f for n, f in globals().items() if n.startswith("test_")),
                      key=lambda f: f.__code__.co_firstlineno):

@@ -47,11 +47,16 @@ BLOCKS = "BLOCKS.jsonl"
 EVENTS = "EVENTS.jsonl"
 REWRITES = "REWRITES.jsonl"
 DECISIONS = "DECISIONS.jsonl"
+QUARANTINE = "QUARANTINE.jsonl"
 
 # Explicit owner actions and the delivery facts around them. Anything not on this list
 # is not an editorial event, and in particular no absence of action is one.
 EVENT_TYPES = (
     "DESK_DELIVERED",
+    # Which Telegram message a card became. Added after the 2026-09-26 identity
+    # incident, where the investigation could establish which article was WRONGLY
+    # opened but not which card had been pressed, because no card was addressable.
+    "CARD_SENT",
     "READ_STARTED",
     "CONTINUE",
     "TOO_FAST",
@@ -337,6 +342,44 @@ def record_event(*, session: str, run_id: str, event_type: str, actor: str,
         "dedupe_key": dedupe_key,
         "metadata": metadata or {},
     }, root)
+
+
+# ── quarantine ──────────────────────────────────────────────────────────────────────
+#
+# An append-only store cannot delete a bad row, and should not: what happened, happened.
+# But a row recorded under a software defect can be evidence of the defect and a lie
+# about the owner at the same time. The 2026-09-26 identity incident produced exactly
+# one such row -- a READ_STARTED asserting the owner chose to read production-20260922,
+# which they did not; they pressed a different card. So the row stays, and this marks it
+# unusable as editorial evidence.
+#
+# Quarantine is a claim about PROVENANCE, never about content. It is never applied to a
+# row because someone disliked what it says.
+
+def quarantine_rows(root=None) -> list:
+    return _read(QUARANTINE, root)
+
+
+def quarantined_event_ids(root=None) -> set:
+    return {r["event_id"] for r in quarantine_rows(root) if r.get("event_id")}
+
+
+def quarantine(event_ids, *, reason: str, incident: str, actor: str,
+               root=None) -> list:
+    out = []
+    for eid in event_ids:
+        out.append(_append(QUARANTINE, {
+            "event_id": eid, "reason": reason, "incident": incident,
+            "actor": actor, "ts": now(),
+        }, root))
+    return out
+
+
+def clean_events(rows: list, root=None) -> list:
+    """`rows` minus anything quarantined. Every consumer that feeds editorial learning
+    must go through this -- see editorial_desk_actions.brief_for."""
+    bad = quarantined_event_ids(root)
+    return [r for r in rows if r.get("event_id") not in bad]
 
 
 # ── rewrites ────────────────────────────────────────────────────────────────────────

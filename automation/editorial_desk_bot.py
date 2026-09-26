@@ -11,6 +11,22 @@ editorial_desk_actions.py; this file turns Telegram events into calls on that an
 formats the replies. It holds no state of its own: the reading position is derived from
 the blocks already sent, so a restart mid-article resumes exactly where the owner was.
 
+ARTICLE IDENTITY IS CARRIED BY THE BUTTON, AND NOTHING ELSE RESOLVES IT. Every inline
+button embeds the session id, which is sha256(run_id, article bytes) -- an immutable
+binding to one run and one exact version. A handler uses the session the button names,
+verifies the stored bytes still hash to the version that card was built from, and sends
+blocks from those bytes only. It may never re-resolve an article from queue order, card
+position, the latest delivery, a title, or any notion of "current". A card whose session
+cannot be found refuses and says so; it never falls back to another article.
+
+That paragraph exists because the opposite was shipped on 2026-09-26. Five cards went
+out at 17:00:17 and every READ, whichever card it sat under, opened card five -- the
+handler resolved the right session from the button and then discarded it for "the most
+recently delivered". A second press on a different card advanced the same wrong article
+rather than opening the right one. See test_multi_card_identity in
+editorial_desk_bot_test.py, which is the regression that must never go green by
+accident.
+
 THE NORMAL VIEW IS PLAIN LANGUAGE. Draft ready, readable now, blocked at Safety, ready
 to publish, published. No SHAs, no stage taxonomy, no prompt hashes, no provider names,
 no model-call counts. /debug shows all of it on request. The machine's problems must not
@@ -182,18 +198,48 @@ def answer_callback(cb_id, text=""):
 
 # ── reading position, derived rather than stored ────────────────────────────────────
 
-def active_session():
-    """The session the owner is currently reading, or None.
+def closed_sessions() -> set:
+    return {e["session_id"] for e in STORE.events()
+            if e["event_type"] in ("ARTICLE_FINISHED", "HOLD")}
 
-    Derived from the event log so a restart cannot lose it: the newest session that has
-    been delivered and not finished or held.
+
+def reading_session():
+    """The article the owner actually OPENED and has not closed. Never "the newest".
+
+    THE BUG THIS REPLACES, 2026-09-26. The previous version returned the most recently
+    DELIVERED session. Five cards were sent at 17:00:17; every READ button, whichever
+    card it sat under, resolved to card five (`a5b9041f3730a0b5`,
+    production-20260922) because that session was appended last. Pressing READ on a
+    second card did not open that article either -- it advanced the same wrong one.
+
+    "Current" can only ever mean the article the owner opened, so it is derived from
+    READ_STARTED, which only a button carrying an explicit session id can produce. A
+    typed /read with nothing open resolves to nothing, and says so, rather than
+    guessing at an article.
     """
-    finished = {e["session_id"] for e in STORE.events()
-                if e["event_type"] in ("ARTICLE_FINISHED", "HOLD")}
-    for s in reversed(STORE.sessions()):
-        if s["session_id"] not in finished:
-            return s
+    closed = closed_sessions()
+    for e in reversed(STORE.events()):
+        if e["event_type"] == "READ_STARTED" and e["session_id"] not in closed:
+            return STORE.session(e["session_id"])
     return None
+
+
+def open_article(session_row) -> tuple:
+    """(text, sha) for exactly the bytes this card was delivered as, or (None, reason).
+
+    The identity check that must run before a single block is sent: the session names a
+    version hash, the stored bytes must still hash to it, and the blocks must come from
+    those bytes and no other source. Fails closed -- a mismatch sends nothing.
+    """
+    sha = (session_row or {}).get("origin_version_sha256") or ""
+    if not sha:
+        return None, "this card carries no version identity"
+    text = STORE.read_version_bytes(sha)
+    if not text:
+        return None, "the stored bytes for this version are missing"
+    if STORE.sha256_text(text) != sha:
+        return None, "the stored bytes no longer match the version this card was for"
+    return text, sha
 
 
 def sent_blocks(session_id, version_sha):
@@ -235,7 +281,12 @@ def undelivered(limit=BACKLOG_DAYS):
 
 
 def offer(run: dict, chat=None):
-    """The card. One article, its plain-language status, and two buttons."""
+    """The card. One article, its plain-language status, and two buttons.
+
+    The session is created BEFORE the card is sent, because its id is what the buttons
+    carry: a card is addressed by the immutable (run, bytes) identity it was built
+    from, never by its position in the queue.
+    """
     d = ACT.deliver(run, chat_id=chat or CHAT_ID)
     text = run["article_text"]
     title = title_of(pathlib.Path(run["run_dir"]), text)
@@ -249,18 +300,38 @@ def offer(run: dict, chat=None):
         lines.append("What the checks flagged:")
         for b in run["gates"]["safety_blocking"][:3]:
             lines.append("  - " + str(b)[:180])
-    send("\n".join(lines), chat=chat,
-         buttons=[[("READ", "read:%s" % d["session_id"]),
-                   ("HOLD", "hold:%s" % d["session_id"])]])
+    mid = send("\n".join(lines), chat=chat,
+               buttons=[[("READ", "read:%s" % d["session_id"]),
+                         ("HOLD", "hold:%s" % d["session_id"])]])
+    # Which Telegram message this card became. Recorded so a click can be audited back
+    # to the card the owner was actually looking at -- the fact the 2026-09-26 incident
+    # investigation could not establish from the log alone.
+    STORE.record_event(session=d["session_id"], run_id=run["run_id"],
+                       event_type="CARD_SENT", actor="system",
+                       version_sha=d["version_sha256"], chat_id=chat or CHAT_ID,
+                       message_id=mid, dedupe_key="card:%s" % d["session_id"],
+                       metadata={"title": title})
     return d
 
 
 def send_block(session_row, version_sha, index, chat=None):
-    """Send block `index` (1-based) and record the message it became."""
-    text = STORE.read_version_bytes(version_sha)
+    """Send block `index` (1-based) from the exact bytes this session was delivered as.
+
+    `version_sha` is not trusted as an argument: it must equal the session's own
+    recorded version, and the stored bytes must still hash to it. Blocks are derived
+    from those bytes and from no other source.
+    """
+    text, sha = open_article(session_row)
+    if text is None:
+        send("I can't open that article safely: %s. Nothing sent." % sha, chat=chat)
+        return None
+    if version_sha and version_sha != sha:
+        send("I can't open that article safely: the button and the stored version "
+             "disagree. Nothing sent.", chat=chat)
+        return None
     blocks = DESK.split_blocks(text)
     if index > len(blocks):
-        return finish(session_row, version_sha, chat=chat)
+        return finish(session_row, sha, chat=chat)
     b = blocks[index - 1]
     header = "%d/%d" % (b["index"], b["of"])
     mid = send("%s\n\n%s" % (header, b["text"]), chat=chat, buttons=[
@@ -268,7 +339,7 @@ def send_block(session_row, version_sha, index, chat=None):
          for t, code in row] for row in BLOCK_BUTTONS])
     if mid:
         ACT.record_block_sent(session_id=session_row["session_id"],
-                              run_id=session_row["run_id"], version_sha=version_sha,
+                              run_id=session_row["run_id"], version_sha=sha,
                               block=b, chat_id=chat or CHAT_ID, message_id=mid)
     return mid
 
@@ -294,13 +365,28 @@ def finish(session_row, version_sha, chat=None):
 
 # ── command handling ────────────────────────────────────────────────────────────────
 
+def unopened_sessions() -> list:
+    """Cards sent but never opened. A card the owner has not pressed READ on is still
+    waiting for them, and /today must not report it as nothing."""
+    opened = {e["session_id"] for e in STORE.events()
+              if e["event_type"] == "READ_STARTED"}
+    closed = closed_sessions()
+    return [s for s in STORE.sessions()
+            if s["session_id"] not in opened and s["session_id"] not in closed]
+
+
 def cmd_today(chat):
     new = undelivered()
     if not new:
-        s = active_session()
+        s = reading_session()
+        waiting = unopened_sessions()
         if s:
-            send("Nothing new. You're part-way through one article — /read to continue.",
-                 chat=chat)
+            send("Nothing new. You're part-way through %s — /read to continue."
+                 % short_title(s), chat=chat)
+        elif waiting:
+            send("Nothing new. %d card%s already on the desk you haven't opened — "
+                 "scroll up and press READ on the one you want."
+                 % (len(waiting), "" if len(waiting) == 1 else "s"), chat=chat)
         else:
             send("Nothing waiting for you.", chat=chat)
         return
@@ -325,79 +411,103 @@ def cmd_backlog(chat):
     send("\n".join(lines) if n else "No finished articles retained.", chat=chat)
 
 
-def cmd_read(chat):
-    s = active_session()
-    if not s:
-        send("Nothing to read. Try /today.", chat=chat)
+def short_title(session_row) -> str:
+    """The title recorded when this card was sent. Read from the card's own event, not
+    re-derived, so what the desk calls an article never drifts from what it showed."""
+    for e in reversed(STORE.session_events(session_row["session_id"])):
+        if e["event_type"] == "CARD_SENT" and (e.get("metadata") or {}).get("title"):
+            return e["metadata"]["title"]
+    text, _ = open_article(session_row)
+    return title_of(run_dir_of(session_row), text or "")
+
+
+def cmd_read(chat, session_row):
+    """Read the article this button belongs to. Never 'the current one'."""
+    if not session_row:
+        send("Nothing open. /today to see what's waiting, then press READ on one.",
+             chat=chat)
         return
-    sha = s["origin_version_sha256"]
-    done = sent_blocks(s["session_id"], sha)
+    text, sha = open_article(session_row)
+    if text is None:
+        send("I can't open that article safely: %s. Nothing sent." % sha, chat=chat)
+        return
+    done = sent_blocks(session_row["session_id"], sha)
     if not done:
-        STORE.record_event(session=s["session_id"], run_id=s["run_id"],
-                           event_type="READ_STARTED", actor="owner",
-                           version_sha=sha, chat_id=chat,
-                           dedupe_key="read:%s:%s" % (s["session_id"], sha))
-    send_block(s, sha, len(done) + 1, chat=chat)
+        STORE.record_event(session=session_row["session_id"],
+                           run_id=session_row["run_id"], event_type="READ_STARTED",
+                           actor="owner", version_sha=sha, chat_id=chat,
+                           dedupe_key="read:%s:%s" % (session_row["session_id"], sha))
+        # The article names itself before its first block. A silent mismatch between
+        # the card pressed and the article delivered is what the 2026-09-26 incident
+        # was, and a reader should be able to see it without reading the log.
+        send("Reading: %s" % short_title(session_row), chat=chat)
+    send_block(session_row, sha, len(done) + 1, chat=chat)
 
 
-def cmd_brief(chat):
-    s = active_session()
-    if not s:
+def cmd_brief(chat, session_row):
+    if not session_row:
         send("No article open.", chat=chat)
         return
-    send(ACT.brief_for(s["session_id"], s["origin_version_sha256"]), chat=chat)
+    send(ACT.brief_for(session_row["session_id"],
+                       session_row["origin_version_sha256"]), chat=chat)
 
 
-def cmd_status(chat):
-    s = active_session()
-    if not s:
+def cmd_status(chat, session_row):
+    if not session_row:
         send("No article open. /today to see what's waiting.", chat=chat)
         return
-    sha = s["origin_version_sha256"]
-    done = sent_blocks(s["session_id"], sha)
-    total = len(DESK.split_blocks(STORE.read_version_bytes(sha)))
-    run = DESK.read_run(run_dir_of(s))
+    text, sha = open_article(session_row)
+    if text is None:
+        send("That article cannot be opened: %s" % sha, chat=chat)
+        return
+    done = sent_blocks(session_row["session_id"], sha)
+    total = len(DESK.split_blocks(text))
+    run = DESK.read_run(run_dir_of(session_row))
     send("Open: %s\nYou're at block %d of %d.\n%s"
-         % (title_of(run_dir_of(s), run["article_text"]), len(done), total,
-            DESK.status_line(run)), chat=chat)
+         % (short_title(session_row), len(done), total, DESK.status_line(run)),
+         chat=chat)
 
 
-def cmd_debug(chat):
-    s = active_session()
-    if not s:
+def cmd_debug(chat, session_row):
+    if not session_row:
         send("No article open.", chat=chat)
         return
-    run = DESK.read_run(run_dir_of(s))
-    send(json.dumps({"run_id": run["run_id"], "session_id": s["session_id"],
-                     "version_sha256": s["origin_version_sha256"][:16],
+    run = DESK.read_run(run_dir_of(session_row))
+    send(json.dumps({"run_id": run["run_id"],
+                     "session_id": session_row["session_id"],
+                     "version_sha256": session_row["origin_version_sha256"][:16],
                      "words": run["words"], "publish_state": run["publish_state"],
                      "publish_reason": run["publish_reason"],
                      "gates": run["gates"]}, indent=2, default=str)[:3800], chat=chat)
 
 
-def cmd_hold(chat):
-    s = active_session()
-    if not s:
+def cmd_hold(chat, session_row):
+    if not session_row:
         send("Nothing open.", chat=chat)
         return
-    STORE.record_event(session=s["session_id"], run_id=s["run_id"], event_type="HOLD",
-                       actor="owner", version_sha=s["origin_version_sha256"],
-                       chat_id=chat)
-    send("Held. It stays on the desk — /backlog to find it again.", chat=chat)
+    STORE.record_event(session=session_row["session_id"],
+                       run_id=session_row["run_id"], event_type="HOLD", actor="owner",
+                       version_sha=session_row["origin_version_sha256"], chat_id=chat)
+    send("Held: %s. It stays on the desk — /backlog to find it again."
+         % short_title(session_row), chat=chat)
 
 
-def cmd_rewrite(chat, user_id):
-    s = active_session()
-    if not s:
+def cmd_rewrite(chat, user_id, session_row):
+    if not session_row:
         send("No article open.", chat=chat)
         return
     if not ACT.authorized(user_id):
         send("Not authorized.", chat=chat)
         return
-    send("Working from your reading. One rewrite.", chat=chat)
-    out = ACT.request_rewrite(session_id=s["session_id"], run_id=s["run_id"],
-                              version_sha=s["origin_version_sha256"], user_id=user_id,
-                              chat_id=chat, rewrite_fn=rewrite_once)
+    text, sha = open_article(session_row)
+    if text is None:
+        send("That article cannot be opened: %s" % sha, chat=chat)
+        return
+    send("Working from your reading of %s. One rewrite." % short_title(session_row),
+         chat=chat)
+    out = ACT.request_rewrite(session_id=session_row["session_id"],
+                              run_id=session_row["run_id"], version_sha=sha,
+                              user_id=user_id, chat_id=chat, rewrite_fn=rewrite_once)
     if out["status"] != ACT.REWRITE_DONE:
         send("No rewrite: %s" % out.get("detail", out["status"]), chat=chat)
         return
@@ -407,24 +517,26 @@ def cmd_rewrite(chat, user_id):
         send("%d/%d\n\n%s" % (b["index"], b["of"], b["text"]), chat=chat)
 
 
-def cmd_publish(chat, user_id):
-    s = active_session()
-    if not s:
+def cmd_publish(chat, user_id, session_row):
+    if not session_row:
         send("No article open.", chat=chat)
         return
-    sha = s["origin_version_sha256"]
-    a = ACT.approve(session_id=s["session_id"], run_id=s["run_id"], version_sha=sha,
-                    user_id=user_id, chat_id=chat)
+    text, sha = open_article(session_row)
+    if text is None:
+        send("Refusing to publish: %s" % sha, chat=chat)
+        return
+    a = ACT.approve(session_id=session_row["session_id"], run_id=session_row["run_id"],
+                    version_sha=sha, user_id=user_id, chat_id=chat)
     if not a["ok"]:
         send("Not authorized.", chat=chat)
         return
-    r = ACT.publish(session_id=s["session_id"], run_id=s["run_id"],
-                    run_dir=run_dir_of(s), version_sha=sha, user_id=user_id,
+    r = ACT.publish(session_id=session_row["session_id"], run_id=session_row["run_id"],
+                    run_dir=run_dir_of(session_row), version_sha=sha, user_id=user_id,
                     chat_id=chat)
     if r["ok"] and r.get("idempotent"):
         send("Already published.", chat=chat)
     elif r["ok"]:
-        send("Published.", chat=chat)
+        send("Published: %s" % short_title(session_row), chat=chat)
     else:
         send("Not published: %s" % r["detail"], chat=chat)
 
@@ -453,6 +565,14 @@ def rewrite_once(article_text: str, brief: str) -> str:
 # ── update dispatch ─────────────────────────────────────────────────────────────────
 
 def handle_callback(cb):
+    """Every button carries the identity of the article it belongs to, and that
+    identity is what gets used. There is no fallback to 'the current article'.
+
+    The 2026-09-26 incident was exactly the missing half of this function: the session
+    was resolved correctly from `callback_data` on the line below, and then thrown away
+    by calling a command that re-derived it from the newest delivery. A card whose
+    session cannot be found now refuses; it never resolves to a different article.
+    """
     data = cb.get("data") or ""
     user_id = (cb.get("from") or {}).get("id")
     chat = ((cb.get("message") or {}).get("chat") or {}).get("id") or CHAT_ID
@@ -461,24 +581,25 @@ def handle_callback(cb):
         return
     parts = data.split(":")
     kind, sid = parts[0], (parts[1] if len(parts) > 1 else "")
-    s = STORE.session(sid) or active_session()
+    s = STORE.session(sid)
     if not s:
-        answer_callback(cb["id"], "That article is no longer open")
+        answer_callback(cb["id"], "I can't identify that card — nothing sent")
+        log("REFUSED callback %r: no session %r" % (kind, sid))
         return
     sha = s["origin_version_sha256"]
     answer_callback(cb["id"])
 
     if kind == "read":
-        cmd_read(chat)
+        cmd_read(chat, s)
         return
     if kind == "hold":
-        cmd_hold(chat)
+        cmd_hold(chat, s)
         return
     if kind == "rewrite":
-        cmd_rewrite(chat, user_id)
+        cmd_rewrite(chat, user_id, s)
         return
     if kind == "publish":
-        cmd_publish(chat, user_id)
+        cmd_publish(chat, user_id, s)
         return
     if kind in ("almost", "notgood"):
         STORE.record_event(session=sid, run_id=s["run_id"],
@@ -490,6 +611,11 @@ def handle_callback(cb):
     if kind in DESK.BUTTON_SIGNALS:
         block_id = parts[2] if len(parts) > 2 else ""
         blk = next((b for b in sent_blocks(sid, sha) if b["block_id"] == block_id), None)
+        if blk is None:
+            # A reaction whose block cannot be located is not filed against a guess.
+            answer_callback(cb["id"], "I can't place that passage")
+            log("REFUSED reaction %r: no block %r in session %s" % (kind, block_id, sid))
+            return
         ACT.react(session_id=sid, run_id=s["run_id"], version_sha=sha, event_type=kind,
                   user_id=user_id, chat_id=chat, block=blk,
                   dedupe_key="cb:%s" % cb["id"])
@@ -509,36 +635,48 @@ def handle_message(msg):
     if not text:
         return
     cmd = text.split()[0].lower().split("@")[0]
+    # A typed command has no card behind it, so it acts on the article the owner
+    # actually OPENED -- see reading_session(). With nothing open, each of these says
+    # so rather than picking one.
+    s = reading_session()
     table = {"/today": lambda: cmd_today(chat), "/start": lambda: cmd_today(chat),
-             "/backlog": lambda: cmd_backlog(chat), "/read": lambda: cmd_read(chat),
-             "/next": lambda: cmd_read(chat), "/brief": lambda: cmd_brief(chat),
-             "/status": lambda: cmd_status(chat), "/debug": lambda: cmd_debug(chat),
-             "/hold": lambda: cmd_hold(chat),
-             "/rewrite": lambda: cmd_rewrite(chat, user_id),
-             "/publish": lambda: cmd_publish(chat, user_id),
+             "/backlog": lambda: cmd_backlog(chat),
+             "/read": lambda: cmd_read(chat, s), "/next": lambda: cmd_read(chat, s),
+             "/brief": lambda: cmd_brief(chat, s),
+             "/status": lambda: cmd_status(chat, s),
+             "/debug": lambda: cmd_debug(chat, s),
+             "/hold": lambda: cmd_hold(chat, s),
+             "/rewrite": lambda: cmd_rewrite(chat, user_id, s),
+             "/publish": lambda: cmd_publish(chat, user_id, s),
              "/help": lambda: send(HELP, chat=chat)}
     if cmd in table:
         table[cmd]()
         return
 
-    # Anything else is editorial feedback. A reply lands on its exact block; a plain
-    # message lands on the last block sent, recorded as such so the two are never
-    # confused when this log is read back later.
-    s = active_session()
-    if not s:
+    # Anything else is editorial feedback. A REPLY carries its own identity: the block
+    # row names the session and the version, so the article is read off the passage
+    # replied to rather than from any notion of what is current. Only a plain message
+    # falls back to the open article, and is marked as an inferred binding.
+    reply_to = (msg.get("reply_to_message") or {}).get("message_id")
+    blk = STORE.block_for_message(chat, reply_to) if reply_to else None
+    if blk is not None:
+        target = STORE.session(blk["session_id"])
+        sha = blk["version_sha256"]
+        binding = "REPLY"
+    else:
+        target, blk, binding = s, None, "NO_BLOCK"
+        if target:
+            sha = target["origin_version_sha256"]
+            done = sent_blocks(target["session_id"], sha)
+            if done:
+                blk, binding = done[-1], "LAST_BLOCK_SENT"
+    if not target:
         send("Nothing open to comment on. /today", chat=chat)
         return
-    sha = s["origin_version_sha256"]
-    reply_to = ((msg.get("reply_to_message") or {}).get("message_id"))
-    blk = STORE.block_for_message(chat, reply_to) if reply_to else None
-    binding = "REPLY"
-    if blk is None:
-        done = sent_blocks(s["session_id"], sha)
-        blk = done[-1] if done else None
-        binding = "LAST_BLOCK_SENT" if blk else "NO_BLOCK"
-    ACT.react(session_id=s["session_id"], run_id=s["run_id"], version_sha=sha,
-              event_type="FREE_TEXT_FEEDBACK", user_id=user_id, chat_id=chat,
-              message_id=msg.get("message_id"), block=blk, raw_feedback=text,
+    ACT.react(session_id=target["session_id"], run_id=target["run_id"],
+              version_sha=sha, event_type="FREE_TEXT_FEEDBACK", user_id=user_id,
+              chat_id=chat, message_id=msg.get("message_id"), block=blk,
+              raw_feedback=text,
               dedupe_key="msg:%s:%s" % (chat, msg.get("message_id")),
               metadata={"binding": binding})
     send("Got it.", chat=chat)
