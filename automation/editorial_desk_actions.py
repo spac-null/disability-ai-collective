@@ -149,8 +149,15 @@ def version_state(session_id: str, version_sha: str, root=None) -> dict:
 
 # Human labels for the feedback summary. Derived from the same tables the buttons are
 # built from, so a new button cannot appear in the desk and be missing from a summary.
+# Buttons whose human label is not a mechanical de-underscoring of their code.
+LABEL_OVERRIDES = {"SOUNDS_LIKE_REPORT": "Sounds like a report",
+                   "READER_LOST": "I am lost",
+                   "WHY_NOW": "Why now?"}
+
+
 def _labels() -> dict:
-    out = {a: a.replace("_", " ").capitalize() for a in DESK.BUTTON_SIGNALS}
+    out = {a: LABEL_OVERRIDES.get(a, a.replace("_", " ").capitalize())
+           for a in DESK.BUTTON_SIGNALS}
     for opts in DESK.DETAIL_OPTIONS.values():
         for label, code in opts:
             out[code] = label

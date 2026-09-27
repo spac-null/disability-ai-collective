@@ -433,8 +433,8 @@ def unopened_sessions() -> list:
             if s["session_id"] not in opened and s["session_id"] not in closed]
 
 
-def _row_lines(r) -> list:
-    lines = [r["label"], "  %s" % r["title"]]
+def _row_lines(r, n) -> list:
+    lines = ["%d  %s" % (n, r["label"]), "  %s" % r["title"]]
     bits = []
     if r["words"]:
         bits.append("%d words" % r["words"])
@@ -447,15 +447,27 @@ def _row_lines(r) -> list:
     return lines + [""]
 
 
-def _row_buttons(r) -> list:
+def _row_buttons(r, n) -> list:
+    """Short, numbered, and tied to the numbered line above.
+
+    Titles inside buttons were cut mid-word -- "READ: The footnote that sets one a" --
+    and repeated text the reader had just read one line higher. Twelve of those in a
+    backlog is furniture, not navigation.
+    """
     if r["status"] == ACT.UNREAD:
-        return [("READ: %s" % r["title"][:28], "read:%s" % r["session_id"])]
+        return [("%d Read" % n, "read:%s" % r["session_id"])]
     if r["status"] == ACT.READING:
-        return [("RESUME: %s" % r["title"][:26], "read:%s" % r["session_id"])]
+        return [("%d Resume" % n, "read:%s" % r["session_id"])]
     if r["status"] == ACT.FINISHED:
-        return [("Rewrite: %s" % r["title"][:24], "rewrite:%s" % r["session_id"]),
-                ("Hold", "hold:%s" % r["session_id"])]
+        return [("%d Rewrite" % n, "rewrite:%s" % r["session_id"]),
+                ("%d Hold" % n, "hold:%s" % r["session_id"])]
     return []
+
+
+def _pack(buttons, per_row=4) -> list:
+    """Lay short buttons out several to a row rather than one per line."""
+    flat = [b for group in buttons for b in group]
+    return [flat[i:i + per_row] for i in range(0, len(flat), per_row)]
 
 
 def cmd_today(chat):
@@ -486,9 +498,9 @@ def cmd_today(chat):
         lines, buttons = ["Nothing new today."], []
     else:
         lines, buttons = ["Waiting for you", ""], []
-        for r in current[:6]:
-            lines += _row_lines(r)
-            b = _row_buttons(r)
+        for n, r in enumerate(current[:6], start=1):
+            lines += _row_lines(r, n)
+            b = _row_buttons(r, n)
             if b:
                 buttons.append(b)
         if len(current) > 6:
@@ -499,7 +511,7 @@ def cmd_today(chat):
         lines.append("%d in the backlog%s — /backlog"
                      % (len(older),
                         (", %d unread" % n_unread) if n_unread else ""))
-    send("\n".join(lines).rstrip(), chat=chat, buttons=buttons or None)
+    send("\n".join(lines).rstrip(), chat=chat, buttons=_pack(buttons) or None)
 
 
 def cmd_backlog(chat):
@@ -510,14 +522,14 @@ def cmd_backlog(chat):
         send("Nothing in the backlog.", chat=chat)
         return
     lines, buttons = ["Backlog", ""], []
-    for r in older[:12]:
-        lines += _row_lines(r)
-        b = _row_buttons(r)
+    for n, r in enumerate(older[:12], start=1):
+        lines += _row_lines(r, n)
+        b = _row_buttons(r, n)
         if b:
             buttons.append(b)
     if len(older) > 12:
         lines.append("%d older still" % (len(older) - 12))
-    send("\n".join(lines).rstrip(), chat=chat, buttons=buttons or None)
+    send("\n".join(lines).rstrip(), chat=chat, buttons=_pack(buttons) or None)
 
 
 def short_title(session_row) -> str:
@@ -739,7 +751,20 @@ def handle_callback(cb):
         at = cursor(sid, sha)
         target = at + 1 if kind == "NEXT" else max(1, at - 1)
         if kind == "BACK" and at <= 1:
-            send("You are at the beginning.", chat=chat)
+            answer_callback(cb["id"], "You are at the beginning.")
+            return
+        total = len(DESK.split_blocks(STORE.read_version_bytes(sha)))
+        if kind == "NEXT" and at >= total:
+            # Past the last block. The end screen is sent ONCE -- pressing Next again
+            # used to re-send the whole thing, so a few idle presses filled the chat
+            # with identical "Finished." cards.
+            already = any(e["event_type"] == "ARTICLE_FINISHED"
+                          and e.get("version_sha256") == sha
+                          for e in STORE.session_events(sid))
+            if already:
+                answer_callback(cb["id"], "That is the end of the article.")
+            else:
+                finish(s, sha, chat=chat)
             return
         STORE.record_event(session=sid, run_id=s["run_id"], event_type=kind,
                            actor=ACT.actor_of(user_id), version_sha=sha, chat_id=chat,

@@ -334,12 +334,23 @@ def scan(root=None, prefixes=None, limit: int = 40) -> list:
 # rather than a technical one: two to three paragraphs is what a person reads in one
 # glance on a phone, and a block that needed splitting would break the one thing this
 # design depends on -- one block, one message id, one exact paragraph range.
-BLOCK_MAX_PARAGRAPHS = 3
-BLOCK_MAX_CHARS = 3200
+# Measured against real articles: three paragraphs ran to 1,716 characters in one
+# message, which on a phone is the wall the reader keeps reporting. Two is a glance.
+BLOCK_MAX_PARAGRAPHS = 2
+BLOCK_MAX_CHARS = 1600
 
 
 def paragraphs(text: str) -> list:
-    return [p.strip() for p in (text or "").split("\n\n") if p.strip()]
+    """The article's paragraphs, without its markdown title.
+
+    The opening `# heading` used to be sent as the first thing in block 1, directly
+    under the desk's own "Reading: <title>" line -- two titles, often different ones,
+    and the hash rendered raw because the desk sends plain text.
+    """
+    out = [q.strip() for q in (text or "").split("\n\n") if q.strip()]
+    if out and out[0].lstrip().startswith("#"):
+        out = out[1:]
+    return out
 
 
 def split_blocks(text: str) -> list:

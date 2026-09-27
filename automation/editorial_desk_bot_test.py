@@ -231,8 +231,10 @@ def test_back_at_the_start_says_so():
     with Harness() as h:
         s = _open_and_read(h)
         BOT.handle_callback(cb("BACK:%s" % s["session_id"], cid="b0"))
-        check("Back at block 1 does not wrap or crash",
-              "beginning" in h.texts()[-1], h.texts()[-1][:60])
+        check("Back at block 1 says so on the button, not in the chat",
+              any("beginning" in t for t in h.toasts()), h.toasts()[-2:])
+        check("and sends no chat message",
+              not any("beginning" in t for t in h.texts()), h.texts()[-1][:40])
 
 
 def test_a_reaction_does_not_move_the_reader():
@@ -719,8 +721,10 @@ def test_today_never_chooses_and_never_hides():
               not any(t.startswith("1/") or t.startswith("2/")
                       for t in h.texts()[before:]), h.texts()[before:])
         buttons = json.dumps(h.last_markup())
-        check("it offers RESUME for the opened one", "RESUME" in buttons, buttons)
-        check("and READ for the unopened one", "READ:" in buttons, buttons)
+        check("it offers Resume for the opened one", "Resume" in buttons, buttons)
+        check("and Read for the unopened one", "Read" in buttons, buttons)
+        check("buttons are numbered, not truncated titles",
+              "..." not in buttons and "paragraph" not in buttons, buttons)
         check("every inbox button names a session",
               all(len(b.split(":")) >= 2
                   for b in _callback_data(h.last_markup())), buttons)
@@ -941,6 +945,55 @@ def test_a_crashing_update_does_not_loop_forever():
             BOT.tg = h_tg
             BOT.cmd_today = saved
         check("a crashing handler still advances the offset", offset == 401, offset)
+
+
+def test_the_end_screen_is_sent_once():
+    """Idle presses used to fill the chat with identical Finished cards."""
+    with Harness() as h:
+        s = _open_and_read(h)
+        sid = s["session_id"]
+        sha = s["origin_version_sha256"]
+        total = len(DESK.split_blocks(STORE.read_version_bytes(sha)))
+        for i in range(total + 6):
+            BOT.handle_callback(cb("NEXT:%s" % sid, cid="fin%d" % i))
+        finals = [t for t in h.texts() if t.startswith("Finished.")]
+        check("the end screen was sent exactly once", len(finals) == 1, len(finals))
+        check("further presses answer on the button",
+              any("end of the article" in t for t in h.toasts()), h.toasts()[-2:])
+        check("and ARTICLE_FINISHED was recorded once",
+              len([e for e in STORE.events()
+                   if e["event_type"] == "ARTICLE_FINISHED"]) == 1)
+
+
+def test_a_block_is_a_glance_not_a_wall():
+    with Harness() as h:
+        s = _open_and_read(h)
+        text = STORE.read_version_bytes(s["origin_version_sha256"])
+        for b in DESK.split_blocks(text):
+            n = len(b["text"])
+            check("block %d is within the reading budget" % b["index"],
+                  n <= DESK.BLOCK_MAX_CHARS + 200 or len(DESK.paragraphs(b["text"])) == 1,
+                  n)
+            check("block %d holds at most two paragraphs" % b["index"],
+                  len(DESK.paragraphs(b["text"])) <= DESK.BLOCK_MAX_PARAGRAPHS)
+
+
+def test_the_articles_own_heading_is_not_sent_twice():
+    with Harness() as h:
+        body = "# The switched-off unit\n\n" + "\n\n".join(
+            "Paragraph %d. %s" % (i, "word " * 40) for i in range(1, 7))
+        h.make_run(today_run("head"), body=body)
+        BOT.cmd_today(CHAT)
+        sid = STORE.sessions()[0]["session_id"]
+        BOT.handle_callback(cb("read:%s" % sid, cid="h1"))
+        first_block = [t for t in h.texts() if t.startswith("1/")][0]
+        check("the markdown heading is not in the block",
+              "# The switched-off unit" not in first_block, first_block[:80])
+        reading_flow = [t for t in h.texts()
+                        if t.startswith("Reading:") or t.startswith("1/")]
+        check("the title appears once in the reading flow, on the Reading line",
+              len([t for t in reading_flow if "The switched-off unit" in t]) == 1,
+              reading_flow)
 
 
 def main():
