@@ -751,6 +751,106 @@ def test_blocked_rewrite_is_visible_but_marked():
               "torch" in str(row["gate_status"]["delta_errors"]), row["gate_status"])
 
 
+class evidence_root:
+    """Point the desk at a fixture tree. `_title_for` resolves a run directory from
+    EVIDENCE_ROOT, which is right in production and needs saying out loud in a test."""
+
+    def __init__(self, tmp):
+        self.tmp = tmp
+
+    def __enter__(self):
+        self.saved = DESK.EVIDENCE_ROOT
+        DESK.EVIDENCE_ROOT = pathlib.Path(self.tmp)
+        return self
+
+    def __exit__(self, *a):
+        DESK.EVIDENCE_ROOT = self.saved
+
+
+def test_a_title_is_never_a_run_id():
+    """The five cards delivered before card titles were recorded showed up in the
+    inbox as `production-20260923T070239Z-1b5de95d`. A timestamp is not a headline."""
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+      with evidence_root(tmp):
+            d = make_run(tmp, "production-20260923T070239Z-1b5de95d")
+            (pathlib.Path(d) / "EDITORIAL_PACKAGE.json").write_text(
+                json.dumps({"title": "The estimate that became the plan"}),
+                encoding="utf-8")
+            run = DESK.read_run(d)
+            ACT.deliver(run, chat_id=7, root=sroot)   # no CARD_SENT: the pre-fix case
+            row = ACT.inbox(sroot)[0]
+            check("with no card event the package title is used",
+                  row["title"] == "The estimate that became the plan", row["title"])
+            check("and never the run id", "production-2026" not in row["title"])
+
+
+def test_title_falls_back_to_the_opening_heading():
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+      with evidence_root(tmp):
+            body = "# A heading the article opens with\n\n" + BODY
+            d = make_run(tmp, "production-20260924T070701Z-3e62a182", body=body)
+            run = DESK.read_run(d)
+            ACT.deliver(run, chat_id=7, root=sroot)
+            row = ACT.inbox(sroot)[0]
+            check("with no package either, the opening heading is used",
+                  row["title"] == "A heading the article opens with", row["title"])
+
+
+def test_a_recorded_card_title_wins():
+    """What the owner was shown beats anything re-derived later."""
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+      with evidence_root(tmp):
+            d = make_run(tmp)
+            (pathlib.Path(d) / "EDITORIAL_PACKAGE.json").write_text(
+                json.dumps({"title": "Retitled since"}), encoding="utf-8")
+            run = DESK.read_run(d)
+            got = ACT.deliver(run, chat_id=7, root=sroot)
+            STORE.record_event(session=got["session_id"], run_id=run["run_id"],
+                               event_type="CARD_SENT", actor="system",
+                               version_sha=got["version_sha256"], message_id=5,
+                               metadata={"title": "What the card actually said"},
+                               root=sroot)
+            check("the card title wins over the package",
+                  ACT.inbox(sroot)[0]["title"] == "What the card actually said")
+
+
+def test_old_unread_ages_out_of_the_default_view():
+    import datetime
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+        for n, day in enumerate(("26", "25", "10"), start=1):
+            body = "\n\n".join("Day %s paragraph %d. %s" % (day, i, "word " * 40)
+                               for i in range(1, 10))
+            r = DESK.read_run(make_run(tmp, "production-202609%sT070000Z-zz%d"
+                                       % (day, n), body=body))
+            ACT.deliver(r, chat_id=7, root=sroot)
+        # Two days on, the first deliveries are backlog.
+        later = (datetime.datetime.now(datetime.timezone.utc)
+                 + datetime.timedelta(days=5))
+        rows = ACT.inbox(sroot, now=later)
+        check("everything is still on the desk", len(rows) == 3)
+        check("and nothing recent remains after five days",
+              not any(r["recent"] for r in rows), [r["recent"] for r in rows])
+        now_rows = ACT.inbox(sroot)
+        check("delivered today, all three are current",
+              all(r["recent"] for r in now_rows))
+
+
+def test_an_open_article_never_ages_out():
+    import datetime
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+        run = DESK.read_run(make_run(tmp))
+        d = ACT.deliver(run, chat_id=7, root=sroot)
+        blocks = DESK.split_blocks(run["article_text"])
+        ACT.record_block_sent(session_id=d["session_id"], run_id=run["run_id"],
+                              version_sha=d["version_sha256"], block=blocks[0],
+                              chat_id=7, message_id=1, root=sroot)
+        later = (datetime.datetime.now(datetime.timezone.utc)
+                 + datetime.timedelta(days=30))
+        row = ACT.inbox(sroot, now=later)[0]
+        check("a part-read article stays in the default view however old",
+              row["status"] == ACT.READING and row["recent"] is True, row)
+
+
 def main():
     for fn in sorted((f for n, f in globals().items() if n.startswith("test_")),
                      key=lambda f: f.__code__.co_firstlineno):

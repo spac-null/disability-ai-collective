@@ -187,27 +187,58 @@ def feedback_summary(session_id: str, version_sha: str, root=None) -> list:
                   key=lambda kv: (-kv[1], kv[0]))
 
 
-def inbox(root=None) -> list:
-    """Everything on the desk, one row per immutable version. Chooses nothing."""
+# How long an unread article stays in the default view. Beyond this it is still on
+# the desk and still openable -- it moves to /backlog. A desk that shows three weeks
+# of unread work every morning is a reproach, not an inbox.
+RECENT_DAYS = 2
+
+
+def _title_for(sess: dict, root=None) -> str:
+    """What the owner was SHOWN, if that was recorded; otherwise the run's own title.
+
+    The card title wins because it is the text that was actually on screen. Only the
+    five cards delivered before card titles existed need the fallback, and falling back
+    to the run id -- which is what happened -- puts a timestamp where a headline
+    belongs.
+    """
+    for e in reversed(STORE.session_events(sess["session_id"], root)):
+        if e["event_type"] == "CARD_SENT" and (e.get("metadata") or {}).get("title"):
+            return e["metadata"]["title"]
+    sha = sess["origin_version_sha256"]
+    return (DESK.title_of(pathlib.Path(DESK.EVIDENCE_ROOT) / sess["run_id"],
+                          STORE.read_version_bytes(sha, root))
+            or sess["run_id"])
+
+
+def inbox(root=None, now=None) -> list:
+    """Everything on the desk, one row per immutable version. Chooses nothing.
+
+    `recent` marks what belongs in the default view: anything open, and anything
+    delivered within RECENT_DAYS. Everything else is backlog -- present, openable,
+    and out of the way.
+    """
+    import datetime
+    now = now or datetime.datetime.now(datetime.timezone.utc)
     rows = []
     for sess in STORE.sessions(root):
         sha = sess["origin_version_sha256"]
         st = version_state(sess["session_id"], sha, root)
-        title = ""
-        for e in reversed(STORE.session_events(sess["session_id"], root)):
-            if e["event_type"] == "CARD_SENT" and (e.get("metadata") or {}).get("title"):
-                title = e["metadata"]["title"]
-                break
         vrow = STORE.version_row(sha, root) or {}
+        try:
+            created = datetime.datetime.fromisoformat(sess["created_at"])
+            age = max(0.0, (now - created).total_seconds() / 86400.0)
+        except Exception:
+            age = 999.0
         rows.append({"session_id": sess["session_id"], "version_sha256": sha,
-                     "run_id": sess["run_id"], "title": title or sess["run_id"],
+                     "run_id": sess["run_id"], "title": _title_for(sess, root),
                      "words": vrow.get("words", 0),
                      "version_id": vrow.get("version_id", ""),
                      "reason": vrow.get("reason", ""),
                      "summary": feedback_summary(sess["session_id"], sha, root),
+                     "age_days": age,
+                     "recent": st["status"] == READING or age <= RECENT_DAYS,
                      **st})
-    rows.sort(key=lambda r: (STATE_ORDER.index(r["status"]),
-                             -_created_ts(r["session_id"], root)))
+    rows.sort(key=lambda r: (STATE_ORDER.index(r["status"]), r["age_days"]))
     return rows
 
 

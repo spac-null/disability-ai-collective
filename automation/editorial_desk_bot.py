@@ -300,15 +300,7 @@ def run_dir_of(session_row) -> pathlib.Path:
 
 
 def title_of(run_dir: pathlib.Path, text: str) -> str:
-    pkg = DESK.artifact(run_dir, "EDITORIAL_PACKAGE.json")
-    t = (pkg.get("title") or "").strip()
-    if t:
-        return t
-    for line in (text or "").splitlines():
-        line = line.strip().lstrip("#").strip()
-        if line:
-            return line[:90]
-    return "Untitled"
+    return DESK.title_of(run_dir, text) or "Untitled"
 
 
 # ── delivery ────────────────────────────────────────────────────────────────────────
@@ -436,12 +428,43 @@ def unopened_sessions() -> list:
             if s["session_id"] not in opened and s["session_id"] not in closed]
 
 
+def _row_lines(r) -> list:
+    lines = [r["label"], "  %s" % r["title"]]
+    bits = []
+    if r["words"]:
+        bits.append("%d words" % r["words"])
+    if r["reason"] == STORE.REASON_EDITORIAL_REWRITE:
+        bits.append("rewrite")
+    if r["summary"]:
+        bits.append(" · ".join("%s x%d" % (lbl, n) for lbl, n in r["summary"][:3]))
+    if bits:
+        lines.append("  " + " · ".join(bits))
+    return lines + [""]
+
+
+def _row_buttons(r) -> list:
+    if r["status"] == ACT.UNREAD:
+        return [("READ: %s" % r["title"][:28], "read:%s" % r["session_id"])]
+    if r["status"] == ACT.READING:
+        return [("RESUME: %s" % r["title"][:26], "read:%s" % r["session_id"])]
+    if r["status"] == ACT.FINISHED:
+        return [("Rewrite: %s" % r["title"][:24], "rewrite:%s" % r["session_id"]),
+                ("Hold", "hold:%s" % r["session_id"])]
+    return []
+
+
 def cmd_today(chat):
     """The inbox. It lists; it never opens anything.
 
     Every row names one immutable version and carries its own button. There is no
     "current article" here and no resume-by-guess: if the desk cannot say which version
     an action is for, it shows this list instead.
+
+    IT SHOWS TODAY, NOT EVERYTHING. Three weeks of unread work arrived on the desk at
+    once when it was first switched on, and an inbox that opens with fifteen unread
+    articles every morning is a reproach rather than a working surface. Anything open
+    stays here; anything older than RECENT_DAYS and unopened moves to /backlog, where
+    it is still one press from being read.
     """
     for run in undelivered():
         offer(run, chat=chat)
@@ -451,64 +474,55 @@ def cmd_today(chat):
         send("Nothing on the desk.", chat=chat)
         return
 
-    lines, buttons, shown = ["Waiting for you", ""], [], 0
-    for r in rows:
-        if r["status"] == ACT.HELD and shown >= 6:
-            continue
-        if shown >= 8:
-            break
-        shown += 1
-        lines.append(r["label"])
-        lines.append("  %s" % r["title"])
-        bits = []
-        if r["words"]:
-            bits.append("%d words" % r["words"])
-        if r["reason"] == STORE.REASON_EDITORIAL_REWRITE:
-            bits.append("rewrite")
-        if r["summary"]:
-            bits.append(" · ".join("%s x%d" % (lbl, n) for lbl, n in r["summary"][:3]))
-        if bits:
-            lines.append("  " + " · ".join(bits))
-        lines.append("")
-        if r["status"] == ACT.UNREAD:
-            buttons.append([("READ: %s" % r["title"][:28], "read:%s" % r["session_id"])])
-        elif r["status"] == ACT.READING:
-            buttons.append([("RESUME: %s" % r["title"][:26],
-                             "read:%s" % r["session_id"])])
-        elif r["status"] == ACT.FINISHED:
-            buttons.append([("Rewrite: %s" % r["title"][:24],
-                             "rewrite:%s" % r["session_id"]),
-                            ("Hold", "hold:%s" % r["session_id"])])
-    more = len(rows) - shown
-    if more > 0:
-        lines.append("%d more" % more)
+    current = [r for r in rows if r["recent"] and r["status"] != ACT.HELD]
+    older = [r for r in rows if r not in current]
+
+    if not current:
+        lines, buttons = ["Nothing new today."], []
+    else:
+        lines, buttons = ["Waiting for you", ""], []
+        for r in current[:6]:
+            lines += _row_lines(r)
+            b = _row_buttons(r)
+            if b:
+                buttons.append(b)
+        if len(current) > 6:
+            lines.append("%d more waiting" % (len(current) - 6))
+
+    if older:
+        n_unread = len([r for r in older if r["status"] == ACT.UNREAD])
+        lines.append("%d in the backlog%s — /backlog"
+                     % (len(older),
+                        (", %d unread" % n_unread) if n_unread else ""))
     send("\n".join(lines).rstrip(), chat=chat, buttons=buttons or None)
 
 
 def cmd_backlog(chat):
-    known = {s["run_id"] for s in STORE.sessions()}
-    lines, n = ["Finished articles from earlier runs:"], 0
-    for d in DESK.scan(limit=60):
-        run = DESK.read_run(d)
-        if run["state"] != DESK.REVIEWABLE_DRAFT:
-            continue
-        n += 1
-        mark = "read" if d.name in known else "NEW"
-        lines.append("  [%s] %s — %d words — %s"
-                     % (mark, d.name[11:19], run["words"], DESK.status_line(run)))
-        if n >= 20:
-            break
-    send("\n".join(lines) if n else "No finished articles retained.", chat=chat)
+    """Everything the inbox aged out. Same rows, same buttons, just not in the way."""
+    rows = ACT.inbox()
+    older = [r for r in rows if not (r["recent"] and r["status"] != ACT.HELD)]
+    if not older:
+        send("Nothing in the backlog.", chat=chat)
+        return
+    lines, buttons = ["Backlog", ""], []
+    for r in older[:12]:
+        lines += _row_lines(r)
+        b = _row_buttons(r)
+        if b:
+            buttons.append(b)
+    if len(older) > 12:
+        lines.append("%d older still" % (len(older) - 12))
+    send("\n".join(lines).rstrip(), chat=chat, buttons=buttons or None)
 
 
 def short_title(session_row) -> str:
-    """The title recorded when this card was sent. Read from the card's own event, not
+    """The title recorded when this card was sent, else the run's own. Read rather than
     re-derived, so what the desk calls an article never drifts from what it showed."""
     for e in reversed(STORE.session_events(session_row["session_id"])):
         if e["event_type"] == "CARD_SENT" and (e.get("metadata") or {}).get("title"):
             return e["metadata"]["title"]
     text, _ = open_article(session_row)
-    return title_of(run_dir_of(session_row), text or "")
+    return DESK.title_of(run_dir_of(session_row), text or "") or session_row["run_id"]
 
 
 def cmd_read(chat, session_row):

@@ -176,6 +176,29 @@ def artifact(run_dir, name: str) -> dict:
     return _load(pathlib.Path(run_dir), name)
 
 
+def title_of(run_dir, text: str = "") -> str:
+    """The article's headline, from the most authoritative place that has one.
+
+    The package first, because that is the stage whose whole job is the reader who has
+    never heard of this subject; then the article's own opening heading. Callers that
+    have a recorded card title should prefer it -- it is what the owner was actually
+    shown -- and fall back here. Before this existed the fallback was the run id, so
+    the five cards delivered before card titles were recorded showed up in the inbox
+    as `production-20260923T070239Z-1b5de95d`.
+    """
+    pkg = artifact(run_dir, "EDITORIAL_PACKAGE.json")
+    t = str(pkg.get("title") or "").strip()
+    if t:
+        return t
+    if not text:
+        text, _ = article_text(pathlib.Path(run_dir))
+    for line in (text or "").splitlines():
+        line = line.strip().lstrip("#").strip()
+        if line:
+            return line[:90]
+    return ""
+
+
 def article_text(run_dir: pathlib.Path) -> tuple:
     """(text, filename) for the finished article, or ("", "") if none was produced."""
     for name in ARTICLE_FILES:
