@@ -156,9 +156,12 @@ def test_read_sends_one_block_with_buttons():
         check("the first block is not the whole article",
               len(body) <= DESK.BLOCK_MAX_CHARS + 40, len(body))
         buttons = json.dumps(h.last_markup())
-        for label in ("Continue", "Too fast", "Why now?", "Strong", "I'm lost",
-                      "Want more"):
+        for label in ("< Back", "Next >"):
+            check("block offers navigation %r" % label, label in buttons)
+        for label in ("Strong", "Too dense", "Sounds like a report", "I am lost",
+                      "Why now?", "Want more"):
             check("block offers %r" % label, label in buttons)
+        check("'Too fast' is no longer offered", "Too fast" not in buttons)
         blocks = STORE.session_blocks(s["session_id"], s["origin_version_sha256"])
         check("the block was recorded with its message id",
               len(blocks) == 1 and blocks[0]["telegram_message_id"] == h.next_id[0],
@@ -168,17 +171,122 @@ def test_read_sends_one_block_with_buttons():
                    if e["event_type"] == "READ_STARTED"]) == 1)
 
 
-def test_continue_advances_and_records():
+def test_next_advances_and_is_navigation_only():
+    with Harness() as h:
+        s = _open_and_read(h)
+        sid = s["session_id"]
+        BOT.handle_callback(cb("NEXT:%s" % sid))
+        check("Next sends the following block", h.texts()[-1].startswith("2/"),
+              h.texts()[-1][:20])
+        ev = [e for e in STORE.events() if e["event_type"] == "NEXT"]
+        check("navigation is recorded", len(ev) == 1)
+        check("navigation carries no editorial signal", ev[0]["derived_signals"] == [],
+              ev[0]["derived_signals"])
+        check("navigation records where it moved the reader",
+              ev[0]["metadata"]["from_index"] == 1
+              and ev[0]["metadata"]["to_index"] == 2, ev[0]["metadata"])
+
+
+def test_back_returns_without_advancing():
+    with Harness() as h:
+        s = _open_and_read(h)
+        sid = s["session_id"]
+        BOT.handle_callback(cb("NEXT:%s" % sid, cid="n1"))
+        BOT.handle_callback(cb("NEXT:%s" % sid, cid="n2"))
+        check("reader is at block 3", h.texts()[-1].startswith("3/"), h.texts()[-1][:12])
+        BOT.handle_callback(cb("BACK:%s" % sid, cid="b1"))
+        check("Back re-sends block 2", h.texts()[-1].startswith("2/"),
+              h.texts()[-1][:12])
+        BOT.handle_callback(cb("NEXT:%s" % sid, cid="n3"))
+        check("Next after Back continues from there, not from the far edge",
+              h.texts()[-1].startswith("3/"), h.texts()[-1][:12])
+
+
+def test_back_at_the_start_says_so():
+    with Harness() as h:
+        s = _open_and_read(h)
+        BOT.handle_callback(cb("BACK:%s" % s["session_id"], cid="b0"))
+        check("Back at block 1 does not wrap or crash",
+              "beginning" in h.texts()[-1], h.texts()[-1][:60])
+
+
+def test_a_reaction_does_not_move_the_reader():
     with Harness() as h:
         s = _open_and_read(h)
         sid = s["session_id"]
         blk = STORE.session_blocks(sid, s["origin_version_sha256"])[0]
-        BOT.handle_callback(cb("CONTINUE:%s:%s" % (sid, blk["block_id"])))
-        check("a second block was sent", h.texts()[-1].startswith("2/"), h.texts()[-1])
-        ev = [e for e in STORE.events() if e["event_type"] == "CONTINUE"]
-        check("the press was recorded once", len(ev) == 1)
-        check("it is bound to the block it was made on",
-              ev[0]["block_id"] == blk["block_id"])
+        before = BOT.cursor(sid, s["origin_version_sha256"])
+        BOT.handle_callback(cb("STRONG:%s:%s" % (sid, blk["block_id"]), cid="s1"))
+        check("the reaction was recorded",
+              [e for e in STORE.events() if e["event_type"] == "STRONG"])
+        check("and the reader did not move",
+              BOT.cursor(sid, s["origin_version_sha256"]) == before)
+
+
+def test_too_dense_offers_a_detail_and_records_the_press_first():
+    with Harness() as h:
+        s = _open_and_read(h)
+        sid = s["session_id"]
+        sha = s["origin_version_sha256"]
+        blk = STORE.session_blocks(sid, sha)[0]
+        BOT.handle_callback(cb("TOO_DENSE:%s:%s" % (sid, blk["block_id"]), cid="d1"))
+        primary = [e for e in STORE.events() if e["event_type"] == "TOO_DENSE"]
+        check("the primary press is stored immediately", len(primary) == 1)
+        check("it carries its own derived signal",
+              primary[0]["derived_signals"] == ["INFORMATION_DENSITY_TOO_HIGH"],
+              primary[0]["derived_signals"])
+        buttons = json.dumps(h.last_markup())
+        for label in ("Too many names", "Too many numbers", "Too much at once",
+                      "Too much jargon"):
+            check("detail offers %r" % label, label in buttons)
+
+        BOT.handle_callback(cb("d:%s:%s:D:TOO_MANY_NAMES" % (sid, blk["block_id"]),
+                               cid="d2"))
+        det = [e for e in STORE.events() if e["event_type"] == "FEEDBACK_DETAIL"]
+        check("the detail is a row of its own", len(det) == 1)
+        check("raw_action is preserved as the detail's parent",
+              det[0]["metadata"]["of_action"] == "TOO_DENSE")
+        check("detail is a first-class column",
+              det[0]["detail"] == "TOO_MANY_NAMES", det[0].get("detail"))
+        check("the detail derives its own signal",
+              det[0]["derived_signals"] == ["INSTITUTIONAL_LOAD_TOO_HIGH"],
+              det[0]["derived_signals"])
+        check("the detail is bound to the same block",
+              det[0]["block_id"] == blk["block_id"])
+        check("skipping the detail would still have left the press",
+              len(primary) == 1)
+
+
+def test_report_register_detail():
+    with Harness() as h:
+        s = _open_and_read(h)
+        sid = s["session_id"]
+        blk = STORE.session_blocks(sid, s["origin_version_sha256"])[0]
+        BOT.handle_callback(cb("SOUNDS_LIKE_REPORT:%s:%s" % (sid, blk["block_id"]),
+                               cid="r1"))
+        buttons = json.dumps(h.last_markup())
+        for label in ("Source summary", "Institutional language", "List of facts",
+                      "No story"):
+            check("report detail offers %r" % label, label in buttons)
+        BOT.handle_callback(cb("d:%s:%s:R:LIST_OF_FACTS" % (sid, blk["block_id"]),
+                               cid="r2"))
+        det = [e for e in STORE.events() if e["event_type"] == "FEEDBACK_DETAIL"][0]
+        check("report detail stored", det["detail"] == "LIST_OF_FACTS")
+        check("report detail derives its signal",
+              det["derived_signals"] == ["CATALOGUE_NOT_NARRATIVE"])
+
+
+def test_retired_buttons_on_old_cards_still_work():
+    """Cards already in the chat carry CONTINUE and TOO_FAST. They must not break."""
+    with Harness() as h:
+        s = _open_and_read(h)
+        sid = s["session_id"]
+        blk = STORE.session_blocks(sid, s["origin_version_sha256"])[0]
+        for old in ("CONTINUE", "TOO_FAST"):
+            BOT.handle_callback(cb("%s:%s:%s" % (old, sid, blk["block_id"]),
+                                   cid="old-%s" % old))
+            check("a retired %s button still records" % old,
+                  [e for e in STORE.events() if e["event_type"] == old])
 
 
 def test_duplicate_callback_is_idempotent():
@@ -186,11 +294,11 @@ def test_duplicate_callback_is_idempotent():
         s = _open_and_read(h)
         sid = s["session_id"]
         blk = STORE.session_blocks(sid, s["origin_version_sha256"])[0]
-        c = cb("TOO_FAST:%s:%s" % (sid, blk["block_id"]), cid="same-id")
+        c = cb("TOO_DENSE:%s:%s" % (sid, blk["block_id"]), cid="same-id")
         BOT.handle_callback(c)
         BOT.handle_callback(c)
         check("a redelivered press is recorded once",
-              len([e for e in STORE.events() if e["event_type"] == "TOO_FAST"]) == 1)
+              len([e for e in STORE.events() if e["event_type"] == "TOO_DENSE"]) == 1)
 
 
 def test_reader_lost_stops_instead_of_advancing():
@@ -201,7 +309,8 @@ def test_reader_lost_stops_instead_of_advancing():
         before = len(STORE.session_blocks(sid, s["origin_version_sha256"]))
         BOT.handle_callback(cb("READER_LOST:%s:%s" % (sid, blk["block_id"])))
         after = len(STORE.session_blocks(sid, s["origin_version_sha256"]))
-        check("'I'm lost' does not send the next block", after == before, (before, after))
+        check("'I am lost' does not send the next block", after == before,
+              (before, after))
         check("it asks what lost them", "What lost you" in h.texts()[-1], h.texts()[-1])
 
 
@@ -234,7 +343,7 @@ def test_reading_position_survives_a_restart():
         s = _open_and_read(h)
         sid = s["session_id"]
         blk = STORE.session_blocks(sid, s["origin_version_sha256"])[0]
-        BOT.handle_callback(cb("CONTINUE:%s:%s" % (sid, blk["block_id"])))
+        BOT.handle_callback(cb("NEXT:%s" % sid))
         # Nothing in the bot process carries the cursor -- it is re-derived from the
         # blocks already sent, so simply calling /read again is the restart case.
         BOT.cmd_read(CHAT, BOT.reading_session())
@@ -248,12 +357,8 @@ def test_finishing_offers_the_end_actions():
         sid = s["session_id"]
         sha = s["origin_version_sha256"]
         total = len(DESK.split_blocks(STORE.read_version_bytes(sha)))
-        for _ in range(total + 1):
-            blocks = STORE.session_blocks(sid, sha)
-            if not blocks:
-                break
-            BOT.handle_callback(cb("CONTINUE:%s:%s" % (sid, blocks[-1]["block_id"]),
-                                   cid="c%d" % len(blocks)))
+        for i in range(total + 1):
+            BOT.handle_callback(cb("NEXT:%s" % sid, cid="c%d" % i))
         check("the desk says the article is read",
               any("read it all" in t for t in h.texts()), h.texts()[-1][:120])
         check("ARTICLE_FINISHED was recorded",
@@ -489,6 +594,12 @@ def test_callback_payloads_fit_telegram():
         _five_cards(h)
         s = STORE.sessions()[0]
         BOT.handle_callback(cb("read:%s" % s["session_id"], cid="len"))
+        # Detail keyboards only appear after a density/register press, and they carry
+        # the longest payloads on the surface -- so drive one before measuring.
+        blk = STORE.session_blocks(s["session_id"], s["origin_version_sha256"])[0]
+        for act in ("TOO_DENSE", "SOUNDS_LIKE_REPORT"):
+            BOT.handle_callback(cb("%s:%s:%s" % (act, s["session_id"], blk["block_id"]),
+                                   cid="len-%s" % act))
         payloads = []
         for m in h.messages():
             for row in (m.get("reply_markup") or {}).get("inline_keyboard", []):
@@ -501,6 +612,11 @@ def test_callback_payloads_fit_telegram():
         check("every payload names a session id",
               all(len(p.split(":")) >= 2 and len(p.split(":")[1]) == 16
                   for p in payloads), payloads[:3])
+        details = [p for p in payloads if p.startswith("d:")]
+        check("detail payloads were produced", len(details) >= 8, len(details))
+        check("the longest detail payload is well inside the limit",
+              max(len(p.encode("utf-8")) for p in details) <= 56,
+              max(details, key=len))
 
 
 def test_the_incident_conditions_are_reproduced():

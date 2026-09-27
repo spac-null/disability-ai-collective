@@ -78,17 +78,20 @@ BOT_TOKEN = ""
 CHAT_ID = ""
 running = True
 
-# Reader buttons, in the order they appear under a block. The labels are the owner's
-# vocabulary, not the pipeline's: nothing here mentions a stage, a gate or a finding.
-BLOCK_BUTTONS = [
-    [("Continue", "CONTINUE"), ("Too fast", "TOO_FAST")],
-    [("Why now?", "WHY_NOW"), ("Strong", "STRONG")],
-    [("I'm lost", "READER_LOST"), ("Want more", "WANT_MORE")],
-]
+# NAVIGATION AND FEEDBACK ARE DIFFERENT ACTS, and until 2026-09-27 this keyboard
+# conflated them: every reaction also advanced the reader, so "Continue" meant both
+# "no objection" and "next page", and a reaction could not be given without moving.
+# Now the top row carries the reader and nothing else; the rows below carry judgement
+# and leave the reader where they are.
+NAV_BUTTONS = [("< Back", "BACK"), ("Next >", "NEXT")]
 
-# Reactions that carry on reading. "I'm lost" deliberately does not: the honest response
-# to someone saying they have left is to stop and ask, not to send the next block.
-ADVANCING = {"CONTINUE", "TOO_FAST", "WHY_NOW", "STRONG", "WANT_MORE"}
+# The labels are the owner's vocabulary, not the pipeline's: nothing here mentions a
+# stage, a gate or a finding. "Too fast" is deliberately absent -- see BUTTON_SIGNALS.
+BLOCK_BUTTONS = [
+    [("Strong", "STRONG"), ("Too dense", "TOO_DENSE")],
+    [("Sounds like a report", "SOUNDS_LIKE_REPORT")],
+    [("I am lost", "READER_LOST"), ("Why now?", "WHY_NOW"), ("Want more", "WANT_MORE")],
+]
 
 HELP = (
     "You read. I do the rest.\n\n"
@@ -101,8 +104,12 @@ HELP = (
     "/backlog   articles from earlier days\n"
     "/status    where you are\n"
     "/debug     the engineering view\n\n"
-    "Under each block: Continue, Too fast, Why now?, Strong, I'm lost, Want more.\n"
-    "Or just type what you think — reply to a block and it lands on that exact "
+    "Under each block, top row moves you: < Back and Next >.\n"
+    "The rows under it are what you think, and they do not move you:\n"
+    "  Strong · Too dense · Sounds like a report · I am lost · Why now? · Want more\n"
+    "Too dense and Sounds like a report will ask which kind. Skipping that is fine — "
+    "the press is already saved.\n\n"
+    "Or just type what you think. Reply to a block and it lands on that exact "
     "passage. You never have to say how to fix it.")
 
 
@@ -168,6 +175,23 @@ def tg(method: str, payload: dict | None = None, timeout=None):
         # Never echo the URL: it carries the token.
         log("TG %s failed: %s" % (method, type(e).__name__))
     return None
+
+
+def block_keyboard(sid, block_id) -> list:
+    """Navigation on top, judgement underneath. A reaction never moves the reader."""
+    rows = [[(t, "%s:%s" % (code, sid)) for t, code in NAV_BUTTONS]]
+    rows += [[(t, "%s:%s:%s" % (code, sid, block_id)) for t, code in row]
+             for row in BLOCK_BUTTONS]
+    return rows
+
+
+def detail_keyboard(action, sid, block_id) -> list:
+    """The optional second press. `d` keeps the payload well inside Telegram's 64-byte
+    callback limit; `D`/`R` name which action is being refined."""
+    tag = {"TOO_DENSE": "D", "SOUNDS_LIKE_REPORT": "R"}[action]
+    opts = DESK.DETAIL_OPTIONS[action]
+    return [[(label, "d:%s:%s:%s:%s" % (sid, block_id, tag, code))]
+            for label, code in opts]
 
 
 def keyboard(rows) -> dict:
@@ -245,6 +269,19 @@ def open_article(session_row) -> tuple:
 def sent_blocks(session_id, version_sha):
     return sorted(STORE.session_blocks(session_id, version_sha),
                   key=lambda b: b.get("index", 0))
+
+
+def cursor(session_id, version_sha) -> int:
+    """Where the reader is: the index of the block most recently SENT.
+
+    Derived from the block rows in the order they were sent, not from how many exist,
+    because Back re-sends a block the reader has already seen. Counting rows would
+    make Back move the reader forward, which is the opposite of the button.
+    """
+    rows = STORE.session_blocks(session_id, version_sha)
+    if not rows:
+        return 0
+    return sorted(rows, key=lambda b: b.get("sent_at", ""))[-1].get("index", 0)
 
 
 def run_dir_of(session_row) -> pathlib.Path:
@@ -334,9 +371,8 @@ def send_block(session_row, version_sha, index, chat=None):
         return finish(session_row, sha, chat=chat)
     b = blocks[index - 1]
     header = "%d/%d" % (b["index"], b["of"])
-    mid = send("%s\n\n%s" % (header, b["text"]), chat=chat, buttons=[
-        [(t, "%s:%s:%s" % (code, session_row["session_id"], b["block_id"]))
-         for t, code in row] for row in BLOCK_BUTTONS])
+    mid = send("%s\n\n%s" % (header, b["text"]), chat=chat,
+               buttons=block_keyboard(session_row["session_id"], b["block_id"]))
     if mid:
         ACT.record_block_sent(session_id=session_row["session_id"],
                               run_id=session_row["run_id"], version_sha=sha,
@@ -431,8 +467,8 @@ def cmd_read(chat, session_row):
     if text is None:
         send("I can't open that article safely: %s. Nothing sent." % sha, chat=chat)
         return
-    done = sent_blocks(session_row["session_id"], sha)
-    if not done:
+    at = cursor(session_row["session_id"], sha)
+    if not at:
         STORE.record_event(session=session_row["session_id"],
                            run_id=session_row["run_id"], event_type="READ_STARTED",
                            actor="owner", version_sha=sha, chat_id=chat,
@@ -441,7 +477,7 @@ def cmd_read(chat, session_row):
         # the card pressed and the article delivered is what the 2026-09-26 incident
         # was, and a reader should be able to see it without reading the log.
         send("Reading: %s" % short_title(session_row), chat=chat)
-    send_block(session_row, sha, len(done) + 1, chat=chat)
+    send_block(session_row, sha, at + 1, chat=chat)
 
 
 def cmd_brief(chat, session_row):
@@ -460,11 +496,11 @@ def cmd_status(chat, session_row):
     if text is None:
         send("That article cannot be opened: %s" % sha, chat=chat)
         return
-    done = sent_blocks(session_row["session_id"], sha)
+    at = cursor(session_row["session_id"], sha)
     total = len(DESK.split_blocks(text))
     run = DESK.read_run(run_dir_of(session_row))
     send("Open: %s\nYou're at block %d of %d.\n%s"
-         % (short_title(session_row), len(done), total, DESK.status_line(run)),
+         % (short_title(session_row), at, total, DESK.status_line(run)),
          chat=chat)
 
 
@@ -608,6 +644,41 @@ def handle_callback(cb):
                            dedupe_key="verdict:%s:%s" % (sid, kind))
         send("Noted. /rewrite to act on your reading, or /hold.", chat=chat)
         return
+    # ── navigation: carries the reader, records no judgement ────────────────────
+    if kind in DESK.NAVIGATION:
+        at = cursor(sid, sha)
+        target = at + 1 if kind == "NEXT" else max(1, at - 1)
+        if kind == "BACK" and at <= 1:
+            send("You are at the beginning.", chat=chat)
+            return
+        STORE.record_event(session=sid, run_id=s["run_id"], event_type=kind,
+                           actor=ACT.actor_of(user_id), version_sha=sha, chat_id=chat,
+                           dedupe_key="nav:%s" % cb["id"],
+                           metadata={"from_index": at, "to_index": target})
+        send_block(s, sha, target, chat=chat)
+        return
+
+    # ── the optional second press: which KIND ───────────────────────────────────
+    if kind == "d":
+        # d:<sid>:<block>:<D|R>:<DETAIL>
+        if len(parts) < 5:
+            return
+        block_id, tag, detail = parts[2], parts[3], parts[4]
+        action = {"D": "TOO_DENSE", "R": "SOUNDS_LIKE_REPORT"}.get(tag, "")
+        if action not in DESK.DETAIL_OPTIONS or detail not in DESK.DETAIL_SIGNALS:
+            return
+        blk = next((b for b in sent_blocks(sid, sha) if b["block_id"] == block_id), None)
+        if blk is None:
+            answer_callback(cb["id"], "I can't place that passage")
+            return
+        ACT.react(session_id=sid, run_id=s["run_id"], version_sha=sha,
+                  event_type="FEEDBACK_DETAIL", user_id=user_id, chat_id=chat,
+                  block=blk, detail=detail, dedupe_key="cb:%s" % cb["id"],
+                  metadata={"of_action": action})
+        send("Noted: %s." % detail.replace("_", " ").lower(), chat=chat)
+        return
+
+    # ── a reaction: recorded, and the reader stays where they are ───────────────
     if kind in DESK.BUTTON_SIGNALS:
         block_id = parts[2] if len(parts) > 2 else ""
         blk = next((b for b in sent_blocks(sid, sha) if b["block_id"] == block_id), None)
@@ -620,17 +691,18 @@ def handle_callback(cb):
                              event_type=kind, user_id=user_id, chat_id=chat,
                              block=blk, dedupe_key="cb:%s" % cb["id"])
         if recorded is None:
-            # A REDELIVERED PRESS IS THE SAME PRESS. The reaction was already deduped,
-            # but the advance below was not, so a Telegram retry silently moved the
-            # reader a block forward -- a paragraph they never asked to skip, and one
-            # that then carries no reaction of its own. Found by the route audit,
-            # 2026-09-26.
+            # A REDELIVERED PRESS IS THE SAME PRESS. Found by the route audit 2026-09-26.
             return
-        if kind in ADVANCING:
-            send_block(s, sha, len(sent_blocks(sid, sha)) + 1, chat=chat)
-        else:
+        if kind in DESK.DETAIL_OPTIONS:
+            # The press is already stored. This only asks which kind, and saying
+            # nothing is a complete answer.
+            send("Which part of it?  (or just carry on)", chat=chat,
+                 buttons=detail_keyboard(kind, sid, blk["block_id"]))
+        elif kind == "READER_LOST":
             send("Stopped here. What lost you?  (just type it)\n"
-                 "Or: /read to carry on, /hold to stop.", chat=chat)
+                 "Or Next to carry on, /hold to stop.", chat=chat)
+        else:
+            send("Noted.", chat=chat)
 
 
 def handle_message(msg):

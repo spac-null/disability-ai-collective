@@ -58,6 +58,17 @@ EVENT_TYPES = (
     # opened but not which card had been pressed, because no card was addressable.
     "CARD_SENT",
     "READ_STARTED",
+    # navigation: carrying the reader, not judging the prose
+    "NEXT",
+    "BACK",
+    # editorial reactions
+    "TOO_DENSE",
+    "SOUNDS_LIKE_REPORT",
+    # an optional second press saying which KIND of density or register. Recorded as its
+    # own row refining the primary one, never replacing it -- the primary is stored the
+    # moment it happens, so skipping the detail loses nothing.
+    "FEEDBACK_DETAIL",
+    # retired as buttons 2026-09-27, retained so historical events stay readable
     "CONTINUE",
     "TOO_FAST",
     "WHY_NOW",
@@ -81,8 +92,9 @@ EVENT_TYPES = (
 # Reader reactions that arrive as a button press. Kept apart from the lifecycle events
 # above because these -- and the free text -- are the editorial evidence; the rest is
 # bookkeeping about delivery.
-REACTION_EVENTS = ("CONTINUE", "TOO_FAST", "WHY_NOW", "STRONG",
-                   "READER_LOST", "WANT_MORE")
+REACTION_EVENTS = ("TOO_DENSE", "SOUNDS_LIKE_REPORT", "WHY_NOW", "STRONG",
+                   "READER_LOST", "WANT_MORE", "FEEDBACK_DETAIL",
+                   "CONTINUE", "TOO_FAST")
 
 REASON_RETAINED_RUN = "RETAINED_RUN"
 REASON_EDITORIAL_REWRITE = "EDITORIAL_REWRITE"
@@ -308,7 +320,7 @@ def record_event(*, session: str, run_id: str, event_type: str, actor: str,
                  paragraph_end: int | None = None,
                  chat_id=None, message_id=None, reply_to_message_id=None,
                  raw_feedback: str | None = None,
-                 derived_signals: list | None = None,
+                 derived_signals: list | None = None, detail: str = "",
                  dedupe_key: str = "", metadata: dict | None = None,
                  root=None) -> dict | None:
     """One explicit owner action, or one delivery fact. Returns None if `dedupe_key`
@@ -336,6 +348,10 @@ def record_event(*, session: str, run_id: str, event_type: str, actor: str,
         "telegram_message_id": message_id,
         "reply_to_message_id": reply_to_message_id,
         "event_type": event_type,
+        # WHICH KIND, when the owner said so. A first-class column rather than something
+        # buried in metadata, because this is the owner's own second press and the whole
+        # point of the taxonomy: raw_action TOO_DENSE, detail TOO_MANY_NAMES.
+        "detail": detail,
         "raw_feedback": raw_feedback,
         "derived_signals": derived_signals or [],
         "actor": actor,

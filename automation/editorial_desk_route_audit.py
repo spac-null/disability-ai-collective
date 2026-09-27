@@ -67,8 +67,8 @@ def declared_callbacks() -> set:
              for line in body.splitlines() if 'kind == "' in line}
     kinds |= {line.split('kind in ("')[1].split('"')[0]
               for line in body.splitlines() if 'kind in ("' in line}
-    kinds |= {"notgood"}
-    return kinds | set(DESK.BUTTON_SIGNALS)
+    kinds |= {"notgood", "d"}
+    return kinds | set(DESK.BUTTON_SIGNALS) | set(DESK.NAVIGATION)
 
 
 def test_00_surface_is_fully_enumerated():
@@ -78,8 +78,8 @@ def test_00_surface_is_fully_enumerated():
     check("SURFACE", "every dispatched command is known to this audit",
           cmds == expected, sorted(cmds ^ expected))
     cbs = declared_callbacks()
-    expected_cb = {"read", "hold", "rewrite", "publish", "almost", "notgood"} | set(
-        DESK.BUTTON_SIGNALS)
+    expected_cb = ({"read", "hold", "rewrite", "publish", "almost", "notgood", "d"}
+                   | set(DESK.BUTTON_SIGNALS) | set(DESK.NAVIGATION))
     check("SURFACE", "every callback kind is known to this audit",
           cbs == expected_cb, sorted(cbs ^ expected_cb))
 
@@ -226,6 +226,7 @@ def test_09_identity_on_every_article_route():
         for kind in sorted(DESK.BUTTON_SIGNALS):
             BOT.handle_callback(cb("%s:%s:%s" % (kind, a["session_id"], blk["block_id"]),
                                    cid="id-%s" % kind))
+            _ = kind
             ev = [e for e in STORE.events() if e["event_type"] == kind]
             check("cb %s" % kind, "files against the named article",
                   ev and ev[-1]["session_id"] == a["session_id"], ev[-1:] )
@@ -364,7 +365,9 @@ def test_15_help_and_backlog_are_read_only():
         BOT.handle_message(msg("/help", mid=910))
         BOT.handle_message(msg("/backlog", mid=911))
         check("msg /help", "writes nothing", counts() == before)
-        check("msg /help", "explains the buttons", "Too fast" in "\n".join(h.texts()))
+        check("msg /help", "explains the buttons",
+              "Too dense" in "\n".join(h.texts())
+              and "Next >" in "\n".join(h.texts()))
         check("msg /backlog", "lists without delivering",
               len(STORE.sessions()) == 2, len(STORE.sessions()))
 

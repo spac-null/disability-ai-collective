@@ -101,7 +101,7 @@ def record_block_sent(*, session_id: str, run_id: str, version_sha: str, block: 
 def react(*, session_id: str, run_id: str, version_sha: str, event_type: str,
           user_id, chat_id, message_id=None, block: dict | None = None,
           raw_feedback: str | None = None, dedupe_key: str = "",
-          reply_to_message_id=None,
+          reply_to_message_id=None, detail: str = "",
           metadata: dict | None = None, root=None) -> dict | None:
     """One explicit reaction, bound to the exact block it was made against.
 
@@ -126,8 +126,8 @@ def react(*, session_id: str, run_id: str, version_sha: str, event_type: str,
         # evidence anything. `metadata.binding` says how the block was arrived at;
         # this says what Telegram was told.
         reply_to_message_id=reply_to_message_id,
-        raw_feedback=raw_feedback,
-        derived_signals=DESK.derived_signals(event_type),
+        raw_feedback=raw_feedback, detail=detail,
+        derived_signals=DESK.derived_signals(event_type, detail),
         dedupe_key=dedupe_key, metadata=metadata, root=root)
 
 

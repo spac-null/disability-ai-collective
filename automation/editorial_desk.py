@@ -58,30 +58,92 @@ MIN_ARTICLE_WORDS = 120
 # older ones.
 ARTICLE_FILES = ("ARTICLE_FINAL.md", "article.md")
 
+# ── the reader's vocabulary ─────────────────────────────────────────────────────────
+#
+# NAVIGATION IS NOT FEEDBACK. Moving through an article and reacting to it are different
+# acts, and a button that does both records neither cleanly. BACK and NEXT carry the
+# reader; everything below carries a judgement.
+NAVIGATION = ("BACK", "NEXT")
+
 # Reader reactions, and the machine's reading of each. LEVEL 2 -- an interpretation of an
 # unambiguous button the owner chose on purpose, recomputable later, and carrying no
 # authority over anything. The owner's own words are never passed through this.
+#
+# TOO_FAST WAS RETIRED AS A BUTTON on 2026-09-27, kept here only so historical events
+# stay readable. It was the nearest thing the desk offered to "too dense", and it was
+# the wrong instrument: it records tempo, and the owner was reporting information
+# density and report register. Three real readings were filed under it that meant
+# something else. Tempo now lives where it belongs, as TOO_MUCH_AT_ONCE under density.
 BUTTON_SIGNALS = {
-    "CONTINUE": "READ_THROUGH_NO_OBJECTION",
-    "TOO_FAST": "IDEA_VELOCITY_TOO_HIGH",
+    "TOO_DENSE": "INFORMATION_DENSITY_TOO_HIGH",
+    "SOUNDS_LIKE_REPORT": "REPORT_REGISTER",
     "WHY_NOW": "READER_PURPOSE_LOST",
     "STRONG": "STRONG_PASSAGE",
     "READER_LOST": "READER_DISENGAGED",
     "WANT_MORE": "WANTS_MORE_ON_CONSEQUENCE",
+    # historical, no longer offered
+    "CONTINUE": "READ_THROUGH_NO_OBJECTION",
+    "TOO_FAST": "IDEA_VELOCITY_TOO_HIGH",
+}
+
+# A second, OPTIONAL press that says which kind. The primary press is recorded the
+# moment it happens, so skipping the detail loses nothing -- the detail refines a
+# reaction that already exists, and never replaces it.
+DETAIL_OPTIONS = {
+    "TOO_DENSE": [("Too many names", "TOO_MANY_NAMES"),
+                  ("Too many numbers", "TOO_MANY_NUMBERS"),
+                  ("Too much at once", "TOO_MUCH_AT_ONCE"),
+                  ("Too much jargon", "TOO_MUCH_JARGON")],
+    "SOUNDS_LIKE_REPORT": [("Source summary", "SOURCE_SUMMARY"),
+                           ("Institutional language", "INSTITUTIONAL_LANGUAGE"),
+                           ("List of facts", "LIST_OF_FACTS"),
+                           ("No story", "NO_STORY")],
+}
+
+DETAIL_SIGNALS = {
+    "TOO_MANY_NAMES": "INSTITUTIONAL_LOAD_TOO_HIGH",
+    "TOO_MANY_NUMBERS": "NUMERIC_LOAD_TOO_HIGH",
+    "TOO_MUCH_AT_ONCE": "IDEA_VELOCITY_TOO_HIGH",
+    "TOO_MUCH_JARGON": "UNGLOSSED_TERMINOLOGY",
+    "SOURCE_SUMMARY": "SOURCE_SUMMARY_REGISTER",
+    "INSTITUTIONAL_LANGUAGE": "INSTITUTIONAL_REGISTER",
+    "LIST_OF_FACTS": "CATALOGUE_NOT_NARRATIVE",
+    "NO_STORY": "NO_CARRYING_STORY",
 }
 
 # What each button asks the rewriter to do. Bounded, and every line is a constraint on
 # arrangement rather than on content -- see the prohibition at the end of edit_brief().
 BUTTON_INSTRUCTIONS = {
-    "TOO_FAST": "slow the idea velocity here: fewer new named entities per paragraph, "
-                "and let one idea land before the next arrives",
+    "TOO_DENSE": "thin this out: fewer things per sentence and per paragraph, and room "
+                 "around whatever survives",
+    "SOUNDS_LIKE_REPORT": "stop summarising the evidence here and tell it: a person or "
+                          "a concrete thing carries the paragraph, not a list of what "
+                          "was found",
     "WHY_NOW": "make clear why the reader is being told this, here, before telling it",
     "READER_LOST": "this is where the reader left. Rebuild the thread into this passage "
                    "or cut what broke it",
     "WANT_MORE": "give this more room -- the reader wanted to stay here",
     "STRONG": "preserve this passage. Do not rewrite it, do not compress it, do not "
               "move it later",
+    "TOO_FAST": "slow the idea velocity here: let one idea land before the next arrives",
     "CONTINUE": "",
+}
+
+DETAIL_INSTRUCTIONS = {
+    "TOO_MANY_NAMES": "cut or shorten the named organisations here; name one only where "
+                      "the reader cannot follow the story without it",
+    "TOO_MANY_NUMBERS": "keep the one figure that changes the reader's understanding and "
+                        "cut the rest",
+    "TOO_MUCH_AT_ONCE": "one idea at a time; let each land before the next arrives",
+    "TOO_MUCH_JARGON": "say it in ordinary words, or gloss the term in the sentence that "
+                       "first uses it",
+    "SOURCE_SUMMARY": "this reads as a summary of what the sources said; write what "
+                      "happened instead",
+    "INSTITUTIONAL_LANGUAGE": "the institution is the grammatical subject here; put the "
+                              "person or the thing back in that position",
+    "LIST_OF_FACTS": "this is a catalogue; select, and let the unselected material go",
+    "NO_STORY": "nothing is carrying the reader through this passage; find the concrete "
+                "thing that does, or cut it",
 }
 
 
@@ -275,7 +337,7 @@ def split_blocks(text: str) -> list:
 
 # ── turning a reading into an edit brief ────────────────────────────────────────────
 
-def derived_signals(event_type: str) -> list:
+def derived_signals(event_type: str, detail: str = "") -> list:
     """LEVEL 2 interpretation of a BUTTON. Never applied to the owner's own words.
 
     Free text is deliberately not classified here. A keyword rule over editorial prose
@@ -283,7 +345,15 @@ def derived_signals(event_type: str) -> list:
     project has already had one of those falsified. The raw sentence is evidence; a
     guess about which taxonomy bucket it belongs in is not, and the rewriter reads the
     sentence anyway.
+
+    THE CLICK IS THE PRIMARY TRUTH AND THE SIGNAL IS DERIVED FROM IT, NEVER THE REVERSE.
+    `TOO_DENSE` + `TOO_MANY_NAMES` is what the owner said; `INSTITUTIONAL_LOAD_TOO_HIGH`
+    is this function's reading of it, and re-reading it differently later must not touch
+    the stored press.
     """
+    if detail:
+        sig = DETAIL_SIGNALS.get(detail)
+        return [sig] if sig else []
     sig = BUTTON_SIGNALS.get(event_type)
     return [sig] if sig else []
 
@@ -310,7 +380,7 @@ def edit_brief(events: list, *, words: int = 0) -> str:
     """
     reading = [e for e in events
                if e.get("event_type") in BUTTON_SIGNALS
-               or e.get("event_type") == "FREE_TEXT_FEEDBACK"]
+               or e.get("event_type") in ("FREE_TEXT_FEEDBACK", "FEEDBACK_DETAIL")]
     L = ["EDITORIAL OBSERVATION",
          "A reader read this article%s and reacted. What follows is what they said and "
          "where they said it." % (" (%d words)" % words if words else "")]
@@ -325,6 +395,10 @@ def edit_brief(events: list, *, words: int = 0) -> str:
         if e.get("event_type") == "FREE_TEXT_FEEDBACK":
             L.append("%s -- the reader wrote:" % where)
             L.append("    %r" % (e.get("raw_feedback") or ""))
+        elif e.get("event_type") == "FEEDBACK_DETAIL":
+            L.append("%s -- %s, specifically: %s"
+                     % (where, (e.get("metadata") or {}).get("of_action", "?"),
+                        e.get("detail", "")))
         else:
             L.append("%s -- %s" % (where, e["event_type"]))
             if e.get("raw_feedback"):
@@ -332,7 +406,10 @@ def edit_brief(events: list, *, words: int = 0) -> str:
 
     instructions, seen = [], set()
     for e in reading:
-        line = BUTTON_INSTRUCTIONS.get(e.get("event_type") or "", "")
+        if e.get("event_type") == "FEEDBACK_DETAIL":
+            line = DETAIL_INSTRUCTIONS.get(e.get("detail") or "", "")
+        else:
+            line = BUTTON_INSTRUCTIONS.get(e.get("event_type") or "", "")
         if not line:
             continue
         text = "%s: %s" % (_locus(e), line)
