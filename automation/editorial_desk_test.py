@@ -514,6 +514,243 @@ def test_quarantined_feedback_never_reaches_a_rewrite():
               STORE.quarantine_rows(sroot)[0]["reason"] == "identity-contaminated")
 
 
+# ── one state per immutable version ─────────────────────────────────────────────────
+
+def test_version_states():
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+        run = DESK.read_run(make_run(tmp))
+        d = ACT.deliver(run, chat_id=7, root=sroot)
+        sid, sha = d["session_id"], d["version_sha256"]
+        st = ACT.version_state(sid, sha, sroot)
+        check("delivered but never opened is UNREAD", st["status"] == ACT.UNREAD, st)
+
+        blocks = DESK.split_blocks(run["article_text"])
+        ACT.record_block_sent(session_id=sid, run_id=run["run_id"], version_sha=sha,
+                              block=blocks[0], chat_id=7, message_id=1, root=sroot)
+        st = ACT.version_state(sid, sha, sroot)
+        check("opened is READING with progress",
+              st["status"] == ACT.READING and st["at"] == 1 and st["of"] == len(blocks),
+              st)
+        check("its label reads as progress", st["label"] == "READING 1/%d" % len(blocks),
+              st["label"])
+
+        STORE.record_event(session=sid, run_id=run["run_id"],
+                           event_type="ARTICLE_FINISHED", actor="owner",
+                           version_sha=sha, root=sroot)
+        check("finished is FINISHED",
+              ACT.version_state(sid, sha, sroot)["status"] == ACT.FINISHED)
+
+        STORE.record_event(session=sid, run_id=run["run_id"], event_type="HOLD",
+                           actor="owner", version_sha=sha, root=sroot)
+        check("held wins over finished",
+              ACT.version_state(sid, sha, sroot)["status"] == ACT.HELD)
+
+
+def test_two_versions_of_one_article_have_separate_states():
+    """v0 and v1 side by side is exactly why state belongs to a version."""
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+        run = DESK.read_run(make_run(tmp))
+        d = ACT.deliver(run, chat_id=7, root=sroot)
+        child_text = run["article_text"].replace("Paragraph 1.", "Opening.")
+        out = ACT.request_rewrite(
+            session_id=d["session_id"], run_id=run["run_id"],
+            version_sha=d["version_sha256"], user_id=4242, chat_id=7,
+            rewrite_fn=lambda t, b: child_text,
+            recheck_fn=lambda a, b: {"status": "NOT_CHECKED", "cleared": False,
+                                     "reason": "test", "delta_errors": [],
+                                     "grounding_blocking": []},
+            root=sroot)
+        child_sid = STORE.session_id(run["run_id"], out["version_sha256"])
+        check("the rewrite opened its own session",
+              STORE.session(child_sid, sroot) is not None)
+        check("parent and child are different sessions",
+              child_sid != d["session_id"])
+        STORE.record_event(session=d["session_id"], run_id=run["run_id"],
+                           event_type="ARTICLE_FINISHED", actor="owner",
+                           version_sha=d["version_sha256"], root=sroot)
+        check("the parent is FINISHED",
+              ACT.version_state(d["session_id"], d["version_sha256"],
+                                sroot)["status"] == ACT.FINISHED)
+        check("the child is independently UNREAD",
+              ACT.version_state(child_sid, out["version_sha256"],
+                                sroot)["status"] == ACT.UNREAD)
+
+
+def test_inbox_lists_and_never_chooses():
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+        for n, day in enumerate(("26", "25", "24"), start=1):
+            body = "\n\n".join("Article %s paragraph %d. %s" % (day, i, "word " * 40)
+                                for i in range(1, 10))
+            r = DESK.read_run(make_run(tmp, "production-202609%sT070000Z-aaa%d"
+                                       % (day, n), body=body))
+            ACT.deliver(r, chat_id=7, root=sroot)
+        rows = ACT.inbox(sroot)
+        check("every delivered version is listed", len(rows) == 3, len(rows))
+        check("all start UNREAD",
+              all(r["status"] == ACT.UNREAD for r in rows), [r["status"] for r in rows])
+        check("each row names its own version",
+              len({r["version_sha256"] for r in rows}) == 3)
+        check("a delivered-but-unopened article never disappears from the inbox",
+              all(r["session_id"] for r in rows))
+
+
+def test_feedback_summary_prefers_the_detail_over_its_parent():
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+        run, d, blocks = _deliver_with_blocks(tmp, sroot)
+        sid, sha = d["session_id"], d["version_sha256"]
+        blk = STORE.block_for_message(7, 1000, root=sroot)
+        ACT.react(session_id=sid, run_id=run["run_id"], version_sha=sha,
+                  event_type="SOUNDS_LIKE_REPORT", user_id=4242, chat_id=7, block=blk,
+                  dedupe_key="p1", root=sroot)
+        ACT.react(session_id=sid, run_id=run["run_id"], version_sha=sha,
+                  event_type="FEEDBACK_DETAIL", user_id=4242, chat_id=7, block=blk,
+                  detail="NO_STORY", metadata={"of_action": "SOUNDS_LIKE_REPORT"},
+                  dedupe_key="p2", root=sroot)
+        summary = dict(ACT.feedback_summary(sid, sha, sroot))
+        check("the detail is what the summary reports",
+              summary.get("No story") == 1, summary)
+        check("the refined parent is not double-counted",
+              "Sounds like report" not in summary, summary)
+
+
+# ── the rewrite may not invent ──────────────────────────────────────────────────────
+
+def test_want_more_never_says_give_this_more_room():
+    text = DESK.BUTTON_INSTRUCTIONS["WANT_MORE"]
+    check("WANT_MORE does not issue an open invitation to expand",
+          "give this more room" not in text.lower(), text)
+    for needed in ("ONLY by", "do not expand it"):
+        check("WANT_MORE names its limits (%r)" % needed, needed in text, text)
+
+
+def test_rewrite_contract_forbids_humanising_by_invention():
+    sysmsg = DESK.REWRITE_SYSTEM
+    check("the contract states HUMAN DOES NOT MEAN INVENTED",
+          "HUMAN DOES NOT MEAN INVENTED" in sysmsg)
+    for banned in ("sensory detail", "scene texture", "motives", "beliefs",
+                   "implied dialogue", "invented chronology", "causal"):
+        check("the contract forbids %s" % banned, banned in sysmsg, banned)
+    for allowed in ("selection", "pacing", "paragraphing", "reordering"):
+        check("the contract permits %s" % allowed, allowed in sysmsg, allowed)
+
+
+def test_licensed_evidence_is_supplied_to_the_rewriter():
+    with tempfile.TemporaryDirectory() as tmp:
+        d = make_run(tmp)
+        (pathlib.Path(d) / "LEDGER.json").write_text(json.dumps({
+            "F01": {"proposition": "A pregnant patient slept in an interview room."},
+            "F02": {"proposition": "42% of patients consented in the second pilot."},
+        }), encoding="utf-8")
+        ev = DESK.licensed_evidence(d)
+        check("the ledger propositions are read", len(ev) == 2, ev)
+        user = DESK.rewrite_user("THE BODY", "THE BRIEF", ev)
+        check("the rewriter is shown the licensed facts", "42% of patients" in user)
+        check("and told it may use nothing else", "nothing outside this list" in user)
+
+        empty = DESK.rewrite_user("THE BODY", "THE BRIEF", [])
+        check("with no evidence retained, expansion is forbidden outright",
+              "may not expand anything" in empty, empty[:400])
+
+
+def test_semantic_delta_coverage_is_measured_not_assumed():
+    """Gate A against the REAL inventions of 2026-09-27. It catches two of four.
+
+    This test records what the deterministic check actually does, including where it
+    is blind, because an overstated gate is worse than a modest one: it was claimed in
+    review that gate A would catch "on the same wall", and it does not. Its channels
+    are lexicons, so a plausible ordinary word invents freely. That blindness is the
+    whole argument for gate B being mandatory rather than a nicety -- do not delete
+    these negative cases to make the suite look better.
+    """
+    import editorial_desk_recheck as RC
+    parent = ("She had refused to stay in a bedroom with an Oxevision unit in it, "
+              "even with the unit switched off.")
+    caught = {
+        "night after night": "She had refused the bedroom night after night.",
+        "No door opening at two in the morning. No torch.":
+            "No door opening at two in the morning. No torch.",
+    }
+    missed = {
+        "on the same wall": "It was the same object on the same wall.",
+        "Someone flicks it": "Off is a setting. Someone flicks it.",
+    }
+    for name, invented in caught.items():
+        errs = RC.semantic_delta_errors(parent, parent + " " + invented)
+        check("gate A catches %r" % name[:30], bool(errs), errs)
+    for name, invented in missed.items():
+        errs = RC.semantic_delta_errors(parent, parent + " " + invented)
+        check("gate A is BLIND to %r -- gate B must cover it" % name[:30],
+              errs == [], errs)
+    clean = parent.replace(", even with", ". Even with")
+    check("gate A passes an edit that adds nothing",
+          RC.semantic_delta_errors(parent, clean) == [],
+          RC.semantic_delta_errors(parent, clean))
+
+
+def test_delta_clean_but_unsupported_still_blocks():
+    """Gate B exists because gate A cannot see a bad join made of old words."""
+    import editorial_desk_recheck as RC
+    with tempfile.TemporaryDirectory() as tmp:
+        d = pathlib.Path(make_run(tmp))
+        for name in RC.GROUNDING_ARTIFACTS:
+            (d / name).write_text("{}", encoding="utf-8")
+
+        class FakeProvider:
+            model = "fake"
+
+        def fake_ground(*a, **kw):
+            return {"status": "HOLD", "blocking": [
+                {"quote": "Before it was a number, it was that.",
+                 "classification": "TRUE_UNCERTAIN"}]}
+
+        from new_engine_v1 import composition as CP
+        saved = CP.ground_candidate
+        CP.ground_candidate = fake_ground
+        try:
+            v = RC.check(d, "the body", "the body, rearranged",
+                         provider=FakeProvider())
+        finally:
+            CP.ground_candidate = saved
+        check("a clean delta does not clear the rewrite on its own",
+              v["status"] == RC.BLOCKED_UNSUPPORTED, v)
+        check("and the finding is reported", v["grounding_blocking"], v)
+        check("cleared is false", v["cleared"] is False)
+
+
+def test_recheck_fails_closed_without_evidence():
+    import editorial_desk_recheck as RC
+    with tempfile.TemporaryDirectory() as tmp:
+        d = make_run(tmp)
+        v = RC.check(d, "the body", "the body, rearranged")
+        check("no retained evidence means NOT_CHECKED, never cleared",
+              v["status"] == RC.NOT_CHECKED and v["cleared"] is False, v)
+        check("and it says what is missing", "not retained" in v["reason"], v["reason"])
+
+
+def test_blocked_rewrite_is_visible_but_marked():
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+        run = DESK.read_run(make_run(tmp))
+        d = ACT.deliver(run, chat_id=7, root=sroot)
+        out = ACT.request_rewrite(
+            session_id=d["session_id"], run_id=run["run_id"],
+            version_sha=d["version_sha256"], user_id=4242, chat_id=7,
+            rewrite_fn=lambda t, b: t.replace("Paragraph 1.", "New opening."),
+            recheck_fn=lambda a, b: {"status": "BLOCKED_ADDED_MATERIAL",
+                                     "cleared": False, "reason": "added scene",
+                                     "delta_errors": ["editing added scene: ['torch']"],
+                                     "grounding_blocking": []},
+            root=sroot)
+        row = STORE.version_row(out["version_sha256"], sroot)
+        check("the blocked version is still stored and readable",
+              STORE.read_version_bytes(out["version_sha256"], sroot) != "")
+        check("its identity is the exact rewritten bytes",
+              STORE.sha256_text(out["text"]) == out["version_sha256"])
+        check("it is marked not revalidated",
+              row["gate_status"]["revalidated"] is False, row["gate_status"])
+        check("and carries the reason verbatim",
+              "torch" in str(row["gate_status"]["delta_errors"]), row["gate_status"])
+
+
 def main():
     for fn in sorted((f for n, f in globals().items() if n.startswith("test_")),
                      key=lambda f: f.__code__.co_firstlineno):

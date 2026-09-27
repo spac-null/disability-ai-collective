@@ -73,12 +73,26 @@ class Harness:
     def messages(self):
         return [p for m, p in self.sent if m == "sendMessage"]
 
+    def toasts(self):
+        """answerCallbackQuery texts -- the ephemeral confirmation on the button."""
+        return [p.get("text", "") for m, p in self.sent
+                if m == "answerCallbackQuery"]
+
     def texts(self):
         return [p["text"] for p in self.messages()]
 
     def last_markup(self):
-        for p in reversed(self.messages()):
-            if p.get("reply_markup"):
+        """The most recent keyboard, however it arrived. Detail choices now replace the
+        keyboard on the block already on screen rather than sending a new message."""
+        for m, p in reversed(self.sent):
+            if m in ("sendMessage", "editMessageReplyMarkup") and p.get("reply_markup"):
+                return p["reply_markup"]
+        return {}
+
+    def card_markup(self):
+        """The keyboard on the article card specifically."""
+        for p in self.messages():
+            if p.get("reply_markup") and "New Crip Minds draft" in p.get("text", ""):
                 return p["reply_markup"]
         return {}
 
@@ -90,9 +104,9 @@ def msg(text, *, user=OWNER, mid=1, reply_to=None):
     return m
 
 
-def cb(data, *, user=OWNER, cid="cb-1"):
+def cb(data, *, user=OWNER, cid="cb-1", message_id=4242):
     return {"id": cid, "from": {"id": user}, "data": data,
-            "message": {"chat": {"id": CHAT}}}
+            "message": {"chat": {"id": CHAT}, "message_id": message_id}}
 
 
 # ── delivery ────────────────────────────────────────────────────────────────────────
@@ -102,12 +116,14 @@ def test_today_offers_a_held_article():
         h.make_run()
         BOT.cmd_today(CHAT)
         txt = "\n".join(h.texts())
-        check("today announces the waiting article", "1 article waiting" in txt, txt[:200])
+        check("today delivers the waiting article", "New Crip Minds draft" in txt,
+              txt[:200])
+        check("and lists it in the inbox as UNREAD", "UNREAD" in txt, txt[-300:])
         check("the card says it is readable",
               "Readable now" in txt, txt[:400])
         check("the card shows the flagged finding verbatim",
               "MACHINE_LANGUAGE" in txt, txt[:400])
-        buttons = json.dumps(h.last_markup())
+        buttons = json.dumps(h.card_markup())
         check("the card offers READ and HOLD",
               "READ" in buttons and "HOLD" in buttons, buttons)
         check("one session was opened", len(STORE.sessions()) == 1)
@@ -121,10 +137,10 @@ def test_today_does_not_reoffer():
         BOT.cmd_today(CHAT)
         check("a delivered article is not offered again",
               len(STORE.sessions()) == 1, STORE.sessions())
-        check("the second /today says nothing new",
-              any("Nothing new" in t for t in h.texts()[before:]), h.texts()[before:])
-        check("and points at the unopened card rather than claiming nothing waits",
-              any("haven't opened" in t for t in h.texts()[before:]),
+        check("the second /today still shows the unread article",
+              any("UNREAD" in t for t in h.texts()[before:]), h.texts()[before:])
+        check("and never claims nothing is waiting",
+              not any("Nothing on the desk" in t for t in h.texts()[before:]),
               h.texts()[before:])
 
 
@@ -133,8 +149,8 @@ def test_upstream_failure_is_not_offered_as_a_draft():
         h.make_run("production-empty", body="")
         BOT.cmd_today(CHAT)
         check("a run with no article opens no session", STORE.sessions() == [])
-        check("and is reported as nothing waiting",
-              any("Nothing waiting" in t for t in h.texts()), h.texts())
+        check("and is reported as an empty desk",
+              any("Nothing on the desk" in t for t in h.texts()), h.texts())
 
 
 # ── reading ─────────────────────────────────────────────────────────────────────────
@@ -311,7 +327,10 @@ def test_reader_lost_stops_instead_of_advancing():
         after = len(STORE.session_blocks(sid, s["origin_version_sha256"]))
         check("'I am lost' does not send the next block", after == before,
               (before, after))
-        check("it asks what lost them", "What lost you" in h.texts()[-1], h.texts()[-1])
+        check("it acknowledges on the button, not in the chat",
+              any("Type what lost you" in t for t in h.toasts()), h.toasts()[-2:])
+        check("and posts no chat message for the press",
+              not any("What lost you" in t for t in h.texts()), h.texts()[-1][:60])
 
 
 def test_reply_binds_to_the_exact_block():
@@ -359,16 +378,18 @@ def test_finishing_offers_the_end_actions():
         total = len(DESK.split_blocks(STORE.read_version_bytes(sha)))
         for i in range(total + 1):
             BOT.handle_callback(cb("NEXT:%s" % sid, cid="c%d" % i))
-        check("the desk says the article is read",
-              any("read it all" in t for t in h.texts()), h.texts()[-1][:120])
+        check("the desk says the article is finished",
+              any(t.startswith("Finished.") for t in h.texts()), h.texts()[-1][:120])
         check("ARTICLE_FINISHED was recorded",
               any(e["event_type"] == "ARTICLE_FINISHED" for e in STORE.events()))
         buttons = json.dumps(h.last_markup())
         check("a blocked article offers rewrite, not publish",
-              "Rewrite from my feedback" in buttons and "PUBLISH" not in buttons,
-              buttons)
-        check("and says why it cannot publish",
-              any("Cannot publish yet" in t for t in h.texts()), h.texts()[-1][:200])
+              "Rewrite" in buttons and "PUBLISH" not in buttons, buttons)
+        check("and never shows publisher plumbing",
+              not any("article.md" in t or "artifact" in t for t in h.texts()),
+              h.texts()[-1][:200])
+        check("and offers going back to the drafts",
+              "Back to drafts" in json.dumps(h.last_markup()))
 
 
 # ── authorization ───────────────────────────────────────────────────────────────────
@@ -601,7 +622,9 @@ def test_callback_payloads_fit_telegram():
             BOT.handle_callback(cb("%s:%s:%s" % (act, s["session_id"], blk["block_id"]),
                                    cid="len-%s" % act))
         payloads = []
-        for m in h.messages():
+        for meth, m in h.sent:
+            if meth not in ("sendMessage", "editMessageReplyMarkup"):
+                continue
             for row in (m.get("reply_markup") or {}).get("inline_keyboard", []):
                 payloads += [b["callback_data"] for b in row]
         check("callback payloads were produced", len(payloads) >= 8, len(payloads))
@@ -662,6 +685,146 @@ def test_no_latest_wins_resolver_remains():
           "reading_session()" not in cbsrc)
     check("and refuses an unknown card",
           "I can't identify that card" in cbsrc)
+
+
+# ── /today is an inbox, and /read never guesses ─────────────────────────────────────
+
+def test_today_never_chooses_and_never_hides():
+    with Harness() as h:
+        for day, tag in (("26", "Alpha"), ("25", "Beta")):
+            body = "\n\n".join("%s paragraph %d. %s" % (tag, n, "word " * 40)
+                               for n in range(1, 10))
+            T.make_run(h.ev.name, "production-202609%sT070000Z-aa%s" % (day, day),
+                       body=body)
+        BOT.cmd_today(CHAT)
+        a = STORE.sessions()[0]
+        BOT.handle_callback(cb("read:%s" % a["session_id"], cid="t1"))
+        BOT.handle_callback(cb("NEXT:%s" % a["session_id"], cid="t2"))
+
+        before = len(h.messages())
+        BOT.cmd_today(CHAT)
+        listing = "\n".join(h.texts()[before:])
+        check("the inbox shows the opened article as READING with progress",
+              "READING 2/" in listing, listing[:400])
+        check("and the untouched one as UNREAD", "UNREAD" in listing, listing[:400])
+        check("it opens nothing by itself",
+              not any(t.startswith("1/") or t.startswith("2/")
+                      for t in h.texts()[before:]), h.texts()[before:])
+        buttons = json.dumps(h.last_markup())
+        check("it offers RESUME for the opened one", "RESUME" in buttons, buttons)
+        check("and READ for the unopened one", "READ:" in buttons, buttons)
+        check("every inbox button names a session",
+              all(len(b.split(":")) >= 2
+                  for b in _callback_data(h.last_markup())), buttons)
+
+
+def _callback_data(markup):
+    return [b["callback_data"] for row in markup.get("inline_keyboard", []) for b in row]
+
+
+def test_bare_read_shows_the_inbox_instead_of_guessing():
+    with Harness() as h:
+        for day in ("26", "25"):
+            T.make_run(h.ev.name, "production-202609%sT070000Z-bb%s" % (day, day))
+        BOT.cmd_today(CHAT)
+        before = len(h.messages())
+        BOT.handle_message(msg("/read", mid=9001))
+        out = "\n".join(h.texts()[before:])
+        check("a bare /read with nothing open resolves no article",
+              not any(t.startswith("1/") for t in h.texts()[before:]), out[:200])
+        check("and shows the inbox", "Waiting for you" in out, out[:200])
+
+
+def test_feedback_makes_no_chat_message():
+    with Harness() as h:
+        s = _open_and_read(h)
+        sid = s["session_id"]
+        blk = STORE.session_blocks(sid, s["origin_version_sha256"])[0]
+        before = len(h.messages())
+        for kind in ("STRONG", "WHY_NOW", "WANT_MORE"):
+            BOT.handle_callback(cb("%s:%s:%s" % (kind, sid, blk["block_id"]),
+                                   cid="q-%s" % kind))
+        check("no chat message was sent for any feedback press",
+              len(h.messages()) == before, h.texts()[before:])
+        check("each press was acknowledged on the button",
+              len([t for t in h.toasts() if t.startswith("Saved:")]) >= 3, h.toasts())
+        check("and all three were recorded",
+              len([e for e in STORE.events()
+                   if e["event_type"] in ("STRONG", "WHY_NOW", "WANT_MORE")]) == 3)
+
+
+def test_detail_replaces_the_keyboard_in_place():
+    with Harness() as h:
+        s = _open_and_read(h)
+        sid = s["session_id"]
+        blk = STORE.session_blocks(sid, s["origin_version_sha256"])[0]
+        before = len(h.messages())
+        BOT.handle_callback(cb("TOO_DENSE:%s:%s" % (sid, blk["block_id"]), cid="k1",
+                               message_id=blk["telegram_message_id"]))
+        check("asking which kind sends no new message",
+              len(h.messages()) == before, h.texts()[before:])
+        edits = [p for m, p in h.sent if m == "editMessageReplyMarkup"]
+        check("the keyboard on the block was replaced", len(edits) == 1, len(edits))
+        check("on that exact block message",
+              edits[0]["message_id"] == blk["telegram_message_id"], edits[0])
+        check("and navigation stays reachable from the sub-menu",
+              "Next >" in json.dumps(edits[0]["reply_markup"]))
+
+        BOT.handle_callback(cb("d:%s:%s:D:TOO_MANY_NAMES" % (sid, blk["block_id"]),
+                               cid="k2", message_id=blk["telegram_message_id"]))
+        edits = [p for m, p in h.sent if m == "editMessageReplyMarkup"]
+        check("choosing a detail restores the normal keyboard", len(edits) == 2)
+        check("still no chat message", len(h.messages()) == before, h.texts()[before:])
+        check("and the reader never moved",
+              BOT.cursor(sid, s["origin_version_sha256"]) == 1)
+
+
+def test_end_screen_is_feedback_not_plumbing():
+    with Harness() as h:
+        s = _open_and_read(h)
+        sid = s["session_id"]
+        sha = s["origin_version_sha256"]
+        blk = STORE.session_blocks(sid, sha)[0]
+        BOT.handle_callback(cb("SOUNDS_LIKE_REPORT:%s:%s" % (sid, blk["block_id"]),
+                               cid="e1"))
+        BOT.handle_callback(cb("d:%s:%s:R:NO_STORY" % (sid, blk["block_id"]), cid="e2"))
+        for i in range(len(DESK.split_blocks(STORE.read_version_bytes(sha))) + 1):
+            BOT.handle_callback(cb("NEXT:%s" % sid, cid="e-n%d" % i))
+        end = h.texts()[-1]
+        check("the end screen leads with Finished", end.startswith("Finished."), end[:40])
+        check("it gives the reading back", "No story x1" in end, end)
+        check("it names no artifact", "article.md" not in end, end)
+        check("it names no stage or SHA",
+              "SAFETY" not in end and sha[:12] not in end, end)
+        buttons = json.dumps(h.last_markup())
+        for label in ("Rewrite", "Hold", "Back to drafts"):
+            check("the end offers %r" % label, label in buttons, buttons)
+        check("publish is absent when unavailable", "PUBLISH" not in buttons, buttons)
+
+
+def test_rewrite_is_given_evidence_and_its_verdict_is_reported():
+    with Harness() as h:
+        s = _open_and_read(h)
+        (pathlib.Path(h.ev.name) / "production-20260926T072441Z-66967ce4"
+         / "LEDGER.json").write_text(json.dumps(
+             {"F01": {"proposition": "A licensed fact the article never used."}}),
+             encoding="utf-8")
+        seen = {}
+        saved = BOT.rewrite_once
+        BOT.rewrite_once = lambda t, b, ev=None: (
+            seen.update(evidence=ev, brief=b) or t.replace("Paragraph 1.", "Opening."))
+        try:
+            BOT.cmd_rewrite(CHAT, OWNER, s)
+        finally:
+            BOT.rewrite_once = saved
+        check("the rewriter was handed the licensed evidence",
+              seen.get("evidence") and "licensed fact" in seen["evidence"][0],
+              seen.get("evidence"))
+        said = "\n".join(h.texts())
+        check("the verdict is reported honestly, not as success",
+              "not factually cleared" in said, h.texts()[-6:-4])
+        check("and the reader is told where the version went",
+              "on the desk as its own draft" in said, h.texts()[-1][:120])
 
 
 def main():

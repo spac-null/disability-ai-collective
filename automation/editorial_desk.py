@@ -122,7 +122,17 @@ BUTTON_INSTRUCTIONS = {
     "WHY_NOW": "make clear why the reader is being told this, here, before telling it",
     "READER_LOST": "this is where the reader left. Rebuild the thread into this passage "
                    "or cut what broke it",
-    "WANT_MORE": "give this more room -- the reader wanted to stay here",
+    # NEVER "give this more room". That sentence, with no unused material supplied,
+    # is an instruction to invent, and on 2026-09-27 it produced exactly that: "night
+    # after night", "No door opening at two in the morning. No torch." -- all landing
+    # in the paragraphs where WANT_MORE had been pressed. Expansion must name its
+    # permitted sources or forbid itself.
+    "WANT_MORE": ("the reader wanted to stay here. You may satisfy that ONLY by "
+                  "slowing and re-paragraphing what is already here, by moving "
+                  "licensed material to this point from elsewhere in the article, or "
+                  "by using a licensed fact from the evidence supplied below that the "
+                  "article has not yet used. If none of those is available, leave the "
+                  "passage as it is -- do not expand it"),
     "STRONG": "preserve this passage. Do not rewrite it, do not compress it, do not "
               "move it later",
     "TOO_FAST": "slow the idea velocity here: let one idea land before the next arrives",
@@ -137,13 +147,15 @@ DETAIL_INSTRUCTIONS = {
     "TOO_MUCH_AT_ONCE": "one idea at a time; let each land before the next arrives",
     "TOO_MUCH_JARGON": "say it in ordinary words, or gloss the term in the sentence that "
                        "first uses it",
-    "SOURCE_SUMMARY": "this reads as a summary of what the sources said; write what "
-                      "happened instead",
+    "SOURCE_SUMMARY": ("this reads as a summary of what the sources said. Write what "
+                       "happened instead, using only what the evidence already "
+                       "establishes"),
     "INSTITUTIONAL_LANGUAGE": "the institution is the grammatical subject here; put the "
                               "person or the thing back in that position",
     "LIST_OF_FACTS": "this is a catalogue; select, and let the unselected material go",
-    "NO_STORY": "nothing is carrying the reader through this passage; find the concrete "
-                "thing that does, or cut it",
+    "NO_STORY": ("nothing is carrying the reader through this passage. Find a concrete "
+                 "thing ALREADY PRESENT in the article or in the supplied evidence to "
+                 "carry it, or cut the passage. Do not invent one"),
 }
 
 
@@ -497,3 +509,78 @@ if __name__ == "__main__":
             print("%-46s %-18s %5d words  %s"
                   % (r["run_id"][:46], r["state"], r["words"], status_line(r)))
     print(json.dumps(survey(a.limit), indent=2))
+
+
+# ── what the rewriter is allowed to know ────────────────────────────────────────────
+
+MAX_EVIDENCE_FACTS = 60
+
+
+def licensed_evidence(run_dir) -> list:
+    """The run's own frozen Ledger propositions -- the facts this article was licensed
+    to use, including the ones it did not use.
+
+    THE MISSING INPUT, 2026-09-27. The rewriter used to receive the article and the
+    reader's reaction and nothing else. Asked to give a passage more room, it had no
+    licensed material to give it, and no way to tell a fact it had simply not used from
+    a fact that does not exist. So it invented. Handing it the Ledger does not loosen
+    the factual boundary; it is what makes the boundary satisfiable.
+
+    Read-only, no network, no model. An unreadable or absent Ledger returns [] and the
+    caller must then forbid expansion outright rather than proceed without evidence.
+    """
+    ledger = artifact(run_dir, "LEDGER.json")
+    out = []
+    for fid, fact in sorted((ledger or {}).items()):
+        if not isinstance(fact, dict):
+            continue
+        prop = str(fact.get("proposition") or "").strip()
+        if prop:
+            out.append("%s  %s" % (fid, prop))
+        if len(out) >= MAX_EVIDENCE_FACTS:
+            break
+    return out
+
+
+REWRITE_SYSTEM = (
+    "You are an editor making ONE pass over a finished article, acting on a reader's "
+    "reaction. You are not the writer and you are not researching.\n"
+    "\n"
+    "HUMAN DOES NOT MEAN INVENTED. This is the whole of the job and the one rule that "
+    "has been broken before.\n"
+    "\n"
+    "Human prose may come from: selection; pacing; paragraphing; reordering; staying "
+    "longer with a concrete action the evidence already establishes; moving licensed "
+    "material to where the reader wanted it; putting the person rather than the "
+    "institution in the grammatical subject; letting a fact sit instead of stacking "
+    "the next one behind it.\n"
+    "\n"
+    "Human prose may NEVER come from: sensory detail; scene texture; duration or "
+    "repetition the evidence does not state; physical placement; motives; beliefs; "
+    "implied dialogue; invented chronology; a new causal or administrative join "
+    "between facts that are separate in the evidence; or metaphor that attributes an "
+    "experience, feeling or belief to a real person.\n"
+    "\n"
+    "You may use any fact in the LICENSED EVIDENCE below, including ones the article "
+    "has not used. You may use nothing else. If the reader asked for more and no "
+    "licensed material answers it, leave the passage alone and say nothing about it.\n"
+    "\n"
+    "Reply with the rewritten article and nothing else -- no preamble, no notes, no "
+    "explanation of what you changed."
+)
+
+
+def rewrite_user(article_text: str, brief: str, evidence: list) -> str:
+    """The rewriter's whole world: the reaction, the licensed facts, the article."""
+    L = [brief, ""]
+    if evidence:
+        L += ["LICENSED EVIDENCE -- the frozen facts this article was written from.",
+              "You may draw on any of these, including facts the article has not used. "
+              "You may use nothing outside this list and the article itself.", ""]
+        L += ["  " + e for e in evidence]
+    else:
+        L += ["LICENSED EVIDENCE: none was retained for this article.",
+              "You therefore may not expand anything. Work only by selection, "
+              "reordering, pacing and paragraphing of the text you were given."]
+    L += ["", "THE ARTICLE", "", article_text]
+    return "\n".join(L)

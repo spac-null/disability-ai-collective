@@ -96,6 +96,132 @@ def record_block_sent(*, session_id: str, run_id: str, version_sha: str, block: 
         text=block["text"], chat_id=chat_id, message_id=message_id, root=root)
 
 
+# ── one state, and it belongs to a VERSION ──────────────────────────────────────────
+#
+# Not to an article and not loosely to a session. On 2026-09-27 /today reported
+# "Nothing new. You are part-way through Ten-minute acts" while an unread article sat
+# on the desk, because four different notions -- undelivered, newly delivered, active
+# session, reading session -- each answered a different question and none answered the
+# reader's. There is now one question ("what is the state of THIS version?") and one
+# place that answers it.
+
+UNREAD = "UNREAD"
+READING = "READING"
+FINISHED = "FINISHED"
+HELD = "HELD"
+
+# The order the inbox lists them in: what is waiting, then what was left open, then
+# what is done, then what was set aside.
+STATE_ORDER = (UNREAD, READING, FINISHED, HELD)
+
+
+def blocks_total(version_sha: str, root=None) -> int:
+    text = STORE.read_version_bytes(version_sha, root)
+    return len(DESK.split_blocks(text)) if text else 0
+
+
+def blocks_read(session_id: str, version_sha: str, root=None) -> int:
+    """How far the reader got: the index of the block most recently SENT, because Back
+    re-sends one already seen and counting rows would read that as progress."""
+    rows = STORE.session_blocks(session_id, version_sha, root)
+    if not rows:
+        return 0
+    return sorted(rows, key=lambda b: b.get("sent_at", ""))[-1].get("index", 0)
+
+
+def version_state(session_id: str, version_sha: str, root=None) -> dict:
+    """UNREAD / READING n/m / FINISHED / HELD for exactly these bytes."""
+    evs = [e for e in STORE.session_events(session_id, root)
+           if not e.get("version_sha256") or e["version_sha256"] == version_sha]
+    kinds = {e["event_type"] for e in evs}
+    at, total = blocks_read(session_id, version_sha, root), blocks_total(version_sha, root)
+    if "HOLD" in kinds:
+        status = HELD
+    elif "ARTICLE_FINISHED" in kinds:
+        status = FINISHED
+    elif at:
+        status = READING
+    else:
+        status = UNREAD
+    return {"status": status, "at": at, "of": total,
+            "label": ("READING %d/%d" % (at, total)) if status == READING else status}
+
+
+# Human labels for the feedback summary. Derived from the same tables the buttons are
+# built from, so a new button cannot appear in the desk and be missing from a summary.
+def _labels() -> dict:
+    out = {a: a.replace("_", " ").capitalize() for a in DESK.BUTTON_SIGNALS}
+    for opts in DESK.DETAIL_OPTIONS.values():
+        for label, code in opts:
+            out[code] = label
+    return out
+
+
+def feedback_summary(session_id: str, version_sha: str, root=None) -> list:
+    """[(label, count)] for one version, most-pressed first. A detail press is counted
+    under its own name, not under the action it refines: "No story x3" is what the
+    reader said, and it is more use than "Sounds like a report x3"."""
+    labels = _labels()
+    counts: dict = {}
+    for e in STORE.clean_events(STORE.session_events(session_id, root), root):
+        if e.get("version_sha256") != version_sha:
+            continue
+        if e["event_type"] == "FEEDBACK_DETAIL":
+            key = e.get("detail") or ""
+        elif e["event_type"] in DESK.BUTTON_SIGNALS:
+            key = e["event_type"]
+        else:
+            continue
+        if key:
+            counts[key] = counts.get(key, 0) + 1
+    # A primary press that was then refined is not also counted: the detail is the
+    # sharper statement of the same reaction.
+    for e in STORE.session_events(session_id, root):
+        if e["event_type"] == "FEEDBACK_DETAIL":
+            parent = (e.get("metadata") or {}).get("of_action")
+            if parent in counts:
+                counts[parent] -= 1
+                if counts[parent] <= 0:
+                    counts.pop(parent, None)
+    return sorted(((labels.get(k, k), n) for k, n in counts.items()),
+                  key=lambda kv: (-kv[1], kv[0]))
+
+
+def inbox(root=None) -> list:
+    """Everything on the desk, one row per immutable version. Chooses nothing."""
+    rows = []
+    for sess in STORE.sessions(root):
+        sha = sess["origin_version_sha256"]
+        st = version_state(sess["session_id"], sha, root)
+        title = ""
+        for e in reversed(STORE.session_events(sess["session_id"], root)):
+            if e["event_type"] == "CARD_SENT" and (e.get("metadata") or {}).get("title"):
+                title = e["metadata"]["title"]
+                break
+        vrow = STORE.version_row(sha, root) or {}
+        rows.append({"session_id": sess["session_id"], "version_sha256": sha,
+                     "run_id": sess["run_id"], "title": title or sess["run_id"],
+                     "words": vrow.get("words", 0),
+                     "version_id": vrow.get("version_id", ""),
+                     "reason": vrow.get("reason", ""),
+                     "summary": feedback_summary(sess["session_id"], sha, root),
+                     **st})
+    rows.sort(key=lambda r: (STATE_ORDER.index(r["status"]),
+                             -_created_ts(r["session_id"], root)))
+    return rows
+
+
+def _created_ts(session_id: str, root=None) -> float:
+    for sess in STORE.sessions(root):
+        if sess["session_id"] == session_id:
+            try:
+                import datetime
+                return datetime.datetime.fromisoformat(sess["created_at"]).timestamp()
+            except Exception:
+                return 0.0
+    return 0.0
+
+
 # ── reading and reacting ────────────────────────────────────────────────────────────
 
 def react(*, session_id: str, run_id: str, version_sha: str, event_type: str,
@@ -155,7 +281,8 @@ MAX_REWRITES_PER_SESSION = 1
 
 
 def request_rewrite(*, session_id: str, run_id: str, version_sha: str, user_id,
-                    chat_id, rewrite_fn, root=None) -> dict:
+                    chat_id, rewrite_fn, run_dir=None, recheck_fn=None,
+                    root=None) -> dict:
     """ONE editorial rewrite per session, from the owner's reading of this version.
 
     `rewrite_fn(article_text, brief) -> str` performs the single model call and is
@@ -201,17 +328,44 @@ def request_rewrite(*, session_id: str, run_id: str, version_sha: str, user_id,
 
     parent = STORE.version_row(version_sha, root) or {}
     new_sha = STORE.sha256_text(new_text)
+
+    # THE REWRITE IS A PROPOSAL UNTIL IT HAS BEEN CHECKED, and it is checked on the
+    # exact bytes produced -- semantic delta against the parent, then Grounding over
+    # the frozen evidence. Both must pass. See editorial_desk_recheck for why one is
+    # not enough.
+    if recheck_fn is None:
+        def recheck_fn(parent_text, child_text):
+            import editorial_desk_recheck as RC
+            return RC.check(run_dir or "", parent_text, child_text)
+    try:
+        verdict = recheck_fn(source, new_text)
+    except Exception as e:                                            # noqa: BLE001
+        verdict = {"status": "NOT_CHECKED", "cleared": False,
+                   "reason": "recheck failed (%s)" % type(e).__name__,
+                   "delta_errors": [], "grounding_blocking": []}
+
     STORE.record_version(
         session=session_id, run_id=run_id, text=new_text,
         version_id="v%d" % (len(done) + 1), reason=STORE.REASON_EDITORIAL_REWRITE,
         parent_version_id=parent.get("version_id"), parent_sha256=version_sha,
-        gate_status={"revalidated": False,
-                     "note": "produced by the editorial desk; no gate has seen it"},
+        gate_status={"revalidated": bool(verdict.get("cleared")),
+                     "recheck_status": verdict.get("status"),
+                     "recheck_reason": verdict.get("reason", ""),
+                     "delta_errors": verdict.get("delta_errors") or [],
+                     "grounding_blocking": verdict.get("grounding_blocking") or []},
         root=root)
     STORE.record_rewrite(session=session_id, run_id=run_id, from_sha=version_sha,
-                         brief=brief, status=REWRITE_DONE, to_sha=new_sha, root=root)
+                         brief=brief, status=REWRITE_DONE, to_sha=new_sha,
+                         detail=verdict.get("status", ""), root=root)
+
+    # A rewritten version is its own thing to read, so it gets its own session and
+    # therefore its own UNREAD/READING/FINISHED state. v0 and v1 sitting side by side
+    # is exactly the case the per-version state model exists for.
+    STORE.ensure_session(run_id=run_id, version_sha=new_sha,
+                         state=DESK.REVIEWABLE_DRAFT,
+                         publish_state=DESK.PUBLISH_BLOCKED, root=root)
     return {"status": REWRITE_DONE, "version_sha256": new_sha, "text": new_text,
-            "brief": brief}
+            "brief": brief, "recheck": verdict}
 
 
 # ── approval and publication ────────────────────────────────────────────────────────

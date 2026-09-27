@@ -190,8 +190,19 @@ def detail_keyboard(action, sid, block_id) -> list:
     callback limit; `D`/`R` name which action is being refined."""
     tag = {"TOO_DENSE": "D", "SOUNDS_LIKE_REPORT": "R"}[action]
     opts = DESK.DETAIL_OPTIONS[action]
-    return [[(label, "d:%s:%s:%s:%s" % (sid, block_id, tag, code))]
+    rows = [[(label, "d:%s:%s:%s:%s" % (sid, block_id, tag, code))]
             for label, code in opts]
+    # Navigation stays reachable: saying nothing about which kind is a complete answer,
+    # and the reader must never be trapped in a sub-menu to get to the next block.
+    rows.append([(t, "%s:%s" % (code, sid)) for t, code in NAV_BUTTONS])
+    return rows
+
+
+def edit_markup(chat, message_id, rows) -> None:
+    """Swap the keyboard under a message that is already on screen, rather than sending
+    a new one. The chat should be the article, not a log of what the reader pressed."""
+    tg("editMessageReplyMarkup", {"chat_id": str(chat), "message_id": message_id,
+                                  "reply_markup": keyboard(rows)})
 
 
 def keyboard(rows) -> dict:
@@ -381,22 +392,36 @@ def send_block(session_row, version_sha, index, chat=None):
 
 
 def finish(session_row, version_sha, chat=None):
+    """What the reader gets for finishing: their own reading back, and what to do next.
+
+    NOT the publisher's refusal text. "Cannot publish yet: missing required artifact:
+    article.md" is the retained-run validator's Fast-Lane contract failing on a
+    story-architecture directory -- plumbing, never an editorial judgement, and it has
+    no business in front of a reader. Publish appears only when it is genuinely
+    available; otherwise it is simply absent.
+    """
     sid = session_row["session_id"]
     STORE.record_event(session=sid, run_id=session_row["run_id"],
                        event_type="ARTICLE_FINISHED", actor="owner",
                        version_sha=version_sha, chat_id=chat or CHAT_ID,
                        dedupe_key="finished:%s:%s" % (sid, version_sha))
+
+    lines = ["Finished.", ""]
+    summary = ACT.feedback_summary(sid, version_sha)
+    if summary:
+        lines += ["%s x%d" % (label, n) for label, n in summary]
+    else:
+        lines.append("No reactions recorded.")
+
+    rows = [[("Rewrite", "rewrite:%s" % sid)],
+            [("Hold", "hold:%s" % sid), ("Back to drafts", "inbox:%s" % sid)]]
+
     run_dir = run_dir_of(session_row)
-    state, reason = DESK.publish_state(run_dir)
-    rows = [[("Rewrite from my feedback", "rewrite:%s" % sid)],
-            [("Almost", "almost:%s" % sid), ("Not good", "notgood:%s" % sid)]]
+    state, _reason = DESK.publish_state(run_dir)
     if state == DESK.PUBLISH_ELIGIBLE and version_sha == STORE.sha256_text(
             DESK.article_text(run_dir)[0]):
         rows.insert(0, [("PUBLISH", "publish:%s" % sid)])
-        tail = "Ready to publish."
-    else:
-        tail = "Cannot publish yet: %s" % reason
-    send("You've read it all.\n\n%s" % tail, chat=chat, buttons=rows)
+    send("\n".join(lines), chat=chat, buttons=rows)
 
 
 # ── command handling ────────────────────────────────────────────────────────────────
@@ -412,23 +437,52 @@ def unopened_sessions() -> list:
 
 
 def cmd_today(chat):
-    new = undelivered()
-    if not new:
-        s = reading_session()
-        waiting = unopened_sessions()
-        if s:
-            send("Nothing new. You're part-way through %s — /read to continue."
-                 % short_title(s), chat=chat)
-        elif waiting:
-            send("Nothing new. %d card%s already on the desk you haven't opened — "
-                 "scroll up and press READ on the one you want."
-                 % (len(waiting), "" if len(waiting) == 1 else "s"), chat=chat)
-        else:
-            send("Nothing waiting for you.", chat=chat)
-        return
-    send("%d article%s waiting." % (len(new), "" if len(new) == 1 else "s"), chat=chat)
-    for run in new[:5]:
+    """The inbox. It lists; it never opens anything.
+
+    Every row names one immutable version and carries its own button. There is no
+    "current article" here and no resume-by-guess: if the desk cannot say which version
+    an action is for, it shows this list instead.
+    """
+    for run in undelivered():
         offer(run, chat=chat)
+
+    rows = ACT.inbox()
+    if not rows:
+        send("Nothing on the desk.", chat=chat)
+        return
+
+    lines, buttons, shown = ["Waiting for you", ""], [], 0
+    for r in rows:
+        if r["status"] == ACT.HELD and shown >= 6:
+            continue
+        if shown >= 8:
+            break
+        shown += 1
+        lines.append(r["label"])
+        lines.append("  %s" % r["title"])
+        bits = []
+        if r["words"]:
+            bits.append("%d words" % r["words"])
+        if r["reason"] == STORE.REASON_EDITORIAL_REWRITE:
+            bits.append("rewrite")
+        if r["summary"]:
+            bits.append(" · ".join("%s x%d" % (lbl, n) for lbl, n in r["summary"][:3]))
+        if bits:
+            lines.append("  " + " · ".join(bits))
+        lines.append("")
+        if r["status"] == ACT.UNREAD:
+            buttons.append([("READ: %s" % r["title"][:28], "read:%s" % r["session_id"])])
+        elif r["status"] == ACT.READING:
+            buttons.append([("RESUME: %s" % r["title"][:26],
+                             "read:%s" % r["session_id"])])
+        elif r["status"] == ACT.FINISHED:
+            buttons.append([("Rewrite: %s" % r["title"][:24],
+                             "rewrite:%s" % r["session_id"]),
+                            ("Hold", "hold:%s" % r["session_id"])])
+    more = len(rows) - shown
+    if more > 0:
+        lines.append("%d more" % more)
+    send("\n".join(lines).rstrip(), chat=chat, buttons=buttons or None)
 
 
 def cmd_backlog(chat):
@@ -460,8 +514,9 @@ def short_title(session_row) -> str:
 def cmd_read(chat, session_row):
     """Read the article this button belongs to. Never 'the current one'."""
     if not session_row:
-        send("Nothing open. /today to see what's waiting, then press READ on one.",
-             chat=chat)
+        # No explicit version means no article. Show the inbox rather than resolve
+        # through newest/latest/current -- that heuristic is what made /today lie.
+        cmd_today(chat)
         return
     text, sha = open_article(session_row)
     if text is None:
@@ -530,7 +585,7 @@ def cmd_hold(chat, session_row):
 
 def cmd_rewrite(chat, user_id, session_row):
     if not session_row:
-        send("No article open.", chat=chat)
+        cmd_today(chat)
         return
     if not ACT.authorized(user_id):
         send("Not authorized.", chat=chat)
@@ -539,18 +594,35 @@ def cmd_rewrite(chat, user_id, session_row):
     if text is None:
         send("That article cannot be opened: %s" % sha, chat=chat)
         return
-    send("Working from your reading of %s. One rewrite." % short_title(session_row),
-         chat=chat)
-    out = ACT.request_rewrite(session_id=session_row["session_id"],
-                              run_id=session_row["run_id"], version_sha=sha,
-                              user_id=user_id, chat_id=chat, rewrite_fn=rewrite_once)
+    run_dir = run_dir_of(session_row)
+    evidence = DESK.licensed_evidence(run_dir)
+    send("Working from your reading of %s. One rewrite, then the factual checks."
+         % short_title(session_row), chat=chat)
+    out = ACT.request_rewrite(
+        session_id=session_row["session_id"], run_id=session_row["run_id"],
+        version_sha=sha, user_id=user_id, chat_id=chat,
+        rewrite_fn=lambda t, b: rewrite_once(t, b, evidence),
+        run_dir=run_dir)
     if out["status"] != ACT.REWRITE_DONE:
         send("No rewrite: %s" % out.get("detail", out["status"]), chat=chat)
         return
-    send("Rewritten. It has not been through the factual checks, so it cannot be "
-         "published from here — read it and tell me whether it's better.", chat=chat)
+
+    v = out.get("recheck") or {}
+    if v.get("cleared"):
+        head = "Rewritten, and it passed the factual checks."
+    elif v.get("status") == "BLOCKED_ADDED_MATERIAL":
+        head = ("Rewritten, but BLOCKED: the edit added material the evidence does not "
+                "carry. You can read it; it is not factually cleared.")
+    elif v.get("status") == "BLOCKED_UNSUPPORTED":
+        head = ("Rewritten, but BLOCKED: some of it is not supported by the evidence. "
+                "You can read it; it is not factually cleared.")
+    else:
+        head = ("Rewritten, but NOT CHECKED: %s. You can read it; it is not factually "
+                "cleared." % (v.get("reason") or "the checks could not run"))
+    send(head, chat=chat)
     for b in DESK.split_blocks(out["text"]):
         send("%d/%d\n\n%s" % (b["index"], b["of"], b["text"]), chat=chat)
+    send("That version is on the desk as its own draft. /today to see it.", chat=chat)
 
 
 def cmd_publish(chat, user_id, session_row):
@@ -577,24 +649,20 @@ def cmd_publish(chat, user_id, session_row):
         send("Not published: %s" % r["detail"], chat=chat)
 
 
-def rewrite_once(article_text: str, brief: str) -> str:
+def rewrite_once(article_text: str, brief: str, evidence=None) -> str:
     """The single editorial rewrite call, on the existing provider abstraction.
+
+    `evidence` is the run's own frozen Ledger propositions. Without it the model was
+    asked to give a passage "more room" with nothing licensed to fill it, and filled it
+    with invention. See editorial_desk.REWRITE_SYSTEM for the contract it is held to.
 
     Imported lazily so the bot starts, polls and delivers articles on a machine where
     no provider is reachable: reading must never depend on the rewriter.
     """
     from new_engine_v1.provider import Provider, DEFAULT_MODEL
-    system = (
-        "You are an editor making one pass over a finished article, acting on a "
-        "reader's reaction. You may reorder, cut, compress, expand explanation already "
-        "present, improve transitions and change rhythm. You may not add a single fact, "
-        "causal relation, motive, date, number, name, quotation, scene or testimony "
-        "that is not already in the article you are given. Reply with the rewritten "
-        "article and nothing else -- no preamble, no notes, no explanation of what you "
-        "changed.")
     p = Provider(model=DEFAULT_MODEL)
-    return p.complete(system=system,
-                      user="%s\n\nTHE ARTICLE\n\n%s" % (brief, article_text),
+    return p.complete(system=DESK.REWRITE_SYSTEM,
+                      user=DESK.rewrite_user(article_text, brief, evidence or []),
                       max_tokens=6000).text
 
 
@@ -625,6 +693,9 @@ def handle_callback(cb):
     sha = s["origin_version_sha256"]
     answer_callback(cb["id"])
 
+    if kind == "inbox":
+        cmd_today(chat)
+        return
     if kind == "read":
         cmd_read(chat, s)
         return
@@ -675,7 +746,10 @@ def handle_callback(cb):
                   event_type="FEEDBACK_DETAIL", user_id=user_id, chat_id=chat,
                   block=blk, detail=detail, dedupe_key="cb:%s" % cb["id"],
                   metadata={"of_action": action})
-        send("Noted: %s." % detail.replace("_", " ").lower(), chat=chat)
+        answer_callback(cb["id"], "Saved: %s" % detail.replace("_", " ").lower())
+        msg_id = ((cb.get("message") or {}).get("message_id"))
+        if msg_id:
+            edit_markup(chat, msg_id, block_keyboard(sid, block_id))
         return
 
     # ── a reaction: recorded, and the reader stays where they are ───────────────
@@ -693,16 +767,21 @@ def handle_callback(cb):
         if recorded is None:
             # A REDELIVERED PRESS IS THE SAME PRESS. Found by the route audit 2026-09-26.
             return
+        # ACKNOWLEDGE ON THE BUTTON, NOT IN THE CHAT. A confirmation message after
+        # every press turns the thing the reader is reading into an event log, and the
+        # reading is what we are here to observe.
+        label = kind.replace("_", " ").lower()
         if kind in DESK.DETAIL_OPTIONS:
-            # The press is already stored. This only asks which kind, and saying
-            # nothing is a complete answer.
-            send("Which part of it?  (or just carry on)", chat=chat,
-                 buttons=detail_keyboard(kind, sid, blk["block_id"]))
+            # The press is already stored; this only asks which kind, and saying
+            # nothing is a complete answer. The keyboard is swapped in place.
+            answer_callback(cb["id"], "Saved: %s - which part?" % label)
+            msg_id = ((cb.get("message") or {}).get("message_id"))
+            if msg_id:
+                edit_markup(chat, msg_id, detail_keyboard(kind, sid, blk["block_id"]))
         elif kind == "READER_LOST":
-            send("Stopped here. What lost you?  (just type it)\n"
-                 "Or Next to carry on, /hold to stop.", chat=chat)
+            answer_callback(cb["id"], "Saved. Type what lost you, or press Next.")
         else:
-            send("Noted.", chat=chat)
+            answer_callback(cb["id"], "Saved: %s" % label)
 
 
 def handle_message(msg):
@@ -758,7 +837,7 @@ def handle_message(msg):
               raw_feedback=text, reply_to_message_id=reply_to,
               dedupe_key="msg:%s:%s" % (chat, msg.get("message_id")),
               metadata={"binding": binding})
-    send("Got it.", chat=chat)
+    send("Saved.", chat=chat)
 
 
 def poll_once(offset: int) -> int:

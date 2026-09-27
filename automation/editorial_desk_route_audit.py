@@ -67,7 +67,7 @@ def declared_callbacks() -> set:
              for line in body.splitlines() if 'kind == "' in line}
     kinds |= {line.split('kind in ("')[1].split('"')[0]
               for line in body.splitlines() if 'kind in ("' in line}
-    kinds |= {"notgood", "d"}
+    kinds |= {"notgood", "d", "inbox"}
     return kinds | set(DESK.BUTTON_SIGNALS) | set(DESK.NAVIGATION)
 
 
@@ -78,7 +78,8 @@ def test_00_surface_is_fully_enumerated():
     check("SURFACE", "every dispatched command is known to this audit",
           cmds == expected, sorted(cmds ^ expected))
     cbs = declared_callbacks()
-    expected_cb = ({"read", "hold", "rewrite", "publish", "almost", "notgood", "d"}
+    expected_cb = ({"read", "hold", "rewrite", "publish", "almost", "notgood", "d",
+                    "inbox"}
                    | set(DESK.BUTTON_SIGNALS) | set(DESK.NAVIGATION))
     check("SURFACE", "every callback kind is known to this audit",
           cbs == expected_cb, sorted(cbs ^ expected_cb))
@@ -274,9 +275,9 @@ def test_11_rewrite_route_identity():
         BOT.handle_callback(cb("read:%s" % a["session_id"], cid="rwread"))
         seen = {}
         saved = BOT.rewrite_once
-        BOT.rewrite_once = lambda text, brief: (
-            seen.update(text=text, brief=brief) or text.replace("Beta", "X")
-            or text + "\n\nnew")
+        BOT.rewrite_once = lambda text, brief, evidence=None: (
+            seen.update(text=text, brief=brief, evidence=evidence)
+            or text.replace("Beta paragraph 1.", "Beta opening."))
         try:
             BOT.handle_callback(cb("rewrite:%s" % b["session_id"], cid="rw-b"))
             check("cb rewrite", "rewrites the card pressed, not the one being read",
