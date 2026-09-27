@@ -835,6 +835,114 @@ def test_rewrite_is_given_evidence_and_its_verdict_is_reported():
               "on the desk as its own draft" in said, h.texts()[-1][:120])
 
 
+# ── an update is handled at most once ───────────────────────────────────────────────
+
+def _updates(*items):
+    return {"ok": True, "result": list(items)}
+
+
+def _msg_update(uid, text):
+    return {"update_id": uid,
+            "message": {"message_id": uid * 10, "from": {"id": OWNER},
+                        "chat": {"id": CHAT}, "text": text}}
+
+
+def test_a_redelivered_update_is_not_handled_twice():
+    """One /start produced two identical inboxes on 2026-09-27. Telegram resends when
+    an acknowledgement is lost; the offset is what says an update is already done."""
+    with Harness() as h:
+        h.make_run(today_run("poll"))
+        batches = [_updates(_msg_update(100, "/today")),
+                   _updates(_msg_update(100, "/today")),   # the same update again
+                   {"ok": True, "result": []}]
+        calls = {"n": 0}
+
+        def fake_tg(method, payload=None, timeout=None):
+            if method == "getUpdates":
+                i = min(calls["n"], len(batches) - 1)
+                calls["n"] += 1
+                return batches[i]
+            return h_tg(method, payload, timeout)
+
+        h_tg = BOT.tg
+        BOT.tg = fake_tg
+        try:
+            offset = BOT.poll_once(0)
+            first = len([t for t in h.texts() if t.startswith("Waiting for you")])
+            offset = BOT.poll_once(offset)
+            second = len([t for t in h.texts() if t.startswith("Waiting for you")])
+        finally:
+            BOT.tg = h_tg
+        check("the first delivery answered once", first == 1, first)
+        check("the redelivery answered not at all", second == first, (first, second))
+        check("the offset moved past the update", offset == 101, offset)
+
+
+def test_duplicates_inside_one_batch_are_skipped():
+    with Harness() as h:
+        h.make_run(today_run("batch"))
+        batch = _updates(_msg_update(200, "/today"), _msg_update(200, "/today"))
+        h_tg = BOT.tg
+
+        def fake_tg(method, payload=None, timeout=None):
+            if method == "getUpdates":
+                return batch
+            return h_tg(method, payload, timeout)
+
+        BOT.tg = fake_tg
+        try:
+            BOT.poll_once(0)
+        finally:
+            BOT.tg = h_tg
+        n = len([t for t in h.texts() if t.startswith("Waiting for you")])
+        check("a duplicate inside one batch is answered once", n == 1, n)
+
+
+def test_distinct_updates_are_both_handled():
+    with Harness() as h:
+        h.make_run(today_run("two"))
+        batch = _updates(_msg_update(300, "/today"), _msg_update(301, "/today"))
+        h_tg = BOT.tg
+
+        def fake_tg(method, payload=None, timeout=None):
+            if method == "getUpdates":
+                return batch
+            return h_tg(method, payload, timeout)
+
+        BOT.tg = fake_tg
+        try:
+            offset = BOT.poll_once(0)
+        finally:
+            BOT.tg = h_tg
+        n = len([t for t in h.texts() if t.startswith("Waiting for you")])
+        check("two genuine presses are answered twice", n == 2, n)
+        check("and the offset clears both", offset == 302, offset)
+
+
+def test_a_crashing_update_does_not_loop_forever():
+    with Harness() as h:
+        batch = _updates(_msg_update(400, "/today"))
+        h_tg = BOT.tg
+        saved = BOT.cmd_today
+
+        def boom(chat):
+            raise RuntimeError("handler exploded")
+
+        def fake_tg(method, payload=None, timeout=None):
+            if method == "getUpdates":
+                return batch
+            return h_tg(method, payload, timeout)
+
+        BOT.tg = fake_tg
+        BOT.cmd_today = boom
+        try:
+            offset = BOT.poll_once(0)
+        finally:
+            BOT.tg = h_tg
+            BOT.cmd_today = saved
+        check("a crashing handler still advances the offset", offset == 401, offset)
+
+
 def main():
     for fn in sorted((f for n, f in globals().items() if n.startswith("test_")),
                      key=lambda f: f.__code__.co_firstlineno):

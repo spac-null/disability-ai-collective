@@ -78,6 +78,10 @@ BOT_TOKEN = ""
 CHAT_ID = ""
 running = True
 
+# Messages sent, so each handled update can report how many it produced. One /start
+# that answers twice is then a single line in the log rather than a screenshot.
+_sent_count = [0]
+
 # NAVIGATION AND FEEDBACK ARE DIFFERENT ACTS, and until 2026-09-27 this keyboard
 # conflated them: every reaction also advanced the reader, so "Continue" meant both
 # "no objection" and "next page", and a reaction could not be given without moving.
@@ -223,6 +227,7 @@ def send(text: str, *, chat=None, buttons=None):
         msg["reply_markup"] = keyboard(buttons)
     r = tg("sendMessage", msg)
     if r and r.get("ok"):
+        _sent_count[0] += 1
         return r["result"]["message_id"]
     return None
 
@@ -855,13 +860,37 @@ def handle_message(msg):
 
 
 def poll_once(offset: int) -> int:
+    """One long-poll, and every update handled AT MOST ONCE.
+
+    AN UPDATE IS HANDLED ONCE, AND THE OFFSET IS THE PROOF. `offset` is always
+    last_handled + 1, so any update arriving with a lower id has already been dealt
+    with and is a redelivery -- Telegram resends whenever an acknowledgement is lost,
+    and without this guard the redelivery is indistinguishable from a second press.
+    On 2026-09-27 a single /start produced two identical inboxes in the chat; the cause
+    could not be established after the fact because nothing recorded which update ids
+    had been seen. Now it is recorded, and it cannot happen twice.
+
+    Callback presses were already deduped in the event store by callback id, but a
+    command writes nothing to the store, so it had no protection at all.
+    """
     r = tg("getUpdates", {"offset": offset, "timeout": POLL_TIMEOUT,
                           "allowed_updates": ["message", "callback_query"]},
            timeout=POLL_TIMEOUT + 10)
     if not r or not r.get("ok"):
         return offset
     for u in r.get("result", []):
-        offset = u["update_id"] + 1
+        uid = u.get("update_id", -1)
+        if uid < offset:
+            log("SKIP duplicate update %s (already handled; offset=%s)" % (uid, offset))
+            continue
+        offset = uid + 1
+        kind = "callback_query" if "callback_query" in u else "message"
+        detail = ""
+        if kind == "message":
+            detail = ((u.get("message") or {}).get("text") or "")[:40]
+        else:
+            detail = ((u.get("callback_query") or {}).get("data") or "")[:40]
+        sent_before = _sent_count[0]
         try:
             if "callback_query" in u:
                 handle_callback(u["callback_query"])
@@ -870,8 +899,9 @@ def poll_once(offset: int) -> int:
         except Exception as e:                                        # noqa: BLE001
             # One bad update must never stop the desk. The offset has already advanced,
             # so a message that crashes the handler is not retried forever.
-            log("update %s failed: %s: %s" % (u.get("update_id"), type(e).__name__,
-                                              str(e)[:200]))
+            log("update %s failed: %s: %s" % (uid, type(e).__name__, str(e)[:200]))
+        log("update %s %s %r -> %d message(s)"
+            % (uid, kind, detail, _sent_count[0] - sent_before))
         _save_offset(offset)
     return offset
 
