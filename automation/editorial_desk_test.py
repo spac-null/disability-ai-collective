@@ -850,7 +850,13 @@ def test_run_date_parsing():
           ACT.run_date("something-else") is None)
 
 
-def test_an_open_article_never_ages_out():
+def test_a_part_read_article_ages_by_last_activity():
+    """Open work stays while it is actually being worked on, and not one day longer.
+
+    It used to stay forever, which turned the inbox into a guilt list: three articles
+    from 10-14 September sat in "today" a fortnight later purely because READ had once
+    been pressed on them.
+    """
     import datetime
     with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
         run = DESK.read_run(make_run(tmp))
@@ -859,11 +865,59 @@ def test_an_open_article_never_ages_out():
         ACT.record_block_sent(session_id=d["session_id"], run_id=run["run_id"],
                               version_sha=d["version_sha256"], block=blocks[0],
                               chat_id=7, message_id=1, root=sroot)
-        later = (datetime.datetime.now(datetime.timezone.utc)
-                 + datetime.timedelta(days=30))
-        row = ACT.inbox(sroot, now=later)[0]
-        check("a part-read article stays in the default view however old",
+        STORE.record_event(session=d["session_id"], run_id=run["run_id"],
+                           event_type="READ_STARTED", actor="owner",
+                           version_sha=d["version_sha256"], root=sroot)
+
+        row = ACT.inbox(sroot)[0]
+        check("just-read work is in the default view",
               row["status"] == ACT.READING and row["recent"] is True, row)
+
+        later = (datetime.datetime.now(datetime.timezone.utc)
+                 + datetime.timedelta(days=5))
+        row = ACT.inbox(sroot, now=later)[0]
+        check("five days untouched, it moves to the backlog",
+              row["recent"] is False, row["idle_days"])
+        check("it is still READING, with its progress intact",
+              row["status"] == ACT.READING and row["at"] == 1, row)
+        check("and nothing was recorded about it having stopped",
+              not any(e["event_type"] in ("HOLD", "ARTICLE_FINISHED")
+                      for e in STORE.session_events(d["session_id"], sroot)))
+
+
+def test_returning_to_an_old_read_brings_it_back():
+    import datetime
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+        run = DESK.read_run(make_run(tmp, "production-20260910T070000Z-old1"))
+        d = ACT.deliver(run, chat_id=7, root=sroot)
+        blocks = DESK.split_blocks(run["article_text"])
+        ACT.record_block_sent(session_id=d["session_id"], run_id=run["run_id"],
+                              version_sha=d["version_sha256"], block=blocks[0],
+                              chat_id=7, message_id=1, root=sroot)
+        old = (datetime.datetime.now(datetime.timezone.utc)
+               + datetime.timedelta(days=9))
+        check("a fortnight-old article left untouched is backlog",
+              ACT.inbox(sroot, now=old)[0]["recent"] is False)
+        # Pressing RESUME sends another block, which is activity.
+        ACT.record_block_sent(session_id=d["session_id"], run_id=run["run_id"],
+                              version_sha=d["version_sha256"], block=blocks[1],
+                              chat_id=7, message_id=2, root=sroot)
+        row = ACT.inbox(sroot)[0]
+        check("resuming it brings it back into the default view",
+              row["recent"] is True, row["idle_days"])
+        check("with the progress it had", row["at"] == 2, row)
+
+
+def test_an_unread_article_is_still_judged_on_its_own_date():
+    """The two clocks must not get crossed: unread by written-date, open by activity."""
+    import datetime
+    today = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d")
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+        fresh = "production-%sT070000Z-f1" % today
+        ACT.deliver(DESK.read_run(make_run(tmp, fresh)), chat_id=7, root=sroot)
+        rows = {r["run_id"]: r for r in ACT.inbox(sroot)}
+        check("an unopened article written today is current",
+              rows[fresh]["recent"] is True and rows[fresh]["status"] == ACT.UNREAD)
 
 
 def main():

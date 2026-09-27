@@ -229,12 +229,36 @@ def _title_for(sess: dict, root=None) -> str:
             or sess["run_id"])
 
 
+def last_touched(session_id: str, version_sha: str, root=None):
+    """When the owner last did anything to this version, or None."""
+    import datetime
+    stamps = [e["ts"] for e in STORE.session_events(session_id, root)
+              if e.get("version_sha256") == version_sha and e.get("ts")]
+    if not stamps:
+        return None
+    try:
+        return datetime.datetime.fromisoformat(max(stamps))
+    except ValueError:
+        return None
+
+
 def inbox(root=None, now=None) -> list:
     """Everything on the desk, one row per immutable version. Chooses nothing.
 
-    `recent` marks what belongs in the default view: anything open, and anything
-    delivered within RECENT_DAYS. Everything else is backlog -- present, openable,
-    and out of the way.
+    `recent` marks what belongs in the default view. An unopened article is judged on
+    when it was WRITTEN; an opened one on when it was LAST TOUCHED, so a read you came
+    back to this morning stays and one you left three weeks ago does not.
+
+    A PART-READ ARTICLE USED TO STAY FOREVER, on the reasoning that open work is open
+    work. In practice that turns the inbox into a guilt list: press READ on twenty
+    articles and twenty permanent RESUME rows follow you around, which is the same
+    accumulation problem as the unread backlog arriving by a different door. Progress
+    is kept; RESUME brings it straight back.
+
+    AGEING A ROW OUT OF VIEW IS HOUSEKEEPING, NOT A JUDGEMENT. Nothing is recorded,
+    nothing is marked abandoned, and no editorial signal is derived from the fact that
+    a reading stopped. Silence is not a signal here either -- the owner putting a phone
+    down is not a verdict on an article, and the log will not pretend otherwise.
     """
     import datetime
     now = now or datetime.datetime.now(datetime.timezone.utc)
@@ -250,6 +274,9 @@ def inbox(root=None, now=None) -> list:
             except Exception:
                 written = now
         age = max(0.0, (now - written).total_seconds() / 86400.0)
+        touched = last_touched(sess["session_id"], sha, root)
+        idle = (max(0.0, (now - touched).total_seconds() / 86400.0)
+                if touched else age)
         rows.append({"session_id": sess["session_id"], "version_sha256": sha,
                      "run_id": sess["run_id"], "title": _title_for(sess, root),
                      "words": vrow.get("words", 0),
@@ -257,7 +284,9 @@ def inbox(root=None, now=None) -> list:
                      "reason": vrow.get("reason", ""),
                      "summary": feedback_summary(sess["session_id"], sha, root),
                      "age_days": age,
-                     "recent": st["status"] == READING or age <= RECENT_DAYS,
+                     "idle_days": idle,
+                     "recent": (idle <= RECENT_DAYS if st["status"] == READING
+                                else age <= RECENT_DAYS),
                      **st})
     rows.sort(key=lambda r: (STATE_ORDER.index(r["status"]), r["age_days"]))
     return rows
