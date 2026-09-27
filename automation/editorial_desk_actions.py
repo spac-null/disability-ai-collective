@@ -187,10 +187,29 @@ def feedback_summary(session_id: str, version_sha: str, root=None) -> list:
                   key=lambda kv: (-kv[1], kv[0]))
 
 
-# How long an unread article stays in the default view. Beyond this it is still on
-# the desk and still openable -- it moves to /backlog. A desk that shows three weeks
-# of unread work every morning is a reproach, not an inbox.
+# How long an article stays in the default view, measured from WHEN IT WAS WRITTEN.
+#
+# Not from when the desk delivered it. The first version of this aged by delivery time
+# and therefore aged nothing: the entire three-week backlog was delivered in one
+# evening, so every row was "recent" and /today still opened with twenty articles. An
+# article written on 10 September is old on 27 September however long it sat unseen.
 RECENT_DAYS = 2
+
+
+def run_date(run_id: str):
+    """The date in a run id, or None. `production-20260927T070556Z-17cadeff` and
+    `editorial-20260927-oxevision-v3` both answer; anything else does not, and an
+    unparseable id is treated as current rather than silently buried."""
+    import datetime
+    import re
+    m = re.search(r"(20\d{6})", run_id or "")
+    if not m:
+        return None
+    try:
+        return datetime.datetime.strptime(m.group(1), "%Y%m%d").replace(
+            tzinfo=datetime.timezone.utc)
+    except ValueError:
+        return None
 
 
 def _title_for(sess: dict, root=None) -> str:
@@ -224,11 +243,13 @@ def inbox(root=None, now=None) -> list:
         sha = sess["origin_version_sha256"]
         st = version_state(sess["session_id"], sha, root)
         vrow = STORE.version_row(sha, root) or {}
-        try:
-            created = datetime.datetime.fromisoformat(sess["created_at"])
-            age = max(0.0, (now - created).total_seconds() / 86400.0)
-        except Exception:
-            age = 999.0
+        written = run_date(sess["run_id"])
+        if written is None:
+            try:
+                written = datetime.datetime.fromisoformat(sess["created_at"])
+            except Exception:
+                written = now
+        age = max(0.0, (now - written).total_seconds() / 86400.0)
         rows.append({"session_id": sess["session_id"], "version_sha256": sha,
                      "run_id": sess["run_id"], "title": _title_for(sess, root),
                      "words": vrow.get("words", 0),

@@ -814,25 +814,40 @@ def test_a_recorded_card_title_wins():
                   ACT.inbox(sroot)[0]["title"] == "What the card actually said")
 
 
-def test_old_unread_ages_out_of_the_default_view():
+def test_ageing_uses_the_article_date_not_the_delivery_date():
+    """The whole backlog was delivered in one evening. Ageing by delivery time aged
+    nothing -- /today still opened with twenty articles, which is the bug this test
+    exists for. An article is old when it was WRITTEN, not when the desk got to it."""
     import datetime
+    today = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d")
     with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
-        for n, day in enumerate(("26", "25", "10"), start=1):
-            body = "\n\n".join("Day %s paragraph %d. %s" % (day, i, "word " * 40)
-                               for i in range(1, 10))
-            r = DESK.read_run(make_run(tmp, "production-202609%sT070000Z-zz%d"
-                                       % (day, n), body=body))
-            ACT.deliver(r, chat_id=7, root=sroot)
-        # Two days on, the first deliveries are backlog.
-        later = (datetime.datetime.now(datetime.timezone.utc)
-                 + datetime.timedelta(days=5))
-        rows = ACT.inbox(sroot, now=later)
-        check("everything is still on the desk", len(rows) == 3)
-        check("and nothing recent remains after five days",
-              not any(r["recent"] for r in rows), [r["recent"] for r in rows])
-        now_rows = ACT.inbox(sroot)
-        check("delivered today, all three are current",
-              all(r["recent"] for r in now_rows))
+        names = {"fresh": "production-%sT070000Z-aaaa" % today,
+                 "stale": "production-20260910T070000Z-bbbb"}
+        for tag, name in names.items():
+            body = "\n\n".join("%s paragraph %d. %s" % (tag, i, "word " * 40)
+                                for i in range(1, 10))
+            ACT.deliver(DESK.read_run(make_run(tmp, name, body=body)),
+                        chat_id=7, root=sroot)
+        rows = {r["run_id"]: r for r in ACT.inbox(sroot)}
+        check("both were delivered just now", len(rows) == 2)
+        check("today's article is current", rows[names["fresh"]]["recent"] is True)
+        check("an article written weeks ago is backlog, delivered today or not",
+              rows[names["stale"]]["recent"] is False,
+              rows[names["stale"]]["age_days"])
+        check("but it is still on the desk, not hidden",
+              rows[names["stale"]]["status"] == ACT.UNREAD)
+
+
+def test_run_date_parsing():
+    import datetime
+    check("a production run id yields its date",
+          ACT.run_date("production-20260927T070556Z-17cadeff")
+          == datetime.datetime(2026, 9, 27, tzinfo=datetime.timezone.utc))
+    check("a hand-driven run id yields its date too",
+          ACT.run_date("editorial-20260927-oxevision-v3")
+          == datetime.datetime(2026, 9, 27, tzinfo=datetime.timezone.utc))
+    check("an unparseable id yields None rather than a guess",
+          ACT.run_date("something-else") is None)
 
 
 def test_an_open_article_never_ages_out():
