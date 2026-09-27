@@ -325,7 +325,7 @@ def undelivered(limit=BACKLOG_DAYS):
     return out
 
 
-def offer(run: dict, chat=None):
+def offer(run: dict, chat=None, heading="New Crip Minds draft"):
     """The card. One article, its plain-language status, and two buttons.
 
     The session is created BEFORE the card is sent, because its id is what the buttons
@@ -335,7 +335,7 @@ def offer(run: dict, chat=None):
     d = ACT.deliver(run, chat_id=chat or CHAT_ID)
     text = run["article_text"]
     title = title_of(pathlib.Path(run["run_dir"]), text)
-    lines = ["New Crip Minds draft",
+    lines = [heading,
              "",
              title,
              "%d words" % run["words"],

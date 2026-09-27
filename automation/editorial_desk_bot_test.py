@@ -996,6 +996,70 @@ def test_the_articles_own_heading_is_not_sent_twice():
               reading_flow)
 
 
+# ── the day's article arrives by itself ─────────────────────────────────────────────
+
+def test_todays_article_is_delivered_alone():
+    import editorial_desk_deliver as DEL
+    with Harness() as h:
+        T.make_run(h.ev.name, today_run("fresh"))
+        T.make_run(h.ev.name, "production-20260910T070000Z-old")
+        runs = DEL.todays_undelivered()
+        check("only today's run is picked up", len(runs) == 1, [r["run_id"] for r in runs])
+        for r in runs:
+            BOT.offer(r, heading="Today's article")
+        texts = h.texts()
+        check("exactly one message was sent", len(texts) == 1, texts)
+        check("it is a card, not an inbox",
+              texts[0].startswith("Today's article") and "Waiting for you" not in texts[0],
+              texts[0][:60])
+        check("no older article was mentioned",
+              "20260910" not in texts[0], texts[0])
+        buttons = json.dumps(h.last_markup())
+        check("the card offers READ and HOLD",
+              "READ" in buttons and "HOLD" in buttons, buttons)
+
+
+def test_delivery_is_idempotent():
+    import editorial_desk_deliver as DEL
+    with Harness() as h:
+        T.make_run(h.ev.name, today_run("once"))
+        first = DEL.todays_undelivered()
+        for r in first:
+            BOT.offer(r, heading="Today's article")
+        second = DEL.todays_undelivered()
+        check("a delivered article is not offered again", second == [], second)
+        check("still one session", len(STORE.sessions()) == 1)
+
+
+def test_an_article_already_pulled_by_hand_is_not_resent():
+    import editorial_desk_deliver as DEL
+    with Harness() as h:
+        T.make_run(h.ev.name, today_run("pulled"))
+        BOT.cmd_today(CHAT)          # the owner got there first
+        check("the cron finds nothing left to deliver",
+              DEL.todays_undelivered() == [])
+
+
+def test_a_run_with_no_article_is_not_announced():
+    import editorial_desk_deliver as DEL
+    with Harness() as h:
+        T.make_run(h.ev.name, today_run("empty"), body="")
+        check("a run that produced no article sends nothing",
+              DEL.todays_undelivered() == [])
+
+
+def test_delivery_is_capped():
+    import editorial_desk_deliver as DEL
+    with Harness() as h:
+        for i in range(6):
+            body = "\n\n".join("Run %d paragraph %d. %s" % (i, n, "word " * 40)
+                               for n in range(1, 8))
+            T.make_run(h.ev.name, today_run("cap%d" % i, "0%d" % i), body=body)
+        check("a runaway day does not flood the chat",
+              len(DEL.todays_undelivered()) == DEL.MAX_PER_RUN,
+              len(DEL.todays_undelivered()))
+
+
 def main():
     for fn in sorted((f for n, f in globals().items() if n.startswith("test_")),
                      key=lambda f: f.__code__.co_firstlineno):
