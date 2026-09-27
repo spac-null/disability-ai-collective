@@ -104,6 +104,15 @@ def msg(text, *, user=OWNER, mid=1, reply_to=None):
     return m
 
 
+def today_run(tag="a", hh="07") -> str:
+    """A run id dated today. Inbox recency is measured from the article's own date, so
+    a fixture with a hardcoded date silently ages out of /today a few days after it is
+    written -- which is exactly how this suite broke on 2026-09-27."""
+    import datetime
+    return "production-%sT%s0000Z-%s" % (
+        datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d"), hh, tag)
+
+
 def cb(data, *, user=OWNER, cid="cb-1", message_id=4242):
     return {"id": cid, "from": {"id": user}, "data": data,
             "message": {"chat": {"id": CHAT}, "message_id": message_id}}
@@ -113,7 +122,7 @@ def cb(data, *, user=OWNER, cid="cb-1", message_id=4242):
 
 def test_today_offers_a_held_article():
     with Harness() as h:
-        h.make_run()
+        h.make_run(today_run("held"))
         BOT.cmd_today(CHAT)
         txt = "\n".join(h.texts())
         check("today delivers the waiting article", "New Crip Minds draft" in txt,
@@ -131,7 +140,7 @@ def test_today_offers_a_held_article():
 
 def test_today_does_not_reoffer():
     with Harness() as h:
-        h.make_run()
+        h.make_run(today_run("reoffer"))
         BOT.cmd_today(CHAT)
         before = len(h.messages())
         BOT.cmd_today(CHAT)
@@ -691,11 +700,10 @@ def test_no_latest_wins_resolver_remains():
 
 def test_today_never_chooses_and_never_hides():
     with Harness() as h:
-        for day, tag in (("26", "Alpha"), ("25", "Beta")):
+        for hh, tag in (("07", "Alpha"), ("08", "Beta")):
             body = "\n\n".join("%s paragraph %d. %s" % (tag, n, "word " * 40)
                                for n in range(1, 10))
-            T.make_run(h.ev.name, "production-202609%sT070000Z-aa%s" % (day, day),
-                       body=body)
+            T.make_run(h.ev.name, today_run(tag.lower(), hh), body=body)
         BOT.cmd_today(CHAT)
         a = STORE.sessions()[0]
         BOT.handle_callback(cb("read:%s" % a["session_id"], cid="t1"))
@@ -724,8 +732,8 @@ def _callback_data(markup):
 
 def test_bare_read_shows_the_inbox_instead_of_guessing():
     with Harness() as h:
-        for day in ("26", "25"):
-            T.make_run(h.ev.name, "production-202609%sT070000Z-bb%s" % (day, day))
+        for hh in ("07", "08"):
+            T.make_run(h.ev.name, today_run("bb" + hh, hh))
         BOT.cmd_today(CHAT)
         before = len(h.messages())
         BOT.handle_message(msg("/read", mid=9001))
