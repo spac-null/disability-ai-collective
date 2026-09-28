@@ -1060,6 +1060,76 @@ def test_delivery_is_capped():
               len(DEL.todays_undelivered()))
 
 
+def test_a_press_is_visible_on_the_button():
+    """On the 2026-09-28 delivery the owner pressed `Why now?` three times in
+    twenty-two seconds because nothing on screen changed. The toast is a grey flash
+    and is missed; the button is where a press has to show."""
+    with Harness() as h:
+        s = _open_and_read(h)
+        sid = s["session_id"]
+        sha = s["origin_version_sha256"]
+        blk = STORE.session_blocks(sid, sha)[0]
+        mid = blk["telegram_message_id"]
+
+        before = json.dumps(h.last_markup(), ensure_ascii=False)
+        check("nothing is ticked before a press", BOT.TICK not in before, before[:120])
+
+        BOT.handle_callback(cb("WHY_NOW:%s:%s" % (sid, blk["block_id"]), cid="t1",
+                               message_id=mid))
+        edits = [p for m, p in h.sent if m == "editMessageReplyMarkup"]
+        check("the keyboard was redrawn on the block", len(edits) == 1, len(edits))
+        check("on that exact message", edits[0]["message_id"] == mid)
+        marked = json.dumps(edits[0]["reply_markup"], ensure_ascii=False)
+        check("the pressed button is ticked",
+              (BOT.TICK + "Why now?") in marked, marked[:200])
+        check("the others are not", marked.count(BOT.TICK) == 1, marked)
+        check("no chat message was sent", not any(
+            "Why now" in t for t in h.texts()), h.texts()[-1][:40])
+
+        BOT.handle_callback(cb("STRONG:%s:%s" % (sid, blk["block_id"]), cid="t2",
+                               message_id=mid))
+        marked = json.dumps([p for m, p in h.sent
+                             if m == "editMessageReplyMarkup"][-1]["reply_markup"],
+                            ensure_ascii=False)
+        check("a second press adds its own tick and keeps the first",
+              marked.count(BOT.TICK) == 2 and (BOT.TICK + "Strong") in marked, marked)
+
+
+def test_ticks_belong_to_one_block_only():
+    with Harness() as h:
+        s = _open_and_read(h)
+        sid = s["session_id"]
+        sha = s["origin_version_sha256"]
+        b1 = STORE.session_blocks(sid, sha)[0]
+        BOT.handle_callback(cb("STRONG:%s:%s" % (sid, b1["block_id"]), cid="u1",
+                               message_id=b1["telegram_message_id"]))
+        BOT.handle_callback(cb("NEXT:%s" % sid, cid="u2"))
+        b2 = STORE.session_blocks(sid, sha)[-1]
+        check("the next block arrives unticked",
+              BOT.TICK not in json.dumps(h.last_markup(), ensure_ascii=False), h.last_markup())
+        check("and it is a different block", b2["block_id"] != b1["block_id"])
+
+
+def test_a_chosen_detail_is_ticked_too():
+    with Harness() as h:
+        s = _open_and_read(h)
+        sid = s["session_id"]
+        sha = s["origin_version_sha256"]
+        blk = STORE.session_blocks(sid, sha)[0]
+        mid = blk["telegram_message_id"]
+        BOT.handle_callback(cb("TOO_DENSE:%s:%s" % (sid, blk["block_id"]), cid="v1",
+                               message_id=mid))
+        BOT.handle_callback(cb("d:%s:%s:D:TOO_MANY_NAMES" % (sid, blk["block_id"]),
+                               cid="v2", message_id=mid))
+        marked = json.dumps([p for m, p in h.sent
+                             if m == "editMessageReplyMarkup"][-1]["reply_markup"],
+                            ensure_ascii=False)
+        check("after choosing a detail the block keyboard returns",
+              "Too dense" in marked and "Too many names" not in marked, marked[:200])
+        check("with the parent action ticked",
+              (BOT.TICK + "Too dense") in marked, marked[:200])
+
+
 def main():
     for fn in sorted((f for n, f in globals().items() if n.startswith("test_")),
                      key=lambda f: f.__code__.co_firstlineno):

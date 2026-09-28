@@ -97,6 +97,9 @@ BLOCK_BUTTONS = [
     [("I am lost", "READER_LOST"), ("Why now?", "WHY_NOW"), ("Want more", "WANT_MORE")],
 ]
 
+# Prefixed to a button the owner has already pressed on this block.
+TICK = "\u2713 "
+
 HELP = (
     "You read. I do the rest.\n\n"
     "/today     what's waiting\n"
@@ -181,20 +184,45 @@ def tg(method: str, payload: dict | None = None, timeout=None):
     return None
 
 
-def block_keyboard(sid, block_id) -> list:
-    """Navigation on top, judgement underneath. A reaction never moves the reader."""
+def pressed_on(sid, version_sha, block_id) -> set:
+    """Which reactions the owner has already recorded against this exact block."""
+    out = set()
+    for e in STORE.session_events(sid):
+        if (e.get("version_sha256") == version_sha
+                and e.get("block_id") == block_id):
+            if e["event_type"] in DESK.BUTTON_SIGNALS:
+                out.add(e["event_type"])
+            elif e["event_type"] == "FEEDBACK_DETAIL":
+                out.add((e.get("metadata") or {}).get("of_action", ""))
+                out.add(e.get("detail", ""))
+    return out
+
+
+def block_keyboard(sid, block_id, pressed=()) -> list:
+    """Navigation on top, judgement underneath. A reaction never moves the reader.
+
+    A PRESS MUST BE VISIBLE ON THE BUTTON. Feedback acknowledges through Telegram's
+    callback toast, which is a grey flash at the top of the screen and is missed
+    routinely: on the 2026-09-28 delivery the owner pressed `Why now?` three times in
+    twenty-two seconds because nothing on screen changed. Silent capture was right --
+    `Noted.` in the chat interrupted the reading we exist to observe -- but silence is
+    not the same as invisibility. A tick on the label costs no message and persists,
+    so the block also shows what has already been said about it.
+    """
     rows = [[(t, "%s:%s" % (code, sid)) for t, code in NAV_BUTTONS]]
-    rows += [[(t, "%s:%s:%s" % (code, sid, block_id)) for t, code in row]
-             for row in BLOCK_BUTTONS]
+    pressed = set(pressed)
+    rows += [[((TICK + t) if code in pressed else t, "%s:%s:%s" % (code, sid, block_id))
+              for t, code in row] for row in BLOCK_BUTTONS]
     return rows
 
 
-def detail_keyboard(action, sid, block_id) -> list:
+def detail_keyboard(action, sid, block_id, pressed=()) -> list:
     """The optional second press. `d` keeps the payload well inside Telegram's 64-byte
     callback limit; `D`/`R` name which action is being refined."""
     tag = {"TOO_DENSE": "D", "SOUNDS_LIKE_REPORT": "R"}[action]
     opts = DESK.DETAIL_OPTIONS[action]
-    rows = [[(label, "d:%s:%s:%s:%s" % (sid, block_id, tag, code))]
+    rows = [[((TICK + label) if code in set(pressed) else label,
+              "d:%s:%s:%s:%s" % (sid, block_id, tag, code))]
             for label, code in opts]
     # Navigation stays reachable: saying nothing about which kind is a complete answer,
     # and the reader must never be trapped in a sub-menu to get to the next block.
@@ -793,7 +821,9 @@ def handle_callback(cb):
         answer_callback(cb["id"], "Saved: %s" % detail.replace("_", " ").lower())
         msg_id = ((cb.get("message") or {}).get("message_id"))
         if msg_id:
-            edit_markup(chat, msg_id, block_keyboard(sid, block_id))
+            edit_markup(chat, msg_id,
+                        block_keyboard(sid, block_id,
+                                       pressed_on(sid, sha, block_id)))
         return
 
     # ── a reaction: recorded, and the reader stays where they are ───────────────
@@ -815,17 +845,24 @@ def handle_callback(cb):
         # every press turns the thing the reader is reading into an event log, and the
         # reading is what we are here to observe.
         label = kind.replace("_", " ").lower()
+        msg_id = ((cb.get("message") or {}).get("message_id"))
         if kind in DESK.DETAIL_OPTIONS:
             # The press is already stored; this only asks which kind, and saying
             # nothing is a complete answer. The keyboard is swapped in place.
             answer_callback(cb["id"], "Saved: %s - which part?" % label)
-            msg_id = ((cb.get("message") or {}).get("message_id"))
             if msg_id:
-                edit_markup(chat, msg_id, detail_keyboard(kind, sid, blk["block_id"]))
-        elif kind == "READER_LOST":
-            answer_callback(cb["id"], "Saved. Type what lost you, or press Next.")
+                edit_markup(chat, msg_id,
+                            detail_keyboard(kind, sid, blk["block_id"],
+                                            pressed_on(sid, sha, blk["block_id"])))
         else:
-            answer_callback(cb["id"], "Saved: %s" % label)
+            if kind == "READER_LOST":
+                answer_callback(cb["id"], "Saved. Type what lost you, or press Next.")
+            else:
+                answer_callback(cb["id"], "Saved: %s" % label)
+            if msg_id:
+                edit_markup(chat, msg_id,
+                            block_keyboard(sid, blk["block_id"],
+                                           pressed_on(sid, sha, blk["block_id"])))
 
 
 def handle_message(msg):
