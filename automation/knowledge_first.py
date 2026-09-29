@@ -57,6 +57,41 @@ _STATUS = re.compile(
     r"(APPROVED_DURABLE|CANDIDATE|NEEDS_RESEARCH|REJECTED|RETIRED)\b", re.M)
 _QUESTION = re.compile(r"^\*\*QUESTION\.\*\*\s*(.+?)(?=\n\n|\n\*\*)", re.M | re.S)
 _MINDS = re.compile(r"^\*\*MINDS SHARPENED\.\*\*\s*(.+?)(?=\n\n|\n\*\*)", re.M | re.S)
+
+
+def _field(entry: str, name: str) -> str:
+    """One bolded field of an instrument, or "".
+
+    Tolerant on purpose: headings are written as **MECHANISM.**, **CARRIERS** and
+    **CARRIERS** *(with a trailing note)*, and a parser that demanded one shape would
+    silently return nothing for the others -- which is how eight fields came to be
+    discarded without anyone noticing.
+    """
+    m = re.search(r"^\*\*%s\.?\*\*\s*(?:\*\([^)]*\)\*)?\s*(.+?)(?=\n\n|\n\*\*)"
+                  % re.escape(name), entry, re.M | re.S)
+    return re.sub(r"\s+", " ", m.group(1)).strip() if m else ""
+
+
+# EVERY FIELD THE OWNER WROTE, NOT ONE (2026-09-29).
+#
+# Each approved instrument carries nine fields of reviewed thinking. `load_questions`
+# extracted QUESTION and dropped the rest, so 48 instruments reached commissioning as a
+# single question string:
+#
+#   MECHANISM            the claim itself -- how the thing works. This IS the hypothesis.
+#   DISCONFIRMING SHAPE  what would refute it. Present on 55 entries.
+#   CARRIERS             the kinds of concrete subject that can carry the question
+#   FALSE MOVE           the wrong version, named by the owner for each instrument
+#   TRANSFER TEST        whether it generalises beyond one case
+#   WHAT THIS ADDS       why it is worth running at all
+#
+# The cost was measurable. Four consecutive articles came back from the same
+# institutional-psychiatric domain because the proposer had a question and no CARRIERS
+# telling it what may carry one; and an entire hypothesis mechanism was drafted to have a
+# MODEL invent a claim with a refutation, while 55 owner-written claims with their own
+# disconfirming shapes sat four lines away in this loader, parsed past.
+_INSTRUMENT_FIELDS = ("MECHANISM", "DISCONFIRMING SHAPE", "CARRIERS", "FALSE MOVE",
+                      "TRANSFER TEST", "WHAT THIS ADDS")
 _SKIP = {"INDEX.md", "README.md"}
 
 # The four canonical editorial perspectives, owner-approved 2026-09-13.
@@ -143,6 +178,51 @@ ACCESS_ORIGIN_QUESTION_IDS = frozenset({
 })
 
 
+# ── THE OWNER'S SUBJECT EXCLUSION ─────────────────────────────────────────────
+#
+# STATED BY THE OWNER, 2026-09-29: nothing about mental health, clinics or hospitals.
+#
+# IT HAD NEVER BEEN IMPLEMENTED. Until this constant existed, the commissioning path
+# carried exactly one exclusion -- ACCESS_ORIGIN_QUESTION_IDS above, about access-deficit
+# framing -- and nothing anywhere excluded this domain. FOUR consecutive articles were
+# produced in it: 26, 27, 28 and 29 September. A desk handoff raised it as an open
+# decision, offered two options, and neither was chosen, so nothing stopped it.
+#
+# THE INSTRUMENT'S OWN CARRIERS FIELD IS THE BETTER GUIDE, and it now reaches the
+# proposer. This is the GUARANTEE underneath it: a guide shapes what gets proposed, and a
+# filter decides what survives. Both, because the measured drift came from a proposer
+# with neither.
+#
+# EXCLUDED AT PROPOSAL, NOT IN THE ARTICLE TEXT. A keyword ban on finished prose is too
+# late -- research and writing are already paid for -- and wrong, because a story about
+# insulin supply may mention a hospital once without being a hospital story.
+#
+# INSTITUTIONAL-PSYCHIATRIC MARKERS ONLY. Deliberately not "patient" or "diagnosis": this
+# publication writes about disability, and those words appear in stories that are not the
+# excluded domain.
+EXCLUDED_SUBJECT_TERMS = (
+    "mental health", "mental illness", "mental-health", "mentally ill",
+    "psychiatry", "psychiatric", "psychiatrist", "psychosis", "psychotic",
+    "asylum", "asylums", "madhouse", "sanatorium", "sanitarium",
+    "clinic", "clinics", "clinical",
+    "hospital", "hospitals", "hospitalisation", "hospitalization",
+    "inpatient", "in-patient", "psych ward", "ward",
+    "institutionalised", "institutionalized",
+)
+
+
+def excluded_subject(*texts) -> str:
+    """The forbidden term a candidate names, or "" when it names none.
+
+    Word boundaries, so "subclinical" does not refuse a legitimate subject.
+    """
+    blob = " ".join(str(t or "") for t in texts).lower()
+    for term in EXCLUDED_SUBJECT_TERMS:
+        if re.search(r"(?<![a-z])%s(?![a-z])" % re.escape(term), blob):
+            return term
+    return ""
+
+
 def load_questions(directory: pathlib.Path | None = None) -> list:
     """The owner-approved questions, read from perspective material. Never authored here.
 
@@ -173,6 +253,12 @@ def load_questions(directory: pathlib.Path | None = None) -> list:
                    "title": m.group(2).strip(),
                    "question": re.sub(r"\s+", " ", q.group(1)).strip(),
                    "doc": f.name, "status": status.group(1)}
+            # Only the fields this entry actually has. An absent one stays absent rather
+            # than becoming an empty string a later stage would render as a blank heading.
+            for name in _INSTRUMENT_FIELDS:
+                value = _field(entry, name)
+                if value:
+                    row[name.lower().replace(" ", "_")] = value
             # Identity metadata only. Absent when the entry declares no single primary --
             # never defaulted, never guessed.
             persp = primary_perspective(minds.group(1) if minds else None)
@@ -313,11 +399,31 @@ def propose_stories(provider, question: dict, diversity_history: dict | None = N
         "metadata only when explicitly known; unknown is valid.\n" %
         json.dumps((diversity_history or {}).get("counts") or {}, ensure_ascii=False,
                    sort_keys=True))
+    # THE INSTRUMENT'S OWN GUARDS, WHICH IT ALWAYS HAD. CARRIERS says what kind of
+    # concrete subject can carry this question; FALSE MOVE names the wrong version the
+    # owner already identified for this instrument. Both were loaded and discarded, and
+    # the proposer was left choosing subjects from a question alone -- which is how four
+    # consecutive commissions landed in the same institutional-psychiatric domain.
+    guards = []
+    if question.get("carriers"):
+        guards += ["", "WHAT CAN CARRY THIS QUESTION (from the instrument itself -- "
+                       "propose a subject of one of these kinds):", "  %s"
+                   % question["carriers"]]
+    if question.get("false_move"):
+        guards += ["", "THE WRONG VERSION OF THIS QUESTION, named by the owner. Do not "
+                       "propose a story that makes this move:", "  %s"
+                   % question["false_move"]]
     user = "\n".join([
+        "EXCLUDED SUBJECT DOMAIN -- the owner's standing rule. Do NOT propose a story "
+        "about mental health, psychiatry, a clinic, a hospital, an asylum or a "
+        "psychiatric ward. A story is excluded when that is what it is ABOUT; a passing "
+        "mention inside a story about something else is not.",
+        "",
         "THE QUESTION (from approved perspective material -- it licenses this question and "
         "NO fact):",
         "  %s" % question["question"],
         "  (mechanism: %s)" % question["title"],
+        *guards,
         "",
         COMMISSION_SCHEMA,
         diversity_note,
@@ -326,7 +432,14 @@ def propose_stories(provider, question: dict, diversity_history: dict | None = N
     obj = _parse(getattr(comp, "text", "") or "")
     cands = [c for c in (obj.get("candidates") or []) if isinstance(c, dict)
              and str(c.get("subject") or "").strip()]
-    return {"question": question, "candidates": cands[:MAX_STORIES],
+    # The guarantee, not the instruction. What was dropped is recorded: a silent filter
+    # is how a rule stops being visible and then stops being true.
+    refused, kept = [], []
+    for c in cands:
+        term = excluded_subject(c.get("subject"), c.get("carrier"), c.get("why_now"))
+        (refused if term else kept).append(dict(c, excluded_term=term) if term else c)
+    return {"question": question, "candidates": kept[:MAX_STORIES],
+            "excluded_candidates": refused,
             "model_calls": 1,
             "provider": comp.identity() if hasattr(comp, "identity") else {}}
 

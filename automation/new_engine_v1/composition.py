@@ -52,6 +52,8 @@ from . import ledger as LG
 from . import stages as S
 from . import story as ST
 from . import materiality as MAT
+from . import editorial_lens as EL
+from . import hypothesis as HYP
 from . import provenance as PV
 from . import relations as REL
 from .provider import Provider, ProviderError, parse_json_object
@@ -996,9 +998,21 @@ WORTH_SCHEMA = (
 )
 
 
-def worth_gate(provider, ledger: dict, subject: str) -> dict:
-    """STAGE 2. A HOLD here stops the article before any expensive composition."""
-    user = "\n".join(["SUBJECT", "  " + (subject or "").strip(), "",
+def worth_gate(provider, ledger: dict, subject: str, hypothesis=None) -> dict:
+    """STAGE 2. A HOLD here stops the article before any expensive composition.
+
+    `hypothesis` is the claim commissioning proposed BEFORE the evidence existed. When it
+    is None -- every run before 2026-09-29, and any run whose commission did not carry
+    one -- the prompt is byte-identical to what it sent before the parameter existed.
+
+    When it IS present, this stage stops being a lens-hunt. The question changes from
+    "what reading can I find in this pile" to "does the evidence support, refuse or
+    complicate the claim I was given" -- and a refusal is a real answer, often the better
+    story. That is the difference between a report and an essay: a report describes what
+    is there, an essay tests something that could have been otherwise.
+    """
+    user = "\n".join(["SUBJECT", "  " + (subject or "").strip(),
+                      HYP.block(hypothesis or {}), "",
                       "THE FROZEN LEDGER -- the only facts that exist",
                       ledger_block(ledger), "", WORTH_SCHEMA])
     obj, ident = _ask(provider, WORTH_SYSTEM, user, 4_000, WORTH, WORTH_HOLD)
@@ -2833,6 +2847,9 @@ WRITER_MIN_WORDS = 50
 # may not create a fact, retrieve evidence, or widen a permission. House style is
 # untouched: PROSE_DOCTRINE and WRITER_CRAFT_DELTA are both still in force, because a
 # safe article is still a Crip Minds article and not a fact sheet.
+# See write_article. One line to revert.
+INCLUDE_EDITORIAL_LENS = True
+
 COMPOSE_NORMAL = "NORMAL"
 COMPOSE_SAFE_RECOMPOSE = "SAFE_RECOMPOSE"
 
@@ -3078,7 +3095,26 @@ def write_article(provider, arch: dict, ledger: dict, cut_prohibitions=None,
     if compose_mode not in COMPOSE_SYSTEMS:
         raise CompositionHold(WRITER, WRITER_HOLD,
                               ["unknown compose_mode %r" % compose_mode])
+    # WHAT THE PUBLICATION IS, FROM THE DOCUMENT THAT SAYS SO (2026-09-29).
+    #
+    # `editorial-lens.md` has existed at the repository root throughout, and no prompt in
+    # this engine had ever loaded it. Nor had any of the 43KB of Bregman craft analysis in
+    # .claude/: every mention of that corpus in code is a comment citing it. The style
+    # rules were derived from it once by hand in August and the derived rules are what
+    # ships -- so the rules have drifted from their source and nothing notices, because
+    # nothing reads the source.
+    #
+    # It goes FIRST, before the craft rules, because it is not a rule. It says what the
+    # work is for. And it is quoted rather than summarised: a paraphrase drifts silently,
+    # and an edit to the lens now reaches the next run by itself.
+    #
+    # ONE CONSTANT TO REVERT. An absent lens file yields an empty block and every prompt
+    # is byte-identical to what it was before this existed.
     system = COMPOSE_SYSTEMS[compose_mode]
+    if INCLUDE_EDITORIAL_LENS:
+        lens = EL.block()
+        if lens:
+            system = lens + "\n\n" + system
     packet, prompt = writer_packet(arch, ledger, cut_prohibitions, relations)
     perms = negative_permissions(arch, ledger)
     last = ""
@@ -8021,7 +8057,7 @@ def run_story_architecture_composition(
         subject: str = "", fact_check: bool = True, reader: bool = True,
         package: bool = True, stop_after: str = "",
         fact_check_fn=None, out_dir=None, frozen: dict | None = None,
-        compose_mode: str = COMPOSE_NORMAL) -> dict:
+        compose_mode: str = COMPOSE_NORMAL, instrument: dict | None = None) -> dict:
     """Approved research material in; a final article candidate out, or a HOLD.
 
     Ten stages, each one either PASS or the stage that stopped the run. There is no
@@ -8148,7 +8184,18 @@ def run_story_architecture_composition(
             st[WORTH] = dict(w, status=REPLAYED, model_calls=0, repairs=0)
             calls[WORTH] = repairs[WORTH] = 0
         else:
-            w = record(WORTH, worth_gate(P, ledger, subject))
+            # THE CLAIM THE OWNER ALREADY WROTE (2026-09-29). Each approved instrument
+            # carries a MECHANISM -- the claim itself -- and 43 of the 48 carry a
+            # DISCONFIRMING SHAPE saying what would refute it. Both were loaded by
+            # knowledge_first and then parsed past, so Worth had only a question and had
+            # to hunt a lens inside whatever the research returned. A lens found inside a
+            # pile can only describe the pile, which is a report by construction.
+            #
+            # `instrument` is optional and defaults to None, so a caller that does not
+            # supply one sends the prompt this stage sent before the parameter existed,
+            # byte for byte.
+            w = record(WORTH, worth_gate(P, ledger, subject,
+                                         HYP.from_instrument(instrument or {})))
 
         # CHEAP TRIAGE. Two model calls answer "does this subject belong here, and what
         # does the reading stand on" -- and that is the whole question a selector needs
