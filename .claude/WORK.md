@@ -622,6 +622,28 @@ and are **not** cutover blockers — they never blocked the completed default cu
   Pack verdicts are RECORDED and deliberately not ranked on — that is NEWS/POOL V2.
   Feeds, weights, ranking order, cron and the publish path are untouched.
 
+## TELEGRAM EDITORIAL DESK — LIVE (added 2026-09-29)
+
+**A subsystem this file otherwise does not describe.** Built 2026-09-26 to 09-29, deployed
+and running. Full handoff: `.claude/editorial-desk-handoff-2026-09-29.md` — read that
+before touching anything under `automation/editorial_desk*`.
+
+In one line: between 10 and 27 September the pipeline wrote ~20 finished articles that no
+person ever read, and the last publication was 3 September. The desk delivers a finished
+article to the owner in Telegram whatever the gates decided, records how he reads it, and
+publishes only on his explicit approval.
+
+- **Invariant:** if a coherent retained article exists, it reaches the desk. Status decides
+  what may be DONE with an article, never whether it may be SEEN. Do not add a delivery gate.
+- **No pipeline file is touched.** Research, Ledger, Worth, Architecture, Writer, Continuity,
+  Prose Finish, materiality policy and the publisher are unchanged; a test asserts the desk
+  modules define no production prompt and import no composition stage.
+- **Publication authority is unchanged and unreachable in practice** — see the handoff's
+  OPEN item 2: `publish_retained_fast_lane` is Fast-Lane-shaped and cannot validate a
+  story-architecture run, so PUBLISH can never fire today.
+- Deployed `e788e5c`; `cripminds-desk-bot.service` (systemd user unit); delivery cron
+  `5 10 * * *`; 593 offline checks.
+
 ## CURRENT PHASE
 
 **`BOUNDED REAL-CAPTION EDITORIAL-VALUE CHECK`** (set 2026-09-07, after PR #94)
@@ -705,6 +727,7 @@ owner-biography leakage into persona voice, or merely no longer feeds it in one 
 | Document | Status | What it's for |
 |---|---|---|
 | `.claude/WORK.md` | **CURRENT** | this file |
+| `.claude/editorial-desk-handoff-2026-09-29.md` | **CURRENT** | the Telegram editorial desk: invariant, doctrine, incidents, open owner decisions, how to run and deploy it |
 | `.claude/LOGBOOK.md` | **CURRENT** | chronological history, compact entries |
 | `.claude/PROJECT-MAP.md` | **CURRENT** | repository/worktree/branch topology |
 | `automation/engine_switch.py` | **CURRENT (code, authoritative)** | the one engine-selection boundary — the real answer to "which engine is default" and how rollback works; its module docstring is kept in sync with the ENGINE STATE table above |
