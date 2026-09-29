@@ -32,7 +32,7 @@ mid-sentence, `_sentence_initial` would return True, and the hit would be droppe
 composition.py:1565. Adding the field to the audit alone fixes numbers and leaves entities
 laundered, which is why both lists are tested.
 
-ONLY ONE OF THE TWO FIELDS IS FIXED HERE, AND THE OTHER IS ASSERTED AS A GAP.
+THE TWO FIELDS NEED DIFFERENT FIXES.
 
 `must_not_say_yet` is screened now. `prohibitions` deliberately are NOT, because the
 obvious fix is refuted by a fixture already in the tree. roman's plan says:
@@ -41,11 +41,8 @@ obvious fix is refuted by a fixture already in the tree. roman's plan says:
 
 "Webb" is in no fact -- and that is exactly why it is forbidden, since the Writer knows
 what Webb is without being told. Screening prohibitions for surface refuses well-formed
-editorial guards. The laundering is real, but the fix belongs at the other end: exclude
-prohibition lines from the approved surface `factual_surface_audit` builds out of the
-rendered packet, so that naming a thing in order to forbid it does not license it. Until
-that lands, the two `KNOWN GAP` cases below assert the CURRENT behaviour so the hole stays
-visible and so that whoever closes it is told by a failing test to come and update this.
+editorial guards. `licensed_surface` excludes prohibitions from permission checks while
+`render` still sends them to the Writer. CUT watch terms use that same positive surface.
 
 A THIRD THING, FOUND WHILE FIXING THE FIRST. The audit joined its fields with " ".
 `_entities` exempts sentence-initial capitals, so a space join put every short field's
@@ -124,32 +121,29 @@ def main() -> int:
           C.check_architecture(arch, ledger) != [],
           "check_architecture returned [] -- _sentence_initial may be dropping it")
 
-    # ── prohibitions: the blind spot, asserted ON PURPOSE ─────────────────────
-    #
-    # This is a KNOWN OPEN DEFECT and the assertion below records it rather than hides
-    # it. Prohibitions launder: a token named in one becomes approved surface for
-    # factual_surface_audit. Screening them here is the wrong fix, and the roman fixture
-    # is why -- "Do not compare Roman's data release to Hubble's or Webb's release
-    # practices" names Webb, which is in no fact, and that is exactly why it is forbidden.
-    # A prohibition must be free to name what it forbids.
-    #
-    # The fix belongs at the other end: exclude prohibition lines from the approved
-    # surface factual_surface_audit builds from the rendered packet. Until that lands,
-    # this test asserts the CURRENT behaviour so the gap stays visible and so that
-    # whoever fixes it is told, by a failing test, to come here and update it.
-    #
-    # DO NOT DELETE THIS CASE TO MAKE THE SUITE LOOK BETTER.
+    # ── prohibitions constrain the Writer without licensing their examples ───
     arch = DS.arch()
     arch["prohibitions"] = (list(arch.get("prohibitions") or [])
                             + ["Do not mention the %s edition." % UNSUPPORTED_YEAR])
     accepted = C.check_architecture(arch, ledger) == []
-    check("KNOWN GAP: a prohibition may still name an unsupported number", accepted,
-          "prohibitions are now screened -- if that is intended, update this test")
+    check("a prohibition may name an unsupported number", accepted)
     if accepted:
+        packet, prompt = C.writer_packet(arch, ledger)
+        check("the forbidden number reaches the Writer as a constraint",
+              UNSUPPORTED_YEAR in prompt)
+        check("the forbidden number is absent from licensed surface",
+              UNSUPPORTED_YEAR not in ST.licensed_surface(packet))
         a = audited(arch, ledger, ARTICLE_YEAR)
-        check("KNOWN GAP: and that silences the article screen for it",
-              a.get("unapproved_numbers") == [],
-              "the laundering appears to be fixed -- update this test and say where")
+        check("the prohibition does not license that number in the article",
+              a.get("unapproved_numbers") == [UNSUPPORTED_YEAR],
+              str(a.get("unapproved_numbers")))
+
+    arch = DS.arch()
+    arch["prohibitions"].append("Do not mention Hitachi.")
+    watch = C.derive_cut_watch_terms(arch, ledger)
+    check("a prohibition cannot remove a CUT name from its watch terms",
+          "Hitachi" in watch["terms"].get("F04", []),
+          str(watch["terms"].get("F04")))
 
     # ── the field lists must not drift apart again ────────────────────────────
     import inspect
