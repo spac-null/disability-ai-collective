@@ -2224,26 +2224,67 @@ def architect_prose_audit(arch: dict, facts: dict, quotes: dict | None = None) -
     evidence = " ".join(list(facts.values()) + list(quotes.values()))
     e_words, e_nums = _content_words(evidence, fold=True), _numbers(evidence)
     e_ents = _entities(evidence, skip_sentence_initial=False)
-    prose = " ".join(str(arch.get(k) or "") for k in
-                     ("story_spine", "opening_object_or_event", "reader_initial_state",
-                      "turn", "crip_turn", "ending_move"))
+    # JOINED ON A SENTENCE BOUNDARY, NOT A SPACE (2026-09-29). `_entities` skips
+    # sentence-initial capitals when reading prose, because every sentence starts with
+    # one -- but these are SEPARATE SHORT FIELDS, and joining them with " " puts each
+    # field's first word in the middle of a sentence, where the exemption does not apply.
+    # That is the whole of the pre-existing `roman` failure on sentence-initial "Naming",
+    # and adding two more fields to this list reproduced it immediately on `jia` with
+    # "What". `composition._sentence_initial` exists to clean up after exactly this, one
+    # layer later; joining properly means there is less for it to clean up.
+    prose = ". ".join(str(arch.get(k) or "") for k in
+                      ("story_spine", "opening_object_or_event", "reader_initial_state",
+                       "turn", "crip_turn", "ending_move"))
     for b in (arch.get("beats") or []):
-        prose += " " + " ".join(str(b.get(k) or "") for k in
+        prose += ". " + ". ".join(str(b.get(k) or "") for k in
                                 ("happens", "concrete_carrier", "concept_introduced",
                                  # Added when this field began reaching the Writer
                                  # (2026-09-24). Anything render() puts in the packet is
                                  # already-approved surface as far as every later audit is
                                  # concerned, so it is screened here first.
-                                 "why_reader_wants_next"))
+                                 "why_reader_wants_next",
+                                 # THE FIELD THAT REACHED THE WRITER UNSCREENED
+                                 # (2026-09-29). render() prints this as "not yet: ..."
+                                 # (story.py:1324), so it is packet text, and
+                                 # factual_surface_audit takes the rendered packet as its
+                                 # approved surface. An unsupported year placed here
+                                 # therefore passed check_architecture, reached the
+                                 # prompt, and then STOPPED the article-level screen from
+                                 # reporting that same year in the prose. Reproduced on a
+                                 # fixture that passes clean without it, with the control
+                                 # that the identical token in `happens` is refused.
+                                 "must_not_say_yet"))
+    # PROHIBITIONS ARE NOT SCANNED, AND THE REASON IS A REFUTATION (2026-09-29).
+    #
+    # They reach the Writer under RULES (story.py:1393) and they DO launder: an
+    # unsupported token placed in one becomes approved surface for
+    # factual_surface_audit, which is measured and asserted in
+    # planning_field_authority_test. The obvious fix is to screen them here, on the
+    # argument that a prohibition never needs to name what the evidence does not carry.
+    #
+    # That argument is false, and the roman fixture disproves it:
+    #
+    #     "Do not compare Roman's data release to Hubble's or Webb's release practices."
+    #
+    # "Webb" appears in no fact -- which is exactly WHY it is forbidden. The Writer knows
+    # what Webb is without being told, and the prohibition exists to stop it reaching for
+    # that comparison. Screening prohibitions for surface refuses well-formed editorial
+    # guards, and the fixture's four hits were all of this kind.
+    #
+    # The laundering is therefore real but the fix belongs at the other end: prohibition
+    # lines must be excluded from the APPROVED SURFACE that factual_surface_audit builds
+    # out of the rendered packet, so that naming a thing in order to forbid it does not
+    # license it. That is a change to a core screen and it is not bundled here.
+    surface = prose
     terms = {w for w in _content_words(prose)
              if w not in e_words and _stem(w) not in e_words}
-    return {"unapproved_numbers": sorted(_numbers(prose) - e_nums),
-            "unapproved_entities": sorted(_entities(prose) - e_ents),
+    return {"unapproved_numbers": sorted(_numbers(surface) - e_nums),
+            "unapproved_entities": sorted(_entities(surface) - e_ents),
             "unapproved_sensory": sorted(t for t in terms if t in SENSORY_RISK),
             "unapproved_scene": sorted(t for t in terms if t in SCENE_RISK),
             "unapproved_spatial": sorted(t for t in terms if t in SPATIAL_RISK),
-            "hard_ok": not (sorted(_numbers(prose) - e_nums)
-                            or sorted(_entities(prose) - e_ents)
+            "hard_ok": not (sorted(_numbers(surface) - e_nums)
+                            or sorted(_entities(surface) - e_ents)
                             or [t for t in terms if t in SENSORY_RISK]
                             or [t for t in terms if t in SCENE_RISK]
                             or [t for t in terms if t in SPATIAL_RISK])}
