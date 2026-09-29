@@ -599,11 +599,22 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     # Claude Code CLI. Built only when the story-architecture path is selected, so a
     # legacy run neither needs the CLI installed nor pays for one.
     comp_provider = None
-    if CP.current_composition_engine() == CP.COMPOSITION_STORY_ARCHITECTURE:
+    if CP.current_composition_engine() in (CP.COMPOSITION_STORY_ARCHITECTURE,
+                                           CP.COMPOSITION_FREE_ARGUMENTATIVE):
         comp_provider = CCP.ClaudeCLIProvider()
+    # THE APPROVED INSTRUMENT REACHES COMPOSITION (2026-09-30). The owner writes a
+    # MECHANISM, a DISCONFIRMING SHAPE, CARRIERS and a FALSE MOVE for every approved
+    # question, `knowledge_first` has loaded all four since 2026-09-29, and until now they
+    # stopped at commissioning. They are EDITORIAL INTENT and license no fact.
+    #
+    # Read by the free argumentative composition path only. The story-architecture path's
+    # own `instrument` parameter is deliberately still unsupplied -- wiring it would change
+    # what Worth is asked on the path this change is not touching, and one defect class per
+    # deploy is the rule. That gap is recorded in the deploy note.
+    _instrument = (commission or {}).get("question") or None
     out = R.run(payload, root, Provider(model=model), run, now.isoformat(),
                 research_fn=research_fn, fact_check_fn=FCB.fact_check,
-                composition_provider=comp_provider)
+                composition_provider=comp_provider, instrument=_instrument)
     (root / run / "ACQUISITION.json").write_text(json.dumps(
         {"seed_id": seed["id"],
          "attempts": getattr(orch, "_source_acquisition_attempts", []),

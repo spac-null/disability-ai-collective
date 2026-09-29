@@ -83,7 +83,14 @@ STAGES = (LEDGER, WORTH, ARCHITECTURE, CUT_TERMS, WRITER, CONTINUITY,
 # flags. Default stays legacy until a cutover is decided.
 COMPOSITION_LEGACY = "legacy"
 COMPOSITION_STORY_ARCHITECTURE = "story_architecture"
-COMPOSITION_ENGINES = (COMPOSITION_LEGACY, COMPOSITION_STORY_ARCHITECTURE)
+# THE FREE ARGUMENTATIVE PATH (2026-09-30). Same frozen Ledger, same gates; the plan no
+# longer reaches the prose. See new_engine_v1/free_composition.py for the measurement that
+# produced it. Adding a third value changes nothing for the other two: the default is
+# untouched, an unset variable still selects legacy, and an unknown value still fails
+# closed rather than guessing.
+COMPOSITION_FREE_ARGUMENTATIVE = "free_argumentative"
+COMPOSITION_ENGINES = (COMPOSITION_LEGACY, COMPOSITION_STORY_ARCHITECTURE,
+                       COMPOSITION_FREE_ARGUMENTATIVE)
 DEFAULT_COMPOSITION_ENGINE = COMPOSITION_LEGACY
 
 COMPOSITION_ENGINE_ENV = "COMPOSITION_ENGINE"

@@ -118,7 +118,7 @@ def _stage_failure(stage: str, category: str, exc: Exception, at: str, A: dict,
 def run(source_payload: dict, run_root: pathlib.Path, provider,
         name: str, created_at: str, byline: str = DEFAULT_BYLINE,
         mode: str | None = None, research_fn=None, fact_check_fn=None,
-        composition_provider=None) -> dict:
+        composition_provider=None, instrument: dict | None = None) -> dict:
     """Execute the target path once against real material.
 
     `source_payload` must already satisfy the SOURCE_SNAPSHOT contract -- acquisition is
@@ -137,6 +137,12 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
     legacy orchestrator, which this package may not import. Production supplies
     `composition_factual_bridge.fact_check`; a test supplies its own, and an absent
     callable is reported NOT_RUN rather than passed.
+
+    `instrument` is the APPROVED QUESTION this run drew -- the owner's own MECHANISM,
+    DISCONFIRMING SHAPE, CARRIERS and FALSE MOVE, written before any evidence existed. It
+    is EDITORIAL INTENT and licenses no fact. It is read only by the free argumentative
+    composition path; the story-architecture path is called exactly as it was before this
+    parameter existed, so an unset instrument changes nothing anywhere.
     """
     mode = (mode or current_mode()).upper()
     if mode == MODE_OFF:
@@ -218,10 +224,16 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
         engine = CP.current_composition_engine()
     except CP.UnknownCompositionEngine as e:
         raise EngineDisabled(str(e))
-    if engine == CP.COMPOSITION_STORY_ARCHITECTURE:
+    if engine in (CP.COMPOSITION_STORY_ARCHITECTURE, CP.COMPOSITION_FREE_ARGUMENTATIVE):
+        # ONE function for both composition contracts, deliberately. They differ only in
+        # WHICH composition runs; everything after it -- WRITER_OUTPUT, GROUNDING_FINDINGS,
+        # the decision, the persisted artifacts -- is identical work on an identically
+        # shaped result, and giving the new path its own copy of it is how the two would
+        # drift.
         return _run_story_architecture(
             composition_provider or provider,
-            A, prov, pack, src, sha, at, run_root, name, mode, fact_check_fn)
+            A, prov, pack, src, sha, at, run_root, name, mode, fact_check_fn,
+            engine=engine, instrument=instrument)
 
     # --- DISCOVERY: consumes the anchor and the frozen pack ------------------
     # The anchor is SELECTED, not written (PR #61). Candidates are cut deterministically
@@ -466,21 +478,39 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
 
 def _run_story_architecture(provider, A: dict, prov: dict, pack: dict, src: str,
                             sha: str, at: str, run_root: pathlib.Path, name: str,
-                            mode: str, fact_check_fn=None) -> dict:
-    """The story-architecture composition path, from the frozen research pack onwards."""
+                            mode: str, fact_check_fn=None,
+                            engine: str = CP.COMPOSITION_STORY_ARCHITECTURE,
+                            instrument: dict | None = None) -> dict:
+    """A Ledger-first composition path, from the frozen research pack onwards.
+
+    `engine` selects WHICH composition runs and is recorded on the provider identity so a
+    consumer downstream -- the publication-safety bridge -- knows which contract produced
+    the result without inspecting artifact shapes. Everything after the composition call is
+    identical for both, because both return the same result shape.
+    """
     out_dir = run_root / name
-    # TWO COMPOSITIONS PER WORTH-PASS STORY (owner-directed, 2026-09-10). This returns a
-    # composition result of the SAME shape as before -- the WINNING attempt's own -- so
-    # everything below is unchanged and a held article or refused package from attempt A
-    # structurally cannot reach WRITER_OUTPUT, the decision or publication state.
-    result = CP.run_composition_with_fallback(
-        provider, pack=pack, source_text=src, source_sha=sha,
-        subject=pack.get("subject", ""), out_dir=out_dir,
-        fact_check_fn=fact_check_fn)
+    if engine == CP.COMPOSITION_FREE_ARGUMENTATIVE:
+        # ONE composition. No fallback recomposition: a second free draft from the same
+        # Ledger is a resample, not a repair. See free_composition's own docstring.
+        from . import free_composition as FC
+        result = FC.run_free_argumentative_composition(
+            provider, pack=pack, source_text=src, source_sha=sha,
+            subject=pack.get("subject", ""), out_dir=out_dir,
+            fact_check_fn=fact_check_fn, instrument=instrument)
+    else:
+        # TWO COMPOSITIONS PER WORTH-PASS STORY (owner-directed, 2026-09-10). This returns
+        # a composition result of the SAME shape as before -- the WINNING attempt's own --
+        # so everything below is unchanged and a held article or refused package from
+        # attempt A structurally cannot reach WRITER_OUTPUT, the decision or publication
+        # state.
+        result = CP.run_composition_with_fallback(
+            provider, pack=pack, source_text=src, source_sha=sha,
+            subject=pack.get("subject", ""), out_dir=out_dir,
+            fact_check_fn=fact_check_fn)
     prov["composition"] = {s: (d or {}).get("provider", {})
                            for s, d in (result.get("detail") or {}).items()
                            if isinstance(d, dict) and d.get("provider")}
-    prov["composition_engine"] = CP.COMPOSITION_STORY_ARCHITECTURE
+    prov["composition_engine"] = engine
 
     article = result.get("article_text") or ""
     det = result.get("detail") or {}
@@ -513,14 +543,14 @@ def _run_story_architecture(provider, A: dict, prov: dict, pack: dict, src: str,
 
     if passed:
         decision = "ACCEPT"
-        reasons = ["story_architecture: all ten stages passed",
+        reasons = ["%s: every stage passed" % engine,
                    "stages: %s" % ", ".join("%s=%s" % (s, result["stages"][s])
                                             for s in CP.STAGES),
                    "ACCEPT = eligible for the candidate pool; never publication"]
     else:
         decision = "HOLD"
-        reasons = ["story_architecture HOLD at %s (%s)"
-                   % (result["failure_stage"], result["reason_code"]),
+        reasons = ["%s HOLD at %s (%s)"
+                   % (engine, result["failure_stage"], result["reason_code"]),
                    str(result["failure_reason"])[:400]]
     if result.get("fallback_recomposition_triggered"):
         reasons.append("attempt %s of %d decided this run; A was discarded as a "
@@ -539,7 +569,11 @@ def _run_story_architecture(provider, A: dict, prov: dict, pack: dict, src: str,
     A[C.SHADOW_DECISION] = _emit(
         C.SHADOW_DECISION, at,
         {"decision": decision, "reasons": reasons, "engine": ENGINE,
-         "composition_engine": CP.COMPOSITION_STORY_ARCHITECTURE,
+         # The engine that actually composed, not a constant. Hardcoding
+         # story_architecture here would file every free run's decision under the wrong
+         # contract, and this artifact is what a later audit reads to find out which one
+         # produced the article.
+         "composition_engine": engine,
          "reason_code": result.get("reason_code") or "",
          "policy": "ACCEPT = eligible for the candidate pool; never publication"},
         dec_inputs)

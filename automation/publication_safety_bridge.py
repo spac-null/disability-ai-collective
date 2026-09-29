@@ -257,8 +257,15 @@ def evaluate(out: dict, *, fact_check_fn=None, run_dir=None) -> BridgeResult:
     one) can know which contract it is looking at without inspecting artifact shapes.
     Its absence -- every legacy run, and any run this field predates -- means legacy.
     """
-    if (out.get("provider") or {}).get("composition_engine") == \
-            CP.COMPOSITION_STORY_ARCHITECTURE:
+    # BOTH Ledger-first contracts are evaluated by _evaluate_new_engine_v1, and the free
+    # argumentative path is one of them (2026-09-30). This is a DISPATCH change and not a
+    # relaxation: the free path emits the same `composition["stages"]` shape and every
+    # check below -- ledger, worth, architecture, safety, grounding, fact check, reader,
+    # and the world-relative fact check -- runs on it at full strength and unchanged.
+    # Routing it to _evaluate_legacy instead would be the bug: that evaluator reads a
+    # Discovery/Article Form lineage which no Ledger-first run has.
+    if (out.get("provider") or {}).get("composition_engine") in (
+            CP.COMPOSITION_STORY_ARCHITECTURE, CP.COMPOSITION_FREE_ARGUMENTATIVE):
         return _evaluate_new_engine_v1(out, fact_check_fn=fact_check_fn,
                                        run_dir=run_dir)
     return _evaluate_legacy(out, fact_check_fn=fact_check_fn)
