@@ -1396,6 +1396,16 @@ def render(packet: dict) -> str:
     return "\n".join(L)
 
 
+def licensed_surface(packet: dict) -> str:
+    """Positive packet material for lexical checks, excluding forbidden examples.
+
+    Writer instructions may name an unsupported thing precisely to forbid it. Those
+    names must reach the Writer, but they may not become permission in a later surface
+    or CUT check. Keep the Writer's actual prompt in ``render`` unchanged.
+    """
+    return render(dict(packet, prohibitions=[]))
+
+
 def validate_packet(packet: dict) -> list:
     """Fail closed. A packet carrying the auditing frame would reintroduce the very
     defect this module exists to remove, so it is refused rather than cleaned."""
@@ -2024,7 +2034,7 @@ def factual_surface_audit(article_text: str, packet: dict, ledger: dict | None =
     `ledger` stays optional so every existing caller and offline test is unaffected;
     omitting it reproduces the previous packet-only behaviour exactly.
     """
-    approved = render(packet)
+    approved = licensed_surface(packet)
     if ledger:
         # Proposition and support span: what was granted, and the source bytes it was
         # granted from. Same pair composition.py's package screen uses.
@@ -2256,11 +2266,8 @@ def architect_prose_audit(arch: dict, facts: dict, quotes: dict | None = None) -
                                  "must_not_say_yet"))
     # PROHIBITIONS ARE NOT SCANNED, AND THE REASON IS A REFUTATION (2026-09-29).
     #
-    # They reach the Writer under RULES (story.py:1393) and they DO launder: an
-    # unsupported token placed in one becomes approved surface for
-    # factual_surface_audit, which is measured and asserted in
-    # planning_field_authority_test. The obvious fix is to screen them here, on the
-    # argument that a prohibition never needs to name what the evidence does not carry.
+    # They reach the Writer under RULES. Screening them here on the assumption that a
+    # prohibition never needs to name unsupported material would be wrong.
     #
     # That argument is false, and the roman fixture disproves it:
     #
@@ -2271,10 +2278,8 @@ def architect_prose_audit(arch: dict, facts: dict, quotes: dict | None = None) -
     # that comparison. Screening prohibitions for surface refuses well-formed editorial
     # guards, and the fixture's four hits were all of this kind.
     #
-    # The laundering is therefore real but the fix belongs at the other end: prohibition
-    # lines must be excluded from the APPROVED SURFACE that factual_surface_audit builds
-    # out of the rendered packet, so that naming a thing in order to forbid it does not
-    # license it. That is a change to a core screen and it is not bundled here.
+    # licensed_surface() now excludes them from lexical permission checks while render()
+    # continues to deliver the constraints to the Writer.
     surface = prose
     terms = {w for w in _content_words(prose)
              if w not in e_words and _stem(w) not in e_words}

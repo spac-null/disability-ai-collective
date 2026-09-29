@@ -1454,15 +1454,14 @@ def _sentence_initial(word: str, arch: dict) -> bool:
     fields = [str(arch.get(k) or "") for k in
               ("story_spine", "opening_object_or_event", "reader_initial_state",
                "turn", "crip_turn", "ending_move")]
-    fields += [str(p or "") for p in (arch.get("prohibitions") or [])]
     for b in (arch.get("beats") or []):
         fields += [str(b.get(k) or "") for k in
                    ("happens", "concrete_carrier", "concept_introduced",
                     "why_reader_wants_next", "must_not_say_yet")]
     # THIS LIST HAS TO TRACK architect_prose_audit's (2026-09-29). It decides which of the
     # audit's entity hits are dropped as mere grammar capitals, and it did so from a
-    # SHORTER list than the audit scanned. A name appearing only in `must_not_say_yet` or
-    # in a prohibition would never be found mid-sentence here, so `_sentence_initial`
+    # SHORTER list than the audit scanned. A name appearing only in `must_not_say_yet`
+    # would never be found mid-sentence here, so `_sentence_initial`
     # returned True and composition.py:1565 discarded the hit -- adding the fields to the
     # audit alone would have fixed unapproved NUMBERS and silently left ENTITIES laundered.
     for f in fields:
@@ -2323,12 +2322,11 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
     `cut_adherence` can never silently watch nothing, and any cut fact for which no term
     survives licensing is REPORTED rather than dropped.
     """
-    # Licensed by everything the WRITER WAS ACTUALLY HANDED, not merely by the used
-    # propositions: the packet also carries beat text, carriers, definitions and
-    # prohibitions, and a word in any of them is language the Writer was given. Rendering
-    # it here is deterministic and free.
+    # A prohibition may name the very CUT material it forbids. Keep it in the Writer's
+    # prompt, but exclude it from the positive surface used to derive CUT watch terms.
+    # Other packet material remains visible to this screen.
     try:
-        packet_text = ST.render(ST.build_packet(
+        packet_text = ST.licensed_surface(ST.build_packet(
             arch, arch.get("final_lens") or {}, LG.propositions(ledger)))
     except Exception:                                             # noqa: BLE001
         packet_text = " ".join((ledger.get(f) or {}).get("proposition") or ""
@@ -2620,7 +2618,7 @@ def verify_negative_lineage(article_text: str, declared, ledger: dict, packet: d
     reuses a merged validator; none of them asks a model anything.
     """
     sentences = label_sentences(article_text)
-    approved = ST.render(packet)
+    approved = ST.licensed_surface(packet)
     a_words = ST._content_words(approved, fold=True)
     a_nums, a_ents = ST._numbers(approved), ST._entities(approved,
                                                          skip_sentence_initial=False)
@@ -3439,7 +3437,7 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
     # entity when the packet grants Survey"): only a possessive whose base is already
     # approved is forgiven, and every other unapproved entity still blocks. No retained
     # run hit it; it is closed because the two sets must not disagree about "approved".
-    approved_render = ST.render(packet) + " " + repair_text
+    approved_render = ST.licensed_surface(packet) + " " + repair_text
     if ledger:
         approved_render += " " + " ".join(
             "%s %s" % (str((v or {}).get("proposition", "")),
@@ -3832,7 +3830,7 @@ def ground_candidate(provider, article_text: str, source_text: str, source_sha: 
     # must add no factual surface the packet does not already carry, which is the same
     # test factual_surface_audit applies. Anything else still blocks.
     defs = {k.lower() for k in ((arch or {}).get("definitions") or {})}
-    approved_words = ST._content_words(ST.render(packet), fold=True) if packet else set()
+    approved_words = ST._content_words(ST.licensed_surface(packet), fold=True) if packet else set()
     adjudicated = []
     if defs and approved_words:
         for f in uncertain:
@@ -3842,8 +3840,8 @@ def ground_candidate(provider, article_text: str, source_text: str, source_sha: 
             names_a_defined_term = any(
                 term in " ".join(q.lower().split()) for term in defs)
             adds_surface = bool(ST._content_words(q) - approved_words) \
-                or bool(ST._numbers(q) - ST._numbers(ST.render(packet))) \
-                or bool(ST._entities(q) - ST._entities(ST.render(packet),
+                or bool(ST._numbers(q) - ST._numbers(ST.licensed_surface(packet))) \
+                or bool(ST._entities(q) - ST._entities(ST.licensed_surface(packet),
                                                        skip_sentence_initial=False))
             if names_a_defined_term and not adds_surface:
                 adjudicated.append({"id": f.get("id"), "quote": q[:160],
@@ -4170,7 +4168,7 @@ def apply_grounding_repair(article_text: str, edits: list, findings: list,
     adds is refused, not applied.
     """
     ids = {str(f.get("id")) for f in findings}
-    approved = ST.render(packet)
+    approved = ST.licensed_surface(packet)
     a_nums, a_ents = _numbers_of(approved), ST._entities(approved,
                                                          skip_sentence_initial=False)
     out, prov, errs = article_text, [], []
@@ -5722,7 +5720,7 @@ def apply_package_safety_repair(package: dict, edits: list, findings: list,
     language, which needs no new permission to remove.
     """
     ids = {str(f.get("id")) for f in findings}
-    approved = ST.render(packet)
+    approved = ST.licensed_surface(packet)
     a_nums = _numbers_of(approved)
     a_ents = ST._entities(approved, skip_sentence_initial=False)
     out = dict(package or {})
