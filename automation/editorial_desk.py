@@ -251,6 +251,25 @@ def publish_state(run_dir: pathlib.Path) -> tuple:
     validator -- resolves to PUBLISH_BLOCKED. The desk fails closed on publication in
     exactly the way it refuses to fail closed on visibility.
     """
+    # THE VALIDATOR STILL DECIDES; THE DESK ADDS WHAT THE RUN ITSELF RECORDED
+    # (2026-09-29).
+    #
+    # `publish_retained_fast_lane` is a Fast Lane V1 replay -- its own docstring says so,
+    # and it wants WRITER_OUTPUT.article_text plus CLAIM_MAP_VALIDATION, GROUNDING_AUDIT
+    # and READER_AUDIT. A story-architecture run carries none of those: its
+    # WRITER_OUTPUT.article_text is empty by construction and those three files are never
+    # written. So it refuses with "missing required artifact: article.md", and the owner
+    # was shown a plumbing error about a file when the run was simply HELD. Measured
+    # 2026-09-29: zero ACCEPTs in 60 production runs, so that message was wrong about the
+    # reason every single time it was shown.
+    #
+    # THE FIRST ATTEMPT AT THIS REPLACED THE VALIDATOR'S SENTENCE, and two tests refused
+    # it by name: "the refusal is the validator's own words, not the desk's". That
+    # doctrine is right -- the desk must never become a second publication gate -- so the
+    # validator's words are kept verbatim and the run's OWN recorded decision is put in
+    # front of them. The desk still authors no judgement; it now quotes two authorities
+    # instead of one, and changes no permission. A held run was unpublishable before and
+    # is unpublishable now.
     try:
         import publish_retained_fast_lane as PRFL
     except Exception as e:                                            # noqa: BLE001
@@ -262,7 +281,15 @@ def publish_state(run_dir: pathlib.Path) -> tuple:
             type(e).__name__, str(e)[:160])
     if r.get("status") == "ELIGIBLE_NOT_PUBLISHED":
         return PUBLISH_ELIGIBLE, "the publication-safety bridge grants eligibility"
-    return PUBLISH_BLOCKED, str(r.get("blocker") or "the publisher refused")[:400]
+    refusal = str(r.get("blocker") or "the publisher refused")[:400]
+    gates = gate_summary(run_dir)
+    decision = str(gates.get("decision") or "").upper()
+    if decision and decision not in ("ACCEPT", "PASS", "PUBLISH"):
+        stage = gates.get("failure_stage") or ""
+        return PUBLISH_BLOCKED, ("this run is %s%s and was never accepted for "
+                                 "publication. The publisher also refuses: %s"
+                                 % (decision, " at %s" % stage if stage else "", refusal))
+    return PUBLISH_BLOCKED, refusal
 
 
 def read_run(run_dir) -> dict:
