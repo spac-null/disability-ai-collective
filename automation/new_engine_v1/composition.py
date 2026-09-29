@@ -1447,9 +1447,17 @@ def _sentence_initial(word: str, arch: dict) -> bool:
     fields = [str(arch.get(k) or "") for k in
               ("story_spine", "opening_object_or_event", "reader_initial_state",
                "turn", "crip_turn", "ending_move")]
+    fields += [str(p or "") for p in (arch.get("prohibitions") or [])]
     for b in (arch.get("beats") or []):
         fields += [str(b.get(k) or "") for k in
-                   ("happens", "concrete_carrier", "concept_introduced")]
+                   ("happens", "concrete_carrier", "concept_introduced",
+                    "why_reader_wants_next", "must_not_say_yet")]
+    # THIS LIST HAS TO TRACK architect_prose_audit's (2026-09-29). It decides which of the
+    # audit's entity hits are dropped as mere grammar capitals, and it did so from a
+    # SHORTER list than the audit scanned. A name appearing only in `must_not_say_yet` or
+    # in a prohibition would never be found mid-sentence here, so `_sentence_initial`
+    # returned True and composition.py:1565 discarded the hit -- adding the fields to the
+    # audit alone would have fixed unapproved NUMBERS and silently left ENTITIES laundered.
     for f in fields:
         for sent in re.split(r"(?<=[.!?])\s+", f.strip()):
             sent = sent.strip()
