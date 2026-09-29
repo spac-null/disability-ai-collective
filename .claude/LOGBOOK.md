@@ -906,3 +906,104 @@ EVIDENCE: `/srv/data/cripminds-relational-supply-2026-09-24` (176 files), nine f
 under `/srv/data/cripminds-evidence` intact.
 FOLLOW-UP: collect editor labels. Redesign the dispatcher only when there are enough of them,
 and score the frozen rule against them first. Do not retune the 1/8 bound in the meantime.
+
+---
+
+## 2026-09-30 — FREE ARGUMENTATIVE COMPOSITION: the plan stops reaching the prose
+
+PRODUCTION BEFORE `e07b8dc` · PRODUCTION NOW `3749a71` · DEPLOY_STATUS=PASS
+ROLLBACK `git tag prod-rollback-2026-09-30-e07b8dc`, or one line:
+`COMPOSITION_ENGINE=story_architecture` in `/srv/secrets/openclaw.env`
+(backup at `openclaw.env.bak-20260930-preflree`).
+FLAG NOW: `COMPOSITION_ENGINE=free_argumentative` — ON.
+
+**WHAT WAS FALSIFIED.** For months the answer to "the articles read like documentation"
+was more control before the Writer: more beats, roles, carrier rules, validators, gates.
+On 2026-09-29 that was tested against the engine's own frozen evidence — the meŞk Ledger,
+`production-20260929T204704Z-0f0cd7b9`, 77 facts. The existing pipeline selected 22 facts
+and wrote 781 words. A free Writer on the same evidence used 57 and wrote ~1350, and read
+substantially better. The ceiling was never the material and never fact density. It was
+argumentative movement. A second blind A/B added one variable, a reader contract, and the
+owner's blind reading preferred it.
+
+**WHAT SHIPS.** A third composition engine beside `legacy` and `story_architecture`. The
+Ledger still owns every fact; Worth, Architecture and CUT still run and still gate; the
+plan no longer reaches the prose.
+
+The Writer now receives, proved on the actual runtime bytes: `editorial-lens.md`; the
+39,588-char Bregman craft corpus that every code reference had only ever cited in a
+comment; the reader contract; the owner's MECHANISM, DISCONFIRMING SHAPE, CARRIERS and
+FALSE MOVE; the WHOLE frozen Ledger; the licensed joins; and each source's own
+publisher/role/url. It receives no byte of the plan.
+
+**ARCHITECTURE IS SHADOW-ONLY, NOT DELETED.** It runs, it gates, its result is recorded,
+and nothing it produces reaches the Writer. `writer_inputs_are_plan_free()` asserts that on
+the prompt about to be sent and HOLDs the run if it is false. Source-code review cannot
+answer this question: an A/B arm once told the Writer "you decide the order" while the
+system prompt still said "write the first beat", and both were true of the code.
+
+**SAFETY WAS NOT RELAXED, IT WAS TOLD THE TRUTH.** Given the meŞk plan they had never
+seen, both offline arms held on CUT_LEAKAGE — for using Ledger facts F19/F20, licensed and
+true, that the ARCHITECTURE had cut. Blocking an article for using a licensed fact the plan
+excluded, after telling it to choose its own facts, is the contradiction this path removes.
+On this path nothing is cut, so nothing can leak, and the licensing record is the whole
+Ledger. Every screen still runs. UNSUPPORTED_NEGATIVES still blocks, because a claim of
+absence is new factual state; a declared negative is admitted only when a cited Ledger fact
+carries the negation itself.
+
+A REAL BUG WAS FOUND BY TESTING THAT CHECK: `story.negative_shape_of` returns the pair
+`(None, None)` for positive prose, which is TRUTHY. Testing the tuple admitted every fact
+ever cited and turned the gate into a rubber stamp. The kind is the answer; the tuple is not.
+
+**CONTINUITY and PROSE_FINISH are skipped** — whole-article rewrites of the prose this path
+exists to preserve. Net model calls go DOWN.
+
+**ONE SURGICAL REPAIR.** The existing `grounding_repair` on the exact findings, subtractive
+and claim-local, then the required checks again on the EXACT repaired bytes. One round. The
+Grounder is non-deterministic and re-grounding identical bytes until it agrees is not a
+check.
+
+CODE: `3749a71`, one squash commit on `e07b8dc`. 7 files, +1677/−23.
+New: `new_engine_v1/free_composition.py`, `new_engine_v1/craft_corpus.py`,
+`free_composition_test.py`. Touched: `composition.py` (+9/−2, the engine enum),
+`runner.py` (dispatch + instrument), `publication_safety_bridge.py` (+11/−4, DISPATCH only
+— every check unchanged), `new_engine_production.py` (the instrument reaches composition).
+
+TESTS: 158 suites on both trees. Baseline `e07b8dc` 131 pass / 26 fail; `3749a71`
+132 pass / 26 fail; **the failing set is identical — zero regressions.** The 26 are
+pre-existing at `e07b8dc` (stale expectations, e.g. `story_architecture_composition_test`
+`KeyError: 'soft_findings'`, `new_engine_v1_test` `_FakeOrch has no attribute
+discovery_db`) and were deliberately NOT fixed here — one defect class per deploy.
+
+OFFLINE REGRESSION on the frozen meŞk evidence with the deployed code: 45,447-char system
+prompt, 77/77 propositions, 7 joins, zero plan leakage, 1434 words, 55 facts used, one
+Writer call. Grounding found the known systematic attribution defect ("a column by Yalçın
+Çetinkaya"); one surgical repair answered it and changed **1 paragraph of 29**, similarity
+0.9948. Evidence: `/srv/data/cripminds-free-compose-regression`.
+
+**FIRST NATURAL RUN** `production-20260929T230317Z-36065d96`, instrument PR003-06 (THE
+ROUTE TO A SETTING CAN CHANGE WHETHER SUPPORT IS USED), Colorado wheelchair right-to-repair.
+92 facts available, 68 used, 1197 words, 11 model calls, `plan_free: true`.
+LEDGER/WORTH/ARCHITECTURE/CUT/WRITER/PACKAGE/**SAFETY/GROUNDING/FACT_CHECK all PASS** — one
+surgical grounding repair — **HOLD at READER** on ACCESSIBLE_READING, ENGINE_LANGUAGE_LEAK,
+READABILITY. Routed to the Telegram desk as a REVIEWABLE_DRAFT.
+
+The comparison that matters, same night, same engine otherwise —
+`production-20260929T202443Z-0dc4b14c` (story_architecture, FAST_LANE): 502 words, 12 model
+calls, Reader held on SEVEN dimensions (ACCESSIBLE_READING, ENDING, ENGINE_LANGUAGE_LEAK,
+MOMENTUM, OPENING, READABILITY, RESEARCH_LOAD). The free run: 1197 words, 11 calls, Reader
+held on THREE. OPENING, ENDING, MOMENTUM and RESEARCH_LOAD came clean — the four
+argumentative-movement dimensions this change targets. n=1.
+
+OBSERVED, NOT FIXED:
+- ENGINE_LANGUAGE_LEAK / MACHINE_LANGUAGE recur. The free system prompt carries the lens,
+  the corpus, the reader contract and the one rule — it does NOT carry `PROSE_DOCTRINE`'s
+  "PROVENANCE IS NOT NARRATION". That is faithful to the probe that was measured. Whether
+  to add it is an editorial decision to make after reading articles, not at 01:00 on n=1.
+- `run_story_architecture_composition(instrument=...)` exists and **no caller on the
+  PLANNED path supplies it**, so `HYP.from_instrument()` has always received `{}` there.
+  The free path now supplies it; the planned path is deliberately unchanged.
+- The desk keys delivery on the UTC date, so a run finishing late in the UTC day is not
+  auto-delivered. This one was delivered by hand. Pre-existing; not in scope.
+
+FOLLOW-UP: read the articles. Do not tune prompts against this subject's wording.
