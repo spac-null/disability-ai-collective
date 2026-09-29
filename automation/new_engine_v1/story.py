@@ -1172,7 +1172,8 @@ def required_commitments_enabled(env=None) -> bool:
     return v.strip().lower() in ("1", "on", "true", "yes")
 
 
-def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None) -> dict:
+def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None,
+                 relations=None) -> dict:
     """The minimal writing packet.
 
     `lens` IS NO LONGER READ (2026-09-23). It is kept in the signature only because ~30
@@ -1253,6 +1254,11 @@ def build_packet(arch: dict, lens: dict, facts: dict, quotes: dict | None = None
             term: [facts[f] for f in ids if f in facts]
             for term, ids in (arch.get("definition_evidence") or {}).items()
             if term in (arch.get("definitions") or {})},
+        # THE JOINS, FOR THE SELECTED FACTS ONLY (2026-09-29). Both endpoints must be in
+        # `use_facts`: a join to a fact the Writer was never given is not a join it can
+        # make, and showing it would invite reaching outside the packet. Filtered by the
+        # caller -- see composition.writer_packet -- so this dict stays a pure carrier.
+        "relations": list(relations or []),
         "prohibitions": list(arch.get("prohibitions") or []),
         # POSITIVE OBLIGATION -- experimental, OFF unless both the flag is set and the
         # architecture actually carries the field. ARCHITECT_SCHEMA does not emit it, so no
@@ -1378,6 +1384,27 @@ def render(packet: dict) -> str:
             t = (r.get("must_realize") or "").strip() if isinstance(r, dict) else ""
             if t:
                 L.append("  - %s" % t)
+        L.append("")
+    if packet.get("relations"):
+        # WHY THIS BLOCK EXISTS. An essay is asserted relations between facts; a report is
+        # the same facts with the joins removed. Until now the Writer could state a fact
+        # and never connect two, so the only thing structurally available to it was a
+        # report -- and the owner's most-pressed reaction, seven times over ten readings,
+        # is SOUNDS_LIKE_REPORT. These joins are carried by the evidence and each has a
+        # verbatim span behind it, so asserting one is not an invention.
+        #
+        # PHRASED AS A PERMISSION, NOT AN INSTRUCTION. The writer system already carries
+        # forty-five imperatives and instruction accumulation is this engine's measured
+        # failure mode. This says what MAY be joined and leaves the writing to decide.
+        L.append("JOINS YOU MAY ASSERT")
+        L.append("  These connections are carried by the evidence, not by you. State any")
+        L.append("  of them outright, in your own words, or leave one unused. Any OTHER")
+        L.append("  connection between facts is yours to imply at most, never to assert:")
+        L.append("  place the material and let the reader draw it.")
+        for r in packet["relations"]:
+            L.append("  - %s" % str(r.get("subject_text") or "")[:170])
+            L.append("      %s" % str(r.get("kind") or "").lower().replace("_", " "))
+            L.append("    %s" % str(r.get("object_text") or "")[:170])
         L.append("")
     L.append("END ON")
     L.append("  " + packet["ending_move"])

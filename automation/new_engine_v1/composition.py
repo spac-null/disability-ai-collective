@@ -53,6 +53,7 @@ from . import stages as S
 from . import story as ST
 from . import materiality as MAT
 from . import provenance as PV
+from . import relations as REL
 from .provider import Provider, ProviderError, parse_json_object
 
 # ── stage names, in order ─────────────────────────────────────────────────────
@@ -433,8 +434,27 @@ FREEZE_SCHEMA = (
     "                                          negative evidence; AUDITED_CORPUS is a\n"
     "                                          claim about a set you enumerated, and then\n"
     '                                          also give "corpus_size": <int>\n'
+    "}],\n"
+    # THE JOINS, FROZEN THE SAME WAY THE FACTS ARE (2026-09-29). An essay is asserted
+    # relations between facts; a report is the same facts with the joins removed. This
+    # engine licensed propositions and nothing else, so the Writer could state a fact and
+    # never connect two -- and the same unlicensed join came back through five
+    # independent controls because it was reaching for an argument the evidence was never
+    # allowed to carry. A relation is now evidence, with a span, or it does not exist.
+    ' "relations": [{\n'
+    '  "relation_id": "R01",                   sequential, R01, R02, ...\n'
+    '  "subject": "F03", "object": "F07",      two DIFFERENT facts above\n'
+    '  "kind": "CAUSE",                        one of: %s\n'
+    '  "evidence_ids": ["S0"],                 the source the span is FROM\n'
+    '  "support_span": "..."                   VERBATIM, and it must be the text where\n'
+    "                                          the source ITSELF makes this connection.\n"
+    "                                          Do not infer a relation because two facts\n"
+    "                                          sit near each other or seem related: if no\n"
+    "                                          source states the join, omit it. An empty\n"
+    "                                          list is a correct answer and a common one.\n"
     "}]}\n"
-    "No prose outside the JSON." % ", ".join(LG.CLAIM_TYPES)
+    "No prose outside the JSON." % (", ".join(LG.CLAIM_TYPES),
+                                    ", ".join(REL.RELATION_KINDS))
 )
 
 
@@ -604,6 +624,9 @@ def freeze_ledger(provider, pack: dict, subject: str) -> dict:
     ledger = _as_ledger(obj.get("facts"))
     failures = check_ledger(ledger, srcs)
     calls, repairs = 1, 0
+    # Held aside until the ledger settles: a relation's endpoints must exist in the FINAL
+    # ledger, and the repair below can replace a rejected fact.
+    proposed_relations = obj.get("relations") or []
 
     if failures:
         # ONE repair, and it may only narrow. Facts that already validated are removed
@@ -694,7 +717,16 @@ def freeze_ledger(provider, pack: dict, subject: str) -> dict:
     kinds = {}
     for f in ledger.values():
         kinds[f.get("claim_kind")] = kinds.get(f.get("claim_kind"), 0) + 1
+    # THE JOINS, VALIDATED AGAINST THE FINAL LEDGER. Deliberately after the repair: a
+    # relation's endpoints must exist in the ledger that actually ships, and one of them
+    # may have been replaced. A relation that fails is DROPPED, never repaired -- the
+    # ledger's own rule for a fact whose support cannot be verified, applied to a join.
+    rel_failures = REL.validate_relations(proposed_relations, ledger, srcs)
+    relations = REL.usable(proposed_relations, ledger, srcs)
     return {"status": PASS, "ledger": ledger, "provider": ident,
+            "relations": relations,
+            "relations_rejected": {k: v for k, v in rel_failures.items()},
+            "relations_proposed": len(proposed_relations),
             # TELEMETRY. Deterministic, no model call, and it blocks nothing: a fact whose
             # span opens on a demonstrative that nothing else in this ledger establishes.
             # Computed here because this is where the pack is in scope; `persist` writes
@@ -2988,7 +3020,8 @@ def negative_permissions_block(perms: dict) -> str:
     return "\n".join(L) + "\n"
 
 
-def writer_packet(arch: dict, ledger: dict, cut_prohibitions=None) -> tuple:
+def writer_packet(arch: dict, ledger: dict, cut_prohibitions=None,
+                  relations=None) -> tuple:
     """The packet and its rendered prompt. Refused if it carries the auditing frame.
 
     `cut_prohibitions` are the compiled CUT lines, added to the architect's own so that
@@ -3000,8 +3033,19 @@ def writer_packet(arch: dict, ledger: dict, cut_prohibitions=None) -> tuple:
         arch = dict(arch, prohibitions=list(arch.get("prohibitions") or [])
                     + [p for p in cut_prohibitions
                        if p not in (arch.get("prohibitions") or [])])
+    # Resolved to PROPOSITIONS here, not ids: the packet carries no fact ids by design,
+    # and a join the Writer cannot read is a join it cannot use. Filtered to the facts the
+    # plan selected, so nothing points outside the packet.
+    use = set(arch.get("use_facts") or [])
+    joins = []
+    for r in REL.for_facts(relations or [], use):
+        joins.append({
+            "kind": r.get("kind"),
+            "subject_text": (ledger.get(r.get("subject")) or {}).get("proposition") or "",
+            "object_text": (ledger.get(r.get("object")) or {}).get("proposition") or "",
+        })
     packet = ST.build_packet(arch, arch.get("final_lens") or {},
-                             LG.propositions(ledger))
+                             LG.propositions(ledger), None, joins)
     # Fail-closed, the same way validate_packet keeps its own call here even though
     # check_architecture already ran it: a quotation the plan required must never be
     # dropped between the plan and the prompt in silence. See quote_requirement_errors.
@@ -3023,7 +3067,7 @@ def _clean_article(text: str) -> str:
 
 
 def write_article(provider, arch: dict, ledger: dict, cut_prohibitions=None,
-                  compose_mode: str = COMPOSE_NORMAL) -> dict:
+                  compose_mode: str = COMPOSE_NORMAL, relations=None) -> dict:
     """STAGE 5. ONE Writer call. A retry only when the output is mechanically unusable.
 
     `compose_mode` selects the writing contract and NOTHING else: the packet, the
@@ -3035,7 +3079,7 @@ def write_article(provider, arch: dict, ledger: dict, cut_prohibitions=None,
         raise CompositionHold(WRITER, WRITER_HOLD,
                               ["unknown compose_mode %r" % compose_mode])
     system = COMPOSE_SYSTEMS[compose_mode]
-    packet, prompt = writer_packet(arch, ledger, cut_prohibitions)
+    packet, prompt = writer_packet(arch, ledger, cut_prohibitions, relations)
     perms = negative_permissions(arch, ledger)
     last = ""
     for attempt in (1, 2):
@@ -8087,11 +8131,16 @@ def run_story_architecture_composition(
     try:
         if replay.get("ledger"):
             ledger = replay["ledger"]
+            # A replayed ledger carries no frozen joins: they are produced by the freeze
+            # call, and a replay does not make one. The Writer then sees no JOINS block,
+            # which is the pre-2026-09-29 behaviour and is correct for a replay.
+            frozen_relations = []
             st[LEDGER] = {"status": REPLAYED, "ledger": ledger, "facts": len(ledger),
                           "model_calls": 0, "repairs": 0}
             calls[LEDGER] = repairs[LEDGER] = 0
         else:
             led = record(LEDGER, freeze_ledger(P, pack, subject))
+            frozen_relations = list(led.get("relations") or [])
             ledger = led["ledger"]
 
         if replay.get("worth"):
@@ -8158,7 +8207,8 @@ def run_story_architecture_composition(
             # Resume at the grounder/repair boundary on prose that already passed the
             # Writer, Continuity and the safety stack. The packet is rebuilt from the
             # same architecture and ledger, deterministically, so nothing is guessed.
-            packet_r, prompt_r = writer_packet(arch, ledger, cut.get("prohibitions"))
+            packet_r, prompt_r = writer_packet(arch, ledger, cut.get("prohibitions"),
+                                               frozen_relations)
             wr = {"status": REPLAYED, "article_text": frozen_article,
                   "packet": packet_r, "prompt": prompt_r, "model_calls": 0, "repairs": 0,
                   "words": len(frozen_article.split()),
@@ -8168,7 +8218,8 @@ def run_story_architecture_composition(
             draft = frozen_article
         else:
             wr = record(WRITER, write_article(P, arch, ledger, cut.get("prohibitions"),
-                                              compose_mode=compose_mode))
+                                              compose_mode=compose_mode,
+                                              relations=frozen_relations))
             draft = wr["article_text"]
 
         if frozen_article:
@@ -8904,6 +8955,14 @@ def persist(out_dir, result: dict) -> None:
                            for h in det[LEDGER]["anaphora"]],
               "selected_count": sum(1 for h in det[LEDGER]["anaphora"]
                                     if h["fact_id"] in _sel)})
+    if det.get(LEDGER, {}).get("relations") is not None:
+        # Beside LEDGER.json, because a join is evidence and belongs with the evidence.
+        # Rejected ones are kept too: a relation the freeze proposed and the validator
+        # refused is the most useful record there is of what the model tried to assert.
+        dump("LEDGER_RELATIONS.json",
+             {"relations": det[LEDGER].get("relations") or [],
+              "proposed": det[LEDGER].get("relations_proposed", 0),
+              "rejected": det[LEDGER].get("relations_rejected") or {}})
     if det.get(CUT_TERMS, {}).get("terms") is not None:
         dump("CUT_WATCH_TERMS.json", det[CUT_TERMS]["terms"])
     if det.get(WRITER, {}).get("prompt"):
