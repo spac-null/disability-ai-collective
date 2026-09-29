@@ -46,6 +46,7 @@ import time
 
 from . import contracts as C
 from . import continuity as CE
+from . import anaphora as AN
 from . import jurisdiction as JU
 from . import ledger as LG
 from . import stages as S
@@ -694,6 +695,12 @@ def freeze_ledger(provider, pack: dict, subject: str) -> dict:
     for f in ledger.values():
         kinds[f.get("claim_kind")] = kinds.get(f.get("claim_kind"), 0) + 1
     return {"status": PASS, "ledger": ledger, "provider": ident,
+            # TELEMETRY. Deterministic, no model call, and it blocks nothing: a fact whose
+            # span opens on a demonstrative that nothing else in this ledger establishes.
+            # Computed here because this is where the pack is in scope; `persist` writes
+            # it as LEDGER_ANAPHORA.json. Measured at 16 of 100 retained runs, 4 of them
+            # selected into an article.
+            "anaphora": AN.orphaned_spans(ledger, pack),
             "model_calls": calls, "repairs": repairs,
             "jurisdiction": jurisdiction_report,
             "subject_place": JU.subject_place(pack),
@@ -8814,6 +8821,20 @@ def persist(out_dir, result: dict) -> None:
               for k in ("worth_gate", "story_candidate", "narrative_yield")})
     if det.get(ARCHITECTURE, {}).get("architecture"):
         dump("ARCHITECTURE.json", det[ARCHITECTURE]["architecture"])
+    if det.get(LEDGER, {}).get("anaphora"):
+        # Only when non-empty: an artifact that exists on every run to say "nothing" is an
+        # artifact nobody reads. Selection is resolved here, where the architecture is
+        # known, so the file says which of them actually reached the Writer.
+        _sel = set((det.get(ARCHITECTURE, {}).get("architecture") or {}).get("use_facts")
+                   or [])
+        dump("LEDGER_ANAPHORA.json",
+             {"note": ("facts whose cited span opens on a demonstrative that no other "
+                       "fact in this ledger establishes. TELEMETRY -- nothing is blocked "
+                       "on it. See new_engine_v1/anaphora.py"),
+              "orphaned": [dict(h, selected=h["fact_id"] in _sel)
+                           for h in det[LEDGER]["anaphora"]],
+              "selected_count": sum(1 for h in det[LEDGER]["anaphora"]
+                                    if h["fact_id"] in _sel)})
     if det.get(CUT_TERMS, {}).get("terms") is not None:
         dump("CUT_WATCH_TERMS.json", det[CUT_TERMS]["terms"])
     if det.get(WRITER, {}).get("prompt"):
