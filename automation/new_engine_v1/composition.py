@@ -3777,6 +3777,54 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
 # reimplemented and neither's semantics are touched. `heldout_factual_bridge.py` was the
 # reference; it is not imported, because it carries the held-out article's own paths,
 # hardcoded source ids and a hand-written F10 fallback.
+# ── WHAT AN UNCERTAIN FINDING COSTS, AND WHO DECIDED IT ───────────────────────
+#
+# TRUE_UNSUPPORTED always blocks: the Grounder read the sources and the claim is not in
+# them. TRUE_UNCERTAIN means it could not tell either way, and until 2026-09-29 that
+# blocked too, on the reasoning that "the architecture does not establish that an
+# uncertain finding is safe to accept".
+#
+# MEASURED, on 71 retained runs with a grounding record:
+#
+#     19  no blocking finding at all
+#     20  held ONLY by TRUE_UNCERTAIN          <- every one of these, by this default
+#     32  carry at least one TRUE_UNSUPPORTED
+#
+# and nothing published between 4 September and that date. What those twenty were held
+# for, verbatim:
+#
+#     "the playa, the flat dry lakebed the city is built on"
+#     "an articulation route: an arrangement by which students entering from a partner
+#      college can secure a place on a named university degree"
+#     "SEVP -- the Student and Exchange Visitor Program, the DHS office that runs the
+#      student visa system"
+#
+# Those are glosses, and the writer system ITSELF instructs them: "On first use, briefly
+# expand a country-specific acronym, agency, benefit, institution, legal mechanism or
+# cultural shorthand when its meaning is necessary to understand the story." The engine
+# asked for the sentence and then held the article for containing it. The Grounder is
+# right every time -- the sources use these terms and do not define them, and it is the
+# one stage that cannot see the architecture, by design.
+#
+# THE OWNER SET THE TRADE-OFF, 2026-09-29: "read beautifully is more important than 100%
+# correct". This is his publication and that is an editorial standard, not a slip. A
+# finding the Grounder could not resolve either way now travels with the article to a
+# person instead of ending its life.
+#
+# WHAT DID NOT CHANGE, AND WHY. TRUE_UNSUPPORTED still blocks, unconditionally. The
+# distinction that matters for this publication is not wording versus wording -- it is a
+# gloss against an INVENTED RELATION between real things. "the headings settled what
+# counted as art" and "the sheet was filed as scribbling" are claims about a real archive
+# and a real disabled woman's work that no source makes, and a reader who knows the
+# Prinzhorn collection would stop trusting the piece. That class stays blocked.
+#
+# Every uncertain finding is still recorded on the result and written to
+# GROUNDING_FINDINGS.json. Nothing is hidden; it stops being fatal.
+#
+# ONE LINE TO REVERT.
+UNCERTAIN_BLOCKS = False
+
+
 def ground_candidate(provider, article_text: str, source_text: str, source_sha: str,
                      pack: dict, arch: dict | None = None,
                      packet: dict | None = None) -> dict:
@@ -3854,13 +3902,28 @@ def ground_candidate(provider, article_text: str, source_text: str, source_sha: 
     if not gf.get("uncertain_adjudicated", False):
         blocking += [f for f in uncertain if f.get("id") not in adjudicated_ids]
     settled = gf.get("status") == "settled"
-    return {"status": PASS if (settled and not blocking) else HOLD,
+    # THE VERDICT AND THE WORKLIST ARE NOT THE SAME LIST (2026-09-29).
+    #
+    # `blocking` is what the completion and repair machinery works through, and an
+    # uncertain finding is worth an attempt: a repair that resolves one makes the article
+    # better. It is the FINAL VERDICT that no longer ends on it. Changing both at once --
+    # the first version of this -- emptied the repair worklist and broke ten completion
+    # tests, which is the loop losing work it should still be doing rather than a stale
+    # expectation.
+    fatal = [f for f in blocking
+             if UNCERTAIN_BLOCKS or f.get("classification") == "TRUE_UNSUPPORTED"]
+    return {"status": PASS if (settled and not fatal) else HOLD,
             "grounding": {k: v for k, v in gf.items() if k != "_provider"},
             "findings": findings,
             "unsupported": unsupported,
             "uncertain": uncertain,
             "uncertain_adjudicated_as_definitions": adjudicated,
+            # Named so a reader of the artifact can see the policy that applied, rather
+            # than inferring it from an absence.
+            "uncertain_blocks": UNCERTAIN_BLOCKS,
             "blocking": blocking,
+            # What actually decided the verdict, separate from what repair may attempt.
+            "fatal": fatal,
             "grounding_status": gf.get("status"),
             "provider": gf.get("_provider", {}),
             "model_calls": 1}
