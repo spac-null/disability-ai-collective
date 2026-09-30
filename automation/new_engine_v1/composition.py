@@ -1005,7 +1005,93 @@ WORTH_SCHEMA = (
 )
 
 
-def worth_gate(provider, ledger: dict, subject: str, hypothesis=None) -> dict:
+# ── THE APPROVED INSTRUMENT SETTLES SCOPE (owner-directed, 2026-09-30: "PR has
+# authority") ────────────────────────────────────────────────────────────────────────
+# WHY. The knowledge-first lane commissions a story FOR an owner-approved question, and
+# Worth then independently re-asked whether the subject belongs to this publication. On
+# 2026-09-30 the two disagreed twice on one instrument, and the disagreement was only
+# discovered after Research, acquisition and a 129-fact Ledger freeze had been paid for.
+#
+# PR006-02's mechanism is "Institutions certify authority, not knowledge. Where the two
+# come apart, the person who knows the thing is consulted informally and credited nowhere."
+# Worth found that reading in the Franklin evidence -- twice, in its own words -- and
+# refused the subject both times, because its scope test asks what a form takes for granted
+# about BODIES, perception, cognition, endurance, and epistemic credentialing is not that.
+# Worth was applying its stated invariant correctly. What was wrong is that it was being
+# asked the question at all: the owner had already answered it when the instrument was
+# approved.
+#
+# WHAT THIS DOES NOT LIFT. The access-deficit invariant is a separate editorial rule, not a
+# scope test, and it still refuses. So does NO_PLAUSIBLE_LENS and so does WEAK_ANALOGY:
+# "the owner approved this question" says the SUBJECT belongs, never that THIS EVIDENCE
+# carries a reading. The bar on what a lens must be is untouched.
+#
+# AND THE DISAGREEMENT IS NOT THROWN AWAY. Worth's objection is recorded for the owner to
+# review, so a pattern of conflicts can sharpen the instrument rather than being silently
+# overruled run after run. See record_instrument_conflict.
+INSTRUMENT_AUTHORITY_BLOCK = (
+    "\n"
+    "SCOPE IS ALREADY SETTLED FOR THIS RUN. The claim above comes from an instrument the\n"
+    "owner approved for this publication before any evidence existed, and this story was\n"
+    "commissioned to test it. Whether the SUBJECT belongs to Crip Minds is therefore not\n"
+    "your question, and GREAT_GENERAL_STORY_WRONG_PUBLICATION is not available to you on\n"
+    "those grounds. Do not refuse because the subject is not obviously about disability:\n"
+    "the approved instrument is what makes it admissible.\n"
+    "\n"
+    "Your question is narrower and entirely about THIS EVIDENCE: does the frozen Ledger\n"
+    "carry a reading that tests the claim -- supporting it, refusing it, or complicating\n"
+    "it? All three are real answers and a refusal of the claim is often the better story.\n"
+    "\n"
+    "WHAT STILL REFUSES, unchanged. NO_PLAUSIBLE_LENS if this evidence carries no such\n"
+    "reading. WEAK_ANALOGY if what you have is a resemblance rather than a mechanism. And\n"
+    "GREAT_GENERAL_STORY_WRONG_PUBLICATION still applies to an ACCESS-DEFICIT central\n"
+    "proposition -- that is an editorial invariant of the publication rather than a\n"
+    "judgement about scope, and the approved instrument does not lift it. A lens must\n"
+    "still name a mechanism and rest on a particular in the Ledger.\n")
+
+
+def instrument_has_authority(hypothesis: dict | None) -> bool:
+    """True when this run was commissioned from an approved instrument carrying a claim.
+
+    Both halves are required. An id with no mechanism is a question the loader read but
+    the owner never turned into a testable claim, and it settles nothing.
+    """
+    h = hypothesis or {}
+    return bool(str(h.get("instrument") or "").strip()
+                and str(h.get("claim") or "").strip())
+
+
+def record_instrument_conflict(sink, *, hypothesis: dict, subject: str, lens: dict,
+                               ledger_facts: int) -> None:
+    """Worth judged an approved instrument's subject out of scope. Keep it for the owner.
+
+    NOT AN ERROR AND NOT A GATE. It changes no verdict and blocks nothing. It exists so a
+    repeated disagreement between the perspective library and Worth's scope test becomes
+    reviewable evidence for sharpening the instrument, instead of being overruled silently
+    on every run that draws it. The owner reviews these; nothing reads them back.
+    """
+    if sink is None:
+        return
+    try:
+        sink({
+            "instrument": hypothesis.get("instrument"),
+            "claim": hypothesis.get("claim"),
+            "subject": subject,
+            "worth_verdict": lens.get("verdict"),
+            "worth_reasoning": (lens.get("lens_claim")
+                                or lens.get("why") or "")[:1200],
+            "ledger_facts": ledger_facts,
+            "note": ("Worth judged this subject out of scope while the owner-approved "
+                     "instrument says it is in scope. The instrument won; this is the "
+                     "disagreement, kept for review."),
+        })
+    except Exception:
+        # A review note must never be able to change a run's outcome.
+        pass
+
+
+def worth_gate(provider, ledger: dict, subject: str, hypothesis=None,
+               conflict_sink=None) -> dict:
     """STAGE 2. A HOLD here stops the article before any expensive composition.
 
     `hypothesis` is the claim commissioning proposed BEFORE the evidence existed. When it
@@ -1018,8 +1104,10 @@ def worth_gate(provider, ledger: dict, subject: str, hypothesis=None) -> dict:
     story. That is the difference between a report and an essay: a report describes what
     is there, an essay tests something that could have been otherwise.
     """
+    authority = instrument_has_authority(hypothesis)
     user = "\n".join(["SUBJECT", "  " + (subject or "").strip(),
-                      HYP.block(hypothesis or {}), "",
+                      HYP.block(hypothesis or {}),
+                      INSTRUMENT_AUTHORITY_BLOCK if authority else "", "",
                       "THE FROZEN LEDGER -- the only facts that exist",
                       ledger_block(ledger), "", WORTH_SCHEMA])
     obj, ident = _ask(provider, WORTH_SYSTEM, user, 4_000, WORTH, WORTH_HOLD)
@@ -1031,6 +1119,21 @@ def worth_gate(provider, ledger: dict, subject: str, hypothesis=None) -> dict:
         raise CompositionHold(WORTH, WORTH_HOLD,
                               ["the worth gate's own output is invalid"] + errs)
     if verdict not in ST.LENS_PUBLISHABLE:
+        # A SCOPE REFUSAL ON A COMMISSIONED RUN IS A DISAGREEMENT WORTH KEEPING. It is
+        # recorded for the owner either way -- the run still holds, because a refusal
+        # carries no lens and this will not invent one, and publishing on a fabricated
+        # lens is the one thing that must never happen here. What the record buys is that
+        # the next conflict is the second data point rather than the first.
+        if authority and verdict == ST.WRONG_PUBLICATION:
+            record_instrument_conflict(conflict_sink, hypothesis=hypothesis or {},
+                                       subject=subject, lens=lens,
+                                       ledger_facts=len(ledger or {}))
+            raise CompositionHold(
+                WORTH, WORTH_HOLD,
+                ["verdict %s on a run commissioned from approved instrument %s, which "
+                 "was told scope is already settled -- recorded as an instrument conflict "
+                 "for review" % (verdict, (hypothesis or {}).get("instrument")),
+                 (lens.get("lens_claim") or "")[:300]])
         # Not an engine failure. The gate did its job and the answer is no.
         raise CompositionHold(
             WORTH, WORTH_HOLD,

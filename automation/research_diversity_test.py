@@ -241,6 +241,127 @@ def test_no_single_query_owns_the_candidate_list() -> None:
     check("no groups at all is empty", RS.round_robin([]) == [])
 
 
+def test_the_budget_is_shared_not_taken_first_come() -> None:
+    """production-20260930T073754Z-54ca6694 fetched seven sources and carried three."""
+    budget = 32_709                         # 40,000 less that run's 7,291-char anchor
+    want = [("S%d" % i, 12_000) for i in range(1, 8)]
+    give, dropped = RS.allocate_budget(want, budget, 1_000)
+    check("every one of the seven is carried", not dropped, dropped)
+    check("none is below the useful floor", all(v >= 1_000 for v in give.values()), give)
+    check("the budget is not exceeded", sum(give.values()) <= budget, sum(give.values()))
+    # Equal to within the rounding remainder, and the remainder goes to the most valuable
+    # source rather than being lost -- so the spread is never more than budget % n.
+    check("they share it evenly to within the rounding remainder",
+          max(give.values()) - min(give.values()) <= budget % len(want), give)
+    check("the remainder goes to the highest-ranked source",
+          give["S1"] == max(give.values()), give)
+    check("three carried becomes seven", len(give) == 7, give)
+
+    # A source that wants less than its share returns the rest rather than hoarding it.
+    give2, _ = RS.allocate_budget([("A", 500), ("B", 40_000)], 10_000, 100)
+    check("a small source takes only what it needs", give2["A"] == 500, give2)
+    check("and the remainder goes to the one that can use it",
+          give2["B"] == 9_500, give2)
+
+    # When it truly cannot fit, the LEAST valuable is dropped, not the last fetched.
+    give3, dropped3 = RS.allocate_budget([("keep", 5_000)] + [("drop%d" % i, 5_000)
+                                                              for i in range(9)],
+                                         6_000, 1_000)
+    check("something is dropped when the budget cannot carry everyone", bool(dropped3))
+    check("the most valuable survives", "keep" in give3 and give3["keep"] >= 1_000,
+          (give3, dropped3))
+
+
+def test_a_short_source_is_not_mistaken_for_a_starved_one() -> None:
+    """The floor is about TRUNCATION, not about length.
+
+    The first version of allocate_budget dropped any source whose whole text was under
+    MIN_USEFUL_CHARS. It emptied four suites at once, and in production it would have
+    thrown away the 889-char Calgary page the Franklin rescue legitimately carried -- a
+    real source, complete, discarded for being short.
+    """
+    give, dropped = RS.allocate_budget([("tiny", 200), ("small", 640), ("big", 9_000)],
+                                       40_000, 1_000)
+    check("nothing is dropped when the budget can carry everything", not dropped, dropped)
+    check("a 200-char source is carried whole", give["tiny"] == 200, give)
+    check("a 640-char source is carried whole", give["small"] == 640, give)
+    check("the long one is carried too", give["big"] == 9_000, give)
+
+    # And a source that IS truncated below the floor is still dropped.
+    give2, dropped2 = RS.allocate_budget([("a", 50_000), ("b", 50_000)], 1_500, 1_000)
+    check("a genuinely starved source is still dropped", bool(dropped2), dropped2)
+    check("and the survivor clears the floor",
+          all(v >= 1_000 for v in give2.values()), give2)
+
+    # Every source short: all carried, none dropped.
+    give3, dropped3 = RS.allocate_budget([("x", 100), ("y", 100)], 150, 1_000)
+    check("a budget smaller than the floor still carries what it can",
+          not dropped3 or sum(give3.values()) <= 150, (give3, dropped3))
+
+
+def test_value_rank_prefers_what_tests_the_claim() -> None:
+    counter = RS.source_value_rank(RS.ROLE_COUNTERWEIGHT, "complicates", 9)
+    fourth_agreement = RS.source_value_rank(RS.ROLE_CONTEXT, "corroborates", 0)
+    check("a counterweight that complicates outranks a fourth corroboration",
+          counter < fourth_agreement, (counter, fourth_agreement))
+    check("an independent source outranks context at the same relation",
+          RS.source_value_rank(RS.ROLE_INDEPENDENT, "extends", 5)
+          < RS.source_value_rank(RS.ROLE_CONTEXT, "extends", 0))
+    check("fetch order breaks ties and nothing else",
+          RS.source_value_rank(RS.ROLE_PRIMARY, "extends", 1)
+          < RS.source_value_rank(RS.ROLE_PRIMARY, "extends", 2))
+    check("a reprint of the anchor ranks last",
+          RS.source_value_rank(RS.ROLE_PRIMARY, "duplicate_of_anchor", 0)
+          > RS.source_value_rank(RS.ROLE_CONTEXT, "background", 99))
+
+
+def test_the_claim_steers_the_queries() -> None:
+    """The disconfirming shape had never once been turned into a search."""
+    inst = {"mechanism": "Institutions certify authority, not knowledge.",
+            "disconfirming_shape": "Show the institution has a route by which "
+                                   "uncertified knowledge enters the record.",
+            "carriers": "A court transcript beside the hearing.",
+            "false_move": "Treating every omission as deliberate erasure."}
+    block = RS.instrument_scope_block(inst)
+    check("the claim reaches the scope prompt", inst["mechanism"] in block)
+    check("the refutation reaches it", inst["disconfirming_shape"] in block)
+    check("carriers reach it", inst["carriers"] in block)
+    check("the false move reaches it", inst["false_move"] in block)
+    check("the first angle is refutation", "would REFUTE the claim" in block)
+    check("it asks for a primary document", "PRIMARY document" in block)
+    check("it asks for a participant voice", "PARTICIPANT" in block)
+    check("it asks for material outside the institution",
+          "OUTSIDE the institution" in block)
+    check("it warns that the anchor's own pages are not a second source",
+          "its other pages are not a second source" in block)
+    check("a run with no instrument sends nothing extra",
+          RS.instrument_scope_block(None) == ""
+          and RS.instrument_scope_block({"carriers": "x"}) == "")
+
+
+def test_scope_prompt_is_unchanged_without_an_instrument() -> None:
+    """Byte-identical for every run that carries no claim."""
+    seen = {}
+
+    class P:
+        def complete(self, system, user, max_tokens=1200, **kw):
+            seen["user"] = user
+
+            class C:
+                text = '{"subject":"s","queries":["q"],"named_entities":[],' \
+                       '"subject_span":"","anchor_subject_words":1}'
+
+                def identity(self):
+                    return {}
+            return C()
+
+    RS.scope(P(), "an anchor about a thing", "sha")
+    check("no instrument block appears", "THIS RUN EXISTS TO TEST A CLAIM"
+          not in seen["user"])
+    check("it is exactly the scope prompt",
+          seen["user"] == RS.scope_prompt("an anchor about a thing", "sha"))
+
+
 def test_diagnosis_renders_and_names_the_cause() -> None:
     p = pack_of(INUIT)
     if p is None:

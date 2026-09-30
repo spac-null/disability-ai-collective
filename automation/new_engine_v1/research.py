@@ -151,6 +151,102 @@ def registrable(url_or_host: str) -> str:
     return ".".join(parts[-2:]) if len(parts) >= 2 else host
 
 
+# ── HOW THE PACK'S TEXT BUDGET IS SPENT ───────────────────────────────────────
+# FIRST-COME WAS THE WHOLE RULE, and it cost the run that made this necessary.
+# production-20260930T073754Z-54ca6694 fetched SEVEN sources -- Parks Canada, Canadian
+# Mysteries, Cambridge, National Geographic, Wikipedia, archive.org, Smithsonian -- and
+# carried THREE. The first two took PER_SOURCE_CHARS (12,000) each, the third took the
+# remainder, and four sources were dropped "pack text budget exhausted" having already
+# been found, fetched and assessed. Nothing about their value entered the decision.
+#
+# The value had already been measured. The assessment gives every source a ROLE and a
+# RELATION, and both say exactly what this decision needs: a COUNTERWEIGHT that
+# `complicates` is the source most likely to test the claim, and a fourth page that
+# `corroborates` what three others already say is the one to truncate. Those fields were
+# computed, written to the pack, and ignored by the spend.
+#
+# So: rank by value, then WATER-FILL. Every source gets an equal share; a source that
+# wants less than its share takes what it needs and returns the rest to the pool; the
+# process repeats until the budget is spent. A source that cannot clear MIN_USEFUL_CHARS
+# even so is dropped -- lowest value first -- and its share returns to the pool, because
+# a pack entry with no text is a citation and a citation is not a source here.
+#
+# On that run's seven sources: 40,000 - 7,291 anchor = 32,709 over 7 is ~4,672 each, and
+# every one of them clears the floor. Three carried becomes seven.
+#
+# The RANK is (relation, role, fetch order) -- deterministic, model-free, and built only
+# from fields the assessment already produced.
+_RELATION_RANK = {"complicates": 0, "extends": 1, "corroborates": 2,
+                  "background": 3, "duplicate_of_anchor": 4}
+_ROLE_RANK = {ROLE_COUNTERWEIGHT: 0, ROLE_INDEPENDENT: 1, ROLE_PRIMARY: 2,
+              ROLE_TERTIARY: 3, ROLE_CONTEXT: 4}
+
+
+def source_value_rank(role: str, relation: str, order: int) -> tuple:
+    """Lower sorts as more valuable. Ties fall back to the order it was fetched in."""
+    return (_RELATION_RANK.get(relation, 3), _ROLE_RANK.get(role, 4), order)
+
+
+def water_fill(wants: list, budget: int) -> dict:
+    """{key: chars} -- an equal share, with what a source does not need returned.
+
+    `wants` is [(key, chars_wanted)] and MUST already be in value order: when the budget
+    cannot be divided exactly, the remainder goes to the earliest keys, and when a source
+    must be dropped it is the last. Deterministic.
+    """
+    give = {k: 0 for k, _ in wants}
+    want = dict(wants)
+    pool = [k for k, _ in wants]
+    remaining = int(budget)
+    while pool and remaining > 0:
+        share = remaining // len(pool)
+        if share <= 0:
+            break
+        satisfied = [k for k in pool if want[k] <= share]
+        if not satisfied:
+            for k in pool:
+                give[k] = share
+                remaining -= share
+            break
+        for k in satisfied:
+            give[k] = want[k]
+            remaining -= want[k]
+            pool.remove(k)
+    # Whatever could not be divided evenly goes to the most valuable source still short.
+    for k in pool:
+        if remaining <= 0:
+            break
+        extra = min(remaining, want[k] - give[k])
+        give[k] += extra
+        remaining -= extra
+    return give
+
+
+def allocate_budget(ranked: list, budget: int, floor: int) -> tuple:
+    """(allocation, dropped_keys). Drops the least valuable until the rest clear `floor`.
+
+    A source below the floor is not carried thin -- it is dropped and its share returned,
+    so the sources that remain are carried properly rather than every source being carried
+    uselessly.
+    """
+    keys = list(ranked)
+    while keys:
+        give = water_fill(keys, budget)
+        # THE FLOOR IS ABOUT TRUNCATION, NOT ABOUT LENGTH. A source is too thin when the
+        # budget cut it below what is usable -- never because the page itself is short.
+        # Getting this wrong dropped every source in a fixture whose texts were all under
+        # 1,000 chars, and in production it would have thrown away the 889-char Calgary
+        # page that the Franklin rescue legitimately carried. A source that receives
+        # everything it has is not truncated at all.
+        short = [k for k, w in keys if give[k] < min(floor, w)]
+        if not short:
+            return give, [k for k, _ in ranked if k not in {x for x, _ in keys}]
+        # Drop the LAST short one in value order, not the first.
+        drop = short[-1]
+        keys = [(k, w) for k, w in keys if k != drop]
+    return {}, [k for k, _ in ranked]
+
+
 def render_diagnosis(pack: dict) -> str:
     """Why this run had the material it had, as one page a person can read.
 
@@ -772,8 +868,72 @@ def scope_prompt(anchor_text: str, sha: str) -> str:
         "}\n" % (sha[:16], anchor_text[:20_000], MAX_QUERIES))
 
 
-def scope(provider, anchor_text: str, sha: str) -> dict:
-    c = provider.complete(SCOPE_SYSTEM, scope_prompt(anchor_text, sha), max_tokens=1200)
+# ── THE CLAIM REACHES RETRIEVAL (owner-directed, 2026-09-30) ──────────────────
+# WHAT WAS WRONG. `scope()` took the anchor text and nothing else, so the four queries that
+# decide the entire evidence universe were written as if the run had no purpose. The engine
+# commissioned a story FOR an owner-written claim, researched it blind to that claim, and
+# then asked Worth to find a reading in whatever came back. That is the same defect the
+# free Writer fixed one stage later -- a lens found inside a pile can only describe the
+# pile -- and nothing had fixed it here.
+#
+# THE MOST EXPENSIVE OMISSION WAS THE DISCONFIRMING SHAPE. The owner writes, for each
+# instrument, the single sentence naming what would REFUTE the claim. It reached the
+# Writer and it reached Worth. It had never once been turned into a search, so the engine
+# systematically gathered material that could support its claim and never went looking for
+# the material that could kill it -- and then a Writer was asked to let the evidence
+# complicate the thesis, using evidence collected only to agree with it.
+#
+# FOUR QUERIES, FOUR DIFFERENT JOBS. The count is unchanged (MAX_QUERIES) and so is the
+# cost. What changes is that they are no longer four phrasings of one question.
+INSTRUMENT_SCOPE_BLOCK = (
+    "THIS RUN EXISTS TO TEST A CLAIM, written by the editor before any evidence was\n"
+    "read. You are not being asked to judge it. You are being asked to find the material\n"
+    "that could settle it, and material that could only agree with it is half a job.\n"
+    "\n"
+    "  the claim          : %s\n"
+    "  what would refute it: %s\n"
+    "%s%s"
+    "\n"
+    "YOUR QUERIES MUST DO DIFFERENT JOBS. Four phrasings of one question waste three of\n"
+    "them. Cover these angles, in this order of importance, adapted to what this subject\n"
+    "actually is:\n"
+    "  1. the material that would REFUTE the claim -- write this query from the\n"
+    "     refutation sentence above, not from the claim;\n"
+    "  2. a PRIMARY document: the paper, report, judgment, dataset, statute, archive or\n"
+    "     record itself, rather than an account of it;\n"
+    "  3. a PARTICIPANT, practitioner or critic -- someone who did the thing or was\n"
+    "     subject to it, rather than the body that administers it;\n"
+    "  4. material from OUTSIDE the institution the anchor belongs to. If the anchor is\n"
+    "     an institution's own account, its other pages are not a second source.\n"
+    "\n"
+    "Still one subject, and every query still serves it. Name the specific people, works,\n"
+    "documents and places the angle needs -- a query naming nobody finds nobody.\n")
+
+
+def instrument_scope_block(instrument: dict | None) -> str:
+    """The claim, as retrieval instructions. Empty when the run carries no instrument, so
+    a run without one sends the prompt byte-identically to what it sent before this
+    existed."""
+    q = instrument or {}
+    claim = str(q.get("mechanism") or "").strip()
+    if not claim:
+        return ""
+    carriers = str(q.get("carriers") or "").strip()
+    false_move = str(q.get("false_move") or "").strip()
+    return INSTRUMENT_SCOPE_BLOCK % (
+        claim,
+        str(q.get("disconfirming_shape") or "").strip()
+        or "(not stated -- then search for what would complicate the claim)",
+        ("  what can carry it  : %s\n" % carriers) if carriers else "",
+        ("  the wrong version  : %s\n" % false_move) if false_move else "")
+
+
+def scope(provider, anchor_text: str, sha: str, instrument: dict | None = None) -> dict:
+    block = instrument_scope_block(instrument)
+    prompt = scope_prompt(anchor_text, sha)
+    if block:
+        prompt = block + "\n" + prompt
+    c = provider.complete(SCOPE_SYSTEM, prompt, max_tokens=1200)
     p = parse_json_object(c.text)
     # The span is only worth anything if it is really in the anchor. A paraphrased or
     # invented span is dropped rather than carried, exactly like an excerpt -- and a
@@ -898,30 +1058,36 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
     # publisher still to come that is not yet in the pack. A source from a NEW publisher
     # is never constrained -- it is the thing being protected, not the thing being
     # limited. Nothing else moves: same budget, same per-source cap, same drop rule.
-    seen_publishers = {anchor_src["publisher"]}
+    # ── WHO GETS THE BUDGET, decided before any of it is spent ────────────────────
+    # An equal share by default, more only to a source that is worth more, and nothing at
+    # all to a source that would be carried too thin to be usable. See allocate_budget:
+    # this replaces first-come, which carried three of seven sources on
+    # production-20260930T073754Z-54ca6694 and dropped National Geographic, Smithsonian,
+    # Wikipedia and archive.org after fetching and assessing all four.
+    def _role_of(s):
+        r = (labels.get(s["source_id"], {}) or {}).get("role")
+        r = r if r in ROLES else ROLE_CONTEXT
+        return ROLE_CONTEXT if r == ROLE_ANCHOR else r
+
+    ranked = sorted(
+        ((s["source_id"], min(len(s["text"]), PER_SOURCE_CHARS)) for s in fetched),
+        key=lambda kv: source_value_rank(
+            _role_of(by_id[kv[0]]),
+            (labels.get(kv[0], {}) or {}).get("relation", "background"),
+            [x["source_id"] for x in fetched].index(kv[0])))
+    allocation, starved = allocate_budget(ranked, budget, MIN_USEFUL_CHARS)
+    for sid in starved:
+        s = by_id[sid]
+        budget_dropped.append({
+            "source_id": sid, "url": s["url"],
+            "reason": "the budget could not carry every source; this one ranked lowest "
+                      "on role and relation"})
+
     for idx, s in enumerate(fetched):
-        # A source the budget cannot carry is DROPPED, not carried empty. A pack entry
-        # with no text is a citation, and a citation is not a source here -- it would
-        # also be unverifiable, since every excerpt must be a span of carried text.
-        if budget < MIN_USEFUL_CHARS:
-            budget_dropped.append({"source_id": s["source_id"], "url": s["url"],
-                                   "reason": "pack text budget exhausted"})
-            continue
-        if s["publisher"] in seen_publishers:
-            unseen_later = {t["publisher"] for t in fetched[idx + 1:]} - seen_publishers
-            reserved = MIN_USEFUL_CHARS * len(unseen_later)
-        else:
-            unseen_later, reserved = set(), 0
-        if budget - reserved < MIN_USEFUL_CHARS:
-            budget_dropped.append({
-                "source_id": s["source_id"], "url": s["url"],
-                "reason": "yielded its share to %d publisher(s) not yet in the pack"
-                          % len(unseen_later)})
+        if s["source_id"] in starved:
             continue
         lab = labels.get(s["source_id"], {})
-        role = lab.get("role") if lab.get("role") in ROLES else ROLE_CONTEXT
-        if role == ROLE_ANCHOR:
-            role = ROLE_CONTEXT
+        role = _role_of(s)
         cluster = None
         for i, group in enumerate(clusters):
             if any(near_duplicate(s["text"], g["text"]) for g in group):
@@ -931,9 +1097,8 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
         if cluster is None:
             clusters.append([s])
             cluster = len(clusters) - 1
-        text = s["text"][:max(0, budget - reserved)]
+        text = s["text"][:max(0, allocation.get(s["source_id"], 0))]
         budget -= len(text)
-        seen_publishers.add(s["publisher"])
         # Excerpts are verified against the text the pack will actually CARRY, not the
         # text that was fetched. The two differ once the budget truncates a source, and
         # verifying against the longer one would ship a span nothing downstream can see
@@ -1257,11 +1422,17 @@ def lens_probe(provider, subject: str, anchor_text: str, sources: list) -> dict:
 
 
 # ── orchestration (one bounded pass) ──────────────────────────────────────────
-def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict:
+def research(provider, *, anchor: dict, now_iso: str, api_key: str = "",
+             instrument: dict | None = None) -> dict:
     """Scope -> search -> fetch -> assess -> pack. Raises ResearchError on a
     provider/transport failure so the caller can fail closed; it never returns a
-    pack it could not actually build."""
-    scoped = scope(provider, anchor["text"], sha256_text(anchor["text"]))
+    pack it could not actually build.
+
+    `instrument` is the approved question this run was commissioned from. It steers the
+    QUERIES and nothing else -- it licenses no fact, it never enters the pack, and a run
+    without one scopes exactly as it did before this parameter existed.
+    """
+    scoped = scope(provider, anchor["text"], sha256_text(anchor["text"]), instrument)
     candidates, failures = [], []
     # Identity, not string equality, and the anchor is in it from the start: a search that
     # returns the page we are already reading does not fetch it a second time.

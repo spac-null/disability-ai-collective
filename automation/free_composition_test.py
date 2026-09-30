@@ -154,8 +154,9 @@ def _canned_upstream(monkey: dict):
     CP.freeze_ledger = lambda p, pack, subj: {
         "status": CP.PASS, "ledger": dict(LEDGER), "relations": list(RELATIONS),
         "facts": len(LEDGER), "sources": PACK["sources"], "model_calls": 1, "repairs": 0}
-    CP.worth_gate = lambda p, led, subj, hyp=None: {
+    CP.worth_gate = lambda p, led, subj, hyp=None, conflict_sink=None: {
         "status": CP.PASS, "worth_gate": {"verdict": "PASS"}, "hypothesis": hyp,
+        "conflict_sink_supplied": conflict_sink is not None,
         "model_calls": 1, "repairs": 0}
     CP.architect = lambda p, led, w, subj, visual_context=None: {
         "status": CP.PASS, "architecture": dict(ARCH), "beats": 1,
@@ -380,6 +381,70 @@ def test_selection_bites_without_becoming_write_shorter() -> None:
     check("no word count, length target or fact quota was introduced",
           not re.search(r"\b(?:at most|no more than|fewer than|maximum of)\s+\d+", system),
           "a numeric cap appeared in the Writer prompt")
+
+
+def test_the_approved_instrument_settles_scope() -> None:
+    """"PR has authority" (owner, 2026-09-30). Worth is told scope is decided; it keeps
+    every other refusal it has."""
+    from new_engine_v1 import hypothesis as HYP
+
+    h = HYP.from_instrument({
+        "id": "PR006-02",
+        "mechanism": "Institutions certify authority, not knowledge.",
+        "disconfirming_shape": "Show a route by which uncertified knowledge enters the "
+                               "record with attribution.",
+        "what_this_adds": "who is licensed to make the classification"})
+    check("an instrument with a claim has authority", CP.instrument_has_authority(h), h)
+    check("an id with no claim does not",
+          not CP.instrument_has_authority({"instrument": "PR006-02", "claim": ""}))
+    check("no instrument at all does not", not CP.instrument_has_authority(None))
+
+    b = CP.INSTRUMENT_AUTHORITY_BLOCK
+    check("Worth is told scope is settled", "SCOPE IS ALREADY SETTLED" in b)
+    check("the scope refusal is withdrawn on those grounds",
+          "is not available to you on" in b)
+    check("it is told not to refuse for not looking like disability",
+          "not obviously about disability" in b)
+    # What must NOT be lifted.
+    check("NO_PLAUSIBLE_LENS still refuses", "NO_PLAUSIBLE_LENS if this evidence" in b)
+    check("WEAK_ANALOGY still refuses", "WEAK_ANALOGY if what you have" in b)
+    check("the access-deficit invariant still refuses",
+          "ACCESS-DEFICIT central" in b and "does not lift it" in b)
+    check("a lens must still name a mechanism and a particular",
+          "name a mechanism and rest on a particular" in b)
+
+
+def test_worth_scope_conflict_is_recorded_for_the_owner() -> None:
+    """A disagreement between the perspective library and Worth's scope test is evidence
+    for sharpening the instrument, not something to overrule silently."""
+    filed = []
+    h = {"instrument": "PR006-02", "claim": "Institutions certify authority."}
+    CP.record_instrument_conflict(
+        filed.append, hypothesis=h, subject="Franklin wrecks",
+        lens={"verdict": ST_WRONG(), "lens_claim": "a contrast between two recording "
+                                                   "systems"},
+        ledger_facts=129)
+    check("one conflict is filed", len(filed) == 1, filed)
+    r = filed[0]
+    check("it names the instrument", r["instrument"] == "PR006-02")
+    check("it keeps the owner's claim", "certify authority" in r["claim"])
+    check("it keeps Worth's own reasoning", "two recording systems" in r["worth_reasoning"])
+    check("it records how much evidence was frozen for it", r["ledger_facts"] == 129)
+    check("it says which side won", "The instrument won" in r["note"])
+    check("a missing sink is not an error",
+          CP.record_instrument_conflict(None, hypothesis=h, subject="x",
+                                        lens={}, ledger_facts=0) is None)
+
+    def explodes(_):
+        raise RuntimeError("disk full")
+    check("a sink that raises cannot break a run",
+          CP.record_instrument_conflict(explodes, hypothesis=h, subject="x",
+                                        lens={}, ledger_facts=0) is None)
+
+
+def ST_WRONG():
+    from new_engine_v1 import story as ST
+    return ST.WRONG_PUBLICATION
 
 
 def test_ported_house_rule_has_not_drifted_from_its_source() -> None:
@@ -619,6 +684,9 @@ def test_the_full_ledger_is_offered_and_selection_is_the_writers() -> None:
     check("the run records what the Writer said it used",
           wr["facts_used_count"] == 4, wr.get("facts_used_count"))
     check("the Writer's freedom is recorded as plan-free", wr["plan_free"] is True)
+    check("Worth is given somewhere to file an instrument conflict",
+          res["detail"][CP.WORTH].get("conflict_sink_supplied") is True,
+          res["detail"][CP.WORTH])
 
 
 # ── 13-14. routing and approval ───────────────────────────────────────────────

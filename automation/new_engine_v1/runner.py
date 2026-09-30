@@ -166,8 +166,16 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
     # "we could not read enough" and "there was not enough to read" are different
     # answers, and neither is permission to write anyway.
     prov_anchor = source_payload.get("provenance") or {}
+    # THE CLAIM STEERS THE QUERIES. Passed only to the real research function: an injected
+    # `research_fn` is a test double written against the signature that existed when it
+    # was written, and handing it an argument it never declared would break every suite
+    # that supplies one. The steering is production behaviour; `scope` and
+    # `instrument_scope_block` are unit-tested directly.
+    _research = research_fn or RS.research
+    _instrument_kw = ({"instrument": instrument}
+                      if instrument and _research is RS.research else {})
     try:
-        pack = (research_fn or RS.research)(
+        pack = _research(
             provider,
             anchor={"url": prov_anchor.get("url", ""), "text": src,
                     "title": prov_anchor.get("title", ""),
@@ -177,7 +185,7 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
                     # Absent on any snapshot recorded before 2026-09-06, hence .get().
                     "figures": prov_anchor.get("figures") or [],
                     "accessed_at": at},
-            now_iso=at)
+            now_iso=at, **_instrument_kw)
     except (RS.ResearchError, ProviderError, C.ContractViolation) as e:
         return _stage_failure(
             C.RESEARCH_PACK,

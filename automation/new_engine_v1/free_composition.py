@@ -753,8 +753,9 @@ def run_free_argumentative_composition(
         # caller supplies it, so `HYP.from_instrument` has always received {}. That gap is
         # NOT fixed on the planned path by this change -- one defect class per deploy --
         # and is recorded in the deploy note.
-        w = record(CP.WORTH, CP.worth_gate(P, ledger, subject,
-                                           CP.HYP.from_instrument(instrument or {})))
+        w = record(CP.WORTH, CP.worth_gate(
+            P, ledger, subject, CP.HYP.from_instrument(instrument or {}),
+            conflict_sink=_conflict_sink(out_dir, subject)))
         if stop_after == CP.WORTH:
             return out(article=None, package_out=None)
 
@@ -977,3 +978,44 @@ def _persist_free(out_dir, result: dict) -> None:
             }, indent=1, sort_keys=True, default=str), encoding="utf-8")
     except Exception:
         pass
+
+
+# ── WHERE AN INSTRUMENT CONFLICT GOES SO THE OWNER CAN ACTUALLY FIND IT ───────
+# Two places, on purpose. The run directory gets the full record beside the evidence that
+# produced it, and one append-only file gathers every conflict across all runs, because
+# the question the owner is actually asking -- "is this instrument repeatedly commissioning
+# subjects Worth refuses, and should its rules be sharpened?" -- cannot be answered from
+# inside a single run directory.
+#
+# Nothing reads either file back. They are for a person.
+CONFLICT_LOG_DIR = "/srv/data/cripminds-instrument-conflicts"
+CONFLICT_LOG = "CONFLICTS.jsonl"
+
+
+def _conflict_sink(out_dir, subject: str):
+    """A callable that files one instrument conflict. Never raises into a run."""
+    def sink(record: dict) -> None:
+        import datetime
+        import json
+        import pathlib
+        row = dict(record, subject=record.get("subject") or subject,
+                   at=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                   run=str(out_dir or "").rstrip("/").rsplit("/", 1)[-1])
+        blob = json.dumps(row, indent=1, sort_keys=True, ensure_ascii=False,
+                          default=str)
+        if out_dir is not None:
+            try:
+                d = pathlib.Path(out_dir)
+                d.mkdir(parents=True, exist_ok=True)
+                (d / "INSTRUMENT_CONFLICT.json").write_text(blob, encoding="utf-8")
+            except Exception:
+                pass
+        try:
+            agg = pathlib.Path(CONFLICT_LOG_DIR)
+            agg.mkdir(parents=True, exist_ok=True)
+            with (agg / CONFLICT_LOG).open("a", encoding="utf-8") as fh:
+                fh.write(json.dumps(row, sort_keys=True, ensure_ascii=False,
+                                    default=str) + "\n")
+        except Exception:
+            pass
+    return sink
