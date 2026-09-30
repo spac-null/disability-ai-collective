@@ -146,6 +146,158 @@ def registrable(url_or_host: str) -> str:
     return ".".join(parts[-2:]) if len(parts) >= 2 else host
 
 
+def render_diagnosis(pack: dict) -> str:
+    """Why this run had the material it had, as one page a person can read.
+
+    WHY IT EXISTS. On 2026-09-30 two of the morning's three pitches died at
+    HOLD_INSUFFICIENT_RESEARCH, and answering "why, when the subject plainly has
+    literature" took reading RESEARCH_PACK.json by hand, counting domains, and adding up
+    six content_length fields to discover the text budget had been consumed to the byte.
+    Everything needed was in the artifact and none of it was legible. The verdict line
+    said `independent=0` and could not say that six independent sources had been FOUND
+    and never fetched.
+
+    Derived entirely from the frozen pack. It licenses nothing, no stage reads it, and it
+    cannot change a verdict -- it only makes one answerable.
+    """
+    import collections
+    P = pack or {}
+    srcs = [s for s in (P.get("sources") or []) if isinstance(s, dict)]
+    cov = P.get("coverage") or {}
+    suf = P.get("sufficiency") or {}
+    cands = P.get("candidates_considered") or []
+    order = P.get("fetch_order") or cands
+    anchor = next((s for s in srcs if s.get("role") == ROLE_ANCHOR), None)
+    anchor_pub = (anchor or {}).get("publisher", "")
+    in_pack = {s.get("url") for s in srcs}
+    L = []
+
+    def line(s=""):
+        L.append(s)
+
+    line("RESEARCH DIAGNOSIS — why this run had the material it had")
+    line("=" * 72)
+    line("SUBJECT   %s" % str(P.get("subject") or "")[:200])
+    line("VERDICT   %s" % suf.get("verdict"))
+    for r in (suf.get("reasons") or []):
+        line("          %s" % r)
+    for m in (suf.get("what_is_missing") or []):
+        line("MISSING   %s" % m)
+    if anchor:
+        line("ANCHOR    %-24s %s chars  %s"
+             % (anchor_pub, anchor.get("content_length"), str(anchor.get("url"))[:80]))
+    line()
+
+    qs = P.get("queries") or []
+    line("QUERIES (%d)" % len(qs))
+    for i, q in enumerate(qs, 1):
+        line("  %d. %s" % (i, str(q)[:150]))
+    line()
+
+    # WHAT WAS FOUND VERSUS WHAT WAS READ, by publisher. This is the table that would
+    # have answered the question immediately on both of the 2026-09-30 holds.
+    found = collections.Counter(registrable(u) for u in cands)
+    got = collections.Counter(s.get("publisher") for s in srcs
+                              if s.get("role") != ROLE_ANCHOR)
+    line("CANDIDATES FOUND: %d across %d publisher(s)" % (len(cands), len(found)))
+    line("  %-34s %7s %7s   %s" % ("publisher", "found", "in pack", ""))
+    for pub, n in found.most_common():
+        mark = "  <- the anchor's own publisher" if pub == anchor_pub else ""
+        line("  %-34s %7d %7d %s" % (pub, n, got.get(pub, 0), mark))
+    line()
+
+    line("FETCH ORDER (one publisher before any second — see by_publisher_diversity)")
+    for i, u in enumerate(order, 1):
+        state = "IN PACK" if u in in_pack else "not fetched"
+        line("  %2d %-30s %-12s %s" % (i, registrable(u), state, str(u)[:70]))
+    line()
+
+    line("PACK TEXT BUDGET %s" % PACK_TEXT_BUDGET)
+    remaining = PACK_TEXT_BUDGET
+    for s in srcs:
+        remaining -= int(s.get("content_length") or 0)
+        line("  %-4s %-26s %7s chars   remaining %7d"
+             % (s.get("source_id"), s.get("publisher"), s.get("content_length"),
+                remaining))
+    for d in (cov.get("budget_dropped") or []):
+        line("  DROPPED %-4s %s — %s" % (d.get("source_id"),
+                                         registrable(str(d.get("url") or "")),
+                                         d.get("reason")))
+    for f in (cov.get("fetch_failures") or []):
+        line("  FAILED  %-10s %s" % (f.get("status"),
+                                     registrable(str(f.get("url") or ""))))
+    line()
+
+    # THE ONE LINE SOMEONE IS ACTUALLY LOOKING FOR.
+    line("WHAT DECIDED THE VERDICT")
+    ind_p = cov.get("independent_publishers", 0)
+    ind_c = cov.get("independent_clusters", 0)
+    line("  independent publishers in pack : %s   (a full feature needs >= 1)" % ind_p)
+    line("  independent clusters in pack   : %s" % ind_c)
+    line("  distinct publishers in pack    : %s" % cov.get("distinct_publishers"))
+    line("  roles present                  : %s" % ", ".join(cov.get("roles_present")
+                                                             or []))
+    if not ind_p:
+        outside = [u for u in cands if registrable(u) != anchor_pub]
+        unread = [u for u in outside if u not in in_pack]
+        if unread:
+            line("  %d source(s) OUTSIDE the anchor's publisher were found and never read:"
+                 % len(unread))
+            for u in unread[:8]:
+                line("      %s" % str(u)[:96])
+            line("  -> the material existed. This is a SELECTION failure, not scarcity.")
+        else:
+            line("  no source outside the anchor's publisher was found at all")
+            line("  -> genuine scarcity, or the queries did not reach the literature.")
+    return "\n".join(L) + "\n"
+
+
+def by_publisher_diversity(candidates: list) -> list:
+    """The fetch order. Same URLs, same count, one per publisher before any second.
+
+    THE DEFECT THIS FIXES, measured on production-20260930T070306Z-54ca6694 (Inuit oral
+    history and the Franklin wrecks -- a subject with plenty of independent scholarship).
+
+    Search worked. It named the right people -- Louie Kamookak, Sammy Kogvik, Douglas
+    Stenton -- and returned 12 candidates, 6 of them independent and good: an Archaeology
+    magazine feature, FOUR papers in the journal Arctic, and a Cambridge Polar Record PDF.
+    Not one of them was ever fetched.
+
+    Candidates were taken in the order search returned them, and the first five were all
+    the anchor's own publisher -- the anchor's sibling pages (recherche-search,
+    decouvertes-discoveries, rapports-reports). Five is MAX_FETCHED_SOURCES, so the run
+    spent every fetch slot inside canada.ca, reached independent_publishers=0, and the
+    sufficiency gate refused it. The refusal was CORRECT -- an article about whose
+    knowledge counted, sourced entirely from the institution's own account of how well it
+    used that knowledge, is exactly the failure that subject's instrument warns about --
+    but nothing was scarce. The spending order was wrong.
+
+    AND IT IS NOT ABOUT THAT SUBJECT. Any anchor on a well-built institutional site --
+    a park service, a museum, a ministry, an NHS trust -- floods the candidate list with
+    its own siblings. The better the institution's website, the more certain the HOLD.
+    The gate requires independence and the spending order did not protect it.
+
+    THE RULE: stable round-robin over `registrable` publisher, original order preserved
+    inside each publisher. The anchor publisher's best candidate still goes first; its
+    SECOND only comes after every other publisher has had one. Deterministic, no model
+    call, no new bound, and the candidate set itself is untouched -- this decides only
+    what order they are tried in.
+
+    On the Inuit run this yields canada.ca, archaeology.org, journalhosting.ucalgary.ca,
+    cambridge.org, canada.ca -- four publishers and three independent of the anchor,
+    inside the same five fetches.
+    """
+    groups: dict = {}
+    for u in candidates:
+        groups.setdefault(registrable(u), []).append(u)
+    out, order = [], list(groups)          # dict preserves first-seen publisher order
+    while len(out) < len(candidates):
+        for pub in order:
+            if groups[pub]:
+                out.append(groups[pub].pop(0))
+    return out
+
+
 def _shingles(text: str, n: int = 5) -> set:
     w = re.findall(r"[a-z0-9]+", (text or "").lower())
     return {tuple(w[i:i + n]) for i in range(max(0, len(w) - n + 1))}
@@ -597,13 +749,37 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
     clusters = [[anchor_src]]
     budget_dropped = []
     MIN_USEFUL_CHARS = 1000
-    for s in fetched:
+    # A PUBLISHER ALREADY IN THE PACK DOES NOT GET TO SPEND WHAT AN UNSEEN ONE NEEDS.
+    # The fetch order now reaches several publishers (see by_publisher_diversity), and
+    # this is the same defect one stage later: on the Inuit run the budget was consumed
+    # to the byte -- 7,291 + 2,921 + 4,354 + 12,000 + 2,821 + 10,613 = exactly 40,000 --
+    # and two further sources were dropped "pack text budget exhausted". A single 12,000-
+    # char source can still starve everything after it, and if what it starves is the only
+    # independent publisher, the sufficiency gate refuses a run whose material was there.
+    #
+    # So a source whose publisher is ALREADY represented yields MIN_USEFUL_CHARS for each
+    # publisher still to come that is not yet in the pack. A source from a NEW publisher
+    # is never constrained -- it is the thing being protected, not the thing being
+    # limited. Nothing else moves: same budget, same per-source cap, same drop rule.
+    seen_publishers = {anchor_src["publisher"]}
+    for idx, s in enumerate(fetched):
         # A source the budget cannot carry is DROPPED, not carried empty. A pack entry
         # with no text is a citation, and a citation is not a source here -- it would
         # also be unverifiable, since every excerpt must be a span of carried text.
         if budget < MIN_USEFUL_CHARS:
             budget_dropped.append({"source_id": s["source_id"], "url": s["url"],
                                    "reason": "pack text budget exhausted"})
+            continue
+        if s["publisher"] in seen_publishers:
+            unseen_later = {t["publisher"] for t in fetched[idx + 1:]} - seen_publishers
+            reserved = MIN_USEFUL_CHARS * len(unseen_later)
+        else:
+            unseen_later, reserved = set(), 0
+        if budget - reserved < MIN_USEFUL_CHARS:
+            budget_dropped.append({
+                "source_id": s["source_id"], "url": s["url"],
+                "reason": "yielded its share to %d publisher(s) not yet in the pack"
+                          % len(unseen_later)})
             continue
         lab = labels.get(s["source_id"], {})
         role = lab.get("role") if lab.get("role") in ROLES else ROLE_CONTEXT
@@ -618,8 +794,9 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
         if cluster is None:
             clusters.append([s])
             cluster = len(clusters) - 1
-        text = s["text"][:max(0, budget)]
+        text = s["text"][:max(0, budget - reserved)]
         budget -= len(text)
+        seen_publishers.add(s["publisher"])
         # Excerpts are verified against the text the pack will actually CARRY, not the
         # text that was fetched. The two differ once the budget truncates a source, and
         # verifying against the longer one would ship a span nothing downstream can see
@@ -693,6 +870,7 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
         "questions": scoped.get("questions", [])[:10],
         "queries": searched.get("queries", []),
         "candidates_considered": searched.get("candidates", []),
+        "fetch_order": searched.get("fetch_order", []),
         "anchor_kind": scoped.get("anchor_kind", "other"),
         "anchor_subject_words": scoped.get("anchor_subject_words", 0),
         "subject_span": scoped.get("subject_span", "") or "",
@@ -990,7 +1168,11 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict
     # yet, and a model call here would be a second one nobody asked for.
     doc_terms = DOC.selection_terms(scoped.get("subject", ""), queries,
                                     scoped.get("named_entities") or [])
-    for i, url in enumerate(candidates, 1):
+    # ONE PER PUBLISHER BEFORE ANY SECOND. `candidates` keeps search order and is what the
+    # pack records; this is the order they are TRIED in. See by_publisher_diversity for
+    # the run that made it necessary.
+    fetch_order = by_publisher_diversity(candidates)
+    for i, url in enumerate(fetch_order, 1):
         if len(fetched) >= MAX_FETCHED_SOURCES:
             break
         rec = fetch_source(url, fallback_budget=fallback_budget, terms=doc_terms)
@@ -1082,6 +1264,10 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict
     pack = build_pack(anchor=anchor, scoped=scoped, fetched=fetched,
                       assessment=assessment,
                       searched={"queries": queries, "candidates": candidates,
+                                # The order they were actually TRIED in, kept beside the
+                                # order search returned them. Without it "why was that
+                                # source never fetched" is unanswerable from the artifact.
+                                "fetch_order": fetch_order,
                                 "failures": failures})
     pack["lens_probe"] = {k: v for k, v in probe.items() if k != "_provider"}
     pack["perspective_explorer"] = {k: v for k, v in explorer.items() if k != "_provider"}

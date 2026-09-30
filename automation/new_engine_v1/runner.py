@@ -622,6 +622,17 @@ def _persist(A: dict, run_root: pathlib.Path, name: str, mode: str,
             encoding="utf-8")
     (out / "source-snapshot.txt").write_text(
         A[C.SOURCE_SNAPSHOT].payload["source_text"], encoding="utf-8")
+    # ONE PAGE ANSWERING "WHY DID THIS RUN HAVE THE MATERIAL IT HAD" (2026-09-30). Two of
+    # that morning's three pitches held at HOLD_INSUFFICIENT_RESEARCH, and finding out why
+    # took reading the pack by hand and adding up content_length fields. Everything needed
+    # was already in the artifact and none of it was legible. Derived from the frozen pack,
+    # read by nothing, and never allowed to break a run that has already decided.
+    if C.RESEARCH_PACK in A:
+        try:
+            (out / "RESEARCH_DIAGNOSIS.txt").write_text(
+                RS.render_diagnosis(A[C.RESEARCH_PACK].payload), encoding="utf-8")
+        except Exception:
+            pass
     if C.WRITER_OUTPUT in A:
         (out / "article.md").write_text(
             A[C.WRITER_OUTPUT].payload["article_text"], encoding="utf-8")
