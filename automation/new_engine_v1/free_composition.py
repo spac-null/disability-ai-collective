@@ -40,9 +40,12 @@ that distinction is Grounding's, and Grounding has demonstrated it can make it.
 WHAT RUNS, AND WHAT DOES NOT
 
     LEDGER          runs, unchanged. It remains the ONLY origin of factual permission.
-    WORTH           runs, unchanged. SHADOW-ONLY: no byte of it reaches the Writer.
-    ARCHITECTURE    runs, unchanged. SHADOW-ONLY: no byte of it reaches the Writer.
-    CUT_TERMS       runs, unchanged. SHADOW-ONLY: its cuts bind nothing on this path.
+    WORTH           runs, and still gates -- but only on its EDITORIAL refusals. Its lens
+                    reaches nothing: no byte of it is shown to the Writer, and the three
+                    checks that asked whether that lens could be PLANNED from are recorded
+                    instead of blocking. See `plan_inputs_required`.
+    ARCHITECTURE    NOT RUN. No plan is built on this path.
+    CUT_TERMS       NOT RUN. It is derived from the architecture.
     WRITER          NEW. The free argumentative Writer. See write_article_free.
     CONTINUITY      SKIPPED -- a whole-article rewrite of the prose we are preserving.
     PROSE_FINISH    SKIPPED -- same reason.
@@ -52,12 +55,21 @@ WHAT RUNS, AND WHAT DOES NOT
     FACT_CHECK      runs, unchanged.
     READER          runs, unchanged.
 
-WHY THE PLANNING STAGES STILL RUN AT ALL. They are a gate, not a plan, on this path. The
-publication-safety bridge requires LEDGER, WORTH and ARCHITECTURE to have passed before it
-will stamp an article publication-eligible, and that requirement is not this change's to
-relax. They run exactly as they do today and decide exactly what they decide today; what
-changed is only that their output no longer reaches the prose. This is the single most
-important property of this module, and `writer_inputs_are_plan_free` exists to prove it.
+WHAT THE MISSING PLAN TOOK WITH IT, stated plainly rather than left to be discovered. The
+architecture also carried `definition_evidence`, the architect's own prohibitions, the CUT
+accounting and (on FAST_LANE) claim mapping. None of those exist here. What replaces them
+is not a like-for-like substitute and is not claimed to be: the Writer is given the WHOLE
+Ledger rather than a curated subset, so there is no cut list to enforce and no withheld
+material to leak; and every factual claim in the finished prose is checked afterwards by
+Safety against the whole-Ledger licensing record, by Grounding against the frozen sources,
+and by the world-relative Fact Check. Definition glosses in particular lose their
+architecture-declared adjudication and are judged by Grounding like any other sentence.
+
+THE BRIDGE ASSERTS THIS CONTRACT'S OWN INTEGRITY PROPERTY. `architecture_valid` is
+replaced, for this engine only, by `writer_plan_free`: proof on the actual prompt bytes
+that no plan reached the Writer, which `writer_inputs_are_plan_free` computes before the
+call is made and the run records as `plan_free`. A run that cannot prove it does not
+publish. That is the single most important property of this module.
 
 WHAT SAFETY IS GIVEN, AND WHY IT IS NOT A RELAXATION
 
@@ -429,17 +441,28 @@ def relation_block(ledger: dict, relations=None) -> str:
     rels = relations or []
     if not rels:
         return ""
+    # DIRECTION IS PART OF THE LICENCE (2026-09-30, external audit). This rendered every
+    # join as "A <-> B". A CAUSE is not symmetric: the freeze validated that the budget cut
+    # caused the closure, and "<->" licenses the reverse just as strongly. The retained
+    # free run that reached the Reader carried FOUR CAUSE relations in that format, so the
+    # Writer was handed directional evidence with the direction stripped off and full
+    # permission to assert it either way. Rendered as subject -> kind -> object now, and
+    # the block says in as many words that the arrow is the licensed direction.
     L = ["LICENSED CONNECTIONS. These propositions are connected, and the connection "
          "itself is evidence you may assert. No other connection between two facts is "
          "licensed: placing two facts side by side is allowed, asserting that one causes, "
-         "explains or follows from the other is not unless it is listed here."]
+         "explains or follows from the other is not unless it is listed here.",
+         "  THE ARROW IS THE LICENCE. Each line reads FROM -> TO, and only that "
+         "direction is licensed. A cause is not reversible: if the arrow runs from A to "
+         "B, you may not write that B brought about A."]
     for r in rels:
         if not isinstance(r, dict):
             continue
         subj = str((ledger.get(r.get("subject")) or {}).get("proposition") or "").strip()
         obj = str((ledger.get(r.get("object")) or {}).get("proposition") or "").strip()
         if subj and obj:
-            L.append("  [%s]  %s  <->  %s" % (str(r.get("kind") or "RELATED"), subj, obj))
+            L.append("  %s" % subj)
+            L.append("     --%s-->  %s" % (str(r.get("kind") or "RELATED"), obj))
     return "\n".join(L) if len(L) > 1 else ""
 
 
@@ -477,6 +500,35 @@ def parse_free_reply(text: str) -> dict:
     return {"article_text": body.strip(),
             "facts_used": sorted(set(facts_used)),
             "declared_negatives": negatives}
+
+
+def _bears_on(fact: dict, sentence: str) -> bool:
+    """Does this fact's negation actually concern THIS claim of absence?
+
+    ADDED 2026-09-30 after an external audit reproduced the gap: "There is no elevator in
+    the museum" was admitted on a fact reading "There is no wheelchair entrance at the
+    museum". Both are negations, so the shape test passed, and nothing asked whether the
+    second was about the first. Safety then returned PASS.
+
+    That made a DECLARATION weaker than the lexical path it exists to supplement --
+    exactly backwards. `story.negative_admission_audit` already requires a fact's
+    proposition to share substantial wording with the sentence before it licenses one;
+    a declaration was skipping that test entirely.
+
+    So this applies the SAME rule, copied from that function rather than invented here:
+    content words of five letters or more, function words dropped, and at least
+    max(2, len(key) // 3) of them present in the sentence. A declaration can now only
+    rescue a negative the lexical matcher missed for a mechanical reason -- never one it
+    refused on substance.
+    """
+    key = [w for w in re.findall(r"[a-z]{5,}",
+                                 str(fact.get("proposition") or "").lower())
+           if w not in ST._FUNCTION_WORDS]
+    if not key:
+        return False
+    sl = " ".join(str(sentence or "").lower().split())
+    shared = sum(1 for w in key if w in sl)
+    return shared >= max(2, len(key) // 3)
 
 
 def verify_declared_negatives(article_text: str, declared: list, ledger: dict) -> tuple:
@@ -517,12 +569,22 @@ def verify_declared_negatives(article_text: str, declared: list, ledger: dict) -
             # for prose carrying no negation -- which is a TRUTHY tuple. Testing the
             # tuple itself admits every fact ever cited and silently turns this check
             # into a rubber stamp. The kind is the answer; the tuple is not.
-            negatives = [f for f in fids
-                         if ST.negative_shape_of(
-                             str((ledger.get(f) or {}).get("proposition") or ""))[0]]
-            if not negatives:
+            # The two refusals are different facts about the world and must not be
+            # reported as one: "you cited nothing negative" and "you cited a negation
+            # about something else" send a reader to different places.
+            negs = [f for f in fids
+                    if ST.negative_shape_of(
+                        str((ledger.get(f) or {}).get("proposition") or ""))[0]]
+            negatives = [f for f in negs if _bears_on(ledger.get(f) or {}, sent)]
+            if not negs:
                 why.append("no cited fact carries a negation; a positive fact cannot "
                            "license a claim of absence")
+            elif not negatives:
+                why.append("the cited negation is about something else: %s -- a negation "
+                           "licenses only the absence it actually states"
+                           % "; ".join(
+                               str((ledger.get(f) or {}).get("proposition") or "")[:120]
+                               for f in negs[:2]))
             else:
                 fids = negatives
         if why:
@@ -641,8 +703,18 @@ def write_article_free(provider, ledger: dict, instrument: dict | None = None,
                     "provider": CP._identity(comp, attempt),
                     "model_calls": attempt, "repairs": 0,
                     "words": len(article.split()),
-                    "facts_used": parsed["facts_used"],
-                    "facts_used_count": len(parsed["facts_used"]),
+                    # SELF-REPORTED, AND SAID SO (2026-09-30, external audit). This is
+                    # the Writer's own ---FACTS USED--- list. Nothing checks that a listed
+                    # fact appears in the prose, so it cannot establish coverage and must
+                    # not be quoted as if it did. Ids the Ledger does not contain are
+                    # dropped and recorded: a Writer citing F404 is a signal, not a count.
+                    "facts_used_self_reported": [f for f in parsed["facts_used"]
+                                                 if f in (ledger or {})],
+                    "facts_used_not_in_ledger": [f for f in parsed["facts_used"]
+                                                 if f not in (ledger or {})],
+                    "facts_used_count_self_reported": len(
+                        [f for f in parsed["facts_used"] if f in (ledger or {})]),
+                    "facts_used_is_self_reported": True,
                     "facts_available": len(ledger or {}),
                     "negative_lineage_declared": parsed["declared_negatives"],
                     "negative_lineage_verified": lineage,
@@ -832,8 +904,16 @@ def run_free_argumentative_composition(
             # `check_package` still validates every name, number and quotation against the
             # article, and the package is still read by Safety, Grounding and Fact Check
             # inside the same bundle.
-            return record(CP.PACKAGE, CP.editorial_package(
-                P, text, None, None, refusals)).get("package")
+            # record() ASSIGNS calls[PACKAGE] from the payload, so a package
+            # regenerated after a repair erased the first call from the books --
+            # reproduced by the external audit as 8 reported against 9 made. The
+            # accumulate-after-record pattern is the one every repair path on the planned
+            # path already uses; this path needed it too.
+            before = calls.get(CP.PACKAGE, 0)
+            out_pkg = record(CP.PACKAGE, CP.editorial_package(
+                P, text, None, None, refusals))
+            calls[CP.PACKAGE] = before + out_pkg.get("model_calls", 0)
+            return out_pkg.get("package")
 
         def audit(text, pkg_, **kw):
             r = CP.safety_audit(text, text, licensing, {}, ledger, {}, None, lineage,
@@ -1006,8 +1086,10 @@ def _persist_free(out_dir, result: dict) -> None:
                 "prompt_sha256": wr.get("prompt_sha256"),
                 "article_sha256": C.sha256_text(wr.get("article_text") or ""),
                 "facts_available": wr.get("facts_available"),
-                "facts_used_count": wr.get("facts_used_count"),
-                "facts_used": wr.get("facts_used"),
+                "facts_used_count_self_reported":
+                    wr.get("facts_used_count_self_reported"),
+                "facts_used_self_reported": wr.get("facts_used_self_reported"),
+                "facts_used_not_in_ledger": wr.get("facts_used_not_in_ledger"),
                 "plan_free": wr.get("plan_free"),
                 "negative_lineage_verified": wr.get("negative_lineage_verified"),
                 "negative_lineage_rejected": wr.get("negative_lineage_rejected"),

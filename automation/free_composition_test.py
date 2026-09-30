@@ -345,7 +345,10 @@ def test_compression_and_carry_reaches_the_runtime_bytes() -> None:
     # guidance quietly becomes a validator.
     import subprocess
     pkg = HERE / "new_engine_v1"
-    hits = subprocess.run(["grep", "-rn", "COMPRESSION_AND_CARRY", str(pkg)],
+    # --include='*.py' because a bare -r also matches __pycache__/*.pyc, which made this
+    # check fail in any tree that had been imported once. Caught by an external audit.
+    hits = subprocess.run(["grep", "-rn", "--include=*.py",
+                           "COMPRESSION_AND_CARRY", str(pkg)],
                           capture_output=True, text=True).stdout.strip().splitlines()
     check("the compression block is referenced only where it is defined and used",
           len(hits) == 2, hits)
@@ -564,6 +567,115 @@ def test_structural_announcement_rule_reaches_the_writer() -> None:
           "put the surprising fact next to the one it overturns" in flat)
     check("it does not forbid short paragraphs",
           "One-sentence paragraphs are fine and normal" in flat)
+
+
+def test_a_licensed_relation_keeps_its_direction() -> None:
+    """A CAUSE is not symmetric, and "A <-> B" licensed the reverse just as strongly.
+
+    The retained free run that reached the Reader
+    (production-20260930T085346Z-54ca6694) carried FOUR CAUSE relations rendered that way:
+    directional evidence handed to the Writer with the direction stripped off. Found by an
+    external audit, reproduced, fixed.
+    """
+    led = {"A": {"proposition": "The council cut the budget."},
+           "B": {"proposition": "The service closed."}}
+    block = FC.relation_block(led, [{"kind": "CAUSE", "subject": "A", "object": "B"}])
+    check("the direction is rendered", "--CAUSE-->" in block, block)
+    check("no symmetric arrow survives", "<->" not in block, block)
+    check("subject comes before object",
+          block.index("The council cut the budget.")
+          < block.index("The service closed."), block)
+    check("the block says the arrow IS the licence",
+          "THE ARROW IS THE LICENCE" in block and "not reversible" in block)
+    # And it reaches the Writer that way.
+    res, prov, _ = _run([PASS_G])
+    user = prov.calls[0]["user"]
+    check("the runtime prompt carries no symmetric join", "<->" not in user)
+    check("and carries a directional one", "--CONTEMPORANEOUS-->" in user, user[-400:])
+
+
+def test_a_declared_negative_must_bear_on_the_claim() -> None:
+    """An unrelated negation must not license an absence claim.
+
+    Reproduced by an external audit: "There is no elevator in the museum" was admitted on
+    a fact reading "There is no wheelchair entrance at the museum". Both are negations;
+    nothing asked whether the second was about the first, and Safety then returned PASS.
+
+    That made a DECLARATION weaker than the lexical path it supplements. It now applies
+    story.negative_admission_audit's own word-overlap rule.
+    """
+    LED = {"F01": {"fact_id": "F01", "claim_type": "NEGATIVE_FACT",
+                   "proposition": "There is no wheelchair entrance at the museum.",
+                   "support_span": "no wheelchair entrance"},
+           "F02": {"fact_id": "F02", "claim_type": "NEGATIVE_FACT",
+                   "proposition": "There is no elevator anywhere in the museum building.",
+                   "support_span": "no elevator in the building"}}
+    art = "# T\n\nThe building opened. There is no elevator in the museum."
+
+    lin, rej = FC.verify_declared_negatives(
+        art, [{"sentence": "There is no elevator in the museum.",
+               "fact_ids": ["F01"]}], LED)
+    check("an unrelated negation is refused", not lin and bool(rej), (lin, rej))
+    check("and the refusal says the RIGHT why -- wrong subject, not missing negation",
+          any("about something else" in " ".join(r["why"]) for r in rej), rej)
+    check("it quotes the negation that was cited",
+          any("wheelchair entrance" in " ".join(r["why"]) for r in rej), rej)
+
+    # The other refusal must still read correctly: a genuinely positive fact.
+    _l3, rej3 = FC.verify_declared_negatives(
+        art, [{"sentence": "There is no elevator in the museum.",
+               "fact_ids": ["F03"]}],
+        dict(LED, F03={"fact_id": "F03", "claim_type": "POSITIVE_FACT",
+                       "proposition": "The museum installed a new elevator in 2019."}))
+    check("a positive fact is refused for being positive, not for being off-topic",
+          any("cannot license a claim of absence" in " ".join(r["why"]) for r in rej3),
+          rej3)
+
+    lin2, rej2 = FC.verify_declared_negatives(
+        art, [{"sentence": "There is no elevator in the museum.",
+               "fact_ids": ["F02"]}], LED)
+    check("the fact that IS about it is still admitted", bool(lin2), (lin2, rej2))
+
+
+def test_facts_used_is_reported_as_self_reported() -> None:
+    """It is the Writer's own list. Nothing checks a listed fact reaches the prose, so it
+    cannot establish coverage -- and ids the Ledger lacks are a signal, not a count."""
+    reply = ARTICLE + "\n\n---FACTS USED---\nF01 F02 F404\n---NEGATIVE CLAIMS---\n"
+    res, _prov, _n = _run([PASS_G], writer_reply=reply)
+    wr = res["detail"][CP.WRITER]
+    check("it is labelled self-reported", wr.get("facts_used_is_self_reported") is True)
+    check("ids outside the Ledger are separated out",
+          wr.get("facts_used_not_in_ledger") == ["F404"], wr.get("facts_used_not_in_ledger"))
+    check("the count covers only real ids",
+          wr.get("facts_used_count_self_reported") == 2, wr)
+    check("no bare 'facts_used_count' remains to be quoted as coverage",
+          "facts_used_count" not in wr, sorted(wr))
+
+
+def test_package_calls_survive_a_regeneration() -> None:
+    """record() ASSIGNS calls[stage], so a package rebuilt after a repair erased the
+    first call. Reproduced by an external audit as 8 reported against 9 made."""
+    res, _prov, _n = _run([HOLD_G, PASS_G], repair_reply=REPAIR_REPLY)
+    by = res["model_calls_by_stage"]
+    check("the package was built twice (once, then after the repair)",
+          by.get(CP.PACKAGE) == 2, by)
+    check("and the total counts both",
+          res["model_calls_total"] == sum(by.values()), (res["model_calls_total"], by))
+
+
+def test_the_module_contract_matches_what_the_code_does() -> None:
+    """The docstring said Architecture and CUT run, after they had been removed."""
+    doc = FC.__doc__ or ""
+    src = (HERE / "new_engine_v1" / "free_composition.py").read_text(encoding="utf-8")
+    check("the contract says Architecture is not run", "ARCHITECTURE    NOT RUN" in doc)
+    check("the contract says CUT_TERMS is not run", "CUT_TERMS       NOT RUN" in doc)
+    check("and the code agrees", "CP.architect(" not in src)
+    check("it names what the missing plan took with it",
+          "definition_evidence" in doc and "claim mapping" in doc)
+    check("it does not claim a like-for-like substitute",
+          "not claimed to be" in doc)
+    check("it states the bridge assertion that replaced architecture_valid",
+          "writer_plan_free" in doc)
 
 
 def test_ported_house_rule_has_not_drifted_from_its_source() -> None:
@@ -811,8 +923,10 @@ def test_the_full_ledger_is_offered_and_selection_is_the_writers() -> None:
     wr = res["detail"][CP.WRITER]
     check("the run records how much evidence was available",
           wr["facts_available"] == len(LEDGER), wr.get("facts_available"))
-    check("the run records what the Writer said it used",
-          wr["facts_used_count"] == 4, wr.get("facts_used_count"))
+    check("the run records what the Writer SAID it used, marked as self-reported",
+          wr["facts_used_count_self_reported"] == 4
+          and wr["facts_used_is_self_reported"] is True,
+          wr.get("facts_used_count_self_reported"))
     check("the Writer's freedom is recorded as plan-free", wr["plan_free"] is True)
     check("Worth is given somewhere to file an instrument conflict",
           res["detail"][CP.WORTH].get("conflict_sink_supplied") is True,
