@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 import sys
 
 HERE = pathlib.Path(__file__).parent
@@ -312,6 +313,18 @@ def test_compression_and_carry_reaches_the_runtime_bytes() -> None:
           "Compression is not omission" in system
           and "keeps every digit" in system)
     check("narrative drives, not facts", "NARRATIVE DRIVES, NOT FACTS" in system)
+    # Second pass, 2026-09-30: the owner's "numbers ... could sometimes written compactly".
+    # A PROMPT IS WRAPPED TEXT. Asserting a multi-word phrase against the raw string tests
+    # where the line breaks happen to fall, not what the Writer is told; two of these
+    # failed for exactly that reason on the first run. Compare on normalised whitespace.
+    flat = " ".join(system.split())
+    check("a quantity's precision is separable from the quantity",
+          "A QUANTITY IS A FACT; ITS PRECISION USUALLY IS NOT" in flat)
+    check("it uses the owner's own example",
+          "780 accredited Medicare and Medicaid supplier locations" in flat)
+    check("it protects the figures that carry meaning",
+          "a threshold, a comparison" in flat)
+    check("a date is compressible too", '"in 2022" is usually the fact' in flat)
     check("the person carries the middle, not only the ends",
           "NOT ONLY ITS ENDS" in system
           and "easiest to lose" in system)
@@ -337,6 +350,36 @@ def test_compression_and_carry_reaches_the_runtime_bytes() -> None:
           tuple(FC.FREE_STAGES) == tuple(CP.STAGES))
     check("the stage list still has no validator stage of its own",
           not any("COMPRESS" in s.upper() for s in FC.FREE_STAGES))
+
+
+def test_selection_bites_without_becoming_write_shorter() -> None:
+    """The owner's leading complaint was "too much facts". The previous wording was live
+    when the Writer used 68 of 92, so it was strengthened -- but strengthening it the
+    WRONG way would undo the whole change.
+
+    THE meŞk EVIDENCE IS THE GUARD. 57 facts read better than 22 on the same Ledger. The
+    criterion is load-bearing, not count, and an instruction that reads as "use fewer
+    facts" or "write shorter" would walk straight back to the 781-word control article
+    this path replaced. So the prompt must sharpen the CRITERION and explicitly refuse the
+    length reading.
+    """
+    res, prov, _ = _run([PASS_G])
+    system = prov.calls[0]["system"]
+    flat = " ".join(system.split())
+    check("the default is to leave a fact out",
+          "the default is to leave one out" in flat)
+    check("availability is named as the wrong reason",
+          "not because it is available and true" in flat)
+    check("an unearned sentence is cut, not rehomed",
+          "do not find it a home" in flat)
+    check("it explicitly refuses the 'write shorter' reading",
+          "This is not an instruction to write a short article or to use few facts"
+          in flat)
+    check("a long fully load-bearing article is named as correct",
+          "every one of whose facts is load-bearing is exactly right" in flat)
+    check("no word count, length target or fact quota was introduced",
+          not re.search(r"\b(?:at most|no more than|fewer than|maximum of)\s+\d+", system),
+          "a numeric cap appeared in the Writer prompt")
 
 
 def test_ported_house_rule_has_not_drifted_from_its_source() -> None:

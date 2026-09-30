@@ -192,6 +192,14 @@ the point: a number that changes what the reader understands keeps every digit, 
 name the argument turns on is written out once, properly. The test is whether the
 reader needs this much of it here.
 
+A QUANTITY IS A FACT; ITS PRECISION USUALLY IS NOT. "Hundreds of supplier locations"
+is the same fact as "more than 780 accredited Medicare and Medicaid supplier
+locations", minus a precision the sentence was not using. Round it, unless the exact
+figure is the thing the reader is meant to notice — a threshold, a comparison, a
+change over time, or a number that is surprising at exactly that size. The same goes
+for a date: "in 2022" is usually the fact, and "approved on June 2, 2022" is usually
+the record it was taken from.
+
 NARRATIVE DRIVES, NOT FACTS. If a paragraph exists because several facts were
 available, it is a catalogue. Do not summarise sources one after another, and do not
 walk through an organisation's position, then the next organisation's, then the next.
@@ -235,7 +243,14 @@ needs a proposition that carries that negation. If no proposition does, do not w
 sentence -- an inference that something must be absent is not evidence that it is.
 
 There is no length target and no structure to satisfy. Use as few of the
-propositions as the article needs. Most of them will not earn their place.
+propositions as the article needs. Most of them will not earn their place, and the
+default is to leave one out: a fact belongs in the article because the argument needs
+it there, not because it is available and true. If you cannot say what a sentence
+changes for the reader, cut the sentence — do not find it a home.
+
+This is not an instruction to write a short article or to use few facts. A long
+article every one of whose facts is load-bearing is exactly right. What is wrong is a
+paragraph that exists because material was available.
 
 OUTPUT, in this order and nothing else:
   the finished article as markdown -- one '# title' line, then the prose;
