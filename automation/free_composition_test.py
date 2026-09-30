@@ -1271,6 +1271,126 @@ def test_the_narrowing_survives_the_whole_free_ladder() -> None:
           FC.writer_inputs_are_plan_free(prov.calls[0]["system"], user) == [])
 
 
+# ── 13. the permission list and the gate read the same pool ──────────────────
+# A DISCONNECTION TEST. `negative_permissions_block` was built from `negative_shape_of`
+# alone; `negative_admission_audit`, the gate that enforces the rule, has used the freeze's
+# TYPE plus that matcher since 2026-09-20. Across the 120 retained Ledgers: 505 typed
+# negatives, 128 shape-matched, 85 both -- 420 licences no Writer was ever shown, and 37
+# Ledgers told "NONE" while holding typed negatives.
+#
+# These assert the POOL, never the matcher. If `negative_shape_of` is ever widened, every
+# check below still passes; that is deliberate, because the matcher's recall is not what
+# was wrong.
+ABS_LEDGER = {
+    "F01": {"proposition": "The survey did not collect housing status.",
+            "claim_type": "ABSENCE"},
+    "F02": {"proposition": "Lung function equations were not validated for this group.",
+            "claim_type": "NEGATIVE_EXISTENCE"},
+    "F03": {"proposition": "The inspection found the audible warning inoperative.",
+            "claim_type": "POSITIVE_FACT"},
+    "F04": {"proposition": "The coroner said there is no known treatment.",
+            "claim_type": "ATTRIBUTION"},
+}
+
+
+def test_a_typed_absence_the_matcher_misses_is_still_offered() -> None:
+    block = FC.negative_permissions_block(ABS_LEDGER)
+    check("the Ledger is not reported as licensing nothing",
+          "THE ABSENCES YOU MAY CLAIM: NONE" not in block, block[:120])
+    for fid in ("F01", "F02"):
+        check("the typed absence %s is offered to the Writer" % fid, fid in block, block)
+    check("a positive fact is not offered as an absence", "F03" not in block, block)
+
+
+def test_the_permission_list_is_exactly_the_gate_s_pool() -> None:
+    """The property that was violated, stated as a property rather than as examples.
+
+    `negative_shape_of`'s own docstring says it exists so that "a permission decision and
+    the audit that enforces it can never use two different definitions of a negative".
+    They did. This fails the moment they do again.
+    """
+    from new_engine_v1 import story as ST
+    import re as _re
+    # THE FIXTURES MUST NOT COLLAPSE. An adversarial review caught the first version
+    # looping over three ledgers that were two: ABS_LEDGER and LEDGER share F01-F04, so
+    # merging them just overwrote one with the other, and no case exercised a fact that is
+    # BOTH typed negative and shape-matched -- the overlap the pools argue about.
+    both = {"N1": {"proposition": "There is no record of the 1974 inspection.",
+                   "claim_type": "ABSENCE"},          # typed AND shape-matched
+            "N2": {"proposition": "The survey did not collect housing status.",
+                   "claim_type": "ABSENCE"},          # typed only
+            "N3": {"proposition": "There was no provision for a ramp.",
+                   "claim_type": "POSITIVE_FACT"},    # shape-matched only
+            "N4": {"proposition": "The unit was replaced in March 2020.",
+                   "claim_type": "POSITIVE_FACT"}}    # neither
+    check("the overlap fixture really does contain a typed AND shaped fact",
+          ST.negative_shape_of(both["N1"]["proposition"])[0] is not None)
+    check("and a typed fact the matcher misses",
+          ST.negative_shape_of(both["N2"]["proposition"])[0] is None)
+    check("and a shaped fact the freeze did not type",
+          ST.negative_shape_of(both["N3"]["proposition"])[0] is not None)
+    merged = dict(ABS_LEDGER)
+    merged.update({"M" + k[1:]: v for k, v in LEDGER.items()})
+    for led in (ABS_LEDGER, LEDGER, both, merged):
+        aud = ST.negative_admission_audit("", led)
+        expected = set(aud["negative_facts_available"]) | set(aud["negation_carrying_facts"])
+        block = FC.negative_permissions_block(led)
+        shown = {fid for fid in led
+                 if _re.search(r"^  %s\s" % _re.escape(fid), block, _re.M)}
+        check("what the Writer may claim == what Safety will accept (%d facts)" % len(led),
+              shown == expected, (sorted(shown), sorted(expected)))
+
+
+def test_a_declared_typed_absence_is_not_rejected_by_the_lineage_check() -> None:
+    """The third reader of "which facts carry a negation", and it was narrow too.
+
+    Offering the Writer a typed absence and then refusing its declaration would hand the
+    owner a NEGATIVE_LINEAGE saying no cited fact carries a negation, about a fact the
+    freeze typed ABSENCE and Safety accepts. Found by an adversarial review of the
+    permission-pool change, in the same file and for the same reason, so it is fixed in
+    the same commit rather than left as a known inconsistency.
+    """
+    led = {"F01": {"proposition": "The survey did not collect housing status.",
+                   "claim_type": "ABSENCE"}}
+    sent = "The survey did not collect housing status."
+    ok, rejected = FC.verify_declared_negatives(
+        sent, [{"sentence": sent, "fact_ids": ["F01"]}], led)
+    check("a typed absence the matcher misses still verifies",
+          len(ok) == 1 and not rejected, (ok, rejected))
+    # And the refusal that matters still refuses: a positive fact licenses nothing.
+    pos = {"F01": {"proposition": "The unit was replaced in March 2020.",
+                   "claim_type": "POSITIVE_FACT"}}
+    ok2, rejected2 = FC.verify_declared_negatives(
+        sent, [{"sentence": sent, "fact_ids": ["F01"]}], pos)
+    check("a positive fact still cannot license an absence",
+          not ok2 and len(rejected2) == 1, (ok2, rejected2))
+
+
+def test_a_shape_only_attribution_keeps_its_cue() -> None:
+    """Exactly the audit's condition, or the prompt promises what the gate refuses."""
+    block = FC.negative_permissions_block(ABS_LEDGER)
+    line4 = [l for l in block.splitlines() if l.strip().startswith("F04")]
+    line1 = [l for l in block.splitlines() if l.strip().startswith("F01")]
+    check("the attributed negative is offered", bool(line4), block)
+    if line4:
+        check("and it is marked as licensing the attributed sentence only",
+              "attributed sentence" in line4[0], line4[0])
+    if line1:
+        check("a typed absence carries no such condition",
+              "attributed sentence" not in line1[0], line1[0])
+
+
+def test_a_ledger_with_no_negation_still_says_so() -> None:
+    plain = {"F01": {"proposition": "The unit was replaced in March 2020.",
+                     "claim_type": "POSITIVE_FACT"}}
+    block = FC.negative_permissions_block(plain)
+    check("a Ledger carrying no negation says NONE",
+          block.startswith("THE ABSENCES YOU MAY CLAIM: NONE"), block[:80])
+    check("an empty Ledger says NONE too",
+          FC.negative_permissions_block({}).startswith(
+              "THE ABSENCES YOU MAY CLAIM: NONE"))
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):

@@ -111,6 +111,61 @@ what it claims, and the end-to-end test covers delivery. Falsification confirms 
 as a whole is not blind: with the block's call severed, 5 checks fail across two tests
 including the one that reads the bytes handed to `provider.complete`.
 
+## 5. The absence problem was misdiagnosed twice before it was found
+
+**The handoff's diagnosis was wrong, and so was my first replacement for it.** Both rested
+on `story.negative_shape_of`, which is not a test of whether a proposition states an
+absence. It is seventeen hand-written regexes for the shapes a *Writer* reaches for when
+it over-claims one, and it matches none of these:
+
+```
+NO   The survey did not collect housing status.
+NO   No records exist of the 1974 inspection.
+NO   The survey excludes unhoused people.
+NO   Access to the basement is not step free.
+NO   Lung function equations were not validated for this group.
+                                             missed 12 of 12
+```
+
+So "Ledgers are 1.1% negative-shaped" does not mean absences are not arriving. It means
+that matcher recognises 1.18% of propositions. I built a retrieval change on that reading
+— a fifth query angle aimed at documents that state a gap — and **reverted it unshipped**
+after an adversarial review pointed out both that the diagnosis was unproven and that
+spending one of the four existing angles would likely displace the
+outside-the-institution query, the one that supplies the independent source the
+sufficiency gate requires. It could have reduced throughput.
+
+**The actual defect, measured across the 120 retained Ledgers holding any fact:**
+
+| | |
+|---|---|
+| facts the freeze TYPED negative (what Safety accepts) | 505 |
+| facts the shape matcher catches (what the Writer was shown) | 128 |
+| both | 85 |
+| **licences that existed and were never shown to any Writer** | **420** |
+| Ledgers holding at least one hidden licence | 93 of 120 |
+| Ledgers told "ABSENCES YOU MAY CLAIM: NONE" while holding typed negatives | 37 |
+
+`negative_admission_audit` has drawn its pool from typed **plus** shaped since
+2026-09-20. `negative_permissions_block`, written 2026-09-30, was built on shaped alone.
+The permission decision and the gate that enforces it were reading two different
+definitions of a negative — the one thing `negative_shape_of`'s own docstring says it
+exists to prevent. `verify_declared_negatives` was a third reader with the same narrow
+pool. All three now use one definition; the adversary confirms the displayed pool equals
+the audit's exactly.
+
+`rehearsal-20260930T173120Z`, cited in the code as proof that no absence had arrived, held
+four typed absences in its 57 facts.
+
+**Still open, from the adversary — NOT FIXED.** `check_ledger` accepts a fact typed
+`ABSENCE` with proposition "The survey did not collect housing status" whose verbatim span
+says only "The survey did not collect names." The WORLD-negative rule checks that the span
+contains a negative word, not that it supports *this* proposition. Reproduced in-session.
+Surfacing typed negatives to the Writer makes that gap reachable where before it was
+merely latent, so it is worth a deploy of its own. The alternative — continuing to
+withhold 420 licences Safety already accepts, while the Writer invents absences because it
+is told it has none — is worse.
+
 ## What the auditor checked and found connected
 
 The approved instrument reaches live research and the free Writer; source role and
