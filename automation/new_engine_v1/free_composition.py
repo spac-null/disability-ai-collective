@@ -714,17 +714,54 @@ def negative_permissions_block(ledger: dict) -> str:
 
     The planned path has never had this problem because `negative_permissions_block` shows
     its Writer the permitted negatives by id. The free path inherited the RULE and not the
-    LIST. This is that list, computed from the same `negative_shape_of` the audit uses to
-    judge the result, so what the Writer is shown and what Safety will accept cannot
-    disagree.
+    LIST. This is that list.
+
+    AND FOR ITS FIRST DAY THE LIST WAS BUILT FROM THE WRONG POOL. It used
+    `negative_shape_of` alone. That function is not a test of whether a proposition states
+    an absence -- it is seventeen hand-written patterns for the shapes a WRITER reaches for
+    when it over-claims one, and it matches none of these:
+
+        The survey did not collect housing status.
+        No records exist of the 1974 inspection.
+        Lung function equations were not validated for this group.
+
+    `negative_admission_audit`, the gate that enforces the rule, has never used it alone.
+    Since 2026-09-20 its pool is facts the FREEZE TYPED negative -- ABSENCE,
+    NEGATIVE_EXISTENCE, EXCLUSIVITY, FIRST_LAST, COMPARATIVE_NEGATION -- plus any other
+    fact the shape matcher catches. So the permission list and the audit that enforces it
+    were reading two different definitions of a negative, which is the one thing
+    `negative_shape_of`'s own docstring says it exists to prevent.
+
+    MEASURED ACROSS THE 120 RETAINED LEDGERS THAT HOLD ANY FACT. 505 facts are typed
+    negative by the freeze; 128 are shape-matched; 85 are both. FOUR HUNDRED AND TWENTY
+    LICENCES EXISTED THAT NO WRITER WAS EVER SHOWN. 93 of the 120 Ledgers hold at least
+    one. THIRTY-SEVEN WERE TOLD "THE ABSENCES YOU MAY CLAIM: NONE" while holding typed
+    negatives -- including rehearsal-20260930T173120Z, cited above as proof that the
+    material had not arrived. It had: four typed absences in those 57 facts. And
+    production-20260930T200948Z was shown 2 of its 13 before holding on
+    PACKAGE_UNSUPPORTED_NEGATIVES.
+
+    The pool is now exactly the audit's, so the two cannot disagree. This widens no
+    permission Safety would refuse; it stops withholding the ones it already accepts.
+
+    ATTRIBUTION CARRIES ITS CUE, because the audit says so. A fact admitted only by shape
+    and typed ATTRIBUTION licenses an ATTRIBUTED sentence -- "the coroner said there is no
+    known treatment" -- and prose that drops the cue and asserts the absence flatly is a
+    different claim that still holds. Showing it without that condition would be a prompt
+    promising a permission the gate will refuse.
 
     An empty Ledger of negations says so in as many words, because "write no sentence
     claiming an absence" is a far easier instruction to follow than "claim only absences
     some proposition carries" when none does.
     """
-    negs = {fid: str((f or {}).get("proposition") or "").strip()
-            for fid, f in sorted((ledger or {}).items())
-            if ST.negative_shape_of(str((f or {}).get("proposition") or ""))[0]}
+    facts = {fid: f for fid, f in sorted((ledger or {}).items()) if isinstance(f, dict)}
+    typed = {fid for fid, f in facts.items()
+             if f.get("claim_type") in LG.NEGATIVE_TYPES}
+    shaped = {fid for fid, f in facts.items()
+              if ST.negative_shape_of(str(f.get("proposition") or ""))[0]}
+    negs = {fid: str(facts[fid].get("proposition") or "").strip()
+            for fid in sorted(typed | shaped)}
+    negs = {fid: prop for fid, prop in negs.items() if prop}
     if not negs:
         return ("THE ABSENCES YOU MAY CLAIM: NONE. No proposition above states that "
                 "anything does not happen, does not exist, is absent, is unmeasured, is "
@@ -735,7 +772,20 @@ def negative_permissions_block(ledger: dict) -> str:
          "state that something does not happen, does not exist, is absent, is unmeasured, "
          "is the only one or is the first:"]
     for fid, prop in negs.items():
-        L.append("  %s  %s" % (fid, prop))
+        # Exactly the audit's condition: shape-only admission of an ATTRIBUTION fact
+        # licenses the attributed form and not the flat assertion.
+        cue = (fid not in typed
+               and facts[fid].get("claim_type") == "ATTRIBUTION")
+        # The verbs are named rather than described. An adversary pointed out that "say
+        # who states it" reads as satisfied by "the coroner ARGUED there is no known
+        # treatment" -- which names the speaker and is still refused, because `argued` is
+        # not in the audit's cue list. A prompt that promises a permission the gate
+        # refuses is the same defect as a prompt that misstates its own provenance.
+        L.append("  %s  %s%s" % (fid, prop,
+                                 "   [attribute it -- said, states, writes, reports, "
+                                 "records, notes, describes, according to, testified, "
+                                 "concluded or found. This licenses the attributed "
+                                 "sentence, not the flat claim]" if cue else ""))
     L.append("  A sentence claiming any other absence has no permission here. There is no "
              "permission for silence: a thing not mentioned above is not thereby absent.")
     return "\n".join(L)
@@ -847,8 +897,15 @@ def verify_declared_negatives(article_text: str, declared: list, ledger: dict) -
             # The two refusals are different facts about the world and must not be
             # reported as one: "you cited nothing negative" and "you cited a negation
             # about something else" send a reader to different places.
+            # THE SAME POOL AS THE PERMISSION LIST AND THE AUDIT, for the same reason and
+            # in the same commit: this is the third reader of "which facts carry a
+            # negation" and it was the second one built on the shape matcher alone. Left
+            # narrow, it would reject the declaration of a typed absence the Writer was
+            # just given permission to use -- losing its NEGATIVE_LINEAGE while Safety
+            # accepted the sentence. Three call sites, one definition.
             negs = [f for f in fids
-                    if ST.negative_shape_of(
+                    if (ledger.get(f) or {}).get("claim_type") in LG.NEGATIVE_TYPES
+                    or ST.negative_shape_of(
                         str((ledger.get(f) or {}).get("proposition") or ""))[0]]
             negatives = [f for f in negs if _bears_on(ledger.get(f) or {}, sent)]
             if not negs:
