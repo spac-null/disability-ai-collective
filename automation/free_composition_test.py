@@ -476,8 +476,12 @@ def test_no_architecture_control_in_runtime_bytes() -> None:
               marker not in system and marker not in user)
     check("the architecture's own spine never reaches the Writer",
           ARCH["story_spine"] not in system and ARCH["story_spine"] not in user)
-    check("the run still records ARCHITECTURE as having passed (shadow, not skipped)",
-          res["stages"][CP.ARCHITECTURE] == CP.PASS, res["stages"])
+    check("no plan is built at all on this path",
+          res["stages"][CP.ARCHITECTURE] == CP.SKIPPED
+          and res["stages"][CP.CUT_TERMS] == CP.SKIPPED, res["stages"])
+    check("and building one costs nothing",
+          not res["model_calls_by_stage"].get(CP.ARCHITECTURE),
+          res["model_calls_by_stage"])
 
 
 def test_a_contradictory_prompt_holds_rather_than_writing() -> None:
@@ -667,6 +671,13 @@ def test_no_extra_planning_model_call() -> None:
           res["stages"][CP.PROSE_FINISH] == CP.SKIPPED and not by.get(CP.PROSE_FINISH),
           (res["stages"][CP.PROSE_FINISH], by.get(CP.PROSE_FINISH)))
     check("the Writer costs exactly one call", by.get(CP.WRITER) == 1, by)
+    check("ARCHITECTURE is skipped and costs nothing",
+          res["stages"][CP.ARCHITECTURE] == CP.SKIPPED and not by.get(CP.ARCHITECTURE),
+          (res["stages"][CP.ARCHITECTURE], by.get(CP.ARCHITECTURE)))
+    check("CUT_TERMS is skipped and costs nothing",
+          res["stages"][CP.CUT_TERMS] == CP.SKIPPED and not by.get(CP.CUT_TERMS))
+    check("WORTH still runs and still gates", res["stages"][CP.WORTH] == CP.PASS
+          and by.get(CP.WORTH) == 1, (res["stages"][CP.WORTH], by.get(CP.WORTH)))
     check("there is no reader-trajectory or audience-model stage",
           not any(k.upper().startswith(("AUDIENCE", "READER_TRAJ", "PERSONA"))
                   for k in by), sorted(by))
@@ -696,19 +707,29 @@ def test_routing_and_publication_authority_unchanged() -> None:
     check("the bridge evaluates the free path with the Ledger-first evaluator",
           "COMPOSITION_FREE_ARGUMENTATIVE" in src
           and "_evaluate_new_engine_v1" in src)
-    for required in ("worth_pass", "architecture_valid", "safety_pass", "grounding_pass",
+    # EVERY FACTUAL GATE IS STILL REQUIRED. These are the checks that decide whether an
+    # article is safe to publish, and none of them moved.
+    for required in ("worth_pass", "safety_pass", "grounding_pass",
                      "fact_check_pass", "reader_pass", "ledger_frozen_valid",
                      "composition_completed"):
         check("the bridge still requires %s" % required, '"%s"' % required in src)
+    check("the planned contract still requires a validated architecture",
+          '"architecture_valid"' in src)
+    check("the free contract asserts the equivalent instead, not nothing",
+          '"writer_plan_free"' in src)
+    check("and it is engine-conditional, not a global weakening",
+          "COMPOSITION_FREE_ARGUMENTATIVE" in src.split('"writer_plan_free"')[0][-900:])
     check("no new approval gate was introduced",
           "owner_approval" not in src and "await_approval" not in src)
 
     # The free path emits the stage shape the bridge reads.
     res, _p, _n = _run([PASS_G])
     stages = res["stages"]
-    for s in (CP.LEDGER, CP.WORTH, CP.ARCHITECTURE):
+    for s in (CP.LEDGER, CP.WORTH):
         check("%s is PASS so the bridge's own check is genuinely satisfied" % s,
               stages[s] == CP.PASS, stages[s])
+    check("the Writer proves it was plan-free, which is what the bridge now asserts",
+          res["detail"][CP.WRITER]["plan_free"] is True)
     check("SAFETY passed on free prose with this path's licensing",
           stages[CP.SAFETY] == CP.PASS, stages[CP.SAFETY])
     check("GROUNDING passed", stages[CP.GROUNDING] == CP.PASS)

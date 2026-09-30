@@ -759,14 +759,32 @@ def run_free_argumentative_composition(
         if stop_after == CP.WORTH:
             return out(article=None, package_out=None)
 
-        # ── ARCHITECTURE + CUT. Unchanged and still gates. SHADOW-ONLY for the prose. ─
-        # They decide exactly what they decide today. What changed is that NO BYTE of
-        # either reaches the Writer -- `writer_inputs_are_plan_free` proves it on the
-        # actual prompt bytes before the call is made, and holds the run if it is false.
-        a = record(CP.ARCHITECTURE, CP.architect(
-            P, ledger, w, subject, visual_context=CP.load_visual_context(out_dir)))
-        arch = a["architecture"]
-        record(CP.CUT_TERMS, CP.derive_cut_watch_terms(arch, ledger))
+        # ── ARCHITECTURE + CUT: NOT RUN (owner-directed, 2026-09-30) ────────────────
+        # They ran here until now for ONE reason: the publication-safety bridge required
+        # ARCHITECTURE to have passed, so a plan had to be built even though this path
+        # discards it. That is a stage whose output nothing reads and whose failure can
+        # still kill the run, and it killed 14 of 178 production compositions (7.9%) --
+        # every one of them an article lost over a plan that would never have been used.
+        #
+        # CUT_TERMS goes with it: it is derived FROM the architecture, and its cut list
+        # binds nothing here (see the module docstring on CUT_LEAKAGE).
+        #
+        # The bridge now asserts the thing that is actually true of this contract instead
+        # -- that no plan reached the Writer, which the run proves on the prompt bytes and
+        # records as `plan_free`. See publication_safety_bridge._evaluate_new_engine_v1.
+        # That is a swap of one contract assertion for the other contract's equivalent,
+        # not a relaxation: no factual gate moves, and Safety, Grounding, Fact Check and
+        # Reader are untouched.
+        #
+        # WORTH IS NOT AFFECTED and still gates. Its lens now has no consumer, which is
+        # the honest state of affairs -- the lens existed to be planned around. The half
+        # of Worth worth keeping is the half that asks whether this evidence carries a
+        # testable reading at all, and that half is unchanged.
+        for s, why in ((CP.ARCHITECTURE, "no plan is built on this path; the Writer "
+                                         "chooses its own structure"),
+                       (CP.CUT_TERMS, "derived from the architecture, which is not run")):
+            st[s] = {"status": CP.SKIPPED, "reason": why, "model_calls": 0, "repairs": 0}
+            calls[s] = repairs[s] = 0
 
         # ── WRITER. Free. ────────────────────────────────────────────────────────────
         wr = record(CP.WRITER, write_article_free(

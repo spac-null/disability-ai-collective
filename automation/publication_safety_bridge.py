@@ -863,8 +863,36 @@ def _evaluate_new_engine_v1(out: dict, *, fact_check_fn=None,
     r.add("ledger_frozen_valid", stage_ok(CP.LEDGER),
           "LEDGER=%r" % stages.get(CP.LEDGER))
     r.add("worth_pass", stage_ok(CP.WORTH), "WORTH=%r" % stages.get(CP.WORTH))
-    r.add("architecture_valid", stage_ok(CP.ARCHITECTURE),
-          "ARCHITECTURE=%r" % stages.get(CP.ARCHITECTURE))
+    # ── THE PLAN ASSERTION, IN WHICHEVER FORM THIS CONTRACT HAS IT (2026-09-30) ──────
+    # `architecture_valid` asks "was a validated plan built". On the story-architecture
+    # contract that is a real integrity property: the article is written FROM the plan, so
+    # an invalid plan means an unaccountable article.
+    #
+    # The free argumentative contract has no plan by construction -- the Writer is given
+    # the whole Ledger and chooses its own structure -- so requiring one is a category
+    # error, the same shape as demanding CUT adherence from a path that cuts nothing. It
+    # was not free: Architecture ran on that path solely to satisfy this check, its output
+    # was discarded, and it killed 14 of 178 production compositions over a plan no
+    # article would have used.
+    #
+    # So this asserts the equivalent property of THAT contract: that no plan reached the
+    # Writer, proved on the prompt bytes before the call was made
+    # (free_composition.writer_inputs_are_plan_free) and recorded as `plan_free`. A run
+    # that cannot prove it does not publish.
+    #
+    # THIS IS A SWAP, NOT A RELAXATION. One contract-integrity assertion is replaced by
+    # the other contract's equivalent. No factual gate moves: safety_pass, grounding_pass,
+    # fact_check_pass, reader_pass and the world-relative fact check are all unchanged and
+    # all still blocking.
+    if (out.get("provider") or {}).get("composition_engine") == \
+            CP.COMPOSITION_FREE_ARGUMENTATIVE:
+        _wr = ((comp.get("detail") or {}).get(CP.WRITER) or {})
+        r.add("writer_plan_free", _wr.get("plan_free") is True,
+              "plan_free=%r (the free contract's equivalent of architecture_valid: no "
+              "plan reached the Writer)" % _wr.get("plan_free"))
+    else:
+        r.add("architecture_valid", stage_ok(CP.ARCHITECTURE),
+              "ARCHITECTURE=%r" % stages.get(CP.ARCHITECTURE))
     r.add("composition_completed", comp.get("status") == CP.PASS,
           "composition status=%r (failure_stage=%r)"
           % (comp.get("status"), comp.get("failure_stage")))
