@@ -53,7 +53,12 @@ from .perspective_explorer import (perspective_explorer, perspective_explorer_en
 
 # ── BOUNDS (an article pipeline, not a crawler) ────────────────────────────────
 MAX_QUERIES = 4               # search calls per run
-MAX_CANDIDATE_URLS = 12       # distinct URLs considered for fetching
+# Distinct URLs CONSIDERED for fetching. Raised from 12 on 2026-09-30, and it costs
+# nothing: a candidate is a string until the fetch loop reaches it, and that loop is
+# bounded by MAX_FETCHED_SOURCES, which is unchanged. What a wider pool buys is publisher
+# spread -- by_publisher_diversity can only reach an institution the list contains, and on
+# the Franklin run the fifth-best publisher was candidate eleven.
+MAX_CANDIDATE_URLS = 24
 MAX_FETCHED_SOURCES = 5       # successful fetches kept, excluding the anchor
 PER_SOURCE_CHARS = 12_000     # text kept per fetched source
 PACK_TEXT_BUDGET = 40_000     # total pack text across all sources
@@ -290,11 +295,23 @@ def by_publisher_diversity(candidates: list) -> list:
     groups: dict = {}
     for u in candidates:
         groups.setdefault(registrable(u), []).append(u)
-    out, order = [], list(groups)          # dict preserves first-seen publisher order
-    while len(out) < len(candidates):
-        for pub in order:
-            if groups[pub]:
-                out.append(groups[pub].pop(0))
+    return round_robin(list(groups.values()))
+
+
+def round_robin(groups: list) -> list:
+    """One from each group in turn, order preserved inside each. Nothing dropped.
+
+    Used twice, for the same reason in two places: whichever list is consumed first
+    should not be allowed to fill the whole quota. Across QUERIES so one search angle
+    does not own the candidate list, and across PUBLISHERS so one institution does not
+    own the fetches.
+    """
+    queues = [list(g) for g in groups if g]
+    out: list = []
+    while queues:
+        for q in queues:
+            out.append(q.pop(0))
+        queues = [q for q in queues if q]
     return out
 
 
@@ -352,14 +369,124 @@ def _norm(s: str) -> str:
 
 
 # ── network: search names pages, fetch supplies material ──────────────────────
-def _post_json(url: str, key: str, payload: dict, timeout: int) -> dict:
+def _post_to(url: str, key: str, payload: dict, timeout: int) -> dict:
+    """POST JSON to an EXACT url. `_post_json` appends /chat/completions; this does not.
+
+    Split out rather than parameterised so every existing caller of `_post_json` keeps
+    byte-identical behaviour, and so the Search endpoint -- which is not a completions
+    endpoint and must not have a path appended -- cannot be reached by accident.
+    """
     req = urllib.request.Request(
-        url.rstrip("/") + "/chat/completions",
-        data=json.dumps(payload).encode("utf-8"),
+        url, data=json.dumps(payload).encode("utf-8"),
         headers={"Content-Type": "application/json", "Authorization": "Bearer %s" % key},
         method="POST")
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return json.loads(r.read().decode("utf-8"))
+
+
+def _post_json(url: str, key: str, payload: dict, timeout: int) -> dict:
+    return _post_to(url.rstrip("/") + "/chat/completions", key, payload, timeout)
+
+
+# ── THE SEARCH BACKEND ────────────────────────────────────────────────────────
+# WHAT WAS ALREADY TRUE. `SEARCH_MODEL = "perplexity/sonar"` -- this engine has been
+# searching through Perplexity all along, but through its ANSWER endpoint via OpenRouter:
+# it asks Sonar a question, gets back a short generated answer capped at 700 tokens, and
+# scrapes URLs out of that prose plus its `citations` array.
+#
+# THAT SHAPE IS A CAUSE OF THE PROBLEM IT WAS ASKED TO SOLVE. A short answer cites the
+# sources it needed IN ORDER TO WRITE THAT ANSWER, which are structurally the most
+# on-the-nose institutional pages. Measured 2026-09-30: four queries returned twelve
+# candidates, ten of them the anchor's own publisher on one run and six on another.
+# The engine does not want an answer. It wants the informational landscape, and
+# `search_urls`'s own docstring already says so: "NAMES pages; supplies no material".
+#
+# So: Perplexity's SEARCH API, which returns raw ranked results as structured data and no
+# generated answer. Same vendor, different endpoint, and the boundary this file exists to
+# protect is untouched -- only URLs cross it, snippets are deliberately DISCARDED, and
+# nothing but fetched bytes can still reach an article.
+#
+# The default stays `sonar` so this changes nothing until it is switched on, and an
+# unrecognised value RAISES rather than guessing, the same rule engine_switch applies.
+PERPLEXITY_SEARCH_URL = "https://api.perplexity.ai/search"
+SEARCH_BACKEND_ENV = "CRIPMINDS_SEARCH_BACKEND"
+SEARCH_BACKEND_SONAR = "sonar"
+SEARCH_BACKEND_PERPLEXITY = "perplexity_search"
+SEARCH_BACKENDS = (SEARCH_BACKEND_SONAR, SEARCH_BACKEND_PERPLEXITY)
+DEFAULT_SEARCH_BACKEND = SEARCH_BACKEND_SONAR
+
+# Per query. The docs say to request only what is needed; the candidate cap and
+# MAX_FETCHED_SOURCES bound everything downstream, and a wider pool is what
+# by_publisher_diversity has to work with.
+PERPLEXITY_MAX_RESULTS = 10
+# "web" ($5/1000) rather than "fast" ($1/1000). At four queries a run the difference is
+# about a pound a year, and this is the leg that decides whether the run ever sees the
+# scholarship -- see the 2026-09-30 Franklin run, where the journal Arctic, a Cambridge
+# Polar Record paper and an Archaeology feature were all found and none was read.
+PERPLEXITY_SEARCH_TYPE = "web"
+
+
+def current_search_backend(env: dict | None = None) -> str:
+    raw = (env if env is not None else os.environ).get(SEARCH_BACKEND_ENV, "")
+    val = (raw or "").strip().lower()
+    if not val:
+        return DEFAULT_SEARCH_BACKEND
+    if val not in SEARCH_BACKENDS:
+        raise ResearchError("%s=%r is not one of %s" % (SEARCH_BACKEND_ENV, raw,
+                                                        ", ".join(SEARCH_BACKENDS)))
+    return val
+
+
+def perplexity_search_urls(query: str, *, api_key: str = "", timeout: int = 60) -> list:
+    """Candidate URLs for one query, from Perplexity's Search API. No answer, no snippets.
+
+    RETURNS URLS AND NOTHING ELSE, deliberately. The response carries `title` and
+    `snippet` for every result and both are DISCARDED here: a snippet is somebody else's
+    extract of a page, and if it entered the pack it would be material this engine never
+    fetched, never hashed and cannot ground an article against. Only fetched bytes may
+    carry a fact. That rule is the reason this function is allowed to exist.
+
+    No SDK. The project's own convention in this module is a narrow urllib client -- see
+    `search_urls`'s docstring on why research keeps its own transport -- and one POST with
+    a bearer token does not need a dependency. `perplexityai` would also be the first
+    third-party import in a package that deliberately has almost none.
+    """
+    key = api_key or os.environ.get("PERPLEXITY_API_KEY", "")
+    if not key:
+        raise ResearchError("PERPLEXITY_API_KEY not set -- cannot search")
+    payload = {"query": query,
+               "max_results": PERPLEXITY_MAX_RESULTS,
+               "search_type": PERPLEXITY_SEARCH_TYPE}
+    for attempt in (1, 2):
+        try:
+            body = _post_to(PERPLEXITY_SEARCH_URL, key, payload, timeout)
+            break
+        except urllib.error.HTTPError as e:                       # noqa: PERF203
+            # 429 is the one status worth waiting on, and only once. The documented limit
+            # is 50 query units a second against four queries a run, so this should never
+            # fire; if it does, Retry-After is honoured within a bound rather than
+            # retried blindly. Every other status is a real failure and is reported.
+            if e.code == 429 and attempt == 1:
+                try:
+                    wait = min(float(e.headers.get("Retry-After") or 5), 15.0)
+                except (TypeError, ValueError):
+                    wait = 5.0
+                time.sleep(wait)
+                continue
+            raise ResearchError("perplexity search failed: HTTP %s" % e.code)
+        except Exception as e:                                    # transport of any kind
+            raise ResearchError("perplexity search failed: %s: %s"
+                                % (type(e).__name__, e))
+    results = body.get("results")
+    if not isinstance(results, list):
+        raise ResearchError("perplexity search returned no results list")
+    out, seen = [], set()
+    for r in results:
+        u = (r or {}).get("url") if isinstance(r, dict) else None
+        if isinstance(u, str) and u.startswith("http") and u not in seen:
+            seen.add(u)
+            out.append(u)
+    return out
 
 
 def search_urls(query: str, *, api_key: str = "", timeout: int = 60) -> list:
@@ -369,7 +496,17 @@ def search_urls(query: str, *, api_key: str = "", timeout: int = 60) -> list:
     verifier (orchestrator.fact_check), which uses the same public transport for a
     different responsibility. Nothing in this function's return value can reach an
     article -- only fetched bytes can.
+
+    TWO BACKENDS, one contract. `sonar` (default, unchanged) asks Perplexity's answer
+    endpoint through OpenRouter and scrapes the URLs out of its reply.
+    `perplexity_search` calls Perplexity's Search API directly and reads the ranked
+    results. Both return a plain list of URLs and nothing else, so everything downstream
+    -- the candidate cap, the diversity ordering, the fetch, the pack -- is identical.
     """
+    if current_search_backend() == SEARCH_BACKEND_PERPLEXITY:
+        # Its own key. `api_key` here is the OpenRouter one the caller threads through
+        # for the sonar path, and handing it to a different vendor would be a bug.
+        return perplexity_search_urls(query, timeout=timeout)
     key = api_key or os.environ.get("OPENROUTER_API_KEY", "")
     if not key:
         raise ResearchError("OPENROUTER_API_KEY not set -- cannot search")
@@ -1134,6 +1271,13 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict
     # this costs nothing and means it cannot.
     queries = list(dict.fromkeys(scoped.get("queries", [])))[:MAX_QUERIES]
     search_errors = []
+    # ONE QUERY DOES NOT OWN THE CANDIDATE LIST. Results are collected per query and then
+    # interleaved, so the cap falls evenly across the search angles instead of truncating
+    # the later ones. It mattered little while the answer endpoint returned ~3 URLs a
+    # query; the Search API returns up to PERPLEXITY_MAX_RESULTS, and without this the
+    # first query would fill MAX_CANDIDATE_URLS on its own -- which is the same
+    # first-come defect as the fetch order, one stage earlier.
+    per_query = []
     for q in queries:
         searched.add(_norm(q))
         try:
@@ -1142,13 +1286,14 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict
             failures.append({"query": q, "error": str(e)[:200]})
             search_errors.append(str(e)[:200])
             continue
-        for u in found:
-            if len(candidates) >= MAX_CANDIDATE_URLS:
-                break
-            if canonical_url(u) in seen:
-                continue
-            seen.add(canonical_url(u))
-            candidates.append(u)
+        per_query.append(found)
+    for u in round_robin(per_query):
+        if len(candidates) >= MAX_CANDIDATE_URLS:
+            break
+        if canonical_url(u) in seen:
+            continue
+        seen.add(canonical_url(u))
+        candidates.append(u)
 
     if queries and len(search_errors) == len(queries):
         # Every scoped query failed at the transport/provider level -- the search never

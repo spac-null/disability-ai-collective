@@ -510,9 +510,20 @@ def test_the_two_attempt_contract_from_pr_53_is_unchanged():
           RS.FALLBACK_STATUSES == ("http_403", "empty_or_blocked"))
     check("a PDF is not a fallback trigger, so no extra fetch happens for one",
           "application/pdf" not in str(RS.FALLBACK_STATUSES))
+    # MAX_CANDIDATE_URLS 12 -> 24 on 2026-09-30, deliberately, and the "article pipeline,
+    # not a crawler" bound this guard protects is NOT what moved. A candidate is a string
+    # until the fetch loop reaches it; the loop is bounded by MAX_FETCHED_SOURCES, which
+    # is unchanged at 5, and the search calls are bounded by MAX_QUERIES, unchanged at 4.
+    # Perplexity's Search API returns up to ten results per query in the one response
+    # already paid for, so a wider candidate list costs no request and no fetch. What it
+    # buys is publisher spread: by_publisher_diversity can only reach an institution the
+    # list contains, and on the Franklin run the fifth-best publisher was candidate 11.
+    # Every other bound here is still pinned.
     check("research thresholds are unchanged",
           (RS.MAX_QUERIES, RS.MAX_CANDIDATE_URLS, RS.MAX_FETCHED_SOURCES,
-           RS.PER_SOURCE_CHARS, RS.PACK_TEXT_BUDGET) == (4, 12, 5, 12_000, 40_000))
+           RS.PER_SOURCE_CHARS, RS.PACK_TEXT_BUDGET) == (4, 24, 5, 12_000, 40_000))
+    check("the bound that actually limits crawling is untouched",
+          RS.MAX_FETCHED_SOURCES == 5 and RS.MAX_QUERIES == 4)
 
 
 def main() -> None:

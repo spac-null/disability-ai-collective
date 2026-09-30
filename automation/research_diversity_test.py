@@ -147,6 +147,100 @@ def test_a_repeat_publisher_yields_budget_to_an_unseen_one() -> None:
           sum(s["content_length"] for s in pack["sources"]))
 
 
+def test_search_backend_selection_fails_closed() -> None:
+    check("the default backend is unchanged",
+          RS.current_search_backend({}) == RS.SEARCH_BACKEND_SONAR)
+    check("sonar still resolves",
+          RS.current_search_backend({"CRIPMINDS_SEARCH_BACKEND": "sonar"})
+          == RS.SEARCH_BACKEND_SONAR)
+    check("the search backend resolves when set",
+          RS.current_search_backend({"CRIPMINDS_SEARCH_BACKEND": "perplexity_search"})
+          == RS.SEARCH_BACKEND_PERPLEXITY)
+    try:
+        RS.current_search_backend({"CRIPMINDS_SEARCH_BACKEND": "perplexity"})
+        check("an unknown backend fails closed", False, "no raise")
+    except RS.ResearchError:
+        check("an unknown backend fails closed", True)
+
+
+def test_perplexity_results_yield_urls_only() -> None:
+    """Snippets and titles must not cross the boundary: only fetched bytes carry facts."""
+    calls = []
+
+    def fake_post(url, key, payload, timeout):
+        calls.append({"url": url, "payload": payload})
+        return {"id": "x", "results": [
+            {"title": "A", "url": "https://a.org/1", "snippet": "text we must not keep",
+             "date": "2024-01-01", "last_updated": None},
+            {"title": "B", "url": "https://b.org/2", "snippet": "nor this"},
+            {"title": "dupe", "url": "https://a.org/1", "snippet": "nor this"},
+            {"title": "junk", "url": "not-a-url", "snippet": ""},
+        ]}
+
+    real = RS._post_to
+    RS._post_to = fake_post
+    try:
+        out = RS.perplexity_search_urls("a query", api_key="test-key")
+    finally:
+        RS._post_to = real
+
+    check("it posts to the documented search endpoint",
+          calls[0]["url"] == "https://api.perplexity.ai/search", calls[0]["url"])
+    check("no path is appended to it", not calls[0]["url"].endswith("/chat/completions"))
+    check("the request carries the documented parameter names",
+          set(calls[0]["payload"]) == {"query", "max_results", "search_type"},
+          calls[0]["payload"])
+    check("max_results is inside the documented 1-50 range",
+          1 <= calls[0]["payload"]["max_results"] <= 50,
+          calls[0]["payload"]["max_results"])
+    check("search_type is a documented value",
+          calls[0]["payload"]["search_type"] in ("web", "fast", "people"))
+    check("only URLs are returned", out == ["https://a.org/1", "https://b.org/2"], out)
+    check("no snippet or title survives the call",
+          not any("must not keep" in x or x == "A" for x in out), out)
+    check("a malformed entry is dropped rather than raising", "not-a-url" not in out)
+
+
+def test_the_two_backends_share_one_contract() -> None:
+    """search_urls returns a plain list of URLs whichever backend served it, so nothing
+    downstream -- the cap, the diversity ordering, the fetch, the pack -- can tell."""
+    def fake_pplx(query, *, api_key="", timeout=60):
+        return ["https://x.org/1", "https://y.org/2"]
+
+    real_b, real_f = RS.current_search_backend, RS.perplexity_search_urls
+    RS.current_search_backend = lambda env=None: RS.SEARCH_BACKEND_PERPLEXITY
+    RS.perplexity_search_urls = fake_pplx
+    try:
+        out = RS.search_urls("q", api_key="an-openrouter-key")
+    finally:
+        RS.current_search_backend, RS.perplexity_search_urls = real_b, real_f
+    check("the search backend is used when selected",
+          out == ["https://x.org/1", "https://y.org/2"], out)
+    check("it is a plain list of strings",
+          isinstance(out, list) and all(isinstance(u, str) for u in out))
+
+
+def test_no_single_query_owns_the_candidate_list() -> None:
+    """The Search API returns up to PERPLEXITY_MAX_RESULTS a query; without interleaving
+    the first query alone would fill MAX_CANDIDATE_URLS -- the same first-come defect as
+    the fetch order, one stage earlier."""
+    q1 = ["https://one.org/%d" % i for i in range(10)]
+    q2 = ["https://two.org/%d" % i for i in range(10)]
+    q3 = ["https://three.org/%d" % i for i in range(10)]
+    out = RS.round_robin([q1, q2, q3])
+    check("nothing is lost", sorted(out) == sorted(q1 + q2 + q3))
+    check("the first twelve cover all three queries",
+          {RS.registrable(u) for u in out[:12]} == {"one.org", "two.org", "three.org"},
+          out[:12])
+    check("each query contributes equally to the first twelve",
+          [RS.registrable(u) for u in out[:12]].count("one.org") == 4,
+          [RS.registrable(u) for u in out[:12]])
+    check("uneven groups are handled",
+          RS.round_robin([["a"], ["b", "c", "d"]]) == ["a", "b", "c", "d"])
+    check("an empty group is skipped", RS.round_robin([[], ["a"]]) == ["a"])
+    check("no groups at all is empty", RS.round_robin([]) == [])
+
+
 def test_diagnosis_renders_and_names_the_cause() -> None:
     p = pack_of(INUIT)
     if p is None:
