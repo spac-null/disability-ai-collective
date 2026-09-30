@@ -1190,3 +1190,53 @@ prose is now refused, the finding stands, and the run holds at Grounding instead
 the Reader with damaged text. Correct, and a throughput cost.
 
 FOLLOW-UP: read tomorrow's article. Do not re-run Franklin a fourth time.
+
+### 2026-09-30, close — an external audit found five defects and every one was mine
+
+Independent review of `a6362db`. I reproduced all five against the deployed code before
+changing anything; all five were real, and all five were introduced earlier the same day
+in this path.
+
+  BLOCKER   an unrelated negation could license an absence claim. "There is no elevator
+            in the museum" admitted on a fact reading "There is no wheelchair entrance at
+            the museum". `verify_declared_negatives` checked only that the cited fact was
+            negative-SHAPED. That made a DECLARATION weaker than the lexical path it
+            exists to supplement -- `negative_admission_audit` already requires word
+            overlap before licensing a negative, and a declaration skipped it. `_bears_on`
+            now applies that same rule, copied rather than reinvented.
+
+  BLOCKER   licensed relations lost direction. Every join rendered "A <-> B". A CAUSE is
+            not symmetric. The retained free run that reached the Reader carried FOUR
+            CAUSE relations that way: directional evidence handed to the Writer with the
+            direction stripped and permission to assert it either way. Now
+            subject --KIND--> object.
+
+  MUST_FIX  facts-used was the Writer's own unchecked list, and I quoted it as coverage
+            all day ("69 of 112 facts"). Renamed self-reported; ids outside the Ledger
+            separated; the bare count removed so it cannot be quoted as measurement again.
+
+  MUST_FIX  package calls vanished on regeneration -- `record()` ASSIGNS. 8 reported
+            against 9 made.
+
+  MUST_FIX  the module contract still described Architecture and CUT as running, after
+            they were removed. It now also names what the missing plan took with it --
+            definition_evidence, the architect's prohibitions, CUT accounting, FAST_LANE
+            claim mapping -- and says what replaced them without claiming it is
+            like-for-like.
+
+Also: the refusal MESSAGE was wrong (said "no cited fact carries a negation" about a fact
+that plainly did), and my own test's recursive grep counted `__pycache__/*.pyc`.
+
+WHAT THIS SAYS ABOUT THE DAY'S TESTING. Fourteen commits, full-suite parity on every one,
+a purpose-written suite of my own -- and none of it caught a symmetric arrow on a causal
+relation. Tests written by the person who wrote the code pass against the behaviour that
+person intended; they do not find the intention that was wrong. The relation defect needed
+an outside reader to ask whether the ARROW was right, and the only reason its cost is
+known is that the retained run could be re-read.
+
+NOT ACCEPTED: that Worth can approve a lens the Writer never sees. That is a consequence
+of this design, recorded in the contract rather than patched. Its lens has had no consumer
+since ARCHITECTURE stopped running; the editorial refusals still block.
+
+The audit's headline recommendation -- pause automatic publication from this route -- is
+the owner's call and was not taken. Both blockers it rested on are closed.
