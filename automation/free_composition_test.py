@@ -678,6 +678,59 @@ def test_the_module_contract_matches_what_the_code_does() -> None:
           "writer_plan_free" in doc)
 
 
+def test_the_writer_is_shown_which_absences_it_may_claim() -> None:
+    """Safety held on UNSUPPORTED_NEGATIVES three times. The third run made the cause
+    unmistakable: 57 Ledger facts, NOT ONE negative-shaped, and the Writer declared eight
+    negatives all citing positive facts. It was not ignoring the rule -- it could not see
+    which facts satisfied it. The planned path has always shown its Writer the list."""
+    # This fixture's F03 is the only negative-shaped fact.
+    block = FC.negative_permissions_block(LEDGER)
+    check("the permitted absence is named by id", "F03" in block, block)
+    check("and quoted", "no composition in the makam" in block)
+    check("it forbids every other absence",
+          "has no permission here" in block and "no permission for silence" in block)
+
+    none_at_all = FC.negative_permissions_block(
+        {"F01": {"proposition": "The conservatory opened in 1926."}})
+    check("a Ledger with no negations says so plainly",
+          "THE ABSENCES YOU MAY CLAIM: NONE" in none_at_all, none_at_all)
+    check("and gives the easy instruction instead of the impossible one",
+          "do not write a sentence that claims one" in none_at_all)
+    check("it names the inference trap",
+          "that is your inference and not this evidence" in none_at_all)
+
+    # It must agree with the audit that judges the result, or the Writer is being told
+    # one thing and marked against another.
+    from new_engine_v1 import story as _ST
+    for fid, f in LEDGER.items():
+        shown = fid in block
+        judged = bool(_ST.negative_shape_of(f["proposition"])[0])
+        check("shown and judged agree for %s" % fid, shown == judged, (shown, judged))
+
+    res, prov, _ = _run([PASS_G])
+    check("it reaches the Writer's actual bytes",
+          "THE ABSENCES YOU MAY CLAIM" in prov.calls[0]["user"])
+
+
+def test_a_package_only_safety_repair_is_available() -> None:
+    """rehearsal-20260930T173120Z-2cc116d7: a 915-word article died at Safety with ZERO
+    repair calls spent. PACKAGE_UNSUPPORTED_NEGATIVES is not in SAFETY_REPAIRABLE_PREFIXES,
+    so one bad line in the five-line package made the ARTICLE repair ineligible too --
+    and the package's own repair, which the planned path runs, was never wired here."""
+    src = (HERE / "new_engine_v1" / "free_composition.py").read_text(encoding="utf-8")
+    check("the package-only completion is called",
+          "CP.package_only_safety_completion(" in src)
+    check("its cost is counted against SAFETY",
+          "calls[CP.SAFETY] = calls.get(CP.SAFETY, 0) + prep.get" in src)
+    check("an accepted package repair is recorded as a repair",
+          "repairs[CP.SAFETY] = 1" in src)
+    check("and the result is re-audited on the repaired package",
+          "sa[\"after_package_safety_repair\"] = True" in src)
+    # The ordering that made it necessary: article repair first, package repair after.
+    check("the article repair is still tried first",
+          src.index("CP.safety_repair(") < src.index("CP.package_only_safety_completion("))
+
+
 def test_ported_house_rule_has_not_drifted_from_its_source() -> None:
     """PROVENANCE IS NOT NARRATION is the planned path's own rule, copied here.
 

@@ -422,6 +422,7 @@ def free_writer_user(instrument: dict | None, ledger: dict, pack: dict | None = 
                       for fid, f in sorted((ledger or {}).items()))
     L += ["THE FROZEN EVIDENCE -- %d propositions, the only facts that exist:"
           % len(ledger or {}), facts]
+    L += ["", negative_permissions_block(ledger or {})]
     joins = relation_block(ledger or {}, relations)
     if joins:
         L += ["", joins]
@@ -464,6 +465,45 @@ def relation_block(ledger: dict, relations=None) -> str:
             L.append("  %s" % subj)
             L.append("     --%s-->  %s" % (str(r.get("kind") or "RELATED"), obj))
     return "\n".join(L) if len(L) > 1 else ""
+
+
+def negative_permissions_block(ledger: dict) -> str:
+    """The absences this Ledger can actually license, named. Ported from the planned path.
+
+    WHY, measured three times. On both meŞk offline arms and again on
+    rehearsal-20260930T173120Z-2cc116d7, Safety held on UNSUPPORTED_NEGATIVES. That last
+    run makes the cause unmistakable: the Ledger held 57 facts and NOT ONE of them was
+    negative-shaped, so no absence claim was licensable at all -- and the Writer declared
+    eight, every one citing a positive fact. It was not ignoring the rule. It could not
+    see which facts, if any, satisfied it.
+
+    The planned path has never had this problem because `negative_permissions_block` shows
+    its Writer the permitted negatives by id. The free path inherited the RULE and not the
+    LIST. This is that list, computed from the same `negative_shape_of` the audit uses to
+    judge the result, so what the Writer is shown and what Safety will accept cannot
+    disagree.
+
+    An empty Ledger of negations says so in as many words, because "write no sentence
+    claiming an absence" is a far easier instruction to follow than "claim only absences
+    some proposition carries" when none does.
+    """
+    negs = {fid: str((f or {}).get("proposition") or "").strip()
+            for fid, f in sorted((ledger or {}).items())
+            if ST.negative_shape_of(str((f or {}).get("proposition") or ""))[0]}
+    if not negs:
+        return ("THE ABSENCES YOU MAY CLAIM: NONE. No proposition above states that "
+                "anything does not happen, does not exist, is absent, is unmeasured, is "
+                "the only one or is the first. So do not write a sentence that claims "
+                "one -- not about the subject, and not as an aside. If a thing's absence "
+                "seems obvious to you, that is your inference and not this evidence.")
+    L = ["THE ABSENCES YOU MAY CLAIM, and no others. These are the only propositions that "
+         "state that something does not happen, does not exist, is absent, is unmeasured, "
+         "is the only one or is the first:"]
+    for fid, prop in negs.items():
+        L.append("  %s  %s" % (fid, prop))
+    L.append("  A sentence claiming any other absence has no permission here. There is no "
+             "permission for silence: a thing not mentioned above is not thereby absent.")
+    return "\n".join(L)
 
 
 def parse_free_reply(text: str) -> dict:
@@ -940,6 +980,31 @@ def run_free_argumentative_composition(
                     sa["after_safety_repair"] = True
                     repairs[CP.SAFETY] = 1
                     calls[CP.SAFETY] = calls.get(CP.SAFETY, 0) + srep.get("model_calls", 0)
+
+        # ── ONE PACKAGE-ONLY SAFETY REPAIR, the planned path's Stage 9c ──────────────
+        # NOT PORTED WHEN THIS LADDER WAS WRITTEN, and rehearsal-20260930T173120Z-2cc116d7
+        # is what that cost. `_safety_locate_findings` refuses the whole attempt unless
+        # EVERY blocking finding is a repairable category, and PACKAGE_UNSUPPORTED_NEGATIVES
+        # is not in SAFETY_REPAIRABLE_PREFIXES -- so one bad line in the five-line package
+        # made the ARTICLE repair ineligible too, and a 915-word article died with zero
+        # repair calls spent. The package has its own repair for exactly this; it simply
+        # was not wired here.
+        if sa["status"] != CP.PASS:
+            comp = CP.package_only_safety_completion(
+                P, sa, final, pkg, ledger, licensing, final, audit_fn=audit)
+            if comp["attempted"]:
+                prep = comp["repair"]
+                calls[CP.SAFETY] = calls.get(CP.SAFETY, 0) + prep.get("model_calls", 0)
+                if prep["status"] == CP.PASS:
+                    # The repaired package proceeds as-is -- never regenerated after this,
+                    # so nothing model-generated can invalidate the recheck below.
+                    pkg = prep["package"]
+                    before = calls.get(CP.SAFETY, 0)
+                    sa = record(CP.SAFETY, audit(final, pkg))
+                    sa["after_package_safety_repair"] = True
+                    CP._carry_package_completion(sa, prep)
+                    calls[CP.SAFETY] = before + prep.get("model_calls", 0)
+                    repairs[CP.SAFETY] = 1
 
         if sa["status"] != CP.PASS:
             return out(CP.SAFETY, "; ".join(sa["blocking"])[:600], CP.SAFETY_HOLD,
