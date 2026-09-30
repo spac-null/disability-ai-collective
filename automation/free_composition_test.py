@@ -154,10 +154,12 @@ def _canned_upstream(monkey: dict):
     CP.freeze_ledger = lambda p, pack, subj: {
         "status": CP.PASS, "ledger": dict(LEDGER), "relations": list(RELATIONS),
         "facts": len(LEDGER), "sources": PACK["sources"], "model_calls": 1, "repairs": 0}
-    CP.worth_gate = lambda p, led, subj, hyp=None, conflict_sink=None: {
-        "status": CP.PASS, "worth_gate": {"verdict": "PASS"}, "hypothesis": hyp,
-        "conflict_sink_supplied": conflict_sink is not None,
-        "model_calls": 1, "repairs": 0}
+    CP.worth_gate = lambda p, led, subj, hyp=None, conflict_sink=None, \
+        plan_inputs_required=True: {
+            "status": CP.PASS, "worth_gate": {"verdict": "PASS"}, "hypothesis": hyp,
+            "conflict_sink_supplied": conflict_sink is not None,
+            "plan_inputs_required": plan_inputs_required,
+            "model_calls": 1, "repairs": 0}
     CP.architect = lambda p, led, w, subj, visual_context=None: {
         "status": CP.PASS, "architecture": dict(ARCH), "beats": 1,
         "model_calls": 1, "repairs": 0}
@@ -412,6 +414,53 @@ def test_the_approved_instrument_settles_scope() -> None:
           "ACCESS-DEFICIT central" in b and "does not lift it" in b)
     check("a lens must still name a mechanism and a particular",
           "name a mechanism and rest on a particular" in b)
+
+
+def test_worth_keeps_its_editorial_refusals_and_drops_only_the_planner_ones() -> None:
+    """ARCHITECTURE no longer runs, so three of Worth's refusals lost their consumer.
+
+    The line is: anything asking "is there a real, subject-specific, non-derivative
+    reading here" keeps its authority. Anything asking "is Worth's own lens shaped well
+    enough to plan from" stops blocking and is recorded instead.
+    """
+    src = (HERE / "new_engine_v1" / "composition.py").read_text(encoding="utf-8")
+    body = src.split("def worth_gate(", 1)[1].split("\ndef ", 1)[0]
+
+    # STILL BLOCKING -- these raise unconditionally, with no plan_inputs_required guard.
+    for editorial in ("the lens rests on no particular about this subject",
+                      "HOLD_INSUFFICIENT_EDITORIAL_DELTA",
+                      "the lens cites fact ids not in the ledger"):
+        seg = body.split(editorial, 1)
+        check("still present: %r" % editorial[:44], len(seg) == 2)
+        check("and not behind the planner guard: %r" % editorial[:30],
+              "plan_inputs_required" not in seg[0][-420:], seg[0][-200:])
+
+    # NO LONGER BLOCKING -- each guarded, each recorded.
+    for planner in ("it cannot carry the article",
+                    "the lens names no carrier"):
+        seg = body.split(planner, 1)
+        check("guarded by plan_inputs_required: %r" % planner[:36],
+              "if plan_inputs_required:" in seg[0][-360:], seg[0][-160:])
+    check("and the candidate's own validity is guarded too",
+          "errs = cand_errs if plan_inputs_required else []" in body)
+    check("refusals that stop blocking are recorded, not discarded",
+          body.count("plan_warnings.append") >= 2
+          and '"plan_input_warnings": plan_warnings' in body)
+
+    # The default is unchanged, so the planned path keeps every refusal it has.
+    import inspect
+    sig = inspect.signature(CP.worth_gate)
+    check("the planned path is unaffected by default",
+          sig.parameters["plan_inputs_required"].default is True)
+
+
+def test_the_free_path_asks_worth_not_to_require_plan_inputs() -> None:
+    """Read off the stage record rather than a spy: `_run` installs its own Worth double,
+    so a spy patched in beforehand is replaced before it is ever called."""
+    res, _prov, _n = _run([PASS_G])
+    check("the free path does not require plan inputs",
+          res["detail"][CP.WORTH].get("plan_inputs_required") is False,
+          res["detail"][CP.WORTH])
 
 
 def test_worth_scope_conflict_is_recorded_for_the_owner() -> None:

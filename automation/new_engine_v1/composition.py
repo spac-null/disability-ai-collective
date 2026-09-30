@@ -1091,7 +1091,7 @@ def record_instrument_conflict(sink, *, hypothesis: dict, subject: str, lens: di
 
 
 def worth_gate(provider, ledger: dict, subject: str, hypothesis=None,
-               conflict_sink=None) -> dict:
+               conflict_sink=None, plan_inputs_required: bool = True) -> dict:
     """STAGE 2. A HOLD here stops the article before any expensive composition.
 
     `hypothesis` is the claim commissioning proposed BEFORE the evidence existed. When it
@@ -1140,11 +1140,32 @@ def worth_gate(provider, ledger: dict, subject: str, hypothesis=None,
             ["verdict %s -- this subject is not publishable here" % verdict,
              (lens.get("lens_claim") or "")[:300]])
 
+    # ── WHICH OF THIS GATE'S REFUSALS STILL HAVE A CONSUMER (2026-09-30) ─────────────
+    # Four of the checks below ask an EDITORIAL question and keep their authority on every
+    # path: does the reading rest on a particular about THIS subject rather than on a
+    # category (the WildSumaco/Meta failure, and the same family as WEAK_ANALOGY); is the
+    # contribution distinct from the strongest existing coverage; is the lens internally
+    # consistent; does it cite facts that exist. Those refuse, unchanged.
+    #
+    # Three ask whether WORTH'S OWN LENS is shaped well enough to PLAN from: is the
+    # story_candidate valid, is a carrier named, can that carrier carry an article. Those
+    # exist for `architect()`, which reads `worth["story_candidate"]` and the carrier and
+    # builds the beats around them. The free path does not run Architecture, so a run
+    # refused on any of the three is refused because a plan that will never be built could
+    # not have been built from a lens the Writer will never see.
+    #
+    # They are RECORDED rather than dropped. If they turn out to predict the Reader's
+    # verdict they are evidence for restoring them; a gate that keeps its authority on the
+    # strength of never having been checked is the thing this engine has too many of.
+    plan_warnings: list = []
     cand = obj.get("story_candidate") or {}
-    errs = ST.validate_candidate(cand)
+    cand_errs = ST.validate_candidate(cand)
     unknown = sorted(set(cand.get("evidence_ids") or []) - set(ledger))
     if unknown:
-        errs.append("story_candidate cites fact ids not in the ledger: %s" % unknown)
+        cand_errs.append("story_candidate cites fact ids not in the ledger: %s" % unknown)
+    errs = cand_errs if plan_inputs_required else []
+    if not plan_inputs_required:
+        plan_warnings += cand_errs
     # THE LENS MUST REST ON A PARTICULAR. Measured on two real ledgers that this gate
     # passed identically: WildSumaco cited ONE disability-bearing fact and published;
     # Meta/neurotech cited TWO and was correctly rejected by the Reader as wrong for the
@@ -1182,22 +1203,32 @@ def worth_gate(provider, ledger: dict, subject: str, hypothesis=None,
     # has been written. So the gate also asks what the reading STANDS ON and whether that
     # can hold more than an incidental sentence.
     if particulars and not can_carry:
-        raise CompositionHold(
-            WORTH, WORTH_HOLD,
-            ["the lens has subject-specific evidence but it cannot carry the article -- "
-             "it would appear as one incidental sentence and the piece would be about "
-             "something else",
-             ("carrier: " + carrier)[:200] if carrier else "no carrier named",
-             (lens.get("lens_claim") or "")[:200]],
-            {"lens_particulars": particulars, "lens_carrier": carrier,
-             "can_carry_article": lens.get("can_carry_article")})
+        if plan_inputs_required:
+            raise CompositionHold(
+                WORTH, WORTH_HOLD,
+                ["the lens has subject-specific evidence but it cannot carry the article "
+                 "-- it would appear as one incidental sentence and the piece would be "
+                 "about something else",
+                 ("carrier: " + carrier)[:200] if carrier else "no carrier named",
+                 (lens.get("lens_claim") or "")[:200]],
+                {"lens_particulars": particulars, "lens_carrier": carrier,
+                 "can_carry_article": lens.get("can_carry_article")})
+        plan_warnings.append(
+            "this lens could not have carried an article on its own (carrier: %s) -- "
+            "recorded, not blocking: the Writer chooses its own reading from the whole "
+            "Ledger and never sees this one"
+            % (carrier[:120] if carrier else "none named"))
     if particulars and not carrier:
-        raise CompositionHold(
-            WORTH, WORTH_HOLD,
-            ["the lens names no carrier -- there is no concrete subject-specific fact or "
-             "tension the reading stands on",
-             (lens.get("lens_claim") or "")[:300]],
-            {"lens_particulars": particulars})
+        if plan_inputs_required:
+            raise CompositionHold(
+                WORTH, WORTH_HOLD,
+                ["the lens names no carrier -- there is no concrete subject-specific "
+                 "fact or tension the reading stands on",
+                 (lens.get("lens_claim") or "")[:300]],
+                {"lens_particulars": particulars})
+        plan_warnings.append(
+            "the lens named no carrier -- recorded, not blocking: a carrier is what the "
+            "architect opens on, and nothing on this path opens on it")
     if not particulars:
         raise CompositionHold(
             WORTH, WORTH_HOLD,
@@ -1236,6 +1267,11 @@ def worth_gate(provider, ledger: dict, subject: str, hypothesis=None,
     yld = ST.narrative_yield(cand)
     return {"status": PASS, "worth_gate": lens, "story_candidate": cand,
             "narrative_yield": yld, "verdict": verdict,
+            # Refusals this path no longer makes, kept so they can be checked
+            # against what the Reader eventually said. Empty on the planned
+            # path, where every one of them still blocks.
+            "plan_input_warnings": plan_warnings,
+            "plan_inputs_required": plan_inputs_required,
             "provider": ident, "model_calls": 1, "repairs": 0}
 
 

@@ -761,9 +761,19 @@ def run_free_argumentative_composition(
         # caller supplies it, so `HYP.from_instrument` has always received {}. That gap is
         # NOT fixed on the planned path by this change -- one defect class per deploy --
         # and is recorded in the deploy note.
+        # `plan_inputs_required=False` because ARCHITECTURE does not run below. Worth's
+        # editorial refusals are untouched -- no particular about this subject, no
+        # editorial delta over existing coverage, an inconsistent lens, a lens citing
+        # facts that do not exist. What stops blocking is the three checks that ask
+        # whether Worth's OWN lens could be planned from: the story_candidate's shape, a
+        # named carrier, and whether that carrier could carry an article. Nothing reads
+        # any of the three on this path, and a run refused on them is refused on behalf
+        # of a plan that will never be built from a lens the Writer will never see.
+        # They are recorded on the result instead.
         w = record(CP.WORTH, CP.worth_gate(
             P, ledger, subject, CP.HYP.from_instrument(instrument or {}),
-            conflict_sink=_conflict_sink(out_dir, subject)))
+            conflict_sink=_conflict_sink(out_dir, subject),
+            plan_inputs_required=False))
         if stop_after == CP.WORTH:
             return out(article=None, package_out=None)
 
