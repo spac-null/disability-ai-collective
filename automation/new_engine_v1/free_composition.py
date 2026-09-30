@@ -235,6 +235,94 @@ put the surprising fact next to the one it overturns and the reader will feel th
 without being told one is coming. One-sentence paragraphs are fine and normal."""
 
 
+# ── tempo, and the standard this will be judged against ───────────────────────
+# WHY THIS EXISTS, and it is the same reason as everything else added to this prompt
+# today: the engine already knew all of it and the Writer was never told.
+#
+# THE READER STAGE JUDGES NINE NAMED DIMENSIONS. They are written in plain language in
+# READER_SYSTEM -- MOMENTUM is "does each paragraph earn the next", BREATHING is "is
+# concrete material given room, or is every sentence carrying fact plus interpretation
+# plus atmosphere plus conclusion at once". Those are exactly the questions "is it
+# boring" and "is it calm", answered in advance, and the Writer had never seen them. It
+# was being marked by an instrument it did not know existed.
+#
+# AND DENSITY WAS MEASURED, NOT GUESSED. Over 142 published Crip Minds articles, in the
+# engine's own counting functions:
+#
+#     proper names   3.5 per 100 words   (middle half 2.7-4.6)
+#     numbers        0.7 per 100 words   (middle half 0.5-1.0)
+#     sentence       17.6 words          (middle half 15.7-21.4)
+#     paragraph      3.4 sentences       (middle half 2.3-4.2)
+#     length         ~1,060 words median
+#
+# It predicts the owner's own reading. The article he pressed STRONG on eight times sits
+# inside the published band on every measure (names 4.1, numbers 1.0). The one he pressed
+# TOO_MUCH_AT_ONCE on six times carries 6.2 names per 100 words -- a third above the
+# upper quartile. The one he was LOST in six times carries 2.7 numbers per 100 words,
+# nearly triple it. A name and a number are each a thing the reader must hold.
+#
+# THESE ARE NOT TARGETS AND NOT A GATE. Nothing measures the draft against them and
+# refuses it; `prose_density` records the numbers beside the article so the next
+# conversation about "too dense" starts from a figure. An article with a good reason to
+# sit outside the band is a good article.
+TEMPO_AND_STANDARD = """=== HOW THIS PUBLICATION ACTUALLY READS ===
+Measured across 142 published Crip Minds articles. This is what its own prose does.
+It is not a target to hit and not a rule -- it is the shape a reader of this
+publication is used to, and a reason to stop and look if you are far outside it.
+
+  length                    about 1,060 words
+  distinct proper names     3.5 per 100 words   (most articles 2.7 - 4.6)
+  distinct numbers          0.7 per 100 words   (most articles 0.5 - 1.0)
+  words per sentence        17.6                (most articles 15.7 - 21.4)
+  sentences per paragraph   3.4                 (most articles 2.3 - 4.2)
+
+A NAME AND A NUMBER ARE EACH A THING THE READER MUST HOLD. That is why these are
+counted and nothing else is, and why they are counted DISTINCT: a name you return to
+is one object, a fourth new name in a paragraph is a fourth object arriving at once,
+however well the sentences are built. Reusing a name you have already introduced
+costs the reader nothing.
+
+ONE MENTAL OBJECT AT A TIME. Let the reader finish forming one thing before the next
+arrives. This is about how quickly new things arrive, not about how long a sentence
+is: a long calm sentence carrying one idea is easier than three short ones carrying
+four. Where the material is technical, slow down further -- a reader who is lost at
+the third paragraph does not recover at the ninth.
+
+KEEP A TECHNICAL TERM WHEN IT IS THE PRECISE ONE, and explain it in ordinary words at
+first use, in a sentence. Simplify the SYNTAX around a difficult idea rather than
+replacing the idea's own name with a vaguer word.
+
+MAKE THE POINT LAND. A reader should be able to tell early what they are being invited
+to notice, and should reach the turn by the end -- through the material, never through
+an announcement. If the reading would otherwise disappear, state it once, plainly.
+Subtlety is not invisibility, and an unreadable point is not a subtle one.
+
+THE LAST PARAGRAPH ADDS. Deepen, turn, land, or show a consequence. Never restate.
+
+=== WHAT A READER WILL BE ASKED ABOUT THIS ARTICLE ===
+These are the questions, in their own words, that an editor puts to the finished piece.
+You are writing against them, so you may as well know them.
+
+  OPENING              Do the first two to four sentences name the concrete subject,
+                       say what is particular about it, and make clear why the piece
+                       exists? A framing device in front of the subject fails.
+  READABILITY          Does any sentence need rereading before its main claim is clear?
+  ACCESSIBLE_READING   Are difficult ideas carried in easy syntax and ordinary words?
+                       Is every technical term explained at first use, in a sentence,
+                       in plain words?
+  MOMENTUM             Does each paragraph earn the next? A paragraph that restates an
+                       earlier one in different abstract vocabulary fails.
+  BREATHING            Is concrete material given room, or is every sentence carrying
+                       fact plus interpretation plus atmosphere plus conclusion at once?
+  RESEARCH_LOAD        Does the piece read as written selectively from wide research,
+                       or as everything the writer found? One fact read three ways is
+                       one fact.
+  ENDING               Does it stop when the point lands, or add a closing paragraph
+                       because articles are expected to have one?
+
+Write so these are true, not so they are answerable."""
+
+
 # ── the one rule ──────────────────────────────────────────────────────────────
 # The probe's own control, kept because it IS the experiment: if the model may invent,
 # a beautiful draft proves nothing about whether this material could carry one.
@@ -370,6 +458,9 @@ def free_writer_system() -> str:
     # how to build the path through an idea, and this says how much of each fact to spend
     # on it. Before the one rule, which is the factual boundary everything else sits in.
     parts.append(COMPRESSION_AND_CARRY)
+    # Tempo and the judging criteria sit with the other writing guidance, before the
+    # factual boundary that everything else operates inside.
+    parts.append(TEMPO_AND_STANDARD)
     parts.append(ONE_RULE)
     return "\n\n".join(parts)
 
@@ -465,6 +556,68 @@ def relation_block(ledger: dict, relations=None) -> str:
             L.append("  %s" % subj)
             L.append("     --%s-->  %s" % (str(r.get("kind") or "RELATED"), obj))
     return "\n".join(L) if len(L) > 1 else ""
+
+
+# Published medians and middle half, from the same 142-article measurement the
+# TEMPO_AND_STANDARD block quotes. Kept beside the measure so a reader of one finds the
+# other, and so a future re-measurement changes both together.
+PUBLISHED_PROSE = {
+    "names_per_100w": (3.5, 2.7, 4.6),
+    "numbers_per_100w": (0.7, 0.5, 1.0),
+    "words_per_sentence": (17.6, 15.7, 21.4),
+    "sentences_per_paragraph": (3.4, 2.3, 4.2),
+}
+
+
+def prose_density(article_text: str) -> dict:
+    """What this draft's tempo actually is, beside what the publication's own prose does.
+
+    TELEMETRY. It measures and records; it refuses nothing, and no stage reads it. The
+    point is that "too dense" should arrive as a figure rather than as a button-press
+    three hours later -- and on the three drafts so far it separates them correctly: the
+    one the owner pressed STRONG on eight times sits inside the band on every measure, the
+    one he found too much at once carries 6.2 names per 100 words against an upper
+    quartile of 4.6, and the one he was lost in carries 2.7 numbers against 1.0.
+
+    Names and numbers are counted DISTINCT, because `story._entities` and
+    `story._numbers` return sets -- and that is the right unit here anyway: a name the
+    reader meets a second time is not a second thing to hold. The published baseline was
+    measured the same way, so the two are comparable.
+
+    `writtenness` is a different and older measure, calibrated against 1,181 paragraphs of
+    published nonfiction, and it was computed inside continuity_pass -- which this path
+    does not run. So it is called here too rather than lost with the stage.
+    """
+    body = CP.CE.article_body(article_text or "")
+    words = body.split()
+    if not words:
+        return {}
+    n = len(words)
+    sents = ST.split_sentences(body)
+    paras = [x for x in CP.CE.paragraphs(body) if x.strip()]
+    got = {
+        "words": n,
+        "names_per_100w": round(100.0 * len(
+            ST._entities(body, skip_sentence_initial=True)) / n, 2),
+        "numbers_per_100w": round(100.0 * len(ST._numbers(body)) / n, 2),
+        "words_per_sentence": round(n / max(len(sents), 1), 2),
+        "sentences_per_paragraph": round(len(sents) / max(len(paras), 1), 2),
+        "paragraphs": len(paras),
+    }
+    outside = {}
+    for k, (_med, lo, hi) in PUBLISHED_PROSE.items():
+        v = got.get(k)
+        if v is not None and not (lo <= v <= hi):
+            outside[k] = {"draft": v, "published_middle_half": [lo, hi],
+                          "direction": "above" if v > hi else "below"}
+    got["published_middle_half"] = {k: [v[1], v[2]]
+                                    for k, v in PUBLISHED_PROSE.items()}
+    got["outside_published_range"] = outside
+    try:
+        got["writtenness"] = CP.CE.writtenness(article_text or "", None)
+    except Exception:
+        pass
+    return got
 
 
 def negative_permissions_block(ledger: dict) -> str:
@@ -756,6 +909,7 @@ def write_article_free(provider, ledger: dict, instrument: dict | None = None,
                         [f for f in parsed["facts_used"] if f in (ledger or {})]),
                     "facts_used_is_self_reported": True,
                     "facts_available": len(ledger or {}),
+                    "prose_density": prose_density(article),
                     "negative_lineage_declared": parsed["declared_negatives"],
                     "negative_lineage_verified": lineage,
                     "negative_lineage_rejected": rejected,
@@ -1156,6 +1310,7 @@ def _persist_free(out_dir, result: dict) -> None:
                 "facts_used_self_reported": wr.get("facts_used_self_reported"),
                 "facts_used_not_in_ledger": wr.get("facts_used_not_in_ledger"),
                 "plan_free": wr.get("plan_free"),
+                "prose_density": wr.get("prose_density"),
                 "negative_lineage_verified": wr.get("negative_lineage_verified"),
                 "negative_lineage_rejected": wr.get("negative_lineage_rejected"),
             }, indent=1, sort_keys=True, default=str), encoding="utf-8")

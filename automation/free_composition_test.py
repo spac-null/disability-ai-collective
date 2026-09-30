@@ -731,6 +731,91 @@ def test_a_package_only_safety_repair_is_available() -> None:
           src.index("CP.safety_repair(") < src.index("CP.package_only_safety_completion("))
 
 
+def test_the_writer_is_told_the_standard_it_is_judged_by() -> None:
+    """It was marked on nine named dimensions it had never been shown."""
+    res, prov, _ = _run([PASS_G])
+    flat = " ".join(prov.calls[0]["system"].split())
+    check("the measured density reaches the Writer",
+          "3.5 per 100 words" in flat and "0.7 per 100 words" in flat)
+    check("it is framed as description, not a target",
+          "not a target to hit and not a rule" in flat)
+    check("it says why names and numbers are the things counted",
+          "ARE EACH A THING THE READER MUST HOLD" in flat)
+    check("and that they are counted distinct",
+          "a name you return to is one object" in flat)
+    check("ONE MENTAL OBJECT AT A TIME is ported", "ONE MENTAL OBJECT AT A TIME" in flat)
+    check("and distinguishes arrival rate from sentence length",
+          "not about how long a sentence is" in flat)
+    check("the jargon rule is ported", "KEEP A TECHNICAL TERM WHEN IT IS THE PRECISE ONE"
+          in flat)
+    check("MAKE THE POINT LAND is ported", "MAKE THE POINT LAND" in flat)
+    check("THE LAST PARAGRAPH ADDS is ported", "THE LAST PARAGRAPH ADDS" in flat)
+
+    # The Reader's own criteria, in the Reader's own words.
+    from new_engine_v1 import composition as _CP
+    for dim in ("OPENING", "READABILITY", "ACCESSIBLE_READING", "MOMENTUM",
+                "BREATHING", "RESEARCH_LOAD", "ENDING"):
+        check("the Writer is shown %s" % dim, dim in flat)
+    check("MOMENTUM is quoted as the Reader states it",
+          "Does each paragraph earn the next" in flat)
+    check("BREATHING is quoted as the Reader states it",
+          "Is concrete material given room" in flat)
+    # Dimensions it must NOT be coached on: the two that would become gameable.
+    check("it is not coached on CRIP_MINDS_FIT",
+          "CRIP_MINDS_FIT" not in flat)
+    check("nor on ENGINE_LANGUAGE_LEAK as a named dimension",
+          "ENGINE_LANGUAGE_LEAK" not in flat)
+    check("and it is told to write so they are true, not answerable",
+          "not so they are answerable" in flat)
+
+
+def test_prose_density_is_measured_and_refuses_nothing() -> None:
+    """A free, deterministic measure that separated the three real drafts correctly.
+
+    Fixtures use VARIED names, because `_entities` returns a set: repeating one name
+    forty times is one object, which is the whole point of counting distinct.
+    """
+    # Names mid-sentence and alphabetic: `_entities(skip_sentence_initial=True)` ignores a
+    # capitalised word opening a sentence (it cannot tell a name from an ordinary word
+    # there), and tokens carrying digits are not names either. The published baseline was
+    # measured with the same function, so both sides count the same way.
+    POOL = ["Alder", "Brill", "Carrow", "Dunmore", "Ellery", "Fenwick", "Garrow",
+            "Halloran", "Ivens", "Jardine", "Kelsall", "Lomax", "Merrick", "Norbury",
+            "Orsett", "Pankhurst", "Quennell", "Rutland", "Sowerby", "Thirsk"]
+    names = " ".join("It was %s who met %s beside %s that year."
+                     % (POOL[i % 20], POOL[(i + 1) % 20], POOL[(i + 2) % 20])
+                     for i in range(20))
+    d = FC.prose_density("# T\n\n" + names)
+    check("it counts words", d["words"] > 100, d.get("words"))
+    check("it carries the published band for comparison",
+          d["published_middle_half"]["names_per_100w"] == [2.7, 4.6],
+          d.get("published_middle_half"))
+    check("a name-dense draft is flagged above the band",
+          d["outside_published_range"].get("names_per_100w", {}).get("direction")
+          == "above", d.get("outside_published_range"))
+
+    check("empty text is handled", FC.prose_density("") == {})
+    check("a repeated name is one object, not forty",
+          FC.prose_density("# T\n\n" + "Alice went to the shop and Alice came back. " * 30)
+          ["names_per_100w"] < 2.0)
+
+    # It is telemetry: recorded on the run, read by no stage, refusing nothing.
+    res, _prov, _n = _run([PASS_G])
+    wr = res["detail"][CP.WRITER]
+    check("it is recorded on the Writer result", bool(wr.get("prose_density")))
+    check("the run still passed with it recorded",
+          res["status"] == CP.PASS, res.get("failure_reason"))
+    src = (HERE / "new_engine_v1" / "free_composition.py").read_text(encoding="utf-8")
+    # Recorded and persisted is fine; BRANCHED ON is not. The ladder body ends where the
+    # persistence helper begins.
+    ladder = src.split("def run_free_argumentative_composition", 1)[1].split(
+        "def repair_byte_delta", 1)[0]
+    check("no stage branches on the measurement",
+          "prose_density" not in ladder, "the ladder reads it")
+    check("and it is persisted for the owner",
+          '"prose_density": wr.get("prose_density")' in src)
+
+
 def test_ported_house_rule_has_not_drifted_from_its_source() -> None:
     """PROVENANCE IS NOT NARRATION is the planned path's own rule, copied here.
 
