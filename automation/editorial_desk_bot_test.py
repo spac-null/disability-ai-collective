@@ -1003,7 +1003,7 @@ def test_todays_article_is_delivered_alone():
     with Harness() as h:
         T.make_run(h.ev.name, today_run("fresh"))
         T.make_run(h.ev.name, "production-20260910T070000Z-old")
-        runs = DEL.todays_undelivered()
+        runs = DEL.recent_undelivered()
         check("only today's run is picked up", len(runs) == 1, [r["run_id"] for r in runs])
         for r in runs:
             BOT.offer(r, heading="Today's article")
@@ -1023,10 +1023,10 @@ def test_delivery_is_idempotent():
     import editorial_desk_deliver as DEL
     with Harness() as h:
         T.make_run(h.ev.name, today_run("once"))
-        first = DEL.todays_undelivered()
+        first = DEL.recent_undelivered()
         for r in first:
             BOT.offer(r, heading="Today's article")
-        second = DEL.todays_undelivered()
+        second = DEL.recent_undelivered()
         check("a delivered article is not offered again", second == [], second)
         check("still one session", len(STORE.sessions()) == 1)
 
@@ -1037,7 +1037,7 @@ def test_an_article_already_pulled_by_hand_is_not_resent():
         T.make_run(h.ev.name, today_run("pulled"))
         BOT.cmd_today(CHAT)          # the owner got there first
         check("the cron finds nothing left to deliver",
-              DEL.todays_undelivered() == [])
+              DEL.recent_undelivered() == [])
 
 
 def test_a_run_with_no_article_is_not_announced():
@@ -1045,7 +1045,138 @@ def test_a_run_with_no_article_is_not_announced():
     with Harness() as h:
         T.make_run(h.ev.name, today_run("empty"), body="")
         check("a run that produced no article sends nothing",
-              DEL.todays_undelivered() == [])
+              DEL.recent_undelivered() == [])
+
+
+def _utc_now():
+    import datetime
+    return datetime.datetime.now(datetime.timezone.utc)
+
+
+def _dated_run(days_ago, tag="x", hh="21", base=None) -> str:
+    """A run id dated a whole number of UTC days before `base` (default: now).
+
+    `base` is threaded through every test below rather than each one calling `now()`
+    again: two separate clock reads that straddle UTC midnight would date the fixture on
+    one day and evaluate it on the next, and the test would fail once a night for
+    reasons that have nothing to do with the code. An adversary pointed this out.
+    """
+    import datetime
+    d = (base or _utc_now()) - datetime.timedelta(days=days_ago)
+    return "production-%sT%s0000Z-%s" % (d.strftime("%Y%m%d"), hh, tag)
+
+
+def test_an_evening_article_survives_midnight():
+    """THE DEFECT, as a test.
+
+    Selection compared the run's UTC date against today's and the cron fired once at
+    10:05 UTC. An article finishing at 21:00 was dated yesterday by the time the next
+    fire came, so it was skipped -- at every hour, permanently, with nothing logged. On
+    2026-09-30 that swallowed three articles including the only one to reach the Reader.
+    """
+    import editorial_desk_deliver as DEL
+    with Harness() as h:
+        base = _utc_now()
+        T.make_run(h.ev.name, _dated_run(1, "evening", base=base))
+        # The next morning, at the hour the cron actually fires. Derived from the same
+        # clock read as the fixture, so the pair cannot straddle UTC midnight.
+        tomorrow_1005 = base.replace(hour=10, minute=5, second=0, microsecond=0)
+        runs = DEL.recent_undelivered(now=tomorrow_1005)
+        check("last night's article is still deliverable this morning",
+              len(runs) == 1, [r["run_id"] for r in runs])
+        # Indexed defensively: when this check fails `runs` is empty, and an IndexError
+        # here aborts the suite and hides every check after it -- which is what happened
+        # the first time this was falsified.
+        check("and it is the one that was written",
+              bool(runs) and "evening" in runs[0]["run_id"],
+              [r["run_id"] for r in runs])
+
+
+def test_an_article_past_the_window_is_left_alone():
+    """The window covers a boundary and a missed fire, not a backlog."""
+    import editorial_desk_deliver as DEL
+    with Harness() as h:
+        T.make_run(h.ev.name, _dated_run(DEL.DELIVERY_WINDOW_DAYS + 2, "stale"))
+        check("an article older than the window is not resurrected",
+              DEL.recent_undelivered() == [])
+
+
+def test_a_future_dated_run_is_not_delivered():
+    """A run id dated ahead of now is a clock problem, not a delivery candidate."""
+    import editorial_desk_deliver as DEL
+    with Harness() as h:
+        T.make_run(h.ev.name, _dated_run(-2, "future"))
+        check("a future-dated run sends nothing", DEL.recent_undelivered() == [])
+
+
+def test_the_window_is_counted_in_whole_utc_days():
+    """`run_date` resolves a run id to a DATE, not an instant.
+
+    An hours-based window would measure from midnight of the run's own day and drift
+    with the hour the check happens to run -- delivering an evening article at 09:00 and
+    silently not at 13:00.
+    """
+    import editorial_desk_deliver as DEL
+    with Harness() as h:
+        base = _utc_now()
+        T.make_run(h.ev.name, _dated_run(1, "boundary", base=base))
+        for hour in (0, 6, 10, 14, 23):
+            at = base.replace(hour=hour, minute=30, second=0, microsecond=0)
+            found = DEL.recent_undelivered(now=at)
+            check("yesterday's article is deliverable at %02d:30 UTC" % hour,
+                  len(found) == 1, (hour, [r["run_id"] for r in found]))
+
+
+def test_a_deliverable_run_is_not_hidden_behind_delivered_ones():
+    """`scan` takes the newest N directories BEFORE anything is filtered.
+
+    Measured on 2026-10-01: the two days inside the delivery window held 15 run
+    directories against a limit of 12, so three were already unreachable and a run could
+    age out of the window without ever being considered. Found by an adversary.
+    """
+    import editorial_desk_deliver as DEL
+    with Harness() as h:
+        base = _utc_now()
+        # More recent runs than the old limit of 12, all delivered, then the real one.
+        for i in range(14):
+            T.make_run(h.ev.name, _dated_run(0, "seen%02d" % i, hh="%02d" % (23 - i),
+                                             base=base))
+        for r in DEL.recent_undelivered(now=base):
+            BOT.offer(r, heading="Today's article")
+        # Deliver the rest so every one of the 14 has a session.
+        for _ in range(6):
+            found = DEL.recent_undelivered(now=base)
+            if not found:
+                break
+            for r in found:
+                BOT.offer(r, heading="Today's article")
+        buried = _dated_run(1, "buried", hh="00", base=base)
+        T.make_run(h.ev.name, buried)
+        found = DEL.recent_undelivered(now=base)
+        check("a run behind a wall of delivered ones is still found",
+              any("buried" in r["run_id"] for r in found),
+              [r["run_id"] for r in found])
+        check("and the scan reaches well past the window",
+              DEL.SCAN_LIMIT >= 40, DEL.SCAN_LIMIT)
+
+
+def test_two_overlapping_fires_cannot_both_deliver():
+    """The cron now fires through the day, so two runs can overlap.
+
+    `offer()` creates the session before the Telegram send returns, so without a lock
+    both fires can select the same run and send two cards for it.
+    """
+    import editorial_desk_deliver as DEL
+    first = DEL._hold_lock()
+    check("the first fire takes the lock", first is not None)
+    second = DEL._hold_lock()
+    check("a second fire while it is held is refused", second is None)
+    if first:
+        first.close()
+    third = DEL._hold_lock()
+    check("and the lock is free once the first process ends", third is not None)
+    if third:
+        third.close()
 
 
 def test_delivery_is_capped():
@@ -1056,8 +1187,8 @@ def test_delivery_is_capped():
                                for n in range(1, 8))
             T.make_run(h.ev.name, today_run("cap%d" % i, "0%d" % i), body=body)
         check("a runaway day does not flood the chat",
-              len(DEL.todays_undelivered()) == DEL.MAX_PER_RUN,
-              len(DEL.todays_undelivered()))
+              len(DEL.recent_undelivered()) == DEL.MAX_PER_RUN,
+              len(DEL.recent_undelivered()))
 
 
 def test_a_press_is_visible_on_the_button():
