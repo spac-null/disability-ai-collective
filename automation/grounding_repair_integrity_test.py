@@ -148,6 +148,36 @@ out_g, prov_g, errs_g = CP.apply_grounding_repair(
     ARTICLE_C, edits_c, finding(), LEDGER, PACKET)
 check("a legitimate local repair still applies here", len(prov_g) == 1 and not errs_g)
 
+print("\nF. the fragment the sentence splitter cannot see (2026-09-30)")
+# production-20260930T085346Z-54ca6694. The Writer wrote "Parks Canada and the Inuit
+# Heritage Trust -- a body created through the Nunavut Agreement ... -- signed a
+# memorandum"; the repair removed the unsupported clause together with the sentence's
+# SUBJECT. Safety, Grounding and Fact Check all passed the result; the Reader called the
+# paragraph "simply broken" at the end of the pipeline.
+#
+# The existing fragment check could not see it. story.SENTENCE_SPLIT breaks on terminal
+# punctuation FOLLOWED BY A CAPITAL, so "...for this. signed a memorandum" does not split
+# at all -- the damage IS the condition that prevents the split, and the detector read one
+# long sentence opening in upper case and passed it.
+_WHOLE = ("There is now a formal channel for this, and it is new. Parks Canada and the "
+          "Trust signed a memorandum on how they will share the artifacts. Pamela Gross "
+          "said it ensures things.")
+_BROKEN = ("There is now a formal channel for this. signed a memorandum on how they will "
+           "share the artifacts Pamela Gross said it ensures things.")
+check("the splitter still cannot see it (this is why the check reads characters)",
+      len(CP.CE.sentences(_BROKEN)) == 1)
+check("repair_damage refuses it anyway",
+      CP.repair_damage(_WHOLE, _BROKEN) == "the repair left a sentence starting mid-clause")
+check("a clean subtraction is still allowed",
+      CP.repair_damage(_WHOLE,
+                       "There is now a formal channel for this, and it is new. Pamela "
+                       "Gross said it ensures things.") == "")
+check("an abbreviation the prose already had is not blamed on the repair",
+      CP.repair_damage("A thing, e.g. this one. And more here.",
+                       "A thing, e.g. this one.") == "")
+check("a NEW lower-case opening is caught even mid-paragraph",
+      bool(CP.repair_damage("One. Two things here. Three.", "One. two things here.")))
+
 print("\n" + "-" * 62)
 if FAILED:
     print("FAILED: %d" % len(FAILED))

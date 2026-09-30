@@ -212,7 +212,15 @@ long passage with no person and no concrete object in it is where a reader stops
 PROVENANCE IS NOT NARRATION. Say the supported thing instead of reporting that it is
 supported: not "the source says", "the record establishes", "the available evidence
 shows", "the reviewer noted". Name a speaker where the naming is part of the claim.
-Otherwise write the world, not the paperwork."""
+Otherwise write the world, not the paperwork.
+
+DO NOT LET A SENTENCE ANNOUNCE ITS OWN STRUCTURAL JOB. Sentences like "Here is where the
+obvious reading goes wrong", "Now the harder test", "It is worth following that route
+backwards", "So go back to the beginning", "Read that list again and notice what it is"
+tell the reader what the article is doing instead of telling them about the world. Write
+the thing, not a note about the thing. A turn that is real does not need to be announced:
+put the surprising fact next to the one it overturns and the reader will feel the turn
+without being told one is coming. One-sentence paragraphs are fine and normal."""
 
 
 # ── the one rule ──────────────────────────────────────────────────────────────

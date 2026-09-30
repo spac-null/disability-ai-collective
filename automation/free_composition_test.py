@@ -447,6 +447,30 @@ def ST_WRONG():
     return ST.WRONG_PUBLICATION
 
 
+def test_structural_announcement_rule_reaches_the_writer() -> None:
+    """Added from the Reader's own findings on production-20260930T085346Z-54ca6694, which
+    held ENGINE_LANGUAGE_LEAK and quoted three sentences announcing their structural job:
+    "Here is where the obvious reading goes wrong", "Now the harder test", and "It is worth
+    following that route backwards".
+
+    The rule already existed in composition.WRITER_CRAFT_DELTA, where the codebase calls it
+    "the single measured difference between published prose and this pipeline's drafts".
+    The first port of house craft into this prompt took PROVENANCE IS NOT NARRATION and
+    missed this one -- the paragraph that actually matched the defect.
+    """
+    res, prov, _ = _run([PASS_G])
+    flat = " ".join(prov.calls[0]["system"].split())
+    check("the rule reaches the Writer",
+          "DO NOT LET A SENTENCE ANNOUNCE ITS OWN STRUCTURAL JOB" in flat)
+    for quoted in ("Here is where the obvious reading goes wrong",
+                   "Now the harder test"):
+        check("it names the Reader's own example %r" % quoted[:34], quoted in flat)
+    check("it says what to do instead, not only what to avoid",
+          "put the surprising fact next to the one it overturns" in flat)
+    check("it does not forbid short paragraphs",
+          "One-sentence paragraphs are fine and normal" in flat)
+
+
 def test_ported_house_rule_has_not_drifted_from_its_source() -> None:
     """PROVENANCE IS NOT NARRATION is the planned path's own rule, copied here.
 

@@ -4525,6 +4525,12 @@ def apply_grounding_repair(article_text: str, edits: list, findings: list,
     return out.strip(), prov, errs
 
 
+# Terminal punctuation, optional closing quote or bracket, whitespace, then a lower-case
+# word. See repair_damage: this is the fragment the sentence splitter is constitutionally
+# unable to report, because the lower-case word is what stops it splitting.
+_MID_CLAUSE_OPEN = re.compile(r"[.!?][\"'”’)\]]*\s+[a-z]")
+
+
 def repair_damage(before_para: str, after_para: str) -> str:
     """Why this repaired paragraph may not be promoted, or "" if it may.
 
@@ -4560,6 +4566,26 @@ def repair_damage(before_para: str, after_para: str) -> str:
     if sum(1 for x in after_sents if _opens_lower(x)) > \
        sum(1 for x in before_sents if _opens_lower(x)):
         return "the repair left a sentence fragment"
+    # AND THE SPLITTER CANNOT SEE THE COMMONEST FORM OF IT. story.SENTENCE_SPLIT breaks on
+    # terminal punctuation FOLLOWED BY A CAPITAL, so a deletion that leaves
+    # "...for this. signed a memorandum of understanding" creates no new sentence at all:
+    # the damage is precisely the condition that prevents the split. The check above then
+    # sees ONE long sentence opening in upper case and passes it. The fragment detector was
+    # blind to the exact defect it exists to catch.
+    #
+    # Measured on production-20260930T085346Z-54ca6694. The Writer wrote "Parks Canada and
+    # the Inuit Heritage Trust -- a body created through the Nunavut Agreement ... -- signed
+    # a memorandum"; the repair removed the unsupported clause together with the sentence's
+    # SUBJECT and left "There is now a formal channel for this. signed a memorandum".
+    # Safety, Grounding and Fact Check all passed the result. The Reader caught it at the
+    # end of the pipeline, calling the paragraph "simply broken".
+    #
+    # Read off the characters rather than the sentence list, and counted against the
+    # paragraph as it stood, so an abbreviation the prose already contained ("e.g. the")
+    # is not blamed on the repair.
+    if len(_MID_CLAUSE_OPEN.findall(after)) > \
+       len(_MID_CLAUSE_OPEN.findall(before_para or "")):
+        return "the repair left a sentence starting mid-clause"
     # Same test for the paragraph's own end: a paragraph that ended in terminal
     # punctuation must still do so.
     _term = ".!?\"'\u201d\u2019)]*_"
