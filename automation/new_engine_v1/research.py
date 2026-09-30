@@ -311,6 +311,21 @@ def render_diagnosis(pack: dict) -> str:
     for i, u in enumerate(order, 1):
         state = "IN PACK" if u in in_pack else "not fetched"
         line("  %2d %-30s %-12s %s" % (i, registrable(u), state, str(u)[:70]))
+    # THE CANDIDATE LIST IS NOT THE WHOLE STORY. The Lens Probe -- and the Perspective
+    # Explorer after it -- search separately and append straight to `fetched`, so a pack
+    # source can exist that no row above explains. On the Franklin run that was Up Here
+    # and Archaeology magazine: two of the eight carried sources, invisible in this table
+    # as first written. A diagnosis that cannot account for a source in the pack is the
+    # same failure it exists to fix, one stage over.
+    extra = [s for s in srcs if s.get("role") != ROLE_ANCHOR
+             and s.get("url") not in set(cands)]
+    if extra:
+        line()
+        line("ALSO IN THE PACK, found outside the scoped queries (Lens Probe / "
+             "Perspective Explorer):")
+        for s in extra:
+            line("     %-4s %-26s %s" % (s.get("source_id"), s.get("publisher"),
+                                         str(s.get("url"))[:70]))
     line()
 
     line("PACK TEXT BUDGET %s" % PACK_TEXT_BUDGET)

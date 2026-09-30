@@ -46,6 +46,35 @@ def pack_of(d: pathlib.Path):
     return json.loads(p.read_text(encoding="utf-8"))["payload"]
 
 
+def test_diagnosis_accounts_for_every_source_in_the_pack() -> None:
+    """The Lens Probe appends straight to `fetched`, outside candidates_considered.
+
+    On production-20260930T085346Z-54ca6694 that was Up Here and Archaeology magazine --
+    two of eight carried sources that the first version of this page could not explain.
+    A diagnosis with an unexplained source in it is the failure it exists to fix.
+    """
+    p = pack_of(pathlib.Path("/srv/data/cripminds-new-engine-v1/"
+                             "production-20260930T085346Z-54ca6694"))
+    if p is None:
+        check("the run with lens-probe sources is present", False)
+        return
+    cands = set(p.get("candidates_considered") or [])
+    extra = [s for s in p["sources"]
+             if s.get("role") != RS.ROLE_ANCHOR and s["url"] not in cands]
+    check("that run really does carry sources from outside the candidate list",
+          len(extra) >= 2, [s["publisher"] for s in extra])
+    txt = RS.render_diagnosis(p)
+    check("the diagnosis names them as such",
+          "found outside the scoped queries" in txt)
+    for s in extra:
+        check("it accounts for %s" % s["publisher"],
+              s["source_id"] in txt and s["publisher"] in txt)
+    # Every non-anchor source in the pack appears somewhere in the page.
+    for s in p["sources"]:
+        check("no source in the pack is unexplained: %s" % s["source_id"],
+              s["source_id"] in txt)
+
+
 def test_round_robin_is_stable_and_lossless() -> None:
     c = ["https://a.com/1", "https://a.com/2", "https://b.org/1",
          "https://a.com/3", "https://c.net/1"]

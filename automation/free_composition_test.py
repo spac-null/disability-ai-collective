@@ -463,6 +463,52 @@ def test_the_free_path_asks_worth_not_to_require_plan_inputs() -> None:
           res["detail"][CP.WORTH])
 
 
+def test_worth_reasoning_survives_its_own_refusal() -> None:
+    """Retained when it PASSED and discarded when it REFUSED -- exactly backwards.
+
+    `persist` writes WORTH_AND_CANDIDATE.json from `det[WORTH]["worth_gate"]`, and the
+    ladder builds that record from the CompositionHold's payload, which was empty. 53 of
+    178 production compositions died at this gate and all that survived was 400 truncated
+    characters of `failure_reason` -- which is why an audit of those 53 today could read
+    verdicts and not one reason. Applies to both paths.
+    """
+    import json as _json
+    import tempfile
+
+    LENS = {"verdict": "GREAT_GENERAL_STORY_WRONG_PUBLICATION",
+            "lens_claim": "a contrast between two recording systems, one oral, one charted",
+            "evidence_ids": ["F01"], "changes_meaning_how": "it reframes the search"}
+
+    class _P:
+        def complete(self, system, user, max_tokens=4000, temperature=None, timeout=180):
+            class _C:
+                text = _json.dumps({"worth_gate": LENS, "story_candidate": {}})
+
+                def identity(self):
+                    return {}
+            return _C()
+
+    try:
+        CP.worth_gate(_P(), {"F01": {"proposition": "x"}}, "a subject")
+        check("a refused verdict holds the run", False, "no hold raised")
+        return
+    except CP.CompositionHold as e:
+        check("a refused verdict holds the run", True)
+        check("and carries the lens it refused on",
+              bool(e.payload.get("worth_gate", {}).get("lens_claim")), e.payload)
+        # Exactly what the ladder does with a hold, then what persist keys off.
+        st = dict(e.payload, status=CP.HOLD, code=e.code, reasons=e.reasons)
+        d = tempfile.mkdtemp()
+        CP.persist(d, {"detail": {CP.WORTH: st}, "stages": {}, "subject": "a subject"})
+        names = sorted(x.name for x in pathlib.Path(d).iterdir())
+        check("WORTH_AND_CANDIDATE.json is written on a HOLD too",
+              "WORTH_AND_CANDIDATE.json" in names, names)
+        got = _json.loads((pathlib.Path(d) / "WORTH_AND_CANDIDATE.json")
+                          .read_text(encoding="utf-8"))
+        check("the reasoning is readable afterwards",
+              "two recording systems" in str(got["worth_gate"]["lens_claim"]))
+
+
 def test_worth_scope_conflict_is_recorded_for_the_owner() -> None:
     """A disagreement between the perspective library and Worth's scope test is evidence
     for sharpening the instrument, not something to overrule silently."""

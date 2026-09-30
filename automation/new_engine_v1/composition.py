@@ -1133,12 +1133,22 @@ def worth_gate(provider, ledger: dict, subject: str, hypothesis=None,
                 ["verdict %s on a run commissioned from approved instrument %s, which "
                  "was told scope is already settled -- recorded as an instrument conflict "
                  "for review" % (verdict, (hypothesis or {}).get("instrument")),
-                 (lens.get("lens_claim") or "")[:300]])
+                 (lens.get("lens_claim") or "")[:300]],
+                {"worth_gate": lens})
         # Not an engine failure. The gate did its job and the answer is no.
+        #
+        # AND THE REASONING SURVIVES THE REFUSAL (2026-09-30). `persist` writes
+        # WORTH_AND_CANDIDATE.json from `det[WORTH]["worth_gate"]`, and the hold handler
+        # builds that record from THIS payload -- which was empty, so the gate's reasoning
+        # was retained when it PASSED and discarded when it REFUSED, which is exactly
+        # backwards. 53 of 178 production compositions died here and all that survived was
+        # 400 truncated characters of `failure_reason`. Measured today: an audit of those
+        # 53 could read verdicts and could not read a single reason.
         raise CompositionHold(
             WORTH, WORTH_HOLD,
             ["verdict %s -- this subject is not publishable here" % verdict,
-             (lens.get("lens_claim") or "")[:300]])
+             (lens.get("lens_claim") or "")[:300]],
+            {"worth_gate": lens})
 
     # ── WHICH OF THIS GATE'S REFUSALS STILL HAVE A CONSUMER (2026-09-30) ─────────────
     # Four of the checks below ask an EDITORIAL question and keep their authority on every
@@ -1211,7 +1221,8 @@ def worth_gate(provider, ledger: dict, subject: str, hypothesis=None,
                  "about something else",
                  ("carrier: " + carrier)[:200] if carrier else "no carrier named",
                  (lens.get("lens_claim") or "")[:200]],
-                {"lens_particulars": particulars, "lens_carrier": carrier,
+                {"worth_gate": lens, "lens_particulars": particulars,
+                 "lens_carrier": carrier,
                  "can_carry_article": lens.get("can_carry_article")})
         plan_warnings.append(
             "this lens could not have carried an article on its own (carrier: %s) -- "
@@ -1225,7 +1236,7 @@ def worth_gate(provider, ledger: dict, subject: str, hypothesis=None,
                 ["the lens names no carrier -- there is no concrete subject-specific "
                  "fact or tension the reading stands on",
                  (lens.get("lens_claim") or "")[:300]],
-                {"lens_particulars": particulars})
+                {"worth_gate": lens, "lens_particulars": particulars})
         plan_warnings.append(
             "the lens named no carrier -- recorded, not blocking: a carrier is what the "
             "architect opens on, and nothing on this path opens on it")
@@ -1236,7 +1247,7 @@ def worth_gate(provider, ledger: dict, subject: str, hypothesis=None,
              "is a definition or a general statement about a category, which can carry a "
              "clause but not an article",
              (lens.get("lens_claim") or "")[:300]],
-            {"evidence_ids": lens.get("evidence_ids"),
+            {"worth_gate": lens, "evidence_ids": lens.get("evidence_ids"),
              "lens_particulars": lens.get("lens_particulars")})
 
     # This is the existing Worth call's originality contract, not a new gate or a
@@ -1254,7 +1265,8 @@ def worth_gate(provider, ledger: dict, subject: str, hypothesis=None,
              "contribution is not distinct from the strongest existing coverage",
              "source_baseline: %s" % (baseline[:260] if baseline else "missing"),
              "crip_minds_delta: %s" % (delta[:260] if delta else "missing")],
-            {"source_baseline": baseline, "crip_minds_delta": delta,
+            {"worth_gate": lens, "source_baseline": baseline,
+             "crip_minds_delta": delta,
              "editorial_delta_status": delta_status or "missing"})
 
     unknown_lens = sorted(set(lens.get("evidence_ids") or []) - set(ledger))
