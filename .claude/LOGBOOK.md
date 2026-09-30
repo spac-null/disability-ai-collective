@@ -1007,3 +1007,100 @@ OBSERVED, NOT FIXED:
   auto-delivered. This one was delivered by hand. Pre-existing; not in scope.
 
 FOLLOW-UP: read the articles. Do not tune prompts against this subject's wording.
+
+### 2026-09-30 06:40 — THE OWNER READ IT. First desk feedback on a free-composition article.
+
+Session `f13dff08bec43209`, run `production-20260929T230317Z-36065d96`, 11 blocks, read to
+the end (ARTICLE_FINISHED). 35 feedback presses.
+
+    STRONG               8      b01, b02(x2, after BACK), b04, b05, b09, b10, b11
+    SOUNDS_LIKE_REPORT  10      b02, b04, b05(x2), b06, b07, b08(x2), b09, b10
+    TOO_DENSE            2      b03, b08
+    details                     LIST_OF_FACTS x6, TOO_MUCH_AT_ONCE x2,
+                                NO_STORY x2, INSTITUTIONAL_LANGUAGE x1
+
+**AGAINST THE BASELINE IN §8 OF THE DESK HANDOFF** — four articles read 26–28 September
+produced `Strong x1` in total. This one article produced `Strong x8`. It is also longer
+(1197 words, 11 blocks, against 401–674 words), so raw counts are not comparable; what is
+comparable is WHICH complaints appear.
+
+**WHAT DISAPPEARED.** `I am lost` (x2 across the four), `Why now?` (x4) and `Want more`
+(x2) do not occur here — not once. The reader never lost the thread and never asked why he
+was reading. That is the orientation-and-momentum family, and it is the family this change
+targeted. It agrees with the Reader gate, which cleared OPENING, ENDING, MOMENTUM and
+RESEARCH_LOAD on this article and held the story_architecture run the same night on all
+four.
+
+**WHAT REMAINS, AND IT IS THE WHOLE REMAINING COMPLAINT.** Register. Ten
+SOUNDS_LIKE_REPORT presses, six of them LIST_OF_FACTS. And it is POSITIONAL: b01 and b11 —
+the opening and the ending — are clean STRONG with nothing against them. The collapse is
+b06, b07, b08 in the middle, the only blocks carrying no STRONG at all.
+
+Reading those three paragraphs says exactly what went wrong, and it is not argument
+structure:
+
+    b03  the bill's legislative metadata — approval date, short title, effective date,
+         "Chapter 327, under the heading Consumer and Commercial Transactions"
+    b06  a roll-call of opposing organisations and their standing — "780 accredited
+         Medicare and Medicaid supplier locations"
+    b07  four sources summarised one after another (Pride Mobility, Permobil, the
+         coalition) — the one thing the reader contract forbids in those words
+    b08  clinic provenance — "reviewed it as coursework, at the invitation of
+         Rep. Brianna Titone, following up on a similar review the previous year on
+         House Bill 21-1199"
+
+The argumentative scaffolding held everywhere: the opening is a person, the turns are
+there ("Now the part that changes the shape of the argument", "Every party in the record
+agrees the wait is real"), the ending lands. What failed is SELECTION. The Writer used 68
+of 92 facts and paid for the surplus in institutional, legislative and provenance detail.
+
+**THIS REFINES THE meŞk FINDING RATHER THAN CONTRADICTING IT.** meŞk said 57 facts read
+better than 22, and the conclusion drawn was "fact count is not the problem". That holds.
+But on meŞk the surplus facts were substantive — intervals, performances, a curriculum. Here
+the surplus is paperwork. The variable is not how MANY facts earn space, it is what KIND.
+The Ledger does not distinguish the two and neither does the prompt.
+
+**NOT CHANGED TONIGHT, DELIBERATELY.** n=1, and the prior it would be tuned against points
+the other way. The candidate change is precise and already has three independent signals —
+Safety's MACHINE_LANGUAGE in the offline regression, the Reader's ENGINE_LANGUAGE_LEAK, and
+the owner's INSTITUTIONAL_LANGUAGE — all naming the same absence: the free Writer's system
+prompt carries the lens, the corpus, the reader contract and the one rule, and does NOT
+carry `PROSE_DOCTRINE`'s "PROVENANCE IS NOT NARRATION". That omission was faithful to the
+probe that was measured. Whether to close it is an editorial decision to make after reading
+two or three more articles, not on the first one at 01:00. A gate calibrated on the cases
+that produced it is telemetry, not authority.
+
+FOLLOW-UP: read articles 2 and 3 before touching the prompt. If LIST_OF_FACTS keeps
+landing on institutional/provenance paragraphs specifically, that is the change to make,
+and it is one paragraph of prompt, not a subsystem.
+
+### THE OWNER'S OWN READING, verbatim — which outranks the tally above
+
+> "very excellent overall, only there are too much facts or written fully which doesnt need
+> do that way all yhe time, writing out literally whole names, numbers, those facts which
+> could sometimes written compactly. narrative should drive, not facts. wheelchair user who
+> is subject in this letter should have stronger place in narrative i think. but huge leap"
+
+This is a SHARPER diagnosis than "selection", and it changes what the fix is. Two distinct
+faults, and only the first is about which facts are used:
+
+  1. SELECTION   — some facts did not earn their place at all.
+  2. RENDERING   — a fact that DID earn its place was written out at full ceremony.
+     "The Samuelson-Glushko Technology Law & Policy Clinic at Colorado Law" where "a law
+     school clinic" carries the sentence; the bill's approval date, short title, effective
+     date and "Chapter 327, under the heading Consumer and Commercial Transactions" where
+     "the bill" would do. The Ledger stores each fact in full and the Writer rendered each
+     one in full. Compression is not omission, and nothing in the prompt says so.
+
+  3. THE SUBJECT DOES NOT CARRY IT. Oliver Giminaro is named in paragraphs 2, 4, 11, 17,
+     18 and 22 — and not at all through 5–10 or 12–16, which is the institutional middle.
+     EVERY BLOCK THAT EARNED NO STRONG (b03, b06, b07, b08) is a block where the person is
+     absent or vestigial. The reader contract says a person or concrete thing carries the
+     paragraph; here one carries the opening and the close and lets go of the middle.
+
+"but huge leap" is the owner's overall verdict on the change itself.
+
+DECISION AT 08:46, 13 MINUTES BEFORE THE SCHEDULED RUN: change nothing. The 09:00 run goes
+on the unchanged contract, to get a second article on the SAME contract before anything is
+tuned. Editorial direction after n=1 is a hypothesis about the next article, not a
+measurement of this one.
