@@ -298,6 +298,64 @@ def test_exact_writer_request_bytes() -> None:
           "(no title established)" in user)
 
 
+def test_compression_and_carry_reaches_the_runtime_bytes() -> None:
+    """The 2026-09-30 owner feedback, as prompt bytes rather than as a comment."""
+    res, prov, _ = _run([PASS_G])
+    system = prov.calls[0]["system"]
+    check("the compression block reaches the exact system bytes",
+          "HOW MUCH OF A FACT TO WRITE" in system)
+    check("it says a fact does not earn its full form",
+          "does not automatically earn its full form" in system)
+    check("it names the forms that are ceremony, not fact",
+          "statute number" in system and "chapter heading" in system)
+    check("it protects exactness where exactness is the point",
+          "Compression is not omission" in system
+          and "keeps every digit" in system)
+    check("narrative drives, not facts", "NARRATIVE DRIVES, NOT FACTS" in system)
+    check("the person carries the middle, not only the ends",
+          "NOT ONLY ITS ENDS" in system
+          and "easiest to lose" in system)
+    check("provenance is not narration", "PROVENANCE IS NOT NARRATION" in system)
+
+    # ORDER MATTERS AND IS ASSERTED: lens, corpus, reader contract, this, the one rule.
+    check("it sits after the reader contract and before the one rule",
+          system.index("READER CONTRACT")
+          < system.index("HOW MUCH OF A FACT TO WRITE")
+          < system.index("THE ONE RULE"))
+
+    # IT IS GUIDANCE, NOT A GATE. The constant is referenced exactly twice in the whole
+    # package -- where it is defined, and where it is concatenated into the system prompt.
+    # A third reference would mean something started reading it, which is how writing
+    # guidance quietly becomes a validator.
+    import subprocess
+    pkg = HERE / "new_engine_v1"
+    hits = subprocess.run(["grep", "-rn", "COMPRESSION_AND_CARRY", str(pkg)],
+                          capture_output=True, text=True).stdout.strip().splitlines()
+    check("the compression block is referenced only where it is defined and used",
+          len(hits) == 2, hits)
+    check("no new stage was added for it",
+          tuple(FC.FREE_STAGES) == tuple(CP.STAGES))
+    check("the stage list still has no validator stage of its own",
+          not any("COMPRESS" in s.upper() for s in FC.FREE_STAGES))
+
+
+def test_ported_house_rule_has_not_drifted_from_its_source() -> None:
+    """PROVENANCE IS NOT NARRATION is the planned path's own rule, copied here.
+
+    Copied rather than refactored so the planned path's prompt bytes are untouched -- but a
+    copy drifts, and the whole reason this engine had to be told what Crip Minds is in the
+    first place is that a derived copy drifted from its source for a month with nothing
+    noticing. This fails the moment the two disagree.
+    """
+    for sentence in ('not "the source says", "the record establishes"',
+                     "Name a speaker where the naming is part of the claim",
+                     "write the world, not the paperwork"):
+        in_free = sentence in " ".join(FC.COMPRESSION_AND_CARRY.split())
+        in_house = sentence in " ".join(CP.WRITER_CRAFT_DELTA.split())
+        check("%r is in the free prompt" % sentence[:40], in_free)
+        check("%r still matches the house rule it came from" % sentence[:40], in_house)
+
+
 def test_no_architecture_control_in_runtime_bytes() -> None:
     res, prov, _ = _run([PASS_G])
     system, user = prov.calls[0]["system"], prov.calls[0]["user"]

@@ -149,6 +149,64 @@ You may use any licensed Ledger proposition.
 Do not invent new factual states."""
 
 
+# ── how much of a fact to write ───────────────────────────────────────────────
+# ADDED 2026-09-30, FROM THE FIRST READ OF A FREE-COMPOSITION ARTICLE. The owner read
+# production-20260929T230317Z-36065d96 end to end and pressed STRONG eight times -- against
+# one STRONG across the four articles read on 26-28 September -- and `I am lost`, `Why now?`
+# and `Want more` did not occur at all. The orientation family is fixed.
+#
+# What he pressed instead was SOUNDS_LIKE_REPORT ten times, six of them LIST_OF_FACTS, and
+# it was POSITIONAL: the opening block and the closing block were clean, and the collapse
+# was the institutional middle. In his words:
+#
+#   "too much facts or written fully which doesnt need do that way all the time, writing
+#    out literally whole names, numbers, those facts which could sometimes written
+#    compactly. narrative should drive, not facts. wheelchair user who is subject in this
+#    letter should have stronger place in narrative"
+#
+# THAT IS TWO FAULTS AND THE SECOND ONE IS NEW. Selection -- some facts did not earn their
+# place -- was already addressed by "most of them will not earn their place". RENDERING was
+# not addressed anywhere: a fact that DID earn its place was written out at full ceremony,
+# because the Ledger stores each proposition in full and nothing told the Writer that a
+# shorter form of a fact is still that fact.
+#
+# Measured on that article: the subject is named in paragraphs 2, 4, 11, 17, 18 and 22, and
+# not once through 5-10 or 12-16. EVERY block that earned no STRONG is a block where the
+# person is absent or vestigial.
+#
+# This is WRITING GUIDANCE. Nothing here is compiled into a validator, and no gate reads it.
+COMPRESSION_AND_CARRY = """=== HOW MUCH OF A FACT TO WRITE ===
+A fact that earns its place does not automatically earn its full form.
+
+The Ledger records each fact completely, because that is what evidence has to do.
+Prose does not. Write the shortest form that carries the sentence. A full registered
+name, a statute number, a short title, an approval date, a chapter heading, a job
+title, an institutional affiliation — these are usually the FORM a fact was recorded
+in, not the thing the reader needs. "A law school clinic" is usually the right
+rendering of a clinic's full registered name. "The bill" is usually the right
+rendering of a bill's number, its short title, its approval date and the chapter it
+sits in.
+
+Compression is not omission and it is not vagueness. Be exact wherever exactness is
+the point: a number that changes what the reader understands keeps every digit, and a
+name the argument turns on is written out once, properly. The test is whether the
+reader needs this much of it here.
+
+NARRATIVE DRIVES, NOT FACTS. If a paragraph exists because several facts were
+available, it is a catalogue. Do not summarise sources one after another, and do not
+walk through an organisation's position, then the next organisation's, then the next.
+
+THE PERSON CARRIES THE WHOLE ARTICLE, NOT ONLY ITS ENDS. If this story has someone at
+its centre, they belong in the middle of it too — inside the procedure, the
+institutions and the documents, which is exactly where they are easiest to lose. A
+long passage with no person and no concrete object in it is where a reader stops.
+
+PROVENANCE IS NOT NARRATION. Say the supported thing instead of reporting that it is
+supported: not "the source says", "the record establishes", "the available evidence
+shows", "the reviewer noted". Name a speaker where the naming is part of the claim.
+Otherwise write the world, not the paperwork."""
+
+
 # ── the one rule ──────────────────────────────────────────────────────────────
 # The probe's own control, kept because it IS the experiment: if the model may invent,
 # a beautiful draft proves nothing about whether this material could carry one.
@@ -273,6 +331,10 @@ def free_writer_system() -> str:
     if corpus:
         parts.append(corpus)
     parts.append(READER_CONTRACT)
+    # Directly after the reader contract, because it is its companion: the contract says
+    # how to build the path through an idea, and this says how much of each fact to spend
+    # on it. Before the one rule, which is the factual boundary everything else sits in.
+    parts.append(COMPRESSION_AND_CARRY)
     parts.append(ONE_RULE)
     return "\n\n".join(parts)
 

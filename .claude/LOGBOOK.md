@@ -1104,3 +1104,5 @@ DECISION AT 08:46, 13 MINUTES BEFORE THE SCHEDULED RUN: change nothing. The 09:0
 on the unchanged contract, to get a second article on the SAME contract before anything is
 tuned. Editorial direction after n=1 is a hypothesis about the next article, not a
 measurement of this one.
+
+**SUPERSEDED 08:53** — owner chose to apply it before the next run. See the next commit.
