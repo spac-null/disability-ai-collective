@@ -1106,3 +1106,87 @@ tuned. Editorial direction after n=1 is a hypothesis about the next article, not
 measurement of this one.
 
 **SUPERSEDED 08:53** — owner chose to apply it before the next run. See the next commit.
+
+### 2026-09-30, later — retrieval, budget, PR authority, and a detector that could not see
+
+Seven more commits on top of `3749a71`. Every one with full-suite parity: 133 pass / 26
+fail, the same 26 that fail at `e07b8dc`, zero regressions on each run.
+
+**THE NUMBER THAT REFRAMED THE DAY.** 178 production compositions in the retained record.
+None has ever passed. WORTH 53 (29.8%), GROUNDING 50, SAFETY 49, ARCHITECTURE 14, READER 9,
+WRITER 2, FACT_CHECK 1. Three gates account for 85%. The engine is filter-limited, not
+capability-limited, and nothing in the record said so until it was counted.
+
+**RESEARCH WAS SPENDING ITS BUDGET ON THE ANCHOR'S OWN PUBLISHER.** Two of the morning's
+three pitches died at HOLD_INSUFFICIENT_RESEARCH and neither was scarce. Franklin found six
+independent sources — an Archaeology feature, four papers in the journal *Arctic*, a
+Cambridge *Polar Record* PDF — and fetched none: candidates are tried in search order, the
+first five were the anchor's sibling pages, and five is MAX_FETCHED_SOURCES. The budget
+then went to the byte: 7,291 + 2,921 + 4,354 + 12,000 + 2,821 + 10,613 = exactly 40,000.
+Istat was identical with the Italian statute databases at candidates 11 and 12.
+
+Fixed by publisher round-robin (`by_publisher_diversity`) and, when that proved insufficient,
+by value-ranked water-filling of the text budget (`allocate_budget`) using the ROLE and
+RELATION the assessment already computed and the spend had always ignored. A COUNTERWEIGHT
+that `complicates` outranks a fourth page that `corroborates`. Three sources carried became
+eight.
+
+**THE SEARCH WAS ALREADY PERPLEXITY, THROUGH THE WRONG ENDPOINT.** `SEARCH_MODEL` was
+`perplexity/sonar` via OpenRouter — the ANSWER endpoint, capped at 700 tokens, with URLs
+scraped out of the generated reply. A short answer cites what it needed to write itself,
+which is structurally the most on-the-nose institutional pages. Moved to Perplexity's
+Search API: on one query, 10 URLs across 9 publishers against ~3 mostly from the anchor's
+domain. No free tier (~$1.80/month at this volume). Snippets and titles are read and
+DISCARDED — only fetched bytes may carry a fact.
+
+**THE CLAIM NOW STEERS RETRIEVAL.** `scope()` took the anchor text and nothing else, so the
+four queries deciding the whole evidence universe were written as if the run had no purpose.
+The DISCONFIRMING SHAPE — the owner's sentence naming what would refute the claim — reached
+the Writer and Worth and had never once been turned into a search. Four queries now do four
+jobs: refutation, primary document, participant, outside the institution.
+
+**PR HAS AUTHORITY** (owner). Worth re-asked whether a commissioned subject belongs here and
+disagreed with the instrument twice on PR006-02 — whose own CARRIERS list names "Indigenous
+and local ecological knowledge against survey science", the exact carrier it refused. 26 of
+178 runs (15%) died on that verdict. Worth is now told scope is settled when an approved
+instrument carries a claim; NO_PLAUSIBLE_LENS, WEAK_ANALOGY, the access-deficit invariant and
+the mechanism/particular bar are untouched. A scope refusal on a commissioned run is filed to
+`/srv/data/cripminds-instrument-conflicts/CONFLICTS.jsonl` for review rather than overruled
+silently.
+
+**ARCHITECTURE NO LONGER RUNS ON THE FREE PATH.** It ran only to satisfy the bridge's
+`architecture_valid`, and killed 14 runs over a plan no article would use. The bridge now
+asserts the free contract's equivalent — `writer_plan_free`, proved on the prompt bytes. A
+swap of one contract assertion for the other's, engine-conditional; no factual gate moved.
+
+**AND THE DETECTOR THAT COULD NOT SEE ITS OWN DEFECT.** A surgical repair removed a
+sentence's subject and left "There is now a formal channel for this. signed a memorandum".
+Safety, Grounding and Fact Check all passed it; the Reader called the paragraph "simply
+broken". `repair_damage()` exists to refuse exactly this and was blind: SENTENCE_SPLIT breaks
+on punctuation followed by a CAPITAL, so the damage is the condition that prevents the split,
+and the fragment check read one long sentence opening in upper case. There was no test for
+`repair_damage` anywhere. Now checked on characters, with a test that asserts the splitter's
+blindness so nobody folds it back into a sentence check.
+
+**WEAK_ANALOGY IS NOT OVER-REFUSING** — audited because it looked like the next
+WRONG_PUBLICATION and it is not. All 20 are space telescopes, nebulae, Mars seismometers,
+snow leopard surveys, dairy quotas, and Worth's reasoning is right every time: an
+instrument's sampling limits *resemble* measures that fail to register disabled bodies and
+share no mechanism with them. The waste starts upstream, in what gets commissioned. Do not
+touch that verdict.
+
+FIRST RUN TO PASS EVERY FACTUAL GATE: `production-20260930T085346Z-54ca6694`. Worth PASS,
+Safety PASS, Grounding PASS, Fact Check PASS, 1,427 words, 69 of 112 facts, 9 model calls,
+independent publishers 0 → 6, canada.ca in pack 5 → 0. Reader HOLD on ACCESSIBLE_READING,
+CRIP_MINDS_FIT, ENGINE_LANGUAGE_LEAK, READABILITY — with OPENING, ENDING, MOMENTUM and
+BREATHING all PASS and notes to match ("the turns are real turns").
+
+CRIP_MINDS_FIT is the scope question arriving where it belongs: a gate that has read the
+finished article rather than a ledger. Its objection is fair — the piece circles testimony
+and credibility and never brings them into contact with disabled knowing.
+
+CONSEQUENCE TO WATCH: the repair fix makes some runs hold EARLIER. A repair that would break
+prose is now refused, the finding stands, and the run holds at Grounding instead of reaching
+the Reader with damaged text. Correct, and a throughput cost.
+
+FOLLOW-UP: read tomorrow's article. Do not re-run Franklin a fourth time.
