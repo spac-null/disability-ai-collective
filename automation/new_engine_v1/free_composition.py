@@ -432,6 +432,71 @@ def source_attribution_block(pack: dict) -> str:
     return "\n".join(L)
 
 
+def narrower_scope_block(pack: dict) -> str:
+    """The narrower subject research named for the anchor, rendered as a constraint.
+
+    WHAT WAS DISCONNECTED, and for how long. `scope()` asks of every anchor for "a narrower
+    subject the anchor actually supports", stores it on the pack, and the sufficiency
+    assessment turns a non-empty answer into the NARROW verdict: the material cleared the
+    thresholds, and a narrower subject was named. An external read-only
+    audit of 53d27df traced the field end to end. research.py writes it. Nothing reads it
+    -- not the planned path, not the free path, not either Writer. `runner` reads the
+    verdict only to separate HOLD from proceed, so NARROW has always proceeded exactly like
+    ARTICLE and the narrowing was dropped at the stage boundary. This is the thirteenth
+    instance of the same pattern found in two days: computed, persisted, never reached.
+
+    THE COST, ON THE ONE RUN WHERE IT WAS MEASURED.
+    production-20260930T085346Z-54ca6694 was narrowed to whether named Inuit contributors
+    appear in the formal scientific and legal record or only in narrative acknowledgement.
+    Its 1,427-word draft does not examine that question, and it held at Reader after nine
+    model calls. The hold is not attributable to this omission alone, and no claim is made
+    here that rendering the scope would have passed it.
+
+    THIS IS A CONSTRAINT, NOT EVIDENCE. It licenses no fact and adds none: it says which of
+    the already-licensed facts the article may be ABOUT. The broad subject is quoted beside
+    it so the Writer can see what it is being narrowed from, rather than receiving a
+    substitute subject with no account of where it came from -- the same reason
+    `source_attribution_block` shows a text's identity instead of leaving it inferable.
+
+    Rendered on a non-empty `narrower_subject` rather than on the verdict string. The two
+    agree wherever composition can see them, because the only verdict that carries a
+    narrower subject without being NARROW is HOLD, and HOLD never reaches a Writer.
+
+    THE WORDING IS EXACT BECAUSE AN ADVERSARY CAUGHT IT NOT BEING. The first draft of this
+    block told the Writer that research "read the anchor and found it carries a narrower
+    subject", and recorded the verdict "for that reason". Both overstate. `scope_prompt`
+    asks one model call, on the anchor text alone and before any source is fetched, for the
+    subject AND the narrower subject together (research.py:864-882); `scope()` parses the
+    reply without checking either against anything; and the verdict flip is mechanical on
+    non-emptiness (research.py:1265-1267). So the narrower subject is a judgement, not a
+    finding. It is rendered anyway, and as a constraint, because the BROAD subject comes
+    from the very same reply and the Writer is already told to write about that -- the two
+    are equally grounded, and preferring the broad one is a preference, not a safeguard.
+    What changed is that the prompt now says where both came from. A prompt that
+    misdescribes the provenance of its own content is this project's most expensive
+    recurring defect.
+    """
+    narrower = " ".join(str((pack or {}).get("narrower_subject") or "").split())
+    if not narrower:
+        return ""
+    verdict = " ".join(str(((pack or {}).get("sufficiency") or {})
+                           .get("verdict") or "").split())
+    broad = " ".join(str((pack or {}).get("subject") or "").split())
+    head = ("THE SCOPE THIS ARTICLE MUST KEEP. When research scoped this anchor it named "
+            "two subjects in one reading: the one above, and a narrower one it judged the "
+            "anchor actually supports. Both are that reading's judgement of the anchor, "
+            "made before any source was fetched")
+    if verdict:
+        head += (", and the narrower one is why the sufficiency verdict is %s"
+                 % verdict[:40])
+    L = [head + ". Write about the narrower subject:", "  " + narrower[:400]]
+    if broad:
+        L += ["", "  Narrowed from, for your orientation only: " + broad[:300]]
+    L.append("  Facts that bear only on the broader subject are context. They are not what "
+             "this article is about, and the article does not owe them a place.")
+    return "\n".join(L)
+
+
 def free_writer_system() -> str:
     """The system prompt. Lens first, then craft corpus, then reader contract, then rule.
 
@@ -481,11 +546,28 @@ def free_writer_user(instrument: dict | None, ledger: dict, pack: dict | None = 
     saw only those. The measurement that produced this module used all 77 and the article
     was better for it. Permission is not instruction: the Writer is told plainly that most
     propositions will not earn their place.
+
+    THE SUBJECT CAN ARRIVE NARROWED. Research may find the anchor supports only a narrower
+    subject than the run is named after. `narrower_scope_block` renders that finding
+    directly under the subject it constrains, so the broad subject is never read without
+    it.
     """
     q = instrument or {}
     L = []
     if subject:
         L += ["THE SUBJECT THIS RUN IS ABOUT:", "  " + subject, ""]
+    # Directly under the subject it narrows, so the Writer never reads the broad subject
+    # without its constraint. NOTE, because the rendered bytes say so and a comment
+    # claiming otherwise would be the exact methodological error this module was written
+    # to avoid: the EDITORIAL INTENT header inserted below goes to index 0 and has no
+    # terminator, so this block IS rendered under it, as `source_attribution_block`
+    # already is. Harmless here -- a scope constraint is not evidence and asserts no fact,
+    # which is what that header says. Not harmless for the source block; see
+    # .claude/free-path-disconnection-audit-2026-09-30.md, unfixed and deliberately not
+    # bundled into this change.
+    scope_block = narrower_scope_block(pack or {})
+    if scope_block:
+        L += [scope_block, ""]
     if q.get("question"):
         L += ["THE QUESTION THIS RUN IS FOR (written by the owner, before any evidence "
               "existed):", "  " + str(q["question"]), ""]

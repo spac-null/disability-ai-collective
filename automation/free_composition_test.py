@@ -1140,6 +1140,137 @@ def test_safety_is_given_this_paths_own_licensing() -> None:
           bool(leaky["violations"]), leaky)
 
 
+# ── 12. the narrower subject reaches the Writer ───────────────────────────────
+# A DISCONNECTION TEST, not a rendering test. `narrower_subject` was computed by research
+# and read by nothing for the life of both engines; an external read-only audit of 53d27df
+# found it. What these assert is the CONNECTION -- that the key research writes is the key
+# composition reads, and that it survives into the bytes the provider is handed. A test
+# that only exercised `narrower_scope_block` directly would have passed all along, on every
+# day the field reached no Writer at all.
+NARROWER = ("whether named contributors appear in the formal scientific record or only "
+            "in narrative acknowledgement")
+
+
+def test_a_narrower_subject_reaches_the_writers_bytes() -> None:
+    narrowed = dict(PACK, narrower_subject=NARROWER,
+                    sufficiency={"verdict": "NARROW", "reasons": [],
+                                 "what_is_missing": ["material supports the narrower "
+                                                     "subject: %s" % NARROWER]})
+    user = FC.free_writer_user(INSTRUMENT, LEDGER, narrowed, PACK["subject"], RELATIONS)
+    check("the narrower subject is in the Writer's user prompt", NARROWER in user)
+    check("the verdict that carried it is named too", "NARROW" in user)
+    check("the broad subject it was narrowed from is still shown",
+          PACK["subject"] in user)
+
+    # PLACEMENT IS THE POINT. A constraint the Writer meets after it has read the whole
+    # Ledger is a constraint it has already spent its attention against.
+    # `find`, not `index`: when the connection is severed these must REPORT, not raise.
+    # A suite that dies on the first symptom hides every check after it, which is the
+    # opposite of what this file is for.
+    i_nar, i_ev = user.find(NARROWER), user.find("THE FROZEN EVIDENCE")
+    i_sub = user.find(PACK["subject"])
+    check("the constraint precedes the evidence it constrains",
+          0 <= i_nar < i_ev, (i_nar, i_ev))
+    check("and it sits directly under the subject, not further down",
+          0 <= i_sub < i_nar and i_nar - i_sub < 600, (i_sub, i_nar))
+
+    # IT IS SCOPE, NOT A FACT. Nothing here may become assertable: the narrower subject is
+    # not a proposition, carries no fact id, and is not inside the frozen evidence listing.
+    _, _, evidence = user.partition("THE FROZEN EVIDENCE")
+    check("the narrower subject is not smuggled into the evidence listing",
+          NARROWER not in evidence)
+    block = FC.narrower_scope_block(narrowed)
+    check("the scope block asserts no fact id",
+          not re.search(r"\bF\d\d\b", block), block)
+
+    # AND IT DOES NOT BREAK THE CONTRACT THE WHOLE PATH RESTS ON.
+    check("the scope constraint carries no planning marker",
+          FC.writer_inputs_are_plan_free(FC.free_writer_system(), user) == [],
+          FC.writer_inputs_are_plan_free(FC.free_writer_system(), user))
+
+    # THE PROVENANCE SENTENCE MUST NOT CLAIM MORE THAN THE CODE DOES. `scope()` produces
+    # the broad subject and the narrower one in a single model reply, on the anchor alone,
+    # before any source is fetched, and validates neither. An adversarial review caught an
+    # earlier draft of this block asserting research had "found" the narrowing. These fail
+    # the moment that overstatement comes back.
+    for overstated in ("found it carries", "for that reason", "the material supports",
+                       "verified", "confirmed"):
+        check("the block does not claim research %r" % overstated,
+              overstated not in block, block[:200])
+    check("it says when the judgement was made",
+          "before any source was fetched" in block, block[:200])
+
+
+def test_an_unnarrowed_pack_adds_nothing_to_the_prompt() -> None:
+    """The empty case must add nothing -- not a heading, not a blank line.
+
+    Most runs carry no narrower subject. If this block changed their prompt at all it would
+    be an unannounced change to every free composition, measured against nothing.
+
+    NAMED FOR WHAT IT ACTUALLY CHECKS. An adversarial review pointed out that its first
+    name -- "byte identical to before" -- promised a comparison against the pre-change
+    prompt, which this cannot make: it compares two outputs of the CURRENT function. The
+    guarantee it really gives is narrower and worth having on its own.
+    """
+    plain = FC.free_writer_user(INSTRUMENT, LEDGER, PACK, PACK["subject"], RELATIONS)
+    empty = FC.free_writer_user(INSTRUMENT, LEDGER, dict(PACK, narrower_subject=""),
+                                PACK["subject"], RELATIONS)
+    check("an empty narrower_subject renders nothing at all", plain == empty)
+    check("and no scope heading appears", "THE SCOPE THIS ARTICLE MUST KEEP" not in plain)
+    check("a whitespace-only narrower_subject is treated as empty",
+          FC.narrower_scope_block(dict(PACK, narrower_subject="   \n ")) == "")
+    check("a pack with no sufficiency block still renders the constraint",
+          NARROWER in FC.narrower_scope_block({"narrower_subject": NARROWER}))
+
+
+def test_the_key_composition_reads_is_the_key_research_writes() -> None:
+    """The disconnection guard. Rename the field in one place and this fails.
+
+    Research is the producer, the stub pack is the shape the contract tests bind to, and
+    free composition is the consumer. All three must spell it the same way; for two days it
+    was spelled identically in all three and read by none of them, which is why the check
+    below is on the CONSUMER reading it, not on the string existing.
+    """
+    research_src = (HERE / "new_engine_v1" / "research.py").read_text(encoding="utf-8")
+    free_src = (HERE / "new_engine_v1" / "free_composition.py").read_text(encoding="utf-8")
+    fixture_src = (HERE / "research_pack_fixture.py").read_text(encoding="utf-8")
+    for name, src in (("research", research_src), ("the stub pack", fixture_src),
+                      ("free composition", free_src)):
+        check("%s spells the field 'narrower_subject'" % name,
+              '"narrower_subject"' in src)
+    check("free composition READS it rather than only naming it",
+          'get("narrower_subject")' in free_src, "the consumer does not read the key")
+    # The verdict itself is still research's to set; composition renders, never decides.
+    block = FC.narrower_scope_block({"narrower_subject": NARROWER,
+                                     "sufficiency": {"verdict": "NARROW"}})
+    check("composition does not invent a verdict it was not given",
+          "NARROW" not in FC.narrower_scope_block({"narrower_subject": NARROWER}))
+    check("but renders the one it was given", "NARROW" in block)
+
+
+def test_the_narrowing_survives_the_whole_free_ladder() -> None:
+    """End to end, on the bytes the provider is actually handed.
+
+    `_run` reads the module-level PACK, so the narrowed pack is installed for the duration
+    of the run and removed afterwards. Source-code grep is not sufficient here and this
+    project has already paid for believing it was.
+    """
+    global PACK
+    original = PACK
+    try:
+        PACK = dict(original, narrower_subject=NARROWER,
+                    sufficiency={"verdict": "NARROW", "reasons": [],
+                                 "what_is_missing": []})
+        res, prov, _n = _run([PASS_G])
+    finally:
+        PACK = original
+    user = prov.calls[0]["user"]
+    check("the narrowing reached the live Writer call", NARROWER in user, user[:300])
+    check("the run still completed", res["status"] == CP.PASS, res.get("failure_reason"))
+    check("and the runtime bytes are still plan-free",
+          FC.writer_inputs_are_plan_free(prov.calls[0]["system"], user) == [])
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
