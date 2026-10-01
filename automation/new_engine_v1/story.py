@@ -2378,9 +2378,57 @@ def _sentences_of(text: str) -> list:
 
 def negative_shape_of(text: str) -> tuple:
     """(kind, pattern) if this ONE string's shape asserts an absence, exclusivity or
-    first/last -- otherwise (None, None). The single owner of "is this negative-shaped",
-    so a permission decision and the audit that enforces it can never use two different
-    definitions of a negative."""
+    first/last -- otherwise (None, None).
+
+    WHAT THIS IS. Seventeen hand-written patterns for the shapes a WRITER reaches for when
+    it over-claims an absence in finished prose. It exists so that a permission decision
+    and the audit that enforces it do not use two different definitions of a negative --
+    which the FREE path's permission list and `negative_admission_audit` now satisfy, and
+    the planned path's `composition.negative_permissions` still does not: it requires both
+    proposition and span to shape-match and so withholds shape-only facts the audit admits.
+
+    WHAT THIS IS NOT, and the distinction cost two wrong diagnoses in one night. It is not
+    a test of whether a proposition STATES an absence, and its recall on ordinary English
+    is poor. Measured 2026-09-30, it matches none of these:
+
+        The survey did not collect housing status.
+        No records exist of the 1974 inspection.
+        The survey excludes unhoused people.
+        The dataset does not measure overcrowding.
+        The register contains no entry for the workshop.
+        Access to the basement is not step free.
+        The statement was never published in the journal.
+        It is the only such programme in the country.
+        No data on ethnicity were collected.
+        The committee did not consider the objection.
+        Lung function equations were not validated for this group.
+        The report omits the wiring.
+        It was never built.
+
+    That last one was offered as an obvious positive while writing the test for this and
+    turned out to be a miss: the pattern covers `never happened|existed|been|occurred|
+    tested` and not `never built`. The boundary is narrower than the name reads.
+
+    SO IT MAY NOT BE USED TO COUNT WHAT A LEDGER HOLDS. "1.18% of propositions are
+    negative-shaped" is a statement about these seventeen patterns and not about the
+    evidence: across the 120 retained Ledgers the freeze typed 505 facts negative, this
+    matched 128 facts in total, and only 85 of those were the same facts -- so 420 typed
+    absences went unseen by it, and 37 Ledgers that hold one would be reported as holding
+    none. A conclusion drawn that way sends the fix upstream of a stage that was working.
+
+    USE `claim_type` INSTEAD, knowing what it is. It is the label the freeze assigned and
+    the one Safety's own pool selects on, so it is authoritative for what the ENGINE will
+    treat as a licensable absence. It is not a validated reading of the proposition:
+    `ledger.check_ledger` applies evidence rules conditional on the label and does not
+    reject a negative proposition typed POSITIVE_FACT, nor establish that a typed
+    negative's span supports it. That second gap is a known open item. Between a
+    model-assigned label the gates agree on and seventeen regexes they do not, the label
+    is the better instrument -- not a good one.
+
+    Deliberately not widened here. Raising its recall would change what
+    `negative_admission_audit` treats as a claim needing a licence -- a factual gate --
+    and that is its own measured change, not a tidy-up attached to a docstring.
+    """
     for pat, kind in NEGATIVE_SHAPES:
         if re.search(pat, text or "", re.I):
             return kind, pat
