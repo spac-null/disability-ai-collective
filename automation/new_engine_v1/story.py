@@ -1904,6 +1904,27 @@ SENSORY_RISK = ("pink", "red", "blue", "green", "yellow", "white", "black", "gre
                 "loud", "quiet", "silent", "bright", "dark", "smooth", "rough", "soft",
                 "hard", "sweet", "bitter", "salty", "sour", "fragrant", "acrid")
 
+# THE SUBSET THAT ROUTINELY MEANS SOMETHING ELSE. A bare word cannot decide its own sense,
+# and these carry an ordinary abstract reading in exactly the register this publication
+# writes in: a warm welcome, a cold call, dry humour, hard evidence, soft power, a dark
+# period, a bitter dispute, a rough estimate, a bright student, sour relations, a loud
+# protest, a quiet period, a smooth transition, a sweet deal, a silent majority.
+#
+# WHAT IS DELIBERATELY NOT IN HERE: every colour, and damp, salty, fragrant and acrid.
+# A colour is the "pink incident" -- a property the evidence never mentions, asserted as
+# fact -- and "the pink form" has no abstract reading that would excuse it. Those stay
+# hard, and an invented colour still stops the run.
+#
+# THIS IS A JUDGEMENT ABOUT THIRTY-TWO WORDS, made once, in one place, and reviewable as
+# a list rather than inferred at runtime. It was made after a real article that had passed
+# every factual check was stopped by `rough` in "there is a rough check on whether an
+# assessment got someone's walking right"
+# (production-20260930T205819Z-3940d315). Adding a word here widens what a Writer may
+# print unlicensed; removing one narrows it back. Neither is a tidy-up.
+SENSORY_ABSTRACTABLE = ("warm", "cold", "cool", "hot", "dry", "loud", "quiet", "silent",
+                        "bright", "dark", "smooth", "rough", "soft", "hard", "sweet",
+                        "bitter", "sour")
+
 
 def _stem(w: str) -> str:
     for suf in ("edly", "ings", "ing", "edness", "ers", "er", "est", "ed", "es", "s"):

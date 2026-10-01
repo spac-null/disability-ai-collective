@@ -1713,6 +1713,145 @@ def test_a_malformed_reply_from_the_transport_is_held_too() -> None:
           not CP._is_subscription_limit(out_err("not JSON")))
 
 
+# ── 17. a bare word does not get to decide its own sense ─────────────────────
+# WHAT WAS WRONG. Safety's factual-surface audit has three lexical channels. Scene and
+# spatial tokens were already advisory, on the module's own argument that "a bare word
+# cannot decide its own sense: 'upper limit' is a range, not a storey". Sensory tokens
+# stayed HARD, on the argument that "a colour the evidence never mentions is the 'pink'
+# incident, and there is no abstract reading of it".
+#
+# That is true of an invented colour and false of most of SENSORY_RISK, which is 32
+# hand-written words including warm, cold, dry, hard, soft, bright, dark, rough, bitter,
+# sour, loud and quiet -- every one of which has an ordinary abstract sense in this
+# publication's register.
+#
+# MEASURED. production-20260930T205819Z-3940d315, the PIP mobility article, had passed
+# every factual check and was stopped at Safety by one token, sensory=['rough'], from
+# "There is a ROUGH check on whether an assessment got someone's walking right, and it is
+# the appeal."
+SENSORY_IDIOM = ("There is a rough check on whether an assessment got someone's walking "
+                 "right, and it is the appeal.")
+
+
+def _surface_of(article):
+    rec = FC.licensing_record(LEDGER, RELATIONS)
+    return CP.safety_audit(article, article, rec, {}, LEDGER, {}, None,
+                           {"S002": ["F03"]}, package=None)
+
+
+def test_a_sensory_word_in_its_abstract_sense_does_not_block() -> None:
+    art = ARTICLE.rstrip() + "\n\n" + SENSORY_IDIOM + "\n"
+    sa = _surface_of(art)
+    blocking = " ".join(sa.get("blocking") or [])
+    check("the article is not blocked for the word 'rough'",
+          "NEW_UNSUPPORTED_FACTS" not in blocking, blocking[:200])
+    check("and no hold message names a sensory channel",
+          "sensory=" not in blocking, blocking[:200])
+
+
+def test_the_sensory_token_still_reaches_the_reader() -> None:
+    """Advisory is not a pass. The judgement moves; it does not disappear."""
+    art = ARTICLE.rstrip() + "\n\n" + SENSORY_IDIOM + "\n"
+    sa = _surface_of(art)
+    adv = sa.get("advisories") or []
+    hit = [a for a in adv if a.get("token") == "rough"]
+    check("the token is handed on as an advisory", bool(hit),
+          [(a.get("kind"), a.get("token")) for a in adv])
+    if hit:
+        a = hit[0]
+        check("it is labelled as sensory", a.get("kind") == CP.SENSORY_ADVISORY,
+              a.get("kind"))
+        check("it names the rule that matched", a.get("rule") == "story.SENSORY_RISK",
+              a.get("rule"))
+        check("it carries the sentence a reader needs to settle it",
+              "rough check" in (a.get("sentence") or ""), a.get("sentence"))
+        check("and it says why the machine declined to decide",
+              bool(a.get("why_not_hard")), a.get("why_not_hard"))
+    # And the Reader is actually shown it, in the bytes.
+    block = CP.advisory_block(adv)
+    check("the advisory reaches the Reader's prompt", "rough" in block, block[:200])
+    check("presented as something to settle, not as a verdict",
+          "Not findings" in block and "Settle each one as a reader" in block,
+          block[:160])
+
+
+def test_an_invented_colour_still_stops_the_run() -> None:
+    """THE SCENARIO THAT KILLED THE FIRST VERSION OF THIS CHANGE.
+
+    A wholesale move to advisory let a Writer print "the form was pink" with no such fact
+    anywhere: Safety recorded it and passed, and because `_pkg_licensed` treats the final
+    article as licensing material, a headline repeating it would have passed too. An
+    adversary found that route. Colours stay hard, and this is the check that says so.
+    """
+    for colour in ("pink", "golden", "brown"):
+        art = ARTICLE.rstrip() + "\n\nThe form itself was %s.\n" % colour
+        sa = _surface_of(art)
+        blocking = " ".join(sa.get("blocking") or [])
+        check("an invented %r still blocks" % colour,
+              "NEW_UNSUPPORTED_FACTS" in blocking and colour in blocking, blocking[:200])
+        check("and the hold names the sensory bucket, which materiality parses",
+              "sensory=" in blocking, blocking[:200])
+    # The split is a list, not a heuristic, so it can be read and argued with.
+    from new_engine_v1 import story as _ST
+    check("no colour was moved to the abstractable set",
+          not ({"pink", "red", "blue", "green", "yellow", "white", "black", "grey",
+                "gray", "brown", "golden"} & set(_ST.SENSORY_ABSTRACTABLE)),
+          sorted(_ST.SENSORY_ABSTRACTABLE))
+    check("and every abstractable word is still a sensory word",
+          set(_ST.SENSORY_ABSTRACTABLE) <= set(_ST.SENSORY_RISK),
+          sorted(set(_ST.SENSORY_ABSTRACTABLE) - set(_ST.SENSORY_RISK)))
+
+
+def test_numbers_and_entities_are_still_hard() -> None:
+    """The channels where there is no abstract reading keep blocking."""
+    art = ARTICLE.rstrip() + "\n\nThe register recorded 998,877 separate entries.\n"
+    sa = _surface_of(art)
+    blocking = " ".join(sa.get("blocking") or [])
+    check("an invented number still blocks",
+          "NEW_UNSUPPORTED_FACTS" in blocking and "998877" in blocking.replace(",", ""),
+          blocking[:220])
+    art2 = ARTICLE.rstrip() + "\n\nThe Fitzwilliam Commission said nothing about it.\n"
+    sa2 = _surface_of(art2)
+    b2 = " ".join(sa2.get("blocking") or [])
+    check("an invented named entity still blocks",
+          "NEW_UNSUPPORTED_FACTS" in b2 and "Fitzwilliam" in b2, b2[:220])
+
+
+def test_a_sensory_advisory_is_never_crowded_out_of_the_reader_prompt() -> None:
+    """`advisory_block` renders only the first twelve.
+
+    A scene or spatial token has always been advisory, so losing one to the cap costs
+    what it always cost. A sensory one was a HARD refusal until this change, so losing it
+    would silently undo the refusal rather than relocate it -- which is the whole bargain.
+    An adversary caught them being appended last.
+    """
+    many = [{"kind": CP.SCENE_ADVISORY, "token": "t%d" % i, "sentence": "s",
+             "rule": "r", "why_not_hard": "w"} for i in range(20)]
+    sens = {"kind": CP.SENSORY_ADVISORY, "token": "rough", "sentence": SENSORY_IDIOM,
+            "rule": "story.SENSORY_RISK", "why_not_hard": "w"}
+    block = CP.advisory_block([sens] + many)
+    check("the sensory token survives a crowded advisory list",
+          "rough" in block, block[:200])
+    # And the real path puts them first rather than relying on there being room.
+    src = (HERE / "new_engine_v1" / "composition.py").read_text(encoding="utf-8")
+    check("sensory advisories are prepended, not appended",
+          "advisories[:0] = [{" in src,
+          "they are appended again; the cap can hide them")
+
+
+def test_the_package_keeps_sensory_hard() -> None:
+    """A five-line title has no room for an idiom and is public prose.
+
+    The package recomputes its own `hard_factual_ok`, so this narrowing falls out rather
+    than being argued for separately -- but it is asserted here so a later tidy-up cannot
+    quietly extend the article's relaxation to the headline.
+    """
+    src = (HERE / "new_engine_v1" / "composition.py").read_text(encoding="utf-8")
+    check("the package surface still counts sensory tokens as hard",
+          'ps["hard_factual_ok"] = not (ents or nums or sens)' in src,
+          "the package path changed; re-check whether a title may now invent a colour")
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
