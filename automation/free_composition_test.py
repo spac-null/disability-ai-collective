@@ -1391,6 +1391,84 @@ def test_a_ledger_with_no_negation_still_says_so() -> None:
               "THE ABSENCES YOU MAY CLAIM: NONE"))
 
 
+# ── 14. the ruler, and what it may not be used to measure ────────────────────
+# Two diagnoses of the absence problem were wrong on 2026-09-30 because both measured with
+# `negative_shape_of`, which answers a narrower question than its name suggests. The
+# checks below pin that boundary so the next person reads it before using the number.
+MISSED_BY_THE_MATCHER = (
+    "The survey did not collect housing status.",
+    "No records exist of the 1974 inspection.",
+    "The survey excludes unhoused people.",
+    "The dataset does not measure overcrowding.",
+    "The register contains no entry for the workshop.",
+    "Access to the basement is not step free.",
+    "The statement was never published in the journal.",
+    "No data on ethnicity were collected.",
+    "The committee did not consider the objection.",
+    "Lung function equations were not validated for this group.",
+    "The report omits the wiring.",
+    # Kept identical to the list in the docstring, deliberately: an adversary noticed the
+    # two had drifted apart, and a documented boundary that its own test does not cover is
+    # how the boundary stops being true without anyone noticing.
+    "It is the only such programme in the country.",
+    # Added after writing this test, because it was offered as an OBVIOUS positive and
+    # turned out to be a miss: the pattern covers `never happened|existed|been|occurred|
+    # tested` and not `never built`. The boundary is narrower than it reads.
+    "It was never built.",
+)
+
+
+def test_the_shape_matcher_is_not_a_classifier_for_propositions() -> None:
+    """Its recall on ordinary English is poor, and that is recorded rather than assumed.
+
+    IF THIS FAILS BECAUSE SOMEONE WIDENED THE MATCHER, that is a factual-gate change, not
+    a tidy-up: `negative_admission_audit` uses the same function to decide which article
+    sentences need a licence, so widening it makes the gate refuse more prose. Update this
+    list deliberately, and re-measure anything that counted with it.
+    """
+    from new_engine_v1 import story as ST
+    missed = [s for s in MISSED_BY_THE_MATCHER if ST.negative_shape_of(s)[0] is None]
+    check("plainly negative propositions it does not match are still unmatched",
+          len(missed) == len(MISSED_BY_THE_MATCHER),
+          [s for s in MISSED_BY_THE_MATCHER if s not in missed])
+    # And it does match what it was built for: a Writer over-claiming in finished prose.
+    # Drawn from the patterns themselves, not from intuition about what "obviously"
+    # reads as an absence -- intuition got "It was never built" wrong.
+    for over_claim in ("There is no evidence that the unit was tested.",
+                       "It was not built.",
+                       "It never existed.",
+                       "Nothing in the record describes the ward."):
+        check("it still catches the over-claim shape it exists for: %r" % over_claim[:34],
+              ST.negative_shape_of(over_claim)[0] is not None)
+
+
+def test_the_docstring_says_which_question_it_answers() -> None:
+    """A function whose name reads as a classifier must say in its own text that it is
+    not one -- the next person to measure with it will read the docstring, not this."""
+    from new_engine_v1 import story as ST
+    doc = (ST.negative_shape_of.__doc__ or "").lower()
+    for phrase in ("what this is not", "claim_type", "may not be used to count",
+                   "not a validated reading"):
+        check("the docstring carries %r" % phrase, phrase in doc, doc[:140])
+    # EVERY SENTENCE THE DOCSTRING CLAIMS IS A MISS MUST ACTUALLY BE ONE. A documented
+    # boundary nobody checks is how the 1.1% figure survived a month.
+    for s in MISSED_BY_THE_MATCHER:
+        check("the docstring's own example is listed in it: %r" % s[:34],
+              s.lower() in doc, doc[:0])
+
+
+def test_the_ledgers_own_type_is_what_counts_an_absence() -> None:
+    """The authority, stated as a check: a typed absence the matcher misses is still an
+    absence the Ledger holds, and the permission list proves it by offering it."""
+    from new_engine_v1 import story as ST
+    led = {"F01": {"proposition": MISSED_BY_THE_MATCHER[0], "claim_type": "ABSENCE"}}
+    check("the matcher does not see it",
+          ST.negative_shape_of(MISSED_BY_THE_MATCHER[0])[0] is None)
+    block = FC.negative_permissions_block(led)
+    check("the Ledger still licenses it, by its type",
+          "F01" in block and "NONE" not in block.split("\n")[0], block[:160])
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
