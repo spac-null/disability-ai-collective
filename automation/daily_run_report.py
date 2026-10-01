@@ -343,7 +343,40 @@ FAILURE_HELP = {
     "CLAUDE_SUBSCRIPTION_LIMIT":
         ("The Claude subscription hit its usage limit.",
          "No action: it resets on its own. Tomorrow's 09:00 run should proceed."),
+    "CLAUDE_SUBSCRIPTION_TIMEOUT":
+        ("A model call ran past its timeout and the run was abandoned.",
+         "Usually latency or a limit under load rather than a fault; the CLI typically\n"
+         "answers normally minutes later. The provider now retries once before giving up,\n"
+         "so seeing this means both attempts timed out."),
 }
+
+# KEYED ON THE EXCEPTION CLASS TOO, because a crash that writes no run_status leaves only
+# a traceback, and a traceback says `SubscriptionTimeout`, never the engine's own
+# CLAUDE_SUBSCRIPTION_TIMEOUT code. Without these aliases the alert names the cause and
+# then offers no help for it -- which is how the 2026-09-30 message came to be true and
+# useless at the same time. Aliased rather than imported: this reporter must keep working
+# when the provider module is the thing that is broken.
+FAILURE_HELP.update({
+    "SubscriptionTimeout": FAILURE_HELP["CLAUDE_SUBSCRIPTION_TIMEOUT"],
+    "SubscriptionLimit": FAILURE_HELP["CLAUDE_SUBSCRIPTION_LIMIT"],
+    "SubscriptionAuthFailure": FAILURE_HELP["CLAUDE_SUBSCRIPTION_AUTH_FAILURE"],
+})
+
+# The last line of a Python traceback: `package.module.ClassName: message`. When the
+# orchestrator dies before writing a run_status block, this is the only statement of cause
+# anywhere in the log, and it is the sentence a person actually needs.
+#
+# `[^\S\n]*` and not `\s*`, because `\s` crosses newlines: `KeyError:` with the message on
+# no line of its own would otherwise swallow the NEXT log line as its message, and the
+# next line here is the wrapper's own "ERROR: orchestrator failed".
+_EXC_LINE = re.compile(
+    r"^([A-Za-z_][\w.]*(?:Error|Exception|Timeout|Limit|Interrupt|Failure|Exit))"
+    r"[^\S\n]*:[^\S\n]*(.+)$", re.M)
+
+# A line is only read as a cause if a traceback actually began above it. Without this the
+# pattern matches any column-zero "SomethingTimeout: ..." in the log -- including one from
+# a failure that was recovered -- and reports it as the cause of this crash.
+_TRACEBACK_START = "Traceback (most recent call last)"
 
 
 def last_failure_from_log(day):
@@ -365,10 +398,37 @@ def last_failure_from_log(day):
         re.escape(day.strftime("[%Y-%m-%d")) + r"[^\]]*\] ERROR: orchestrator failed", text)]
     if not marks:
         return None
-    head = text[:marks[-1]]
+    # BOUNDED AT BOTH ENDS, TO THIS DAY. The end was already anchored on the day's ERROR
+    # line; the start was position zero, so everything searched below could come from any
+    # earlier day in the log. An adversary pointed out the consequence: a crash today with
+    # no traceback of its own would be reported with YESTERDAY's exception, and a crash
+    # before any run_status was written would be explained by an older run's status block.
+    # Both would be confidently wrong, which is the failure this whole change exists to
+    # remove rather than relocate.
+    day_start = text.find(day.strftime("[%Y-%m-%d"))
+    head = text[(day_start if day_start >= 0 else 0):marks[-1]]
     blocks = list(re.finditer(r'"run_status":\s*\{(.*?)\}', head, re.S))
     if not blocks:
-        return None
+        # A FAILURE WITH NO RUN_STATUS IS STILL A FAILURE. Returning None here made the
+        # caller say "no orchestrator failure recorded in automation.log" -- one second
+        # after the wrapper had logged exactly that, with a full traceback above it. On
+        # 2026-09-30 the orchestrator died at the Ledger freeze before any run_status was
+        # written, and the alert sent the reader to cron while the provider was the cause.
+        #
+        # "No run_status block" and "no failure" are different facts about the world and
+        # must not be reported as one. The traceback's last line is the cause the log does
+        # carry, so it is lifted out and named.
+        # Only the text after the last traceback header, so a recovered failure earlier in
+        # the day cannot be read as the cause of this one.
+        tb = head.rfind(_TRACEBACK_START)
+        exc = list(_EXC_LINE.finditer(head[tb:])) if tb >= 0 else []
+        if exc:
+            cls, msg = exc[-1].group(1), exc[-1].group(2).strip()
+            short = cls.rsplit(".", 1)[-1]
+            return ("FAILURE", "", "%s: %s" % (short, msg[:200]), short)
+        return ("FAILURE", "",
+                "the orchestrator failed and wrote no run_status and no traceback; "
+                "read automation.log around the ERROR line", "")
     blk = blocks[-1].group(1)
     get = lambda k: (re.search(r'"%s":\s*"([^"]*)"' % k, blk) or [None, ""])[1]
     reasons = re.findall(r'"reason_code":\s*"([^"]+)"', head)
@@ -382,11 +442,24 @@ def failure_lines(day):
     """Explanatory lines for a failure with no run directory, most useful first."""
     f = last_failure_from_log(day)
     if not f:
+        # Reached only when the log carries no "ERROR: orchestrator failed" line for the
+        # day at all -- which really does mean the job never ran or never finished.
         return ["No production run directory for today, and no orchestrator failure "
                 "recorded in automation.log. The 09:00 job may not have started."]
     status, stage, detail, reason = f
     out = []
-    key = next((k for k in FAILURE_HELP if k in (detail or "") or k in (reason or "")), None)
+    # EXACT FIRST, SUBSTRING ONLY AFTER. `reason` from the traceback path is a bare class
+    # name, and matching aliases as substrings against free-form detail picks the wrong
+    # advice: "PermissionError: failed while handling SubscriptionTimeout" would be
+    # answered with timeout advice, hiding the permission error. An adversary found it.
+    key = reason if reason in FAILURE_HELP else None
+    if key is None and not reason:
+        # Substring scanning ONLY when nothing authoritative was recorded. When `reason`
+        # is known -- an engine reason_code, or an exception class from the traceback --
+        # it is the answer, and scanning free-form detail on top of it is how
+        # "PermissionError: failed while handling SubscriptionTimeout" came to be
+        # answered with timeout advice.
+        key = next((k for k in FAILURE_HELP if k in (detail or "")), None)
     if key:
         what, how = FAILURE_HELP[key]
         out.append(what)
