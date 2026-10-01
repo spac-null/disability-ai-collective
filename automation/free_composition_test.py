@@ -1469,6 +1469,131 @@ def test_the_ledgers_own_type_is_what_counts_an_absence() -> None:
           "F01" in block and "NONE" not in block.split("\n")[0], block[:160])
 
 
+# ── 15. the measurement has to still be there afterwards ─────────────────────
+# `prose_density` is the only instrument that has separated the drafts the owner liked
+# from the ones he did not. It is computed at the Writer and read by no stage, which is
+# exactly the kind of thing that stops being written without anyone noticing -- this
+# session found three fields in that state before lunch.
+#
+# IT IS NOT IN COMPOSITION_RESULT.json, AND THAT IS DELIBERATE, NOT A LOSS.
+# `composition.persist` writes that file as {k: v for k, v in result if k != "detail"},
+# so every per-stage detail is excluded by design. The density lives in
+# FREE_WRITER_CALL_IDENTITY.json. Looking in the obvious file and finding an empty
+# `detail` is what led me to report it missing earlier today; the check below is written
+# against the file that actually holds it.
+
+
+def _identity_of(tmp, expect_one=True):
+    import json as _json
+    import pathlib as _pl
+    hits = list(_pl.Path(tmp).rglob("FREE_WRITER_CALL_IDENTITY.json"))
+    if expect_one:
+        # One run, one identity file. rglob returns an arbitrary order, so reading the
+        # first of several would validate a file that may not be this run's.
+        check("exactly one writer identity was written", len(hits) == 1, len(hits))
+    if not hits:
+        return None
+    return _json.loads(hits[0].read_text(encoding="utf-8"))
+
+
+def _writer_draft_of(tmp):
+    """The text the density was measured on -- the Writer's DRAFT, not the final.
+
+    `prose_density` runs inside `write_article_free`, so it describes what the Writer
+    produced. Comparing it against the repaired final would be comparing it to text it
+    never saw; the first attempt at this check did exactly that, against a file this
+    harness does not even write.
+    """
+    import pathlib as _pl
+    hits = list(_pl.Path(tmp).rglob("WRITER_DRAFT.md"))
+    return hits[0].read_text(encoding="utf-8") if hits else ""
+
+
+def test_density_survives_a_real_grounding_hold() -> None:
+    """A HOLD is the only outcome this engine has ever produced. If the measurement does
+    not survive one, it does not exist.
+
+    NAMED FOR THE PATH IT ACTUALLY TAKES. The first version passed [HOLD_G, HOLD_G] with
+    no repair_reply and claimed to be a GROUNDING_HOLD; an adversary pointed out the
+    repair provider then returns empty text, `_ask` raises CompositionHold with
+    INVALID_JSON_REPLY, and the ladder leaves through its exception handler instead --
+    so the second HOLD_G was never consumed and the ordinary post-recheck grounding hold
+    was never exercised. Supplying the repair reply makes it the path the name claims.
+    """
+    import tempfile
+    tmp = tempfile.mkdtemp(prefix="density-hold-")
+    res, _prov, _n = _run([HOLD_G, HOLD_G], repair_reply=REPAIR_REPLY, tmp=tmp)
+    check("the run ended at GROUNDING after the Writer ran",
+          res.get("failure_stage") == CP.GROUNDING
+          and res["stages"].get(CP.WRITER) == CP.PASS,
+          (res.get("failure_stage"), res.get("reason_code"),
+           res["stages"].get(CP.WRITER)))
+    ident = _identity_of(tmp)
+    check("the writer call identity is persisted on a hold", ident is not None)
+    if ident:
+        pd = ident.get("prose_density") or {}
+        check("and it carries the density measurement", bool(pd), sorted(ident))
+        for k in ("names_per_100w", "numbers_per_100w", "words_per_sentence",
+                  "sentences_per_paragraph"):
+            check("the measurement is complete: %s" % k, k in pd, sorted(pd))
+        check("and the published band it is read against travels with it",
+              bool(pd.get("published_middle_half")), sorted(pd))
+        # BOUND TO THE TEXT, not merely present. Keys populated with wrong or null values
+        # would otherwise pass every check above.
+        recomputed = FC.prose_density(_writer_draft_of(tmp))
+        check("the recorded measurement is the one the draft actually produces",
+              bool(recomputed) and all(pd.get(k) == recomputed.get(k)
+                                       for k in ("words", "names_per_100w",
+                                                 "numbers_per_100w")),
+              {k: (pd.get(k), recomputed.get(k))
+               for k in ("words", "names_per_100w", "numbers_per_100w")})
+
+
+def test_density_survives_the_exception_path_too() -> None:
+    """The other way out of the ladder: a CompositionHold raised rather than returned.
+
+    Both routes end at `out()`, which is why the measurement survives either. Kept as its
+    own check because the first version of the test above took this path while claiming
+    to take the other one.
+    """
+    import tempfile
+    tmp = tempfile.mkdtemp(prefix="density-exc-")
+    res, _prov, _n = _run([HOLD_G, HOLD_G], tmp=tmp)
+    check("the run ended through the raised-hold path",
+          res["status"] != CP.PASS and res["stages"].get(CP.WRITER) == CP.PASS,
+          (res["status"], res.get("reason_code")))
+    ident = _identity_of(tmp)
+    check("the density survives that route as well",
+          bool((ident or {}).get("prose_density")), sorted(ident or {}))
+
+
+def test_density_survives_a_passing_run_too() -> None:
+    import tempfile
+    tmp = tempfile.mkdtemp(prefix="density-pass-")
+    res, _prov, _n = _run([PASS_G], tmp=tmp)
+    check("the run passed", res["status"] == CP.PASS, res.get("failure_reason"))
+    ident = _identity_of(tmp)
+    check("the identity file is written on a pass", ident is not None)
+    if ident:
+        check("and the density is in it", bool(ident.get("prose_density")),
+              sorted(ident))
+
+
+def test_the_density_is_not_expected_in_the_composition_result() -> None:
+    """Stated as a check so the next person does not repeat my search.
+
+    `composition.persist` excludes `detail` from COMPOSITION_RESULT.json wholesale. That
+    is where a reader looks first, finds an empty detail, and concludes the telemetry was
+    dropped -- which is what I concluded, wrongly, earlier today.
+    """
+    src = (HERE / "new_engine_v1" / "composition.py").read_text(encoding="utf-8")
+    check("COMPOSITION_RESULT.json is still written without detail",
+          'if k != "detail"' in src, "the exclusion changed; re-check where density lives")
+    free_src = (HERE / "new_engine_v1" / "free_composition.py").read_text(encoding="utf-8")
+    check("and the density is still persisted on the writer identity",
+          '"prose_density": wr.get("prose_density")' in free_src)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
