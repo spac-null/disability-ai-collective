@@ -29,6 +29,7 @@ import re
 import stat
 import sys
 import tempfile
+import time
 from collections import deque
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -70,8 +71,22 @@ if "auth" in sys.argv and "status" in sys.argv:
     sys.stdout.write(json.dumps(auth)); sys.exit(0)
 model = sys.argv[sys.argv.index("--model") + 1] if "--model" in sys.argv else "?"
 sys.stdin.read()
+# Counts COMPLETION calls only -- `auth status` returns above, before this line. The
+# retry tests assert how many subprocesses actually ran, which is the only way to tell
+# "retried once" from "retried three times" or "did not retry at all".
+counter = os.environ.get("FAKE_CLAUDE_COUNTER")
+if counter:
+    with open(counter, "a") as fh:
+        fh.write("1\n")
 if mode == "hang":
     time.sleep(30); sys.exit(0)
+if mode == "hang_once":
+    # Hangs the first time it is called and answers the second: a transient timeout,
+    # which is what the host actually did on 2026-09-30.
+    marker = os.environ["FAKE_CLAUDE_MARKER"]
+    if not os.path.exists(marker):
+        open(marker, "w").close()
+        time.sleep(30); sys.exit(0)
 if mode == "not_json":
     sys.stdout.write("I am afraid that is not JSON"); sys.exit(0)
 if mode == "limit":
@@ -507,6 +522,120 @@ check("claude_cli_provider is the ONE permitted transport import, and it is lazy
       and "        import claude_cli_provider" in prov_src,
       "a module-level import would put a shelling-out dependency in the import graph")
 
+
+print("\ntest_a_transient_timeout_does_not_discard_the_run")
+# WHY. On 2026-09-30 a single `claude CLI timed out after 600s` at the Ledger freeze threw
+# away a run that had already done acquisition, research and commissioning. A trivial call
+# answered normally minutes later, so it was latency or a limit under load. Third instance
+# in the retained record. `complete()` made one subprocess call and gave up.
+
+
+def _counted(mode, timeout=2, marker=None):
+    """Run one completion through the fake CLI, returning (result_or_exc, call_count)."""
+    ccp.reset_providers()
+    counter = os.path.join(TMP, "calls-%s.txt" % mode)
+    for p in (counter, marker):
+        if p and os.path.exists(p):
+            os.remove(p)
+    os.environ["FAKE_CLAUDE_COUNTER"] = counter
+    os.environ["FAKE_CLAUDE_MARKER"] = marker or os.path.join(TMP, "marker-unused")
+    try:
+        out = run_mode(BIN, mode, timeout=timeout)
+    except Exception as e:                                        # noqa: BLE001
+        out = e
+    finally:
+        os.environ.pop("FAKE_CLAUDE_COUNTER", None)
+    n = 0
+    if os.path.exists(counter):
+        n = len(open(counter).read().split())
+    return out, n
+
+
+out, calls = _counted("hang_once", marker=os.path.join(TMP, "hang-once-marker"))
+check("a transient timeout is retried rather than losing the run",
+      not isinstance(out, Exception), repr(out)[:200])
+check("and the retry's answer is returned",
+      getattr(out, "text", "") == "SUBSCRIPTION-OK", repr(getattr(out, "text", ""))[:120])
+check("it took exactly two subprocess calls", calls == 2, calls)
+# THE RETRY PATH IS EXERCISED HERE, which is the point: it writes to stderr, and `sys`
+# was not imported in this module until this change. A NameError on that line would only
+# ever have fired during a real production timeout.
+
+out, calls = _counted("hang")
+check("a persistent hang still raises, after the bounded number of attempts",
+      isinstance(out, ccp.ClaudeCLIError)
+      and getattr(out, "code", "") == ccp.CLAUDE_SUBSCRIPTION_TIMEOUT, repr(out)[:160])
+check("and it says how many attempts it made",
+      "2 attempts" in str(out), str(out))
+check("it did not keep trying past the bound",
+      calls == ccp.TIMEOUT_ATTEMPTS, (calls, ccp.TIMEOUT_ATTEMPTS))
+
+# ONLY A TIMEOUT IS RETRIED. A subscription limit will not clear in five seconds, and
+# retrying it spends the owner's quota against a wall.
+out, calls = _counted("limit")
+check("an exhausted plan is not retried", calls == 1, calls)
+check("and it still raises the limit", isinstance(out, ccp.SubscriptionLimit), repr(out)[:120])
+
+out, calls = _counted("not_json")
+check("a malformed reply is not retried either", calls == 1, calls)
+check("and it still raises an output error",
+      isinstance(out, ccp.ClaudeCLIError), repr(out)[:120])
+
+check("the bound is declared rather than buried in the loop",
+      ccp.TIMEOUT_ATTEMPTS == 2 and ccp.TIMEOUT_RETRY_PAUSE_S >= 1,
+      (ccp.TIMEOUT_ATTEMPTS, ccp.TIMEOUT_RETRY_PAUSE_S))
+
+print("\ntest_the_callers_deadline_is_finally_honoured_here_too")
+# WHY. This provider accepted `deadline` and read it nowhere, while
+# new_engine_v1.provider.Provider clamps to min(timeout, remaining) and grounding_v2
+# states as fact that "provider.complete already clamps each leg ... so the total cannot
+# be outlived by an ordinary per-call timeout". True of that seam, false here -- and
+# production injects THIS class directly into composition
+# (new_engine_production.py:604), so the grounding shadow's 120s budget was unenforced on
+# the live path. A retry that ignored it would have doubled an already unbounded overrun.
+ccp.reset_providers()
+os.environ["FAKE_CLAUDE_MODE"] = "ok"
+os.environ["FAKE_CLAUDE_AUTH"] = json.dumps(GOOD_AUTH)
+prov = ccp.ClaudeCLIProvider(binary=BIN, timeout=600, verify_auth=False)
+
+try:
+    prov.complete("s", "u", deadline=time.monotonic() - 1)
+    spent = "returned"
+except ccp.SubscriptionTimeout as e:
+    spent = str(e)
+check("a deadline already passed refuses the call instead of making it",
+      "deadline reached before the attempt" in str(spent), str(spent)[:140])
+
+# BOTH STATES MUST TIME OUT, AND SAY A DIFFERENT NUMBER. The fake hangs for 30s, so any
+# leg shorter than that is a timeout either way and wall clock cannot separate them --
+# every elapsed-time bound I tried passed with the clamp severed. With timeout=6 against
+# a 2s deadline, a clamped leg reports "after 2s" and an unclamped one "after 6s".
+t0 = time.monotonic()
+os.environ["FAKE_CLAUDE_MODE"] = "hang"
+try:
+    prov.complete("s", "u", timeout=6, deadline=time.monotonic() + 2)
+    outcome = "returned"
+except ccp.SubscriptionTimeout as e:
+    outcome = str(e)
+elapsed = time.monotonic() - t0
+# ASSERTED ON THE EFFECTIVE LIMIT, WHICH THE MESSAGE NAMES, not on elapsed time. Wall
+# clock cannot separate the two states here: the fake hangs for exactly 30s and then
+# exits, so an unclamped 600s leg finishes in 30s too and every elapsed-time bound I
+# tried passed with the clamp severed. A check that cannot distinguish the states it
+# claims to test is worse than none, so this reads the number the provider actually used.
+# "after 1s", not 2: the clamp is `int(min(timeout, remaining))` and the remaining 1.99
+# truncates. What matters is that it is the deadline's number and not the argument's.
+check("a leg is clamped to what the deadline leaves, not to its own timeout",
+      ("after 1s" in str(outcome) or "after 2s" in str(outcome))
+      and "after 6s" not in str(outcome),
+      "%s (%.1fs elapsed)" % (str(outcome)[:120], elapsed))
+check("and it does not burn a retry it has no time for",
+      "no time left inside the caller's deadline" in str(outcome)
+      or "1 attempt" in str(outcome), str(outcome)[:160])
+check("the two providers agree on what a deadline means",
+      "deadline" in open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                      "claude_cli_provider.py")).read())
+os.environ["FAKE_CLAUDE_MODE"] = "ok"
 
 print("\n" + "-" * 60)
 if FAILURES:

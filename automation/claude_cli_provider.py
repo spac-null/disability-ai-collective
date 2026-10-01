@@ -51,6 +51,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import time
 
 # The three the pipeline's own environment would otherwise inject. See module docstring.
@@ -62,6 +63,14 @@ OVERRIDE_VARS = ("ANTHROPIC_API_KEY", "ANTHROPIC_BASE_URL", "ANTHROPIC_AUTH_TOKE
 # actual_model to expose. Both are still recorded on every call.
 DEFAULT_MODEL = "claude-opus-5"
 DEFAULT_TIMEOUT = 600
+
+# HOW MANY TIMES A CALL MAY TIME OUT BEFORE THE STAGE GIVES UP. Two: one retry.
+# A run costs roughly nine model calls and an hour of acquisition and research; a single
+# transient timeout discarding all of it is a bad trade, and a second full wait before
+# admitting defeat is a cheap one. Not three: past two, a timeout is a hang and waiting
+# 30 minutes to say so helps nobody.
+TIMEOUT_ATTEMPTS = 2
+TIMEOUT_RETRY_PAUSE_S = 5
 
 CLAUDE_SUBSCRIPTION_LIMIT = "CLAUDE_SUBSCRIPTION_LIMIT"
 CLAUDE_SUBSCRIPTION_AUTH_FAILURE = "CLAUDE_SUBSCRIPTION_AUTH_FAILURE"
@@ -337,15 +346,68 @@ class ClaudeCLIProvider:
         # guard is here at the boundary rather than left to each call site.
         user = _neutralise_leading_slash(user)
         t0 = time.monotonic()
-        try:
-            p = subprocess.run(
-                self._argv(system, model), input=user, capture_output=True, text=True,
-                env=scrubbed_env(), timeout=timeout or self.timeout, cwd=self.cwd)
-        except subprocess.TimeoutExpired:
-            raise SubscriptionTimeout("claude CLI timed out after %ss"
-                                      % (timeout or self.timeout))
-        except FileNotFoundError:
-            raise ClaudeCLIError("claude CLI not found at %r" % self.binary)
+        limit = timeout or self.timeout
+        # THE DEADLINE IS THE CALLER'S OWN UPPER BOUND, and until now this provider
+        # accepted it and read it nowhere. `new_engine_v1.provider.Provider` clamps to
+        # min(timeout, remaining) and refuses a leg with nothing left, and
+        # `grounding_v2` states as fact that "provider.complete already clamps each leg
+        # ... so the total cannot be outlived by an ordinary per-call timeout". That is
+        # true of the Provider seam and was false here -- and production injects THIS
+        # class directly into composition (new_engine_production.py:604), so the
+        # grounding shadow's 120-second budget was unenforced on the live path, where a
+        # single 600s leg outlives it fivefold.
+        #
+        # It is fixed in the same change as the retry rather than after it, because a
+        # retry that ignores the deadline doubles an overrun that was already unbounded.
+        # Same semantics as the other provider, deliberately: two providers disagreeing
+        # about what a deadline means is how the absence of one goes unnoticed.
+        if deadline is not None:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise SubscriptionTimeout("deadline reached before the attempt")
+            limit = max(1, int(min(limit, remaining)))
+        # ONE RETRY, ON A TIMEOUT AND NOTHING ELSE. Measured: on 2026-09-30 a single
+        # `claude CLI timed out after 600s` at the Ledger freeze discarded an entire run
+        # -- acquisition, research and commissioning all done, all thrown away -- and a
+        # trivial call answered normally minutes later, so it was latency or a limit under
+        # load rather than a fault. That is the third instance in the retained record.
+        #
+        # SAFE TO REPEAT because this call has no side effects: it starts a subprocess,
+        # sends a prompt and reads a reply. Nothing is written, nothing is charged to a
+        # stage that already ran, and the caller's contract is unchanged -- a retry that
+        # also times out raises exactly what a single one did.
+        #
+        # ONLY A TIMEOUT. A subscription limit will not clear in seconds and retrying it
+        # spends the owner's quota against a wall; a malformed reply will be malformed
+        # again. Both still raise on the first failure.
+        for attempt in range(1, TIMEOUT_ATTEMPTS + 1):
+            try:
+                p = subprocess.run(
+                    self._argv(system, model), input=user, capture_output=True, text=True,
+                    env=scrubbed_env(), timeout=limit, cwd=self.cwd)
+                break
+            except subprocess.TimeoutExpired:
+                # A retry that outlives the caller's deadline is not a retry, it is the
+                # overrun the deadline exists to prevent. Checked against the pause AND a
+                # second full leg, because a retry with two seconds left cannot succeed
+                # and only delays the failure the caller is waiting for.
+                out_of_time = (
+                    deadline is not None
+                    and (deadline - time.monotonic()) <= (TIMEOUT_RETRY_PAUSE_S + 1))
+                if attempt >= TIMEOUT_ATTEMPTS or out_of_time:
+                    raise SubscriptionTimeout(
+                        "claude CLI timed out after %ss, %d attempt%s%s"
+                        % (limit, attempt, "" if attempt == 1 else "s",
+                           "; no time left inside the caller's deadline"
+                           if out_of_time else ""))
+                sys.stderr.write(
+                    "claude CLI timed out after %ss (attempt %d of %d); retrying\n"
+                    % (limit, attempt, TIMEOUT_ATTEMPTS))
+                time.sleep(TIMEOUT_RETRY_PAUSE_S)
+                if deadline is not None:
+                    limit = max(1, int(min(limit, deadline - time.monotonic())))
+            except FileNotFoundError:
+                raise ClaudeCLIError("claude CLI not found at %r" % self.binary)
 
         raw = (p.stdout or "").strip()
         if p.returncode != 0 and not raw:
