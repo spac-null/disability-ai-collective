@@ -432,6 +432,24 @@ def source_attribution_block(pack: dict) -> str:
     return "\n".join(L)
 
 
+def permitted_material_block(ledger: dict) -> str:
+    """What a Reader repair on this path may draw on: the frozen Ledger, and nothing else.
+
+    The planned path hands its repair `ST.render(packet)` -- the working subset
+    Architecture prepared. This path has no packet, and the thing it licenses from is the
+    whole frozen Ledger, exactly as the Writer was given it. Rendered the same way the
+    Writer saw it, so a repair cannot be licensed by a wording the Writer never read.
+
+    It is a ceiling, not an instruction. `apply_reader_repair` separately refuses any edit
+    that introduces a number or a name its own paragraph does not already carry, so this
+    text is what a repair may REPHRASE toward, never new material it may add.
+    """
+    facts = "\n".join("  %s  %s" % (fid, str((f or {}).get("proposition") or "").strip())
+                      for fid, f in sorted((ledger or {}).items()))
+    return ("THE FROZEN EVIDENCE -- %d propositions, the only facts that exist:\n%s"
+            % (len(ledger or {}), facts))
+
+
 def narrower_scope_block(pack: dict) -> str:
     """The narrower subject research named for the anchor, rendered as a constraint.
 
@@ -1376,16 +1394,77 @@ def run_free_argumentative_composition(
         else:
             st[CP.FACT_CHECK] = {"status": CP.SKIPPED}
 
-        # ── READER. Unchanged, and NOT turned into a rewrite loop. ───────────────────
-        # A Reader HOLD on this path is a HOLD: the article goes to the desk for the owner
-        # to read, which is what the desk is for. Converting Reader feedback into an
-        # automatic whole-article rewrite is exactly what would destroy the prose this
-        # path exists to protect.
+        # ── READER, AND ONE BOUNDED EDITORIAL COMPLETION. ────────────────────────────
+        # THIS PATH DECLINED THE COMPLETION LOOP UNTIL 2026-10-01, on the reasoning that
+        # "converting Reader feedback into an automatic whole-article rewrite is exactly
+        # what would destroy the prose this path exists to protect". That was true of the
+        # stage as it stood when this engine was written, and it stopped being true on
+        # 2026-09-09, for the same reason: `reader_completion_loop` was rebuilt as a batch
+        # of LOCAL EDITS, each confined to one paragraph, each quoted verbatim, each
+        # mechanically verified by `apply_reader_repair`, and every candidate judged by
+        # THE SAME safety_audit, the SAME package generation and the SAME reader_gate this
+        # run already enforces. The module's own words: a wider blast radius was "never
+        # the fix a Reader hold needed, it was just the shape the first version happened
+        # to have". The objection outlived the thing it objected to.
+        #
+        # WHAT A READER HOLD ACTUALLY LOOKED LIKE. production-20260930T212300Z-474783da,
+        # the furthest anything has reached: five dimensions PASSED, including BREATHING
+        # and CRIP_MINDS_FIT. The four that held were -- explain three words, name the
+        # document the piece is about, delete a paragraph restating an earlier one. Those
+        # are line edits, and this is the stage that makes line edits.
+        #
+        # NOTHING FACTUAL MOVES. A proposal is a PROPOSAL: it is refused whole, with the
+        # package it regenerated, if Safety or Grounding finds anything new, and the
+        # article that reached here factually clean stays exactly as it is. No rerun of
+        # Worth, the Ledger or the Writer. The free path passes no packet -- Architecture
+        # never ran -- so `apply_reader_repair` licenses each edit against nothing but its
+        # own paragraph, which is STRICTER than the planned path, not looser: an edit may
+        # not introduce a number or a name at all.
         if reader:
             rg = record(CP.READER, CP.reader_gate(P, final, sa.get("advisories")))
             if rg["status"] != CP.PASS:
-                return out(CP.READER, "reader HOLD on %s" % ", ".join(sorted(rg["held"])),
-                           CP.READER_HOLD, final, pkg)
+                rc = CP.reader_completion_loop(
+                    # `draft_text` is the Writer's own first article, which the
+                    # loop uses for its semantic-delta comparison. On this path
+                    # that is wr["article_text"] -- `final` may already carry a
+                    # Safety or Grounding repair, and comparing a candidate
+                    # against a repaired text would measure the repair, not the
+                    # candidate.
+                    P, final, pkg, rg, {}, ledger, wr["article_text"], pack, None,
+                    source_text, source_sha,
+                    audit_fn=audit, package_fn=make_package,
+                    gate_fn=lambda t, adv: CP.reader_gate(P, t, adv),
+                    permitted_text=permitted_material_block(ledger))
+                before_repair = final
+                if rc["reader_repairs_accepted"]:
+                    # Article and package move together or not at all: the package is the
+                    # one the accepted article's own Safety approved.
+                    final, pkg = rc["article_text"], rc["package"]
+                # RECORD FIRST, ACCUMULATE AFTER -- `record` replaces st[stage] and RESETS
+                # calls[stage] and repairs[stage] from the payload it is given, so
+                # anything added before it is discarded. The planned path calls this "the
+                # same accumulate-after-record pattern used everywhere above"; writing it
+                # the other way round cost this block its entire completion audit on the
+                # first run of its own test.
+                rg = record(CP.READER, rc["gate"])
+                calls[CP.READER] = calls.get(CP.READER, 0) + rc["reader_model_calls"]
+                calls[CP.SAFETY] = calls.get(CP.SAFETY, 0) + rc["safety_model_calls"]
+                calls[CP.GROUNDING] = (calls.get(CP.GROUNDING, 0)
+                                       + rc["grounding_model_calls"])
+                st[CP.READER].update({
+                    k: rc[k] for k in (
+                        "reader_completion_iterations", "reader_repair_proposals",
+                        "reader_repairs_accepted", "reader_repairs_rejected",
+                        "reader_completion_history", "reader_initial_blocker_count",
+                        "reader_final_blocker_count")})
+                if rc["reader_repairs_accepted"]:
+                    repairs[CP.READER] = 1
+                    st[CP.READER]["reader_repair_byte_delta"] = repair_byte_delta(
+                        before_repair, final)
+                if rg["status"] != CP.PASS:
+                    return out(CP.READER,
+                               "reader HOLD on %s" % ", ".join(sorted(rg["held"])),
+                               CP.READER_HOLD, final, pkg)
         else:
             st[CP.READER] = {"status": CP.SKIPPED}
 
