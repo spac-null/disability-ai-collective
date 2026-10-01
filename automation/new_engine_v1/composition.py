@@ -6808,6 +6808,14 @@ def reader_gate(provider, article_text: str, advisories: list | None = None) -> 
 # the facts are not this stage's to revisit.
 READER_REPAIR_OPS = ("REPHRASE", "COMPRESS", "DELETE")
 
+# The words whose presence or absence decides what a sentence CLAIMS, as opposed to how it
+# reads. Matched as whole words on the lowered span, and compared as a multiset so that
+# dropping one of two negations is caught as readily as dropping the only one.
+_NEGATION_TOKENS = re.compile(
+    r"\b(?:not|no|never|nor|none|neither|without|cannot|can't|won't|doesn't|didn't|"
+    r"isn't|wasn't|aren't|weren't|hasn't|haven't|hadn't|don't|shouldn't|wouldn't|"
+    r"couldn't|nothing|nobody|nowhere)\b")
+
 READER_REPAIR_SYSTEM = (
     "One or more readers have already approved this article's subject and its central "
     "reading. A hard reader has now read the finished prose and held it on specific "
@@ -6868,16 +6876,23 @@ def _numbered_paragraphs(text: str) -> str:
 
 
 def reader_repair_prompt(article_text: str, held: dict, packet: dict,
-                        rejection: dict | None = None) -> str:
+                         permitted_text: str | None = None,
+                         rejection: dict | None = None) -> str:
     L = ["THE ARTICLE, BY PARAGRAPH", _numbered_paragraphs(article_text), "",
         "WHAT THE READER HELD"]
     for dim, v in held.items():
         L += ["", "DIMENSION %s" % dim, "  note: %s" % str((v or {}).get("note", ""))[:500]]
         for p in (v or {}).get("passages") or []:
             L.append("  passage: %s" % str(p)[:300])
-    L += ["", "PERMITTED MATERIAL -- the writer packet this article was licensed from. "
-             "Nothing outside the article and this packet may be added:",
-         ST.render(packet)[:6000]]
+    # PERMITTED MATERIAL IS WHATEVER THE RUN LICENSED FROM, and the two engines license
+    # from different things. The planned path renders its writer packet; the free path
+    # has no packet at all -- Architecture never ran -- and licenses from the frozen
+    # Ledger directly, so it passes that text in. `ST.render` requires a packet's own
+    # keys and raises on an empty dict, which is why this is a parameter rather than a
+    # fallback inside the renderer.
+    L += ["", "PERMITTED MATERIAL -- what this article was licensed from. "
+             "Nothing outside the article and this material may be added:",
+         (permitted_text if permitted_text is not None else ST.render(packet))[:6000]]
     if rejection:
         # CONCISE AND STRUCTURED, never a transcript -- the same shape
         # grounding_completion_prompt() already uses on its own retries.
@@ -7003,6 +7018,23 @@ def apply_reader_repair(article_text: str, edits: list, held: dict,
                         "not the whole packet)"
                         % (i, new_nums, new_ents, new_rel))
             continue
+        # POLARITY IS NOT A COUNT, AND EVERYTHING ABOVE IS A COUNT. Numbers, entities and
+        # relation tallies all survive "The board did not approve it" -> "The board did
+        # approve it": a DELETE of one word, no new number, no new name, no new relation,
+        # and the opposite claim. An adversary named it when this stage was wired into the
+        # path that publishes. Safety and Grounding are the loop's acceptance tests and
+        # might catch it, but both are model judgements and this one is arithmetic.
+        #
+        # Refused in BOTH directions. Removing a negation asserts the positive the
+        # evidence may never have carried; adding one asserts an absence, which is a
+        # factual claim needing its own licence and is not a copy edit either way.
+        lost_neg = _NEGATION_TOKENS.findall(orig.lower())
+        kept_neg = _NEGATION_TOKENS.findall(rep.lower())
+        if sorted(lost_neg) != sorted(kept_neg):
+            errs.append("edit %d changes the polarity of its own span -- negation before "
+                        "%s, after %s. A repair may rephrase a claim; it may not reverse "
+                        "one." % (i, sorted(lost_neg), sorted(kept_neg)))
+            continue
         out = out.replace(orig, rep, 1)
         prov.append({"dimension": dim, "operation": op, "original": orig,
                      "repaired": rep})
@@ -7083,6 +7115,7 @@ def reader_completion_loop(provider, article_text: str, package: dict | None, rg
                            arch: dict | None, source_text: str, source_sha: str,
                            audit_fn, package_fn, gate_fn,
                            package_completion_fn=None,
+                           permitted_text: str | None = None,
                            max_iterations: int = READER_COMPLETION_MAX_ITERATIONS
                            ) -> dict:
     """TRANSACTIONAL, PROGRESS-BOUNDED Reader completion. Replaces the one-repair budget
@@ -7132,7 +7165,8 @@ def reader_completion_loop(provider, article_text: str, package: dict | None, rg
         if not held:
             break
         iterations += 1
-        prop = reader_repair(provider, accepted_text, held, packet, rejection)
+        prop = reader_repair(provider, accepted_text, held, packet, rejection,
+                             permitted_text)
         proposals += 1
         reader_calls += prop.get("model_calls", 0)
 
@@ -7249,7 +7283,8 @@ def _reader_edit_signature(edits: list) -> tuple:
 
 
 def reader_repair(provider, article_text: str, held: dict, packet: dict,
-                  rejection: dict | None = None) -> dict:
+                  rejection: dict | None = None,
+                  permitted_text: str | None = None) -> dict:
     """STAGE 10b. ONE proposal, local edits only -- never a full-article rewrite.
     Mechanically verified by apply_reader_repair(), the same discipline
     apply_grounding_repair() already applies to Safety and Grounding's own repairs.
@@ -7260,7 +7295,8 @@ def reader_repair(provider, article_text: str, held: dict, packet: dict,
     if not held:
         return {"status": SKIPPED, "reason": "no held dimension", "model_calls": 0}
     obj, ident = _ask(provider, READER_REPAIR_SYSTEM,
-                      reader_repair_prompt(article_text, held, packet, rejection),
+                      reader_repair_prompt(article_text, held, packet,
+                                           permitted_text, rejection),
                       4_000, READER, READER_HOLD)
     edits = obj.get("edits")
     if not isinstance(edits, list) or not edits:

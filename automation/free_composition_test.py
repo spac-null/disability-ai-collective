@@ -1852,6 +1852,181 @@ def test_the_package_keeps_sensory_hard() -> None:
           "the package path changed; re-check whether a title may now invent a colour")
 
 
+# ── 18. the bounded editorial completion reaches this path ───────────────────
+# WHAT WAS WRONG. `reader_completion_loop` -- a batch of LOCAL edits, each confined to one
+# paragraph, each verified by `apply_reader_repair`, each candidate judged by the SAME
+# Safety, package and Reader this run already uses -- existed, was tested, and this path
+# never called it. Its stated reason was that it would be "an automatic whole-article
+# rewrite", which the stage stopped being on 2026-09-09.
+#
+# WHAT A READER HOLD LOOKED LIKE. production-20260930T212300Z-474783da reached the Reader
+# with five dimensions PASSING, including BREATHING and CRIP_MINDS_FIT. The four that held
+# were: explain three words, name the document, delete a repeated paragraph.
+_HELD_SPAN = "So the men who wrote the music down were writing while the room was"
+_REPAIRED_SPAN = "So the men writing the music down were working while the room was"
+
+READER_EDITS = json.dumps({"edits": [
+    {"dimension": "READABILITY", "operation": "REPHRASE",
+     "original": _HELD_SPAN, "repaired": _REPAIRED_SPAN}]})
+
+
+def _reader_holds_once(monkey):
+    """A Reader that holds the first time it is asked and passes afterwards.
+
+    Exactly the shape the loop is built for: an initial verdict the caller already paid
+    for, then a recheck on the candidate.
+    """
+    seen = {"n": 0}
+
+    def gate(p, text, adv=None):
+        seen["n"] += 1
+        if seen["n"] == 1:
+            return {"status": CP.HOLD, "model_calls": 1, "repairs": 0,
+                    "dimensions": {"READABILITY": {"verdict": "HOLD",
+                                                   "note": "a sentence needs rereading",
+                                                   "passages": [_HELD_SPAN]}},
+                    "held": {"READABILITY": {"verdict": "HOLD",
+                                             "note": "a sentence needs rereading",
+                                             "passages": [_HELD_SPAN]}},
+                    "passages": {"READABILITY": [_HELD_SPAN]},
+                    "one_line": "nearly"}
+        return {"status": CP.PASS, "held": {}, "dimensions": {}, "passages": {},
+                "model_calls": 1, "repairs": 0, "one_line": "good"}
+
+    CP.reader_gate = gate
+    return seen
+
+
+def test_a_reader_hold_now_gets_one_bounded_repair() -> None:
+    monkey: dict = {}
+    _canned_upstream(monkey)
+    seen = _reader_holds_once(monkey)
+    prov = Recorder([REPLY, READER_EDITS])
+
+    def ground(p, text, src, sha, pack, arch=None, packet=None):
+        return dict(PASS_G, model_calls=1,
+                    grounded_text_sha256=CP.C.sha256_text(text))
+    CP.ground_candidate = ground
+    try:
+        res = FC.run_free_argumentative_composition(
+            prov, pack=PACK, source_text="source bytes", source_sha="abc",
+            subject=PACK["subject"], fact_check=False, out_dir=None,
+            instrument=INSTRUMENT,
+            fact_check_fn=lambda t: {"status": CP.PASS, "model_calls": 0})
+    finally:
+        _restore(monkey)
+
+    check("the Reader was asked again after the repair", seen["n"] >= 2, seen["n"])
+    check("a run that would have been a terminal HOLD now passes",
+          res["status"] == CP.PASS, (res["status"], res.get("failure_reason")))
+    check("the repair reached the article",
+          _REPAIRED_SPAN in (res.get("article_text") or ""),
+          (res.get("article_text") or "")[-200:])
+    check("and the held wording is gone",
+          _HELD_SPAN not in (res.get("article_text") or ""))
+    rd = (res.get("detail") or {}).get(CP.READER) or {}
+    check("one repair is recorded against READER",
+          res.get("repairs_by_stage", {}).get(CP.READER) == 1,
+          res.get("repairs_by_stage"))
+    for k in ("reader_completion_iterations", "reader_repair_proposals",
+              "reader_repairs_accepted", "reader_initial_blocker_count",
+              "reader_final_blocker_count"):
+        check("the completion audit records %s" % k, k in rd, sorted(rd))
+
+
+def test_the_repair_may_not_add_a_fact() -> None:
+    """A proposal that introduces a number or a name is refused whole.
+
+    This path passes NO packet, so `apply_reader_repair` licenses each edit against its
+    own paragraph alone -- stricter than the planned path, where a beat's own material
+    may be drawn on.
+    """
+    monkey: dict = {}
+    _canned_upstream(monkey)
+    seen = _reader_holds_once(monkey)
+    adds = json.dumps({"edits": [
+        {"dimension": "READABILITY", "operation": "REPHRASE",
+         "original": _HELD_SPAN,
+         "repaired": "So the 47 men from Vienna wrote the music down while the room was"}]})
+    prov = Recorder([REPLY, adds])
+
+    def ground(p, text, src, sha, pack, arch=None, packet=None):
+        return dict(PASS_G, model_calls=1,
+                    grounded_text_sha256=CP.C.sha256_text(text))
+    CP.ground_candidate = ground
+    try:
+        res = FC.run_free_argumentative_composition(
+            prov, pack=PACK, source_text="source bytes", source_sha="abc",
+            subject=PACK["subject"], fact_check=False, out_dir=None,
+            instrument=INSTRUMENT,
+            fact_check_fn=lambda t: {"status": CP.PASS, "model_calls": 0})
+    finally:
+        _restore(monkey)
+    art = res.get("article_text") or ""
+    check("an invented number never reaches the article", "47" not in art, art[-200:])
+    check("nor an invented name", "Vienna" not in art, art[-200:])
+    check("the article that arrived clean is unchanged", _HELD_SPAN in art, art[-200:])
+    check("and the run still ends at a Reader hold, not a pass",
+          res["status"] != CP.PASS, res["status"])
+
+
+def test_a_repair_may_not_reverse_a_claim() -> None:
+    """Polarity is not a count, and every other check here is a count.
+
+    "The board did not approve it" -> "The board did approve it" is one deleted word, no
+    new number, no new name, no new relation tally -- and the opposite claim. Found by an
+    adversary when this stage was wired into the path that publishes.
+    """
+    art = ("# T\n\nThe board did not approve the scheme in 1974. It met twice.\n\n"
+           "A second paragraph so the first is not the whole article.\n")
+    flip = [{"dimension": "READABILITY", "operation": "DELETE",
+             "original": "The board did not approve the scheme in 1974.",
+             "repaired": "The board did approve the scheme in 1974."}]
+    text, prov, errs = CP.apply_reader_repair(art, flip, {"READABILITY": {}}, {})
+    check("a polarity flip is refused", not prov, prov)
+    check("and the refusal says what it caught",
+          any("polarity" in e for e in errs), errs)
+    check("the article is unchanged", "did not approve" in text, text[:120])
+
+    # THE OTHER DIRECTION WAS ALREADY COVERED, which is worth recording rather than
+    # assuming: ADDING a negation registers as a new NEGATION relation and the existing
+    # "ADDS rather than edits" check refuses it. Only REMOVAL was unguarded -- a deleted
+    # "not" adds no number, no name and no relation, and every other check here counts.
+    add = [{"dimension": "READABILITY", "operation": "REPHRASE",
+            "original": "It met twice.", "repaired": "It never met twice."}]
+    _t2, prov2, errs2 = CP.apply_reader_repair(art, add, {"READABILITY": {}}, {})
+    check("adding a negation is refused as well", not prov2, prov2)
+    check("by one guard or the other",
+          any(("polarity" in e) or ("NEGATION" in e) for e in errs2), errs2)
+
+    # AND AN ORDINARY REPHRASE STILL WORKS -- the guard must not forbid copy editing.
+    ok = [{"dimension": "READABILITY", "operation": "REPHRASE",
+           "original": "It met twice.", "repaired": "It met on two occasions."}]
+    t3, prov3, _e3 = CP.apply_reader_repair(art, ok, {"READABILITY": {}}, {})
+    check("a rephrase that keeps the polarity is still accepted", bool(prov3), prov3)
+    check("and it reaches the text", "two occasions" in t3, t3[:160])
+
+
+def test_the_loop_is_bounded_and_not_a_rewrite() -> None:
+    """The objection this path held for a month, stated as checks."""
+    src = (HERE / "new_engine_v1" / "composition.py").read_text(encoding="utf-8")
+    check("edits are local operations only",
+          CP.READER_REPAIR_OPS == ("REPHRASE", "COMPRESS", "DELETE"),
+          CP.READER_REPAIR_OPS)
+    check("an edit spanning more than one paragraph is refused",
+          "spans more than one paragraph -- not a local edit" in src)
+    check("the iteration count is bounded",
+          isinstance(CP.READER_COMPLETION_MAX_ITERATIONS, int)
+          and CP.READER_COMPLETION_MAX_ITERATIONS <= 5,
+          CP.READER_COMPLETION_MAX_ITERATIONS)
+    check("a candidate is judged by the run's own Safety, package and Reader",
+          "audit_fn=audit, package_fn=make_package" in
+          (HERE / "new_engine_v1" / "free_composition.py").read_text(encoding="utf-8"))
+    check("no packet is passed, so licensing is paragraph-local",
+          "P, final, pkg, rg, {}, ledger," in
+          (HERE / "new_engine_v1" / "free_composition.py").read_text(encoding="utf-8"))
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
