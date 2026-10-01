@@ -1594,6 +1594,125 @@ def test_the_density_is_not_expected_in_the_composition_result() -> None:
           '"prose_density": wr.get("prose_density")' in free_src)
 
 
+# ── 16. a transport failure is recorded, never a crash ───────────────────────
+# WHAT WAS WRONG. Four stage-failure guards read `type(e).__name__ != "ClaudeCLIError"`.
+# The exceptions that actually arrive are its SUBCLASSES -- SubscriptionTimeout,
+# SubscriptionLimit, SubscriptionOutputError -- so every one of them re-raised as an
+# unhandled crash instead of becoming a recorded CompositionHold.
+#
+# THE COST, MEASURED. On 2026-09-30 a provider timeout at the Ledger freeze left no run
+# directory, no recorded decision, and nothing for the failure alert to read; the alert
+# then said no orchestrator failure had been recorded at all. The run's acquisition,
+# research and commissioning were all discarded with no trace of why.
+
+
+class _FakeCLIError(Exception):
+    """Stands in for claude_cli_provider.ClaudeCLIError by NAME.
+
+    These modules cannot import the transport -- provider.py holds the one permitted
+    import and holds it lazily -- so identification is by class name up the MRO, and the
+    test has to exercise that same mechanism rather than the real class.
+    """
+    __name__ = "ClaudeCLIError"
+
+
+_FakeCLIError.__name__ = "ClaudeCLIError"
+
+
+class _FakeTimeout(_FakeCLIError):
+    pass
+
+
+_FakeTimeout.__name__ = "SubscriptionTimeout"
+
+
+class _FakeLimit(_FakeCLIError):
+    pass
+
+
+_FakeLimit.__name__ = "SubscriptionLimit"
+
+
+def test_every_transport_subclass_is_recognised() -> None:
+    check("the base class is recognised", CP._is_cli_transport_error(_FakeCLIError("x")))
+    for cls in (_FakeTimeout, _FakeLimit):
+        check("and so is %s, which is what actually arrives" % cls.__name__,
+              CP._is_cli_transport_error(cls("x")))
+    check("a limit is still identified as a limit",
+          CP._is_subscription_limit(_FakeLimit("x")))
+    check("a timeout is not mistaken for a limit",
+          not CP._is_subscription_limit(_FakeTimeout("x")))
+    # AND AN UNRELATED FAILURE STILL CRASHES. A bug in this engine must not be dressed up
+    # as "provider unavailable" -- that would hide our own defects behind the transport.
+    for other in (ValueError("boom"), KeyError("soft_findings"), RuntimeError("x")):
+        check("an ordinary %s is not a transport error" % type(other).__name__,
+              not CP._is_cli_transport_error(other))
+
+
+def test_a_transport_failure_at_the_writer_leaves_evidence_on_disk() -> None:
+    """Not merely "does not raise" -- the run must leave a directory saying why it stopped.
+
+    THAT IS THE INCIDENT, EXACTLY. On 2026-09-30 the timeout produced NO run directory and
+    NO recorded decision, so the failure alert had nothing to read and reported that no
+    orchestrator failure had been recorded at all. An adversary pointed out that the first
+    version of this test passed `out_dir=None`, which skips persistence entirely -- so it
+    would have gone green on the very outcome it exists to prevent.
+    """
+    import json as _json
+    import pathlib as _pl
+    import tempfile
+    monkey: dict = {}
+    _canned_upstream(monkey)
+    tmp = tempfile.mkdtemp(prefix="transport-hold-")
+
+    class Boom:
+        def complete(self, system, user, max_tokens=3000, timeout=180, temperature=None):
+            raise _FakeTimeout("claude CLI timed out after 600s")
+
+    try:
+        res = FC.run_free_argumentative_composition(
+            Boom(), pack=PACK, source_text="source bytes", source_sha="abc",
+            subject=PACK["subject"], fact_check=False, out_dir=tmp,
+            instrument=INSTRUMENT,
+            fact_check_fn=lambda t: {"status": CP.PASS, "model_calls": 0})
+    except Exception as e:                                        # noqa: BLE001
+        res = {"status": "RAISED:%s" % type(e).__name__, "failure_reason": str(e)[:120]}
+    finally:
+        _restore(monkey)
+    check("a provider timeout becomes a recorded outcome, not a traceback",
+          res.get("status") == CP.HOLD, (res.get("status"), res.get("failure_reason")))
+    check("and the reason names the transport",
+          "provider unavailable" in str(res.get("failure_reason") or ""),
+          res.get("failure_reason"))
+    check("the stage that failed is recorded",
+          res.get("failure_stage") == CP.WRITER, res.get("failure_stage"))
+
+    # THE EVIDENCE THE INCIDENT DID NOT LEAVE.
+    written = sorted(p.name for p in _pl.Path(tmp).rglob("*") if p.is_file())
+    check("the run left a directory behind", bool(written), written)
+    check("including the composition result", "COMPOSITION_RESULT.json" in written,
+          written)
+    hits = list(_pl.Path(tmp).rglob("COMPOSITION_RESULT.json"))
+    if hits:
+        rec = _json.loads(hits[0].read_text(encoding="utf-8"))
+        check("which says it was a HOLD", rec.get("status") == CP.HOLD, rec.get("status"))
+        check("and names the stage it stopped at",
+              rec.get("failure_stage") == CP.WRITER, rec.get("failure_stage"))
+        check("and carries a reason a person can read",
+              "provider unavailable" in str(rec.get("failure_reason") or ""),
+              str(rec.get("failure_reason"))[:120])
+
+
+def test_a_malformed_reply_from_the_transport_is_held_too() -> None:
+    """SubscriptionOutputError is the third subclass, and it re-raised like the others."""
+    out_err = type("SubscriptionOutputError", (_FakeCLIError,), {})
+    out_err.__name__ = "SubscriptionOutputError"
+    check("it is recognised as a transport failure",
+          CP._is_cli_transport_error(out_err("not JSON")))
+    check("and it is not mistaken for a limit",
+          not CP._is_subscription_limit(out_err("not JSON")))
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):

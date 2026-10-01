@@ -159,8 +159,38 @@ PRE_POLISH_FALLBACK = "PRE_POLISH_FALLBACK"
 CLAUDE_SUBSCRIPTION_LIMIT = "CLAUDE_SUBSCRIPTION_LIMIT"
 
 
+def _exc_names(exc: BaseException) -> set:
+    """Every class name in the exception's ancestry, leaf first.
+
+    IDENTIFIED BY NAME AND NOT BY IMPORT, deliberately. These modules do not import the
+    transport: `provider.py` holds the one permitted `claude_cli_provider` import and
+    holds it lazily, so a shelling-out dependency stays out of the import graph. The name
+    is therefore the only handle available here.
+
+    UP THE MRO, AND NOT THE LEAF, because the leaf is never the base class in practice.
+    The guards below matched `type(e).__name__ != "ClaudeCLIError"`, and the exceptions
+    that actually arrive are SubscriptionTimeout, SubscriptionLimit and
+    SubscriptionOutputError -- every one of which is a ClaudeCLIError subclass, and every
+    one of which the leaf comparison re-raised as an unhandled crash instead of recording
+    a CompositionHold.
+
+    THE COST, MEASURED. On 2026-09-30 a provider timeout at the Ledger freeze left NO run
+    directory, NO recorded decision, and nothing for the failure alert to read; the alert
+    then reported that no orchestrator failure had been recorded at all. A whole class of
+    failure was invisible rather than merely unhappy.
+    """
+    return {c.__name__ for c in type(exc).__mro__}
+
+
 def _is_subscription_limit(exc: BaseException) -> bool:
-    return type(exc).__name__ == "SubscriptionLimit"
+    """A refused call, matched up the ancestry for the same reason as the transport check
+    below -- it was a leaf comparison too, and would miss any future subclass."""
+    return "SubscriptionLimit" in _exc_names(exc)
+
+
+def _is_cli_transport_error(exc: BaseException) -> bool:
+    """A failure of the CLI transport itself, including every subclass of it."""
+    return "ClaudeCLIError" in _exc_names(exc)
 
 
 # A reply that never became one JSON object after two mechanical attempts (see `_ask`).
@@ -272,7 +302,7 @@ def _ask(provider, system: str, user: str, max_tokens: int, stage: str,
                                       ["the Claude subscription cannot serve this call: "
                                        "%s" % str(e)[:300],
                                        "stopping; no paid fallback was attempted"])
-            if not isinstance(e, ProviderError) and type(e).__name__ != "ClaudeCLIError":
+            if not isinstance(e, ProviderError) and not _is_cli_transport_error(e):
                 raise
             raise CompositionHold(stage, code, ["provider unavailable: %s" % e])
         try:
@@ -3286,7 +3316,7 @@ def write_article(provider, arch: dict, ledger: dict, cut_prohibitions=None,
                                       ["the Claude subscription cannot serve this call: "
                                        "%s" % str(e)[:300],
                                        "stopping; no paid fallback was attempted"])
-            if not isinstance(e, ProviderError) and type(e).__name__ != "ClaudeCLIError":
+            if not isinstance(e, ProviderError) and not _is_cli_transport_error(e):
                 raise
             raise CompositionHold(WRITER, WRITER_HOLD, ["provider unavailable: %s" % e])
         try:
@@ -4085,7 +4115,7 @@ def ground_candidate(provider, article_text: str, source_text: str, source_sha: 
                                   ["the Claude subscription cannot serve this call: %s"
                                    % str(e)[:300],
                                    "stopping; no paid fallback was attempted"])
-        if not isinstance(e, ProviderError) and type(e).__name__ != "ClaudeCLIError":
+        if not isinstance(e, ProviderError) and not _is_cli_transport_error(e):
             raise
         raise CompositionHold(GROUNDING, GROUNDING_HOLD,
                               ["grounder provider unavailable: %s" % e])

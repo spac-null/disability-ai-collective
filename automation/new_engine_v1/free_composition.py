@@ -1018,7 +1018,7 @@ def write_article_free(provider, ledger: dict, instrument: dict | None = None,
                     CP.WRITER, CP.CLAUDE_SUBSCRIPTION_LIMIT,
                     ["the Claude subscription cannot serve this call: %s" % str(e)[:300],
                      "stopping; no paid fallback was attempted"])
-            if not isinstance(e, CP.ProviderError) and type(e).__name__ != "ClaudeCLIError":
+            if not isinstance(e, CP.ProviderError) and not CP._is_cli_transport_error(e):
                 raise
             raise CP.CompositionHold(CP.WRITER, CP.WRITER_HOLD,
                                      ["provider unavailable: %s" % e])
