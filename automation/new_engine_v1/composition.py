@@ -2482,6 +2482,7 @@ CUT_LOW = "LOW"
 CUT_ADVISORY = "CUT_ADVISORY"
 SPATIAL_ADVISORY = "SPATIAL_ADVISORY"
 SCENE_ADVISORY = "SCENE_ADVISORY"
+SENSORY_ADVISORY = "SENSORY_ADVISORY"
 
 _WHY_ADVISORY = ("the only evidence is the token itself, and a single lexical match "
                  "cannot decide a physical sense from an abstract one; structural "
@@ -3745,19 +3746,45 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
                                     if x not in lic_w])
         ents = [e for e in surface["unapproved_entities"]
                 if not _possessive_of_approved(e)]
-        # SCENE AND SPATIAL TOKENS ARE ADVISORY. A bare word cannot decide its own sense:
-        # "upper limit" is a range, not a storey, and the canary was held by exactly that
-        # while the packet licensed the idea. Numbers, named entities and SENSORY
-        # assertions stay HARD -- a colour the evidence never mentions is the "pink"
-        # incident, and there is no abstract reading of it.
+        # SCENE, SPATIAL AND SENSORY TOKENS ARE ADVISORY. A bare word cannot decide its
+        # own sense: "upper limit" is a range, not a storey, and the canary was held by
+        # exactly that while the packet licensed the idea. Numbers and named entities stay
+        # HARD, because a figure or a name the evidence never carries is an addition in
+        # any reading.
+        #
+        # SENSORY IS SPLIT, NOT RELAXED (2026-10-01). It was wholly hard, on the reasoning
+        # that "a colour the evidence never mentions is the 'pink' incident, and there is
+        # no abstract reading of it". That holds for a colour and fails for most of the
+        # list: `story.SENSORY_ABSTRACTABLE` names the seventeen words that routinely mean
+        # something else -- a warm welcome, hard evidence, a rough estimate -- and those
+        # become advisory. Every colour, and damp, salty, fragrant and acrid, STAY HARD.
+        # "The form was pink" still stops the run.
+        #
+        # MEASURED COST OF THE OLD BEHAVIOUR. production-20260930T205819Z-3940d315, the
+        # PIP mobility article, had passed every factual check and was stopped by one
+        # token -- `sensory=['rough']` from "There is a ROUGH check on whether an
+        # assessment got someone's walking right, and it is the appeal."
+        #
+        # A WHOLESALE MOVE TO ADVISORY WAS WRITTEN FIRST AND REJECTED. An adversary showed
+        # it let a Writer print "the form was pink" with no such fact anywhere: article
+        # Safety would record it and pass, and because `_pkg_licensed` treats the final
+        # article as licensing material, a headline repeating "The Pink Form" would pass
+        # too. Everything after Safety that could catch it is a model judgement. Splitting
+        # the list keeps the deterministic refusal exactly where there is no second
+        # reading, and moves it only where a bare word genuinely cannot decide.
+        hard_sens = [t for t in surface["unapproved_sensory"]
+                     if t not in ST.SENSORY_ABSTRACTABLE]
+        soft_sens = [t for t in surface["unapproved_sensory"]
+                     if t in ST.SENSORY_ABSTRACTABLE]
         surface = dict(surface,
                        unapproved_entities=ents,
                        possessives_forgiven=[e for e in surface["unapproved_entities"]
                                              if _possessive_of_approved(e)],
                        advisory_scene=list(surface["unapproved_scene"]),
                        advisory_spatial=list(surface["unapproved_spatial"]),
-                       hard_ok=not (surface["unapproved_numbers"] or ents
-                                    or surface["unapproved_sensory"]))
+                       advisory_sensory=soft_sens,
+                       unapproved_sensory=hard_sens,
+                       hard_ok=not (surface["unapproved_numbers"] or ents or hard_sens))
         neg = ST.negative_admission_audit(text, ledger)
         return {
             "words": len(text.split()),
@@ -3884,6 +3911,11 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
     blocking = []
     if not f["hard_factual_ok"]:
         s = f["factual_surface"]
+        # `unapproved_sensory` is the HARD subset only -- colours and the rest of the list
+        # that has no second reading. The abstractable ones were moved to
+        # `advisory_sensory` and never reach this branch. The bucket stays NAMED because
+        # `materiality` parses this message to decide what may be adjudicated as minor,
+        # and a bucket dropped from the text is a bucket its override cannot see.
         blocking.append(
             "NEW_UNSUPPORTED_FACTS: the final prose carries factual surface the packet "
             "never granted -- numbers=%s entities=%s sensory=%s"
@@ -4018,6 +4050,19 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
             "sentence": _sentence_containing(final_text, tok),
             "rule": "story.SCENE_RISK",
             "why_not_hard": _WHY_ADVISORY})
+    # SENSORY ADVISORIES GO FIRST, not last. `advisory_block` renders only the first
+    # twelve, and these are the only channel that was moved out of a HARD refusal to get
+    # here -- a scene or spatial token has always been advisory, so losing one to the cap
+    # costs what it always cost. Losing a sensory one would silently undo the refusal it
+    # replaced, which is the whole bargain this change makes. Found by an adversary, which
+    # pointed out that appending them last meant twelve earlier flags could hide the token
+    # the Reader is being asked to settle.
+    advisories[:0] = [{
+        "kind": SENSORY_ADVISORY, "token": tok,
+        "sentence": _sentence_containing(final_text, tok),
+        "rule": "story.SENSORY_RISK",
+        "why_not_hard": _WHY_ADVISORY}
+        for tok in f["factual_surface"].get("advisory_sensory") or []]
 
     return {"status": HOLD if blocking else PASS,
             "blocking": blocking,
