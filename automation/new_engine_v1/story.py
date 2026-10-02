@@ -1945,6 +1945,72 @@ def _numbers(text: str) -> set:
     return set(re.findall(r"\b\d[\d,.]*\b", text))
 
 
+# A figure wearing a unit suffix, for the factual-surface screen ONLY.
+#
+# `_numbers`'s trailing \b cannot hold between "0" and "m", and the pattern finds no
+# shorter match, so "A$90m" yields NOTHING. Measured on
+# production-20260905T210605Z-2d62633a: packet "A$90m", prose "A$90 million", `90` blocked
+# -- the only number ever to block a run in the retained record. The half that matters is
+# that prose can carry an invented "A$250m" and the HARD numbers screen sees no figure
+# there at all.
+#
+# WHY THIS IS NOT IN `_numbers`. It was, and an adversary broke it: `_numbers` feeds CUT
+# watch-term selection at composition.py:2535, which pushes its results FIRST, longest
+# first, into a capped candidate list. Extra tokens DISPLACE later candidates -- with a
+# cut fact carrying six suffixed figures, the identifier `abc123` fell off the list and a
+# hard CUT_LEAKAGE finding became a pass. An old hold becoming a new pass is a loosening,
+# whatever its mechanism, so the new reading is confined to the one screen that needs it.
+# `_numbers` is byte-for-byte unchanged and every other caller -- CUT identity, the repair
+# parser, the package check, continuity deltas, the per-100-word metric, translation
+# parity -- behaves exactly as it does today.
+#
+# Case is folded so "A$90M" and "A$90m" are one figure; without that, equivalent
+# typography on the two sides produced a NEW hold. The separator run is bounded because
+# the unbounded form is quadratic on strings like "1.1.1.1..." (8,000 chars ~ 0.19s).
+# Grammatical suffixes are not units: "107th", "3rds", "1990s" and "2nd" are excluded, or
+# an ordinal in prose would flag against an approved plain figure. "5s" for seconds is
+# excluded with them and so stays invisible -- unchanged from today, not a regression.
+_UNIT_FIGURE = re.compile(r"\b\d[\d,.]{0,20}[A-Za-z]+\b")
+_GRAMMATICAL_SUFFIX = re.compile(r"^\d[\d,.]*(?:(?:st|nd|rd|th)s?|s)$", re.I)
+_NUMERAL_OF = re.compile(r"^\d[\d,.]*")
+
+
+def _figures_with_units(text: str) -> set:
+    return {t.lower() for t in _UNIT_FIGURE.findall(text)
+            if not _GRAMMATICAL_SUFFIX.match(t)}
+
+
+def _unit_figure_leaks(body: str, approved: str, a_nums: set) -> set:
+    """Suffixed figures in the prose that the approved material never granted.
+
+    A SUFFIXED FIGURE IS ONLY NEW IF ITS NUMERAL IS ALSO NEW. Flagging every unmatched
+    unit token holds an article for a notation difference: approved "50 kilometres",
+    prose "50km" -- which an adversary rated the most likely shape of all, and which is
+    exactly what a dek does to an article's own figure. The numeral is the figure; the
+    suffix is how it is written. So `50km` is refused only when `50` is unlicensed too.
+
+    What this still catches is the case that matters: prose inventing "A$250m" when the
+    approved material says "A$75 million". 250 is nowhere in the approved numbers, so the
+    figure is new however it is spelled -- and before this, the screen saw no figure there
+    at all and let it through.
+
+    What it deliberately does NOT fix stays unfixed: approved "A$90m", prose "A$90
+    million" still disagree, because closing that needs a suffixed approved figure to
+    license a bare prose numeral -- and then an approved "A$90m" would license a prose
+    "90 deaths", which blocks today. That trade is the owner's.
+    """
+    granted = _figures_with_units(approved)
+    out = set()
+    for tok in _figures_with_units(body):
+        if tok in granted:
+            continue
+        numeral = _NUMERAL_OF.match(tok)
+        if numeral and numeral.group(0).rstrip(".,") in a_nums:
+            continue
+        out.add(tok)
+    return out
+
+
 def _entities(text: str, skip_sentence_initial: bool = True) -> set:
     """Capitalised tokens. Sentence-initial ones are skipped when reading PROSE, because
     every sentence starts with a capital; they are NOT skipped when building the approved
@@ -2107,7 +2173,8 @@ def factual_surface_audit(article_text: str, packet: dict, ledger: dict | None =
     excused_month_tokens = {tok for d, tok in _calendar_dates(body)
                             if tok and d in licensed_dates}
 
-    nums = sorted(_numbers(body) - a_nums)
+    nums = sorted((_numbers(body) - a_nums)
+                  | _unit_figure_leaks(body, approved, a_nums))
     ents = sorted((_entities(body) - a_ents) - excused_month_tokens)
     terms = sorted(_content_words(body) - a_words)
     sensory = sorted(t for t in terms if t in SENSORY_RISK)
