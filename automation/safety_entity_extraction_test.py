@@ -226,8 +226,154 @@ def test_a_partial_phrase_match_is_not_a_licence():
           "Contemporary" in r["unapproved_entities"], r["unapproved_entities"])
 
 
+# ── the number tokeniser: a figure wearing a unit suffix ─────────────────────
+#
+# `\b\d[\d,.]*\b` cannot end between "0" and "m", and finds no shorter match, so "A$90m"
+# yielded NO token while "A$90 million" yielded "90". Measured on
+# production-20260905T210605Z-2d62633a: the packet said "A$90m", the prose said "A$90
+# million", and `90` blocked -- the only number ever to block a run in the retained record.
+# The mild half is that false positive. The half that matters is that an invented "A$250m"
+# was never looked at, because the screen saw no figure there at all.
+
+
+def test_the_number_tokeniser_itself_is_unchanged():
+    """THE GUARD ON THE WHOLE DESIGN. The unit reading lives in factual_surface_audit, not
+    in `_numbers`, because `_numbers` feeds CUT watch-term selection at
+    composition.py:2535 -- which pushes its results first, longest first, into a CAPPED
+    list. An adversary showed that extra tokens displace later candidates: with a cut fact
+    carrying six suffixed figures the identifier `abc123` fell off and a hard CUT_LEAKAGE
+    finding became a pass. If this test ever fails, every caller of `_numbers` has moved."""
+    print("\n4. `_numbers` is untouched -- every other caller is unaffected")
+    for text, want in (("A$90m", set()), ("5km", set()), ("1990s", set()),
+                       ("A$90 million", {"90"}), ("in 2018, it closed", {"2018"}),
+                       ("179.8 million", {"179.8"}), ("100,000 people", {"100,000"})):
+        check("  _numbers(%-18s) == %s" % (repr(text), want or "nothing"),
+              ST._numbers(text) == want, ST._numbers(text))
+
+
+def test_a_figure_with_a_unit_suffix_is_visible_to_the_screen():
+    print("\n4b. The audit reads a figure wearing a unit suffix")
+    check("precondition: the spelled-out form was always seen",
+          ST._numbers("A$90 million") == {"90"}, ST._numbers("A$90 million"))
+    check("the suffixed form yields a token", ST._figures_with_units("A$90m") == {"90m"},
+          ST._figures_with_units("A$90m"))
+    for text, want in (("5km", "5km"), ("20kg", "20kg"), ("3bn", "3bn")):
+        check("  %-7s yields %s" % (text, want), want in ST._figures_with_units(text),
+              ST._figures_with_units(text))
+    check("case is folded, so A$90M and A$90m are one figure",
+          ST._figures_with_units("A$90M") == ST._figures_with_units("A$90m"),
+          (ST._figures_with_units("A$90M"), ST._figures_with_units("A$90m")))
+
+
+def test_a_suffixed_figure_does_not_license_the_bare_numeral():
+    """THE REASON THE TOKEN IS "90m" AND NOT "90". An adversary constructed the case:
+    with the bare numeral, an approved "A$90m" would license a prose "90 deaths", which
+    blocks today. Leaving the bare-numeral tokens untouched makes that structurally
+    impossible -- the approved side gains nothing that can cover a bare numeral."""
+    print("\n4c. A figure in dollars does not license the same numeral in deaths")
+    pk = _packet("The deal covers A$90m.")
+    r = ST.factual_surface_audit("# T\n\nThe fire killed 90 people that night.\n", pk)
+    check("90 is still unapproved", "90" in r["unapproved_numbers"],
+          r["unapproved_numbers"])
+    check("hard_ok is False", r["hard_ok"] is False)
+
+
+def test_a_grammatical_suffix_is_not_a_unit():
+    """"107th" and "1990s" must not become tokens: an ordinal in prose would then flag
+    against an approved plain figure. Measured -- "107th" was the one and only tightening
+    this change produced across the record before grammatical suffixes were excluded.
+    Their behaviour is deliberately UNCHANGED, which here means still invisible."""
+    print("\n4d. Ordinals and plurals are grammar, not units")
+    for text in ("107th", "19th", "1990s", "2nd", "3rds", "5s"):
+        check("  %-7s yields no unit token" % text,
+              ST._figures_with_units(text) == set(), ST._figures_with_units(text))
+
+
+def test_separators_are_untouched():
+    """The trailing boundary used to force a backtrack off a swallowed separator. With it
+    gone the greedy class keeps them, so they are stripped explicitly -- and these are the
+    cases that would break if the stripping were wrong."""
+    print("\n4e. Separators inside and after a figure")
+    check("a trailing comma is not part of the figure",
+          ST._numbers("in 2018, the scheme closed") == {"2018"},
+          ST._numbers("in 2018, the scheme closed"))
+    check("a decimal point is", "179.8" in ST._numbers("179.8 million"),
+          ST._numbers("179.8 million"))
+    check("a thousands separator is", "100,000" in ST._numbers("100,000 people"),
+          ST._numbers("100,000 people"))
+    check("a full stop ending a sentence is not",
+          ST._numbers("It cost 90.") == {"90"}, ST._numbers("It cost 90."))
+
+
+def test_the_two_notations_still_disagree_and_that_is_on_purpose():
+    """WHAT THIS CHANGE DELIBERATELY LEAVES BROKEN, pinned so nobody reads it as an
+    oversight. production-20260905T210605Z-2d62633a: packet "A$90m", prose "A$90
+    million", `90` blocked -- the only number ever to block a run in the record, and a
+    genuine false positive. Closing it requires the two notations to produce the SAME
+    token, and that is exactly the loosening test_a_suffixed_figure_does_not_license_the
+    _bare_numeral exists to prevent. The trade is the owner's; this test fails the day
+    someone makes it quietly."""
+    print("\n4f. The false positive is still here, deliberately")
+    pk = _packet("The deal covers up to A$75 million of Tamboran's A$90m share.")
+    r = ST.factual_surface_audit(
+        "# T\n\nIt covers up to A$75 million of the A$90 million share.\n", pk)
+    check("90 is still unapproved -- the known false positive",
+          "90" in r["unapproved_numbers"], r["unapproved_numbers"])
+
+
+def test_an_invented_suffixed_figure_blocks():
+    """THE HALF THAT MATTERS. This case passed the screen before the change: the prose
+    carried a figure the approved material never granted, and the tokeniser saw no figure
+    there at all."""
+    print("\n4g. An invented figure in suffixed notation is caught")
+    pk = _packet("The deal covers up to A$75 million.")
+    r = ST.factual_surface_audit("# T\n\nThe deal covers A$250m instead.\n", pk)
+    check("the invented figure blocks", "250m" in r["unapproved_numbers"],
+          r["unapproved_numbers"])
+    check("hard_ok is False", r["hard_ok"] is False)
+
+
+def test_the_same_suffixed_figure_on_both_sides_is_clean():
+    """The approved side must read units too, or the fix would only ever ADD flags: a
+    packet saying "A$90m" and prose saying "A$90m" would disagree with itself."""
+    print("\n4h. The same suffixed figure on both sides is licensed")
+    pk = _packet("The deal covers A$90m over three years.")
+    r = ST.factual_surface_audit("# T\n\nThe deal covers A$90m over three years.\n", pk)
+    check("90m is not unapproved", "90m" not in r["unapproved_numbers"],
+          r["unapproved_numbers"])
+    check("and the surface is clean", r["hard_ok"], r["unapproved_numbers"])
+
+
+def test_a_notation_difference_is_not_a_new_figure():
+    """THE RULE THAT KEEPS THIS FROM HOLDING GOOD ARTICLES. An adversary rated this the
+    most likely shape of all: the article says "50 kilometres", the dek says "50km", and
+    a screen that flags every unmatched unit token blocks the package for a notation
+    difference. The numeral is the figure; the suffix is how it is written. So a suffixed
+    figure is refused only when its NUMERAL is unlicensed too."""
+    print("\n4i. An abbreviation of a licensed figure is not an invention")
+    pk = _packet("The route runs 50 kilometres inland from the coast.")
+    r = ST.factual_surface_audit("# T\n\nThe route runs 50km inland.\n", pk)
+    check("50km is not unapproved", "50km" not in r["unapproved_numbers"],
+          r["unapproved_numbers"])
+    check("and the surface is clean", r["hard_ok"], r["unapproved_numbers"])
+    # and the catch survives it: an invented figure has no licensed numeral behind it
+    pk2 = _packet("The deal covers up to A$75 million.")
+    r2 = ST.factual_surface_audit("# T\n\nThe deal covers A$250m instead.\n", pk2)
+    check("an invented suffixed figure still blocks",
+          "250m" in r2["unapproved_numbers"], r2["unapproved_numbers"])
+
+
 def main():
-    for t in (test_sentence_initial_after_a_closing_quote_is_not_an_entity,
+    for t in (test_the_number_tokeniser_itself_is_unchanged,
+              test_a_notation_difference_is_not_a_new_figure,
+              test_the_same_suffixed_figure_on_both_sides_is_clean,
+              test_a_figure_with_a_unit_suffix_is_visible_to_the_screen,
+              test_a_suffixed_figure_does_not_license_the_bare_numeral,
+              test_a_grammatical_suffix_is_not_a_unit,
+              test_separators_are_untouched,
+              test_the_two_notations_still_disagree_and_that_is_on_purpose,
+              test_an_invented_suffixed_figure_blocks,
+              test_sentence_initial_after_a_closing_quote_is_not_an_entity,
               test_the_sentence_initial_tradeoff_is_now_uniform,
               test_a_multi_word_name_the_ledger_grants_does_not_fragment,
               test_the_ledger_also_licenses_figures_and_vocabulary_it_grants,
