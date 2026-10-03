@@ -1240,3 +1240,72 @@ since ARCHITECTURE stopped running; the editorial refusals still block.
 
 The audit's headline recommendation -- pause automatic publication from this route -- is
 the owner's call and was not taken. Both blockers it rested on are closed.
+
+## 2026-10-02/03 — STRIP LIST: one of four items was real
+
+PRODUCTION BEFORE `37884dc` · PRODUCTION NOW `9b7f3dd` · DEPLOY_STATUS=PASS
+ROLLBACK `git revert 9b7f3dd` — two files, no flag, no schema.
+BASELINE regenerated clean at `9b7f3dd`: 160 suites, 134 pass / 26 fail.
+`/srv/data/cripminds-qa/current.txt` repointed; previous kept as `current.txt.bak-2026-10-03`.
+
+**WHAT WAS FALSIFIED.** The STRIP list rested on a measurement reading "26 distinct tokens
+have ever blocked a run on the factual-surface screen and every one is a false positive".
+Checked item by item against the retained record, three of the four items were wrong as
+written, and the one real defect was described backwards.
+
+**ITEM 1 — ENTITIES ADVISORY / PHRASE REPAIR: REFUSED.** It would have let invented `NASA`,
+`DWP`, `June` and `April` reach publication, verified end to end against the clean tree.
+`safety_matcher_precision_test` already carried a named check, *"an all-caps acronym in the
+title is still an entity"*, whose case is literally NASA — the suite had pinned the
+guarantee the patch removed. Of the record's 25 gate-path entity flags, 8 are correct
+refusals with confusing labels, 11 are single tokens the repair cannot help, and 6 are real
+false positives: 2 already fixed by passing the Ledger into the audit, and 4 (`CULT`,
+`DEATH`, `REAL`, `SATANIC`) caused by **case** rather than typography — the phrase is in the
+packet in ordinary case and `_entities` compares case-sensitively. A case-folded comparison
+would fix those four without dropping the class; identified, not built, not authorised.
+
+**ITEM 2 — THE NUMBER TOKENISER: SHIPPED, AND THE ITEM HAD IT BACKWARDS.** The task said
+stop `A$90 million` yielding `90`. The prose yielding 90 is correct. `_numbers`' trailing
+`\b` cannot hold between a digit and a letter, so **`A$90m` yielded no token at all**: the
+one number ever to block a run (`production-20260905T210605Z-2d62633a`) and, far worse,
+prose could carry an invented `A$250m`, `5km` or `20kg` past a HARD screen that saw no
+figure there. Falsified on the clean tree — the invented-`A$250m` test fails with `[]` and
+`hard_ok` True. That escape was live. Four shapes were needed, and each failure was about
+something other than numbers: (A) yielding bare `90` lets an approved `A$90m` license a
+prose "90 deaths"; (B) adding `90m` to `_numbers` displaced a CUT watch term, because
+`_numbers` feeds a CAPPED candidate list at `composition.py:2535` — `abc123` fell off the
+end and a hard CUT_LEAKAGE became a pass, a gate lowered by a fixed-size budget three files
+away; (C) reading units on both sides of the audit newly HELD articles whose own dek
+abbreviated their own figure (`50 kilometres` → `50km`), through the package screen. (D)
+ships: a suffixed figure is new only if its NUMERAL is new. 115/115 record runs unchanged,
+17 tests, 6 guards severed and 6 caught, fourth adversary pass found no blocker. Left
+unfixed on purpose and pinned by a test: a packet saying `A$90m` and prose saying `A$90
+million` still disagree, because closing that is variant A's trade.
+
+**ITEM 3 — CUT OFF THE FREE PATH: ALREADY DONE.** `free_composition` passes `cut = {}` by
+design, with its measurement in the module docstring; confirmed on a live run
+(`cut_declared: 0, violations: 0, ok: True`). The audit is SHARED, so deleting the machinery
+would have stripped a working gate from the planned path — 0 CUT_LEAKAGE holds across 9 free
+runs against 10 across 175 planned. The cited "23 blocks, 13 sole cause" could not be
+reproduced: 10 by the only countable definition, and "sole cause" was unmeasurable as
+attempted, because the first attempt counted stage statuses as findings.
+
+**ITEM 4 — COLLAPSE DUPLICATED DEFINITIONS: NEITHER HALF EXISTS.** `composition.py` contains
+the string `deadline` **zero** times. And `negative_shape_of` is already the single shared
+owner of the shape test, used by the permission compiler, the free path and the audit
+explicitly so they "cannot disagree about what a negative is"; the both-vs-either difference
+is two different questions, and the stricter side is owner-directed from 2026-09-10 with a
+retained proof (`production-20260910T073435Z-703b7b90`).
+
+**MY OWN MEASUREMENTS WERE WRONG FIVE TIMES**, each error changing the answer, and one of
+them after I had already written the verdict down. Counting `RESEARCH_PACK.json` as approved
+material (raw source, licenses nothing). Counting `EDITORIAL_PACKAGE.json` as approved
+(generated output — self-licensing, the `_pkg_licensed` trap). Reading only `LEDGER.json`,
+which left the approved blob EMPTY for seven pre-Ledger-era runs whose material is
+`WRITER_PACKET.txt`, so every fragment in them read as unlicensed vacuously. Treating a
+missing artefact as a refusal instead of reporting `NO_APPROVED_ARTEFACT`. Including
+`architect_prose_telemetry` in proportions when it gates nothing and is 85 of the record's
+207 entity flags.
+
+**EVIDENCE.** `.claude/patches/overnight-summary.md` and `item1`–`item4-state.md`, each
+naming the measurement script behind its verdict.

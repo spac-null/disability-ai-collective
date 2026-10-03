@@ -1,0 +1,114 @@
+diff --git a/automation/new_engine_v1/story.py b/automation/new_engine_v1/story.py
+index 69e925b..1a47a7f 100644
+--- a/automation/new_engine_v1/story.py
++++ b/automation/new_engine_v1/story.py
+@@ -2049,6 +2049,99 @@ def _calendar_dates(text: str) -> list:
+     return out
+ 
+ 
++_MONTH_NAMES = frozenset(
++    "January February March April May June July August September October November "
++    "December".split())
++# The capitalised words that are never a name: a sentence can start with any of them and
++# `_entities` reads the capital as evidence of one.
++_NUMBER_WORDS = frozenset(
++    "One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen "
++    "Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen Twenty Thirty Forty "
++    "Fifty Sixty Seventy Eighty Ninety Hundred Thousand Million Billion".split())
++
++_NOT_A_NAME = frozenset(
++    "She He They It We You His Her Their Its This That There These Those And But For "
++    "Yet So Nor The A An".split()) | _MONTH_NAMES
++
++
++def _named_entities_only(body: str, unapproved: set, approved: set) -> list:
++    """The unapproved entities that are plausibly NAMES, with fragments rejoined.
++
++    WHY THIS EXISTS, MEASURED. `_entities` reads a capital letter as a name, and across
++    every retained run that flagged anything it produced 22 flags, of which NOT ONE was an
++    invented fact:
++
++        fragment of a longer name   9   Saint, States, Nations, Kingdom, Museum, Modern
++        ALL-CAPS from a source      4   CULT, DEATH, REAL, SATANIC
++        month                       3   August, January, September
++        demonym or adjective        3   Economic, Italian
++        pronoun                     2   She
++        other                       1   Behind
++
++    THE GATE IS NOT LOWERED. An earlier attempt made the whole channel advisory and an
++    adversary showed what that admits: "Dr Helen Marsh of the Wellcome Trust said the
++    programme had failed", with nothing deterministic after Safety. The flaw was never
++    that the gate was too strict -- it is that the instrument cannot tell a name from the
++    word "September". This repairs the instrument and leaves the refusal exactly where it
++    was: `Helen Marsh` and `Wellcome Trust` are rejoined into phrases, remain unlicensed,
++    and still block.
++
++    FRAGMENTS ARE REJOINED, NOT DROPPED. `United Kingdom` reaches `_entities` as two
++    tokens and `Kingdom` alone is meaningless; dropping it would be a loosening. The
++    maximal capitalised run containing it is reconstructed from the prose and judged as
++    one thing -- so a licensed `United Kingdom` stops flagging, and an unlicensed
++    `Wellcome Trust` is flagged once, as itself.
++
++    A SINGLE CAPITALISED WORD IN MID-SENTENCE IS STILL A NAME and still flags: a Writer
++    inventing `Microsoft` has not escaped through this. What stops flagging is a word
++    that is a name only because a sentence began with it, a month, an all-caps heading
++    lifted out of a source, and half of a phrase.
++    """
++    # A PHRASE MAY NOT BEGIN AT A SENTENCE-INITIAL CAPITAL. `_entities` already skips
++    # those as names; the phrase builder has to as well, or it joins the capital that
++    # merely starts a sentence to the name that follows it. Measured on
++    # production-20261001T070632Z: "Thirteen Korean public institutions run a test"
++    # produced the phrase "Thirteen Korean" -- a misfire this repair would have
++    # introduced while removing nine others.
++    # ONLY the leading token is dropped, and only when it cannot be part of a name.
++    # Trimming every sentence-initial phrase was the first attempt and it was worse than
++    # the problem: "Wellcome Trust funded the programme" became the fragment "Trust",
++    # degrading a real catch into the exact shape this repair exists to remove. A number
++    # word or a function word opening a sentence is never part of the name beside it; a
++    # capitalised name is.
++    runs = {}
++    for m in re.finditer(r"\b[A-Z][\w’']*(?:[ ’'-][A-Z][\w’']*)+", body):
++        phrase, at = m.group(0), m.start()
++        head = re.split(r"[ ’'-]", phrase)[0]
++        starts_sentence = (at == 0 or bool(re.match(r"[.!?\n]\s*$", body[:at][-3:])))
++        if starts_sentence and (head in _NOT_A_NAME or head in _NUMBER_WORDS):
++            rest = phrase[len(head):].lstrip(" ’'-")
++            if not rest or not re.match(r"^[A-Z]", rest):
++                continue
++            phrase = rest
++        for part in re.split(r"[ ’'-]", phrase):
++            runs.setdefault(part, set()).add(phrase)
++    out: set = set()
++    for e in unapproved:
++        base = e.rstrip("’'s")
++        if e in _NOT_A_NAME or base in _NOT_A_NAME:
++            continue
++        # An all-caps token is typography -- a source's own headline -- not a name. The
++        # package screen already draws this distinction for title case.
++        if e.isupper() and len(e) > 1:
++            continue
++        phrases = runs.get(e) or runs.get(base) or set()
++        if phrases:
++            # Judge the whole phrase instead. Licensed as a phrase means not flagged.
++            for ph in phrases:
++                if ph not in approved and not all(
++                        p in approved for p in re.split(r"[ ’'-]", ph) if p):
++                    out.add(ph)
++            continue
++        out.add(e)
++    return sorted(out)
++
++
+ def factual_surface_audit(article_text: str, packet: dict, ledger: dict | None = None) -> dict:
+     """What factual surface does the prose carry that the approved material never granted?
+ 
+@@ -2108,7 +2201,8 @@ def factual_surface_audit(article_text: str, packet: dict, ledger: dict | None =
+                             if tok and d in licensed_dates}
+ 
+     nums = sorted(_numbers(body) - a_nums)
+-    ents = sorted((_entities(body) - a_ents) - excused_month_tokens)
++    ents = _named_entities_only(body, _entities(body) - a_ents - excused_month_tokens,
++                                a_ents)
+     terms = sorted(_content_words(body) - a_words)
+     sensory = sorted(t for t in terms if t in SENSORY_RISK)
+     scene = sorted(t for t in terms if t in SCENE_RISK)
