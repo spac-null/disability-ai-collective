@@ -589,6 +589,54 @@ def free_writer_user(instrument: dict | None, ledger: dict, pack: dict | None = 
     if q.get("question"):
         L += ["THE QUESTION THIS RUN IS FOR (written by the owner, before any evidence "
               "existed):", "  " + str(q["question"]), ""]
+        # THE SECOND INSTRUCTION, WHICH USED TO BE MISSING. The EDITORIAL INTENT header
+        # above is a licensing statement and nothing else: it says this question may not
+        # be ASSERTED. Nothing ever said the article must ANSWER it. Nothing else in the
+        # prompt did either -- READER_CONTRACT asks for an opening, momentum and an
+        # ending, and the engine's one nut-graf-shaped field (`wants_next`, story.py) sits
+        # inside `beats`, on the path this one replaced. So the sentence stating why the
+        # piece exists reached the Writer under a prohibition and no purpose, while six of
+        # the craft sources put saying-why-early ahead of everything else a piece does.
+        #
+        # IT LICENSES NOTHING, which is why it can sit under that header without
+        # contradicting it. "Answer the question" is a statement about what the article is
+        # for; every fact in the answer still comes from the frozen evidence below, and a
+        # mechanism written as established is still an unlicensed claim Safety refuses.
+        # Placed beside the question rather than after the whole block, so it is read with
+        # the thing it refers to.
+        L += ["WHAT THE ARTICLE OWES THAT QUESTION: answer it. Not assert it -- answer "
+              "it, out of the frozen evidence below, and let the answer be whatever that "
+              "evidence makes it: support, refusal, or something more complicated than "
+              "either. A reader who reaches the end should know what was asked and what "
+              "this evidence says about it.",
+              # Both sentences below were added after an adversary measured what the
+              # instruction above invites. Neither narrows the answer; both say how to
+              # write it so the engine does not refuse a compliant one.
+              #
+              # ANSWERING IS NOT A LICENCE TO CONNECT. Measured: with the removal of
+              # instruction and the practice of transmission both licensed and no source
+              # relating them, "the conservatory removed it, ending transmission by mesk"
+              # passes factual_surface_audit and safety_audit, leaving Grounding alone
+              # against it. Two facts in one sentence with nothing licensed between them
+              # is the project's oldest failure mode, and "answer the question" is exactly
+              # the pressure that produces it.
+              "  Answering does not license a connection. If two facts sit next to each "
+              "other and no source relates them, they stay unrelated in the prose: do not "
+              "make one the cause, the consequence or the end of the other.",
+              # A REFUSAL MUST REST ON A LICENSED ABSENCE. Measured: "the record does not
+              # show that X ended Y" passes the factual surface and then holds on
+              # UNSUPPORTED_NEGATIVES, because the Ledger grants no such absence. Inviting
+              # "refusal" as an answer without saying this invites a hold.
+              "  And if the answer is that the evidence does not settle it, say that only "
+              "where an absence is licensed -- the permitted absences are listed below. "
+              "Otherwise show the limit by what the evidence DOES say, and stop there. An "
+              "unlicensed 'the record does not show' is a new factual claim and will be "
+              "refused.",
+              "  Make the reason to read plain EARLY. Before a reader has spent much of "
+              "their attention, the piece has to show why it is worth the rest of it -- "
+              "not by summarising what follows, and not by opening on the question in the "
+              "abstract, but by putting the concrete thing in front of them and making "
+              "plain why it matters.", ""]
     if q.get("mechanism"):
         L += ["THE MECHANISM -- the claim being tested. It is NOT established; the "
               "evidence may support it, refuse it or complicate it, and all three are "
@@ -874,6 +922,57 @@ def _bears_on(fact: dict, sentence: str) -> bool:
     return shared >= max(2, len(key) // 3)
 
 
+def counterevidence_left_out(ledger: dict, facts_used, instrument: dict | None) -> dict:
+    """Frozen facts that bear on what would REFUTE the claim, and never reached the prose.
+
+    THE ONE QUESTION NOTHING ASKED. Every check on this path asks whether what the article
+    SAYS is supported -- Safety, Grounding, Fact Check, the claim mapper, the negative
+    audit, all of them. Not one asks what the article LEFT OUT. So evidence that
+    complicates the story can simply go unused, the piece passes every gate, and nobody
+    knows. `disconfirming_shape` -- the owner's own statement, written before any evidence
+    existed, of what would refute the claim -- is shown to the Writer under WHAT WOULD
+    REFUTE IT and then never looked at again.
+
+    That gap got more expensive on 2026-10-03, when the Writer began seeing the sources'
+    verbatim sentences. A strong piece built around two striking quotes is exactly the
+    piece most likely to walk past the awkward fact.
+
+    IT IS TELEMETRY AND IT REFUSES NOTHING, deliberately -- the same standing as
+    `prose_density`. "The Writer did not use F42" is not a safety violation, this cannot
+    judge relevance reliably, and a gate built on a lexical overlap would refuse good
+    articles for sport. It records, the owner reads, and he decides whether an omission
+    mattered.
+
+    RELEVANCE IS NOT INVENTED HERE. It reuses `_bears_on`, the test this module already
+    trusts to decide whether a fact concerns a sentence -- content words of five letters
+    or more, function words dropped, a third of them shared. Copied rather than invented
+    is the rule that produced it in the first place.
+
+    WHAT IT CANNOT DO. `facts_used` is the Writer's own declaration, so a run that emits
+    no FACTS marker yields `no_declaration` rather than flagging all 77 facts as omitted:
+    an absent declaration is missing information, not evidence of suppression.
+    """
+    refuted_if = str((instrument or {}).get("disconfirming_shape") or "").strip()
+    if not refuted_if:
+        return {"status": "no_disconfirming_shape", "candidates": [], "count": 0}
+    declared = {f for f in (facts_used or []) if f in (ledger or {})}
+    if not declared:
+        return {"status": "no_declaration", "refuted_if": refuted_if,
+                "candidates": [], "count": 0}
+    out = []
+    for fid, f in sorted((ledger or {}).items()):
+        if fid in declared:
+            continue
+        if _bears_on(f or {}, refuted_if):
+            out.append({"fact_id": fid,
+                        "proposition": str((f or {}).get("proposition") or "").strip()})
+    return {"status": "review" if out else "clean",
+            "refuted_if": refuted_if,
+            "unused_checked": len(ledger or {}) - len(declared),
+            "candidates": out,
+            "count": len(out)}
+
+
 def verify_declared_negatives(article_text: str, declared: list, ledger: dict) -> tuple:
     """(lineage, rejected). A declaration is admitted only if the LEDGER backs it.
 
@@ -1067,6 +1166,9 @@ def write_article_free(provider, ledger: dict, instrument: dict | None = None,
                     "facts_used_is_self_reported": True,
                     "facts_available": len(ledger or {}),
                     "prose_density": prose_density(article),
+                    # Advisory, read by nothing, refuses nothing. See the docstring.
+                    "counterevidence_left_out": counterevidence_left_out(
+                        ledger, parsed["facts_used"], instrument),
                     "negative_lineage_declared": parsed["declared_negatives"],
                     "negative_lineage_verified": lineage,
                     "negative_lineage_rejected": rejected,
