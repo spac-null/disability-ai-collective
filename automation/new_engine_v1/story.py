@@ -30,6 +30,7 @@ THE DOCTRINE, stated once:
 from __future__ import annotations
 
 import re
+import unicodedata
 
 # ── outcomes ──────────────────────────────────────────────────────────────────
 NO_STORY = "NO_STORY"
@@ -2115,6 +2116,66 @@ def _calendar_dates(text: str) -> list:
     return out
 
 
+# LETTERS NFKD CANNOT HELP WITH, because they are not a base plus a combining mark but
+# characters in their own right. Found the hard way: the first version of `_fold_accents`
+# turned "Yalcin" into "Yalcin" and left the dotless i alone, so it did not fix the very
+# name that prompted it. PyICU is installed on the host and would cover these, but a
+# SAFETY comparison must not behave differently on a machine where it is missing, so the
+# table is explicit and the behaviour is the same everywhere.
+#
+# These are character identities -- one letter written another way -- which is why folding
+# them cannot merge two different names. Transliteration SCHEMES are a different thing and
+# deliberately absent: sch/sh/s for the same Slavic sound, or ch/tch/cz, are conventions
+# rather than identities, and folding them would make genuinely different names equal.
+_NOT_A_BASE_PLUS_MARK = {
+    "\u0131": "i", "\u0130": "I",                     # Turkish dotless i, dotted I
+    "\u0142": "l", "\u0141": "L",                     # Polish l with stroke
+    "\u00f8": "o", "\u00d8": "O",                     # Nordic o with stroke
+    "\u00e6": "ae", "\u00c6": "AE",                   # ae ligature
+    "\u0153": "oe", "\u0152": "OE",                   # oe ligature
+    "\u00df": "ss", "\u1e9e": "SS",                   # German sharp s
+    "\u00fe": "th", "\u00de": "TH",                   # thorn
+    "\u00f0": "d", "\u00d0": "D",                     # eth
+    "\u0111": "d", "\u0110": "D",                     # d with stroke
+    "\u0127": "h", "\u0126": "H",                     # h with stroke
+    "\u0167": "t", "\u0166": "T",                     # t with stroke
+    "\u017f": "s",                                     # long s
+    "\u0138": "k",                                     # kra
+}
+
+
+def _fold_accents(token: str) -> str:
+    """A name with its accents stripped, for comparison only.
+
+    MEASURED, AND IT BLOCKS REAL ARTICLES. On the meSk Ledger, prose attributing a quote
+    to "Yalcin Cetinkaya" is refused as two invented people, because the Ledger spells him
+    "Yalcin Cetinkaya" with Turkish diacritics and `_entities` compares code point by code
+    point. Written with the diacritics the same sentence passes. So the screen is not
+    asking who a person is, it is asking how their name was typed -- and every Turkish,
+    Polish, Vietnamese or Icelandic name is a trap, on a publication whose subjects are
+    rarely anglophone.
+
+    THIS LOWERS NOTHING. Two strings that differ only in their diacritics are the same
+    word; folding them cannot make an invented name match a licensed one that is spelled
+    differently, because a different spelling means different letters. Case is a SEPARATE
+    question and deliberately not folded here: `_entities` collects capitalised tokens, so
+    case folding would let an invented acronym match an ordinary capitalised word (an
+    invented "ACT" against an approved "Act"), which is the shape that got an earlier
+    change refused.
+
+    NFKD then dropping combining marks, so it covers every accented character rather than
+    a list someone has to maintain.
+    """
+    folded = "".join(c for c in unicodedata.normalize("NFKD", token or "")
+                     if not unicodedata.combining(c))
+    return "".join(_NOT_A_BASE_PLUS_MARK.get(c, c) for c in folded)
+
+
+def _accent_insensitive(tokens: set) -> set:
+    """The folded forms of an approved token set, for membership tests."""
+    return {_fold_accents(t) for t in tokens}
+
+
 def factual_surface_audit(article_text: str, packet: dict, ledger: dict | None = None) -> dict:
     """What factual surface does the prose carry that the approved material never granted?
 
@@ -2175,7 +2236,21 @@ def factual_surface_audit(article_text: str, packet: dict, ledger: dict | None =
 
     nums = sorted((_numbers(body) - a_nums)
                   | _unit_figure_leaks(body, approved, a_nums))
-    ents = sorted((_entities(body) - a_ents) - excused_month_tokens)
+    # NAMES ARE COMPARED WITH THEIR ACCENTS FOLDED, ON BOTH SIDES, AND THE SECOND HALF OF
+    # THAT IS THE IMPORTANT ONE. `_entities` matches [A-Z][A-Za-z'.-]{2,}, which is ASCII,
+    # so an accented name is invisible to it: on "Yalcin Cetinkaya writes that Huseyin
+    # Sadeddin Arel was born in Istanbul" -- spelled with its Turkish diacritics -- it
+    # returns Arel and Istanbul and NOTHING ELSE. That cuts both ways and the engine was
+    # wrong in both directions. A real name written plainly was refused as an invention,
+    # because the approved side never contained it. And an INVENTED name written with
+    # diacritics was never seen at all, which is a hole in the screen, not a strictness.
+    #
+    # Folding the text before extraction fixes both: every name becomes visible, and the
+    # comparison stops caring how it was typed. Flags are reported folded, which is also
+    # how a reader wants to read them.
+    a_ents_folded = _entities(_fold_accents(approved), skip_sentence_initial=False)
+    ents = sorted((_entities(_fold_accents(body)) - a_ents_folded)
+                  - {_fold_accents(t) for t in excused_month_tokens})
     terms = sorted(_content_words(body) - a_words)
     sensory = sorted(t for t in terms if t in SENSORY_RISK)
     scene = sorted(t for t in terms if t in SCENE_RISK)
