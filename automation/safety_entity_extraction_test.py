@@ -363,8 +363,64 @@ def test_a_notation_difference_is_not_a_new_figure():
           "250m" in r2["unapproved_numbers"], r2["unapproved_numbers"])
 
 
+# ── names are compared with their accents folded ─────────────────────────────
+def test_a_name_is_the_same_name_however_its_accents_are_typed():
+    """`_entities` matches [A-Z][A-Za-z'.-]{2,}, which is ASCII. On a Turkish Ledger that
+    cut both ways and the engine was wrong in both directions: a real name written plainly
+    was refused as an invention, and an invented name written WITH diacritics was never
+    seen at all. Measured on the meSk Ledger, where the screen returned only Arel and
+    Istanbul from a sentence naming four people."""
+    print("\n5. Accents are spelling, not identity")
+    raw = "Yal\u00e7\u0131n \u00c7etinkaya writes that H\u00fcseyin Arel was born."
+    check("precondition: the raw screen cannot see an accented name",
+          "\u00c7etinkaya" not in ST._entities(raw, skip_sentence_initial=False)
+          and "Cetinkaya" not in ST._entities(raw, skip_sentence_initial=False),
+          sorted(ST._entities(raw, skip_sentence_initial=False)))
+    check("folded, every name becomes visible",
+          {"Yalcin", "Cetinkaya", "Huseyin"}
+          <= ST._entities(ST._fold_accents(raw), skip_sentence_initial=False),
+          sorted(ST._entities(ST._fold_accents(raw), skip_sentence_initial=False)))
+    pk = _packet("Yal\u00e7\u0131n \u00c7etinkaya writes that the system was contested.")
+    plain = ST.factual_surface_audit(
+        "# T\n\nYalcin Cetinkaya writes that the system was contested.\n", pk)
+    check("the real name written plainly is no longer an invention",
+          plain["hard_ok"], plain["unapproved_entities"])
+    accented = ST.factual_surface_audit(
+        "# T\n\nYal\u00e7\u0131n \u00c7etinkaya writes that the system was contested.\n", pk)
+    check("and written with its accents it still passes", accented["hard_ok"],
+          accented["unapproved_entities"])
+
+
+def test_an_invented_name_in_accents_is_no_longer_invisible():
+    """THE HALF THAT IS NEW PROTECTION. Before this, an invented name spelled with
+    diacritics was not flagged -- it was never extracted."""
+    print("\n5b. An invented name cannot hide behind a diacritic")
+    pk = _packet("The programme was reviewed last year.")
+    r = ST.factual_surface_audit(
+        "# T\n\nH\u00fcseyin \u015eahin of the Wellcome Trust said it had failed.\n", pk)
+    check("the invented accented name blocks",
+          any("Sahin" in e for e in r["unapproved_entities"]), r["unapproved_entities"])
+    check("hard_ok is False", r["hard_ok"] is False)
+
+
+def test_folding_covers_letters_that_are_not_a_base_plus_a_mark():
+    """NFKD alone turned Yal\u00e7\u0131n into Yalc\u0131n and left the dotless i, so the first
+    version did not fix the name that prompted it. These are character identities, not
+    transliteration schemes -- sch/sh and ch/cz are conventions and are deliberately
+    absent, because folding those would make different names equal."""
+    print("\n5c. The letters NFKD cannot reach")
+    for raw, want in (("Yal\u00e7\u0131n", "Yalcin"), ("\u0141\u00f3d\u017a", "Lodz"),
+                      ("Stra\u00dfe", "Strasse"), ("\u00d8re", "Ore"),
+                      ("\u0110or\u0111e", "Dorde"), ("M\u00fcller", "Muller")):
+        check("  %-10s -> %s" % (raw, want), ST._fold_accents(raw) == want,
+              ST._fold_accents(raw))
+
+
 def main():
-    for t in (test_the_number_tokeniser_itself_is_unchanged,
+    for t in (test_a_name_is_the_same_name_however_its_accents_are_typed,
+              test_an_invented_name_in_accents_is_no_longer_invisible,
+              test_folding_covers_letters_that_are_not_a_base_plus_a_mark,
+              test_the_number_tokeniser_itself_is_unchanged,
               test_a_notation_difference_is_not_a_new_figure,
               test_the_same_suffixed_figure_on_both_sides_is_clean,
               test_a_figure_with_a_unit_suffix_is_visible_to_the_screen,
