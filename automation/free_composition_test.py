@@ -2027,6 +2027,90 @@ def test_the_loop_is_bounded_and_not_a_rewrite() -> None:
           (HERE / "new_engine_v1" / "free_composition.py").read_text(encoding="utf-8"))
 
 
+# ── the reason to read ────────────────────────────────────────────────────────
+def test_the_article_is_told_to_answer_the_owners_question() -> None:
+    """The editorial-intent header says the question may not be ASSERTED. Nothing said the
+    article must ANSWER it, and nothing else in the prompt did either: READER_CONTRACT asks
+    for an opening, momentum and an ending, and the engine's one nut-graf-shaped field
+    (`wants_next`) sits inside `beats`, on the path this one replaced."""
+    user = FC.free_writer_user(INSTRUMENT, LEDGER, {}, "a subject")
+    check("precondition: the owner's question reaches the Writer",
+          "THE QUESTION THIS RUN IS FOR" in user)
+    check("precondition: still under a header saying it may not be asserted",
+          "none of it may be asserted as a fact" in user)
+    check("and the article is now told to answer it",
+          "WHAT THE ARTICLE OWES THAT QUESTION" in user)
+    check("and to make the reason plain early",
+          "Make the reason to read plain EARLY" in user)
+    # Both added after an adversary measured what "answer it" invites: a causal join
+    # between two licensed facts passes the factual surface, and an unlicensed "the record
+    # does not show" holds on UNSUPPORTED_NEGATIVES. The instruction now says how to write
+    # a compliant answer rather than only what to answer.
+    check("answering does not license a connection between unrelated facts",
+          "Answering does not license a connection" in user)
+    check("and a refusal must rest on a licensed absence",
+          "say that only where an absence is licensed" in user)
+    i_q, i_a = user.find("THE QUESTION THIS RUN IS FOR"), user.find("WHAT THE ARTICLE OWES")
+    i_m = user.find("THE MECHANISM")
+    check("it is read beside the question, before the mechanism",
+          -1 < i_q < i_a < i_m, (i_q, i_a, i_m))
+    check("and it says nothing when there is no question to answer",
+          "WHAT THE ARTICLE OWES" not in FC.free_writer_user({}, LEDGER, {}, "a subject"))
+
+
+def test_the_reason_to_read_instruction_is_not_a_plan_leak() -> None:
+    """It is an instruction about purpose, not a plan. If it ever trips the marker that
+    defends this path's invariant, the run HOLDS rather than writing -- so the check is on
+    the assembled bytes, and the guard is proven live in the same test."""
+    user = FC.free_writer_user(INSTRUMENT, LEDGER, {}, "a subject")
+    system = FC.free_writer_system()
+    check("the assembled prompt is still plan-free",
+          FC.writer_inputs_are_plan_free(system, user) == [],
+          FC.writer_inputs_are_plan_free(system, user))
+    check("and the guard that says so still fires on a real leak",
+          bool(FC.writer_inputs_are_plan_free("", user + "\nTHE PATH, IN ORDER\n 1. x")))
+
+
+# ── what the article left out ────────────────────────────────────────────────
+def test_counterevidence_left_out_names_the_fact_the_article_walked_past() -> None:
+    """Every other check asks whether what the article SAYS is supported. None asks what
+    it LEFT OUT, so evidence that complicates the story can go unused and the piece passes
+    every gate. This records it for the owner; it refuses nothing."""
+    led = {"F01": {"proposition": "The conservatory removed Turkish music instruction."},
+           "F02": {"proposition": "Students continued learning meshk privately for decades "
+                                  "after the conservatory removed instruction."},
+           "F03": {"proposition": "A cat sat on a windowsill in Vienna."}}
+    inst = {"disconfirming_shape": "Students continued learning meshk privately after "
+                                   "instruction was removed from the conservatory."}
+    r = FC.counterevidence_left_out(led, ["F01"], inst)
+    check("it reviews rather than passing silently", r["status"] == "review", r)
+    ids = [c["fact_id"] for c in r["candidates"]]
+    check("the refuting fact the article skipped is named", "F02" in ids, ids)
+    check("an unrelated unused fact is not", "F03" not in ids, ids)
+    check("and a fact the article used is not", "F01" not in ids, ids)
+
+
+def test_counterevidence_left_out_is_clean_when_nothing_was_skipped() -> None:
+    led = {"F01": {"proposition": "Students continued learning meshk privately for decades."}}
+    inst = {"disconfirming_shape": "Students continued learning meshk privately for decades."}
+    check("using it leaves nothing to report",
+          FC.counterevidence_left_out(led, ["F01"], inst)["status"] == "clean")
+
+
+def test_counterevidence_left_out_refuses_to_guess() -> None:
+    """An absent declaration is missing information, not evidence of suppression; and with
+    no disconfirming shape there is nothing to measure against."""
+    led = {"F01": {"proposition": "Students continued learning meshk privately."}}
+    inst = {"disconfirming_shape": "Students continued learning meshk privately."}
+    check("no declaration is reported as such, not as 77 omissions",
+          FC.counterevidence_left_out(led, [], inst)["status"] == "no_declaration")
+    check("and it flags nothing in that case",
+          FC.counterevidence_left_out(led, [], inst)["count"] == 0)
+    check("no disconfirming shape means nothing to check",
+          FC.counterevidence_left_out(led, ["F01"], {})["status"]
+          == "no_disconfirming_shape")
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
