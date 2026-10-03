@@ -2111,6 +2111,125 @@ def test_counterevidence_left_out_refuses_to_guess() -> None:
           == "no_disconfirming_shape")
 
 
+# ── the shape of an article ──────────────────────────────────────────────────
+def test_all_eight_standard_openings_are_available() -> None:
+    """The engine permitted ONE of the eight standard ledes and held the rest. The
+    instruction said "begin with one concrete anomaly, puzzle, person, object, action or
+    contradiction" -- every option a thing -- and the Reader held on "a framing device in
+    front of the subject", which is what a question, a quotation or a thesis looks like.
+    OPENING held 8 of the 17 articles the Reader judged."""
+    system = _flat(FC.free_writer_system())
+    for lede in ("anecdotal", "descriptive", "quotation",
+                 "dialogue", "contrast", "summary"):
+        check("  %-12s is offered" % lede, lede in system)
+    # THE MANIFESTO IS SENIOR TO THE GENERAL CRAFT ADVICE. The standard repertoire has
+    # eight; this publication's own manifesto rules two out in writing -- "the opening
+    # line is a concrete moment or a sharp claim, never a question, never statistics,
+    # never throat-clearing". Owner decision 2026-10-03, taken with both options in front
+    # of him. If this test ever fails, the publication's published design has changed.
+    check("a question lede is not offered", "question    ask the thing" not in system
+          and "question, quotation" not in system)
+    check("a statistic lede is not offered", "statistic   one figure" not in system)
+    check("and the judge holds them",
+          "A question lede or a statistic lede is a HOLD" in _flat(CP.READER_SYSTEM))
+    check("the old single-shape instruction is gone",
+          "begin with one concrete anomaly" not in system)
+
+
+def test_the_opening_is_not_measured_in_sentences() -> None:
+    """A sentence count is arbitrary and cannot know the material. What the first
+    paragraph must DO is land the reader inside the story."""
+    system = _flat(FC.free_writer_system())
+    check("no sentence count survives", "two to four sentences" not in system)
+    check("the test is what the paragraph does",
+          "land the reader inside the story" in system)
+    check("and personal is required, not suggested",
+          "Not where convenient -- always" in system)
+    check("the evidence cannot be used as an excuse",
+          "THE EVIDENCE CANNOT EXCUSE YOU FROM THIS" in system)
+    check("but an unnamed person still counts",
+          "Unnamed is not impersonal" in system)
+    check("and a reorderable passage is named as a list",
+          "it is a list and it has to be rewritten" in system)
+
+
+def test_the_body_is_told_to_alternate_its_material() -> None:
+    """Nothing ever asked for the standard feature body -- research, then a voice, then
+    the exact words, then back. CATALOGUE_NOT_NARRATIVE is pressed 14 times in the desk
+    record, which is what a body of one texture reads like."""
+    system = _flat(FC.free_writer_system())
+    check("the body must move between kinds of material",
+          "MOVE BETWEEN KINDS OF MATERIAL" in system)
+    check("and a run of findings is named as the failure",
+          "is a catalogue whatever the findings are" in system)
+
+
+def test_the_nut_graf_is_asked_for_as_its_own_move() -> None:
+    system = _flat(FC.free_writer_system())
+    check("it is asked for early and in its own paragraph",
+          "in a paragraph of its own" in system)
+    check("and distinguished from a summary of what follows",
+          "Not a summary of what follows" in system)
+
+
+def _flat(text: str) -> str:
+    """Prompt blocks are hand-wrapped, so a phrase the writer reads as one sentence is
+    split across lines with indentation. Assertions are made against the flattened text."""
+    return " ".join((text or "").split())
+
+
+def test_returning_to_the_opening_is_not_padding() -> None:
+    """The ending rule forbade the standard feature close. "Does it add a closing
+    paragraph because articles are expected to have one" reads a circle kicker as padding,
+    and an anecdotal opening OWES the reader a return."""
+    system = _flat(FC.free_writer_system())
+    check("the writer is told a return is legitimate", "NOT padding" in system)
+    check("and that an anecdote or scene owes one",
+          "owed when the opening was an anecdote or a scene" in system)
+    check("while real padding still fails", "restates the argument" in system)
+
+
+def test_the_free_path_finally_has_a_quote_rule() -> None:
+    """IT NEVER HAD ONE. The planned path carries DO_NOT_QUOTE, and its stated reason is
+    this path's situation exactly: "Nothing you are given below is verbatim source text --
+    every fact is a proposition written for this article, not a transcript -- so any
+    quotation you form would be a reconstruction." The free Writer was given the same
+    propositions and no rule at all, and one live article already carries quotation marks.
+
+    Offering a quotation and a dialogue lede without this would have been three
+    invitations to invent a quote."""
+    system = _flat(FC.free_writer_system())
+    check("quotation marks are tied to verbatim material",
+          "Put quotation marks around somebody's words ONLY when you were given those "
+          "words verbatim" in system)
+    check("and reporting with attribution is offered instead",
+          "report what was said and name who said it" in system)
+    check("the named fabrications are forbidden",
+          "combining two separated clauses" in system)
+    check("titles and examined terms stay unaffected",
+          "Marks around a title" in system)
+    check("the body no longer asks for words the Writer was never given",
+          "the exact words they used" not in system)
+
+
+def test_the_lens_reaches_the_writer_as_a_method_not_as_background() -> None:
+    """The most personal material in the system -- a room at the Van Abbemuseum, a plastic
+    cube on a street, Bic pen with no undo, the three-second lag -- reached the Writer
+    under a bare heading and nothing else. Its own text says PUT THE READER IN A ROOM and
+    THE IMAGE MAKES THE ARGUMENT; nothing ever said those were instructions. On the
+    planned path the wrapper went further and called it "not a rule to satisfy and not a
+    style to imitate", cancelling the text it introduced."""
+    system = _flat(FC.free_writer_system())
+    check("the lens still reaches the writer whole",
+          "Put the reader in a room" in system and "Van Abbemuseum" in system)
+    check("its experiences are marked as not evidence",
+          "THE EXPERIENCES BELOW ARE NOT EVIDENCE" in system)
+    check("its method is stated as a method",
+          "THE METHOD BELOW IS YOURS, AND IT IS NOT OPTIONAL" in system)
+    check("and explaining before showing is named as backwards",
+          "has done this backwards" in system)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):

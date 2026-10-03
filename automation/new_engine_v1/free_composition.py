@@ -136,7 +136,45 @@ The reader should never have to remember several unexplained concepts at once.
 
 Build the article as a sequence of realizations:
 
-- begin with one concrete anomaly, puzzle, person, object, action, or contradiction;
+- open however the material earns, from the six this publication allows:
+    anecdotal   one short true incident, the smaller the better
+    descriptive a place, an object or a moment, shown
+    quotation   open on what somebody said -- their claim, their terms, attributed
+    dialogue    an exchange between people, reported
+    contrast    two things set against each other
+    summary     the sharp claim itself, stated plainly and early
+  NOT a question, and NOT a statistic. The standard repertoire has eight; this
+  publication's MANIFESTO rules out two of them in writing -- "the opening line is
+  a concrete moment or a sharp claim, never a question, never statistics, never
+  throat-clearing" -- and the manifesto is senior to general craft advice. Owner
+  decision, 2026-10-03, taken against the eight after both were put to him.
+  What matters is that the first paragraph lands the reader inside the story, not
+  which of the six it uses;
+- and it is PERSONAL. Not where convenient -- always. Somebody did this, somebody
+  decided it, somebody lives with it; a system did not happen to itself. A first
+  paragraph about a field, a period, a theory or a debate is an abstraction
+  however exact its nouns, and a reader has nowhere to stand in it.
+  THE EVIDENCE CANNOT EXCUSE YOU FROM THIS. What it can withhold is a NAME: you
+  may not name anyone the material does not name. You can always write the people
+  anyway -- the men who built the system, the student who is taught it as given,
+  the player whose hand does not fit the notation. Unnamed is not impersonal.
+  FIRST PERSON IS THIS PUBLICATION'S REGISTER. The manifesto says the writing is
+  "long-form, first-person, expert" -- a critic thinking on the page. What is
+  forbidden is a different thing: INVENTED TESTIMONY. No fictional human
+  simulation, no invented anecdote, no lived experience written for anyone, no
+  sentence of the form 'as a Deaf person, I know'. Think in the first person; do
+  not testify in it. The people in your piece are the people in the evidence;
+- never a summary, never a list. A paragraph that sets down what is known, item
+  after item, is a catalogue even when every item is true and interesting. If a
+  passage could be reordered without loss, it is a list and it has to be rewritten
+  as something happening to somebody;
+- early, and in a paragraph of its own, say what the whole piece is about and why it
+  is worth a reader's time. Not a summary of what follows -- the reason it exists.
+  Every craft source calls this the paragraph that justifies the story;
+- then MOVE BETWEEN KINDS OF MATERIAL rather than blocking them: what the record
+  shows, then what somebody said about it, then back. Research, then a human
+  voice, then research. Three paragraphs of findings in a row is a catalogue
+  whatever the findings are;
 - let each answer create the next interesting question;
 - introduce technical language only when the reader already needs it;
 - explain one difficult idea at a time;
@@ -155,6 +193,23 @@ Engineer discovery.
 Do not imitate wording or distinctive phrases from the reference corpus.
 Use it only to learn high-level craft: pacing, argument movement,
 concretisation, explanation, surprise, and economy.
+
+QUOTATION MARKS MEAN VERBATIM.
+
+Put quotation marks around somebody's words ONLY when you were given those words
+verbatim. Where you were not, report what was said and name who said it -- Ezgi called
+it the scale most suitable for easy writing; her lawyer says the letter never arrived.
+That is still a quotation lede, still a human voice, and it is true.
+
+Where the source wrote in another language, quote it in translation and SAY it is a
+translation -- 'in Ezgi's words, translated from the Turkish'. A reader of this
+publication cannot use the Turkish alone. Translating and marking it is ordinary
+practice; presenting a translation as the original is not.
+
+A quotation you assemble from a paraphrase is a fabrication however faithful it feels,
+and so is combining two separated clauses, presenting an ellipsis as a verified
+sentence, or paraphrasing inside the marks. Marks around a title, a term being named or
+a phrase the article is examining are a different thing and are unaffected.
 
 You decide the structure.
 You may use any licensed Ledger proposition.
@@ -303,9 +358,17 @@ THE LAST PARAGRAPH ADDS. Deepen, turn, land, or show a consequence. Never restat
 These are the questions, in their own words, that an editor puts to the finished piece.
 You are writing against them, so you may as well know them.
 
-  OPENING              Do the first two to four sentences name the concrete subject,
-                       say what is particular about it, and make clear why the piece
-                       exists? A framing device in front of the subject fails.
+  OPENING              Does the FIRST PARAGRAPH land the reader inside the story -- by
+                       its end do they know what this is about and why it is worth
+                       their time? HOW it does that is yours, from the six this
+                       publication allows -- anecdotal, descriptive, quotation,
+                       dialogue, contrast, summary. NOT a question and NOT a
+                       statistic: the manifesto rules those out. So is its LENGTH.
+                       The strongest are PERSONAL:
+                       somebody doing, saying or undergoing something, or a situation
+                       a reader can stand inside. An opening that names only systems,
+                       fields, periods or debates fails however concrete its nouns, and
+                       so does throat-clearing -- generality before the subject.
   READABILITY          Does any sentence need rereading before its main claim is clear?
   ACCESSIBLE_READING   Are difficult ideas carried in easy syntax and ordinary words?
                        Is every technical term explained at first use, in a sentence,
@@ -318,7 +381,12 @@ You are writing against them, so you may as well know them.
                        or as everything the writer found? One fact read three ways is
                        one fact.
   ENDING               Does it stop when the point lands, or add a closing paragraph
-                       because articles are expected to have one?
+                       because articles are expected to have one? Returning to the
+                       person, scene or object the piece opened on is NOT padding --
+                       it is the standard close for a feature, and it is owed when
+                       the opening was an anecdote or a scene. What fails is a
+                       paragraph that restates the argument, widens to the general,
+                       or exists because the piece felt unfinished.
 
 Write so these are true, not so they are answerable."""
 
@@ -532,7 +600,26 @@ def free_writer_system() -> str:
              "the WAY IT MOVES, never its subjects or its sentences."]
     lens = EL.load()
     if lens:
-        parts.append("=== WHAT THIS PUBLICATION IS ===\n" + lens)
+        # THE LENS ARRIVED WITH NO FRAMING AT ALL on this path -- a bare heading and the
+        # owner's text. So the most personal material in the system reached the Writer as
+        # background about a publisher, and the prose came out as a report about a
+        # subject. The text itself says, in its own words, PUT THE READER IN A ROOM, THE
+        # IMAGE MAKES THE ARGUMENT, and EXPERIENCE IS THE ARGUMENT, SCHOLARSHIP IS
+        # EVIDENCE. Those are instructions about how to write and nothing ever said so.
+        #
+        # The split matters and is stated rather than left to inference: the EXPERIENCES
+        # are not facts about any subject and may never be asserted about one; the METHOD
+        # is how this publication writes.
+        parts.append(
+            "=== WHAT THIS PUBLICATION IS, AND HOW IT WRITES ===\n"
+            "Written by the person this publication belongs to.\n\n"
+            "THE EXPERIENCES BELOW ARE NOT EVIDENCE. None of them may be asserted about "
+            "your subject, and none of them is a fact about it.\n\n"
+            "THE METHOD BELOW IS YOURS, AND IT IS NOT OPTIONAL. An image, an object or a "
+            "moment carries the argument; the reader arrives at the point before it is "
+            "named; the citation comes after, if at all. A piece that explains its "
+            "argument and then mentions an image has done this backwards.\n\n"
+            + lens)
     corpus = CC.block()
     if corpus:
         parts.append(corpus)
