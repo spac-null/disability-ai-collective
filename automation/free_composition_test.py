@@ -2230,6 +2230,48 @@ def test_the_lens_reaches_the_writer_as_a_method_not_as_background() -> None:
           "has done this backwards" in system)
 
 
+def test_the_two_safe_manifesto_lines_reach_the_writer() -> None:
+    """Four manifesto elements never reached the Writer. Two of them carry an epistemic
+    risk when read by a model rather than by an editor, and are deliberately NOT here:
+    "nothing is balanced, nothing is comprehensive" can read as licence to ignore what
+    complicates the argument -- which is exactly what `counterevidence_left_out` was built
+    to detect -- and "nothing resolves" can manufacture false irresolution in a piece whose
+    evidence does settle something. Owner's decision, 2026-10-03: ship the two safe ones,
+    hold the other two.
+
+    The thesis line is only safe WITH its second half. "One thesis" alone would force unity
+    onto plural evidence; "until the thesis starts holding back" is what makes the
+    resistance the subject rather than a problem to write around."""
+    system = _flat(FC.free_writer_system())
+    check("one thesis arrives with its second half",
+          "holds it until the thesis starts holding back" in system)
+    check("resistance is conditional, not demanded",
+          "IF the evidence stops supporting it" in system
+          and "Do not manufacture friction" in system)
+    check("a settled question may be settled",
+          "a settled question honestly settled is a finished article" in system)
+    check("and running out of evidence needs a licensed absence",
+          "only where an absence is licensed" in system.lower())
+    check("the register is a letter, not a lecture",
+          "a letter from someone who respects your time" in system)
+    check("the balance line is NOT shipped", "Nothing here is balanced" not in system)
+    check("the resolution line is NOT shipped", "Nothing resolves" not in system)
+
+
+def test_the_seams_between_sections_are_asked_for() -> None:
+    """MOMENTUM asks whether each paragraph earns the next. Nothing asked the same question
+    between SECTIONS, and the craft sources call the join the glue that makes a long piece
+    read as one piece rather than four."""
+    system = _flat(FC.free_writer_system())
+    check("a section may not open by announcing its topic",
+          "Do not start a section by announcing its topic" in system)
+    check("it starts from what the reader was just made to want",
+          "start it from what the last one just made the reader want" in system)
+    check("and sections may vary in length without a prescribed number",
+          "No number is being prescribed here" in system
+          and "what is being refused is uniformity" in system)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):

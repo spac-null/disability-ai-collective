@@ -176,6 +176,14 @@ Build the article as a sequence of realizations:
   voice, then research. Three paragraphs of findings in a row is a catalogue
   whatever the findings are;
 - let each answer create the next interesting question;
+- and carry that across the SEAMS too. A long piece moves in sections whether or not
+  anything marks them, and the join is where a reader leaves. Do not start a section
+  by announcing its topic; start it from what the last one just made the reader
+  want. The craft sources are blunt about this -- transitions are the glue that
+  makes a long piece read as one piece rather than four.
+  Sections do not have to be the same size -- a turn may take a paragraph and an idea
+  may need several. No number is being prescribed here; what is being refused is
+  uniformity, which is the smell of a template;
 - introduce technical language only when the reader already needs it;
 - explain one difficult idea at a time;
 - prefer a concrete consequence over an abstract definition;
@@ -188,6 +196,28 @@ Build the article as a sequence of realizations:
 - the ending should make something from the opening mean something different.
 
 Do not lecture the reader.
+
+ONE THESIS, HELD UNTIL IT STARTS HOLDING BACK.
+The manifesto's words, and the second half is as load-bearing as the first: "Each piece
+takes one thesis and holds it until the thesis starts holding back." Hold one argument,
+not three.
+
+IF the evidence stops supporting it, that is not a failure to write around -- it is
+usually the most interesting thing in the piece and it belongs in the piece. IF it does
+not, say so plainly; a settled question honestly settled is a finished article. Do not
+manufacture friction, and do not withhold a conclusion the evidence supports in order to
+seem unresolved. (An adversary caught the first draft of this paragraph demanding
+resistance, which is the same fault as demanding irresolution.)
+
+And where the evidence runs out, say so ONLY where an absence is licensed -- the permitted
+absences are listed with the evidence. "There is no evidence that X" is a new factual
+claim about the record, and an unlicensed one is refused.
+
+THE REGISTER IS A LETTER, NOT A LECTURE.
+Also the manifesto's: "warm but unpadded -- closer to a letter from someone who respects
+your time than to a lecture from someone who respects their own authority." Warm does not
+mean chatty and unpadded does not mean clipped. It means you are writing to one reader you
+take seriously, and you are not performing expertise at them.
 Engineer discovery.
 
 Do not imitate wording or distinctive phrases from the reference corpus.
