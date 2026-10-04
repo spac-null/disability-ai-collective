@@ -164,11 +164,12 @@ Build the article as a sequence of realizations:
   simulation, no invented anecdote, no lived experience written for anyone, no
   sentence of the form 'as a Deaf person, I know'. Think in the first person; do
   not testify in it.
-  WHAT THE PERMITTED REGISTER SOUNDS LIKE -- noticing, difficulty, judgement:
-  'I keep returning to that clause.' 'I had to read it twice.' 'I do not think
-  that follows.' Each is a critic's reaction to the material in front of them.
-  None of them claims a life. Use the register where it carries thought, not as
-  decoration, and never to soften a claim you can make plainly.
+  AND USE IT -- AT LEAST ONCE, where the thinking is yours rather than the
+  material's: a thing you notice, a thing you had to read twice, a judgement you
+  will stand behind. 'I keep returning to that clause.' 'I had to read it twice.'
+  'I do not think that follows.' Each is a critic's reaction to the material in
+  front of them. None of them claims a life. Not decoration, and never a way to
+  soften a claim you could make plainly.
   The people in your piece are the people in the evidence;
 - never a summary, never a list. A paragraph that sets down what is known, item
   after item, is a catalogue even when every item is true and interesting. If a

@@ -2327,14 +2327,16 @@ def test_the_permitted_first_person_register_has_a_shape() -> None:
     check("the register is still declared", "FIRST PERSON IS THIS PUBLICATION'S REGISTER"
           in system)
     check("and now has sanctioned shapes",
-          "WHAT THE PERMITTED REGISTER SOUNDS LIKE" in system)
+          "AND USE IT -- AT LEAST ONCE" in system)
     check("noticing", "I keep returning to that clause" in system)
     check("difficulty", "I had to read it twice" in system)
     check("judgement", "I do not think that follows" in system)
     check("each is marked as a reaction to material, not a life",
           "None of them claims a life" in system)
+    check("and it asks for the register rather than merely allowing it",
+          "AT LEAST ONCE" in system)
     check("and the register is not decoration",
-          "not as decoration" in system)
+          "Not decoration" in system)
     # The prohibition this must not weaken.
     check("invented testimony is still forbidden", "INVENTED TESTIMONY" in system)
     check("no lived experience written for anyone",
