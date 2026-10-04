@@ -2304,6 +2304,60 @@ def test_the_writer_is_told_not_to_write_about_its_own_research() -> None:
     check("nor is CRIP_MINDS_FIT", "CRIP_MINDS_FIT" not in system)
 
 
+def test_the_permitted_first_person_register_has_a_shape() -> None:
+    """THE REGISTER HAS NEVER ONCE APPEARED. Zero first-person pronouns across all 16
+    articles since 2026-09-25, ~13,000 words -- strict and wide regex, contractions and
+    we/our/us included, measured on ARTICLE_FINAL.md, which equals WRITER_OUTPUT on every
+    run, so nothing downstream strips it. The manifesto calls the register "long-form,
+    first-person, expert" and the prompt says so in capitals.
+
+    THE CAUSE IS NOT ESTABLISHED, AND AN EARLIER DRAFT OF THIS CLAIMED IT WAS. The
+    permission and the prohibition landed together in `4daf89d` on 2026-10-03; fifteen of
+    those sixteen articles were written before that text existed, under prompts that
+    either said nothing about first person or carried a bare prohibition. The current text
+    has produced ONE article. This ships as an experiment on n=1, not as a fix for a
+    sixteen-fold pattern.
+
+    WHAT IS BEING CHANGED is the order: the model previously read the permission, then
+    sixty words of prohibition, and nothing after it. Now the last thing it reads is three
+    sentences it is allowed to write.
+
+    THE PROHIBITION IS UNTOUCHED, and these tests assert that it is."""
+    system = _flat(FC.free_writer_system())
+    check("the register is still declared", "FIRST PERSON IS THIS PUBLICATION'S REGISTER"
+          in system)
+    check("and now has sanctioned shapes",
+          "WHAT THE PERMITTED REGISTER SOUNDS LIKE" in system)
+    check("noticing", "I keep returning to that clause" in system)
+    check("difficulty", "I had to read it twice" in system)
+    check("judgement", "I do not think that follows" in system)
+    check("each is marked as a reaction to material, not a life",
+          "None of them claims a life" in system)
+    check("and the register is not decoration",
+          "not as decoration" in system)
+    # The prohibition this must not weaken.
+    check("invented testimony is still forbidden", "INVENTED TESTIMONY" in system)
+    check("no lived experience written for anyone",
+          "no lived experience written for anyone" in system)
+    check("the 'as a Deaf person' shape is still named",
+          "as a Deaf person, I know" in system)
+    check("think in it, do not testify in it",
+          "Think in the first person; do not testify in it" in system)
+    # An example that trips a gate would be the ENGINE_LANGUAGE_LEAK mistake repeated: a
+    # first draft of this used "what I cannot find anywhere in the record", and `the
+    # record` is the vocabulary that holds runs. None of the three may be flagged prose.
+    from new_engine_v1 import story as _ST
+    for ex in ("I keep returning to that clause.", "I had to read it twice.",
+               "I do not think that follows."):
+        check("the example is not a negative-shaped claim: %s" % ex,
+              _ST.negative_shape_of(ex) == (None, None))
+    for bad in ("the source", "the evidence", "the record"):
+        check("no example teaches %r" % bad,
+              bad not in _flat(
+                  "I keep returning to that clause. I had to read it twice. "
+                  "I do not think that follows."))
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
