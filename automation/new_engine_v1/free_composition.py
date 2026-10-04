@@ -248,6 +248,26 @@ and so is combining two separated clauses, presenting an ellipsis as a verified
 sentence, or paraphrasing inside the marks. Marks around a title, a term being named or
 a phrase the article is examining are a different thing and are unaffected.
 
+A FROZEN FACT IS YOURS TO STATE.
+
+Every numbered proposition has already been checked. It is established for this article,
+and you do not have to credit it to the text it came from. "An account of the period holds
+that Saxl saw it coming" and "Saxl saw it coming" are the same fact; the first has a layer
+of paperwork in front of it, and the paperwork is most of what makes an article read like
+a report instead of a piece of writing.
+
+ATTRIBUTE WHEN THE ATTRIBUTION IS THE POINT -- a contested claim, somebody's opinion, a
+reading that is theirs rather than settled, words you are quoting, or a finding whose
+author matters to the argument. Not as a reflex, and never as insurance.
+
+This changes nothing about SOURCE IDENTITY, which stays exactly as strict: when you DO
+name a text or a person, use the identity the material gives and no more. The licence here
+is to stop naming one where the fact alone will do.
+
+Measured: this publication's own 137 published articles carry about 1.7 attributions per
+thousand words, and a quarter of them carry none at all. The last seventeen drafts from
+this engine averaged 5.6. That is a description of the house voice, not a target to hit.
+
 You decide the structure.
 You may use any licensed Ledger proposition.
 Do not invent new factual states."""

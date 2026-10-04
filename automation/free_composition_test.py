@@ -2360,6 +2360,52 @@ def test_the_permitted_first_person_register_has_a_shape() -> None:
                   "I do not think that follows."))
 
 
+def test_a_frozen_fact_may_be_stated_without_crediting_a_text() -> None:
+    """THE ENGINE WRITES IN A REGISTER THE PUBLICATION DOES NOT USE. Measured with the
+    same attribution-phrase counter over both corpora:
+
+        137 published articles   median 1.7 attributions per 1,000 words, upper quartile
+                                 3.0, and a quarter of them carry NONE
+        17 engine drafts         median 4.9, mean 5.6, worst 13.1
+
+    Eleven of the seventeen sit above the published upper quartile. That gap is the
+    "reads like documentation" complaint, in a number.
+
+    THE CAUSE IS TWO CORRECT RULES WITH NO COUNTERWEIGHT. `source_attribution_block` hands
+    the Writer a SOURCES table and the ONE RULE says SOURCE IDENTITY IS A FACT LIKE ANY
+    OTHER -- both of which exist because two free Writer calls once invented author names
+    outright. Nothing anywhere told the Writer the other half: that a proposition the
+    freeze already approved is established, and crediting it to its text is optional.
+
+    THIS LOWERS NO GATE. The fact is licensed either way; only the furniture changes. If
+    anything it removes risk, because the invented-attribution class the Grounder caught
+    ("Yalçın Çetinkaya writes that Arel was born") cannot occur in a sentence that names
+    no author."""
+    system = _flat(FC.free_writer_system())
+    check("a frozen proposition is established", "A FROZEN FACT IS YOURS TO STATE" in system)
+    check("and need not be credited to its text",
+          "you do not have to credit it to the text it came from" in system)
+    check("the two phrasings are named as the same fact",
+          "are the same fact" in system)
+    check("attribution is kept where it carries meaning",
+          "ATTRIBUTE WHEN THE ATTRIBUTION IS THE POINT" in system)
+    check("including somebody's opinion and a contested claim",
+          "a contested claim, somebody's opinion" in system)
+    check("and it is not insurance", "never as insurance" in system)
+    check("the measured house voice is given as description",
+          "1.7 attributions per thousand words" in system
+          and "not a target to hit" in system)
+    # The rule this must not be mistaken for a relaxation of.
+    check("SOURCE IDENTITY is explicitly untouched",
+          "This changes nothing about SOURCE IDENTITY" in system)
+    check("and naming still uses the material's identity and no more",
+          "use the identity the material gives and no more" in system)
+    check("the ONE RULE still carries the identity rule",
+          "SOURCE IDENTITY IS A FACT LIKE ANY OTHER" in system)
+    check("quotation marks still mean verbatim",
+          "QUOTATION MARKS MEAN VERBATIM" in system)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
