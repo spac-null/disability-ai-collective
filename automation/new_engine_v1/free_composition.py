@@ -346,6 +346,19 @@ without being told one is coming. One-sentence paragraphs are fine and normal.""
 # upper quartile. The one he was LOST in six times carries 2.7 numbers per 100 words,
 # nearly triple it. A name and a number are each a thing the reader must hold.
 #
+# THE READER'S TENTH QUESTION IS TAUGHT WITHOUT ITS NAME (2026-10-04). ENGINE_LANGUAGE_
+# LEAK is the named cause in three of the four READER holds on this path -- production
+# 20260929T230317, 20260930T085346, 20260930T212300 -- and the single largest reader-hold
+# cause on it. It is deliberately absent from the list of dimensions below, with the
+# reason recorded in `free_composition_test.py`: naming it makes it gameable, because a
+# model told the label optimises for the label. So the CRAFT ships and the LABEL does not,
+# which is exactly how CRIP_MINDS_FIT already reaches this Writer -- the lens says PUT THE
+# READER IN A ROOM and never names the dimension that checks it.
+#
+# WORTH KNOWING AND NOT FIXED HERE: this prompt writes "the record" seven times and "the
+# evidence" eleven, so the Writer learns the register it is then penalised for. Rewriting
+# the engine's own vocabulary is a larger change than this one and is not bundled into it.
+#
 # THESE ARE NOT TARGETS AND NOT A GATE. Nothing measures the draft against them and
 # refuses it; `prose_density` records the numbers beside the article so the next
 # conversation about "too dense" starts from a figure. An article with a good reason to
@@ -381,6 +394,13 @@ MAKE THE POINT LAND. A reader should be able to tell early what they are being i
 to notice, and should reach the turn by the end -- through the material, never through
 an announcement. If the reading would otherwise disappear, state it once, plainly.
 Subtlety is not invisibility, and an unreadable point is not a subtle one.
+
+YOU ARE WRITING ABOUT THE WORLD, NOT ABOUT HOW YOU CAME TO KNOW IT. The source, the
+evidence, the record, what is unknown or unestablished -- that is the vocabulary of
+assembling an article, and a reader did not come for it. Name the thing itself: the
+tribunal's written reasons, the charity's survey of its members, the letter nobody
+answered. Where something genuinely is not known, say WHO does not know it. And never
+write a sentence whose only job is to announce the sentence after it.
 
 THE LAST PARAGRAPH ADDS. Deepen, turn, land, or show a consequence. Never restate.
 

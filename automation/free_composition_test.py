@@ -2272,6 +2272,38 @@ def test_the_seams_between_sections_are_asked_for() -> None:
           and "what is being refused is uniformity" in system)
 
 
+def test_the_writer_is_told_not_to_write_about_its_own_research() -> None:
+    """THE LARGEST READER-HOLD CAUSE WAS NEVER TAUGHT. ENGINE_LANGUAGE_LEAK is the named
+    cause in three of the four READER holds on this path (production 20260929T230317,
+    20260930T085346, 20260930T212300), and no instruction anywhere told the Writer that
+    process vocabulary is a defect. Measured before this change: zero occurrences of any
+    craft rule about it in the whole prompt.
+
+    THE LABEL IS STILL WITHHELD, AND THAT IS NOT AN OVERSIGHT. `test_the_writer_is_told_
+    the_standard_it_is_judged_by` asserts the dimension is NOT named, because a model told
+    the label optimises for the label. Both tests must pass together: the craft ships, the
+    name does not. CRIP_MINDS_FIT already works this way -- the lens teaches PUT THE READER
+    IN A ROOM and never names the dimension that checks it.
+
+    A PROHIBITION ALONE WOULD MAKE THE PROSE WORSE by producing avoidance rather than
+    writing, so the instruction must also say what to do instead."""
+    system = _flat(FC.free_writer_system())
+    check("the Writer is told what it is writing about",
+          "NOT ABOUT HOW YOU CAME TO KNOW IT" in system)
+    check("the flagged vocabulary is named as vocabulary",
+          "The source, the evidence, the record, what is unknown or unestablished"
+          in system)
+    check("it is given the positive move, not only the prohibition",
+          "Name the thing itself" in system)
+    check("an honest absence is still sayable, with an owner",
+          "say WHO does not know it" in system)
+    check("and a sentence may not announce the next one",
+          "announce the sentence after it" in system)
+    # The decision this change deliberately does not reverse.
+    check("the dimension is still NOT named", "ENGINE_LANGUAGE_LEAK" not in system)
+    check("nor is CRIP_MINDS_FIT", "CRIP_MINDS_FIT" not in system)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
