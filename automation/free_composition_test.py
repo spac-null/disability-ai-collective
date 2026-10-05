@@ -2406,6 +2406,44 @@ def test_a_frozen_fact_may_be_stated_without_crediting_a_text() -> None:
           "QUOTATION MARKS MEAN VERBATIM" in system)
 
 
+def test_an_abbreviation_is_an_identity() -> None:
+    """TODAY'S RUN DIED ON THIS. production-20261005T070208Z-e7277567 held at SAFETY with
+    NEW_UNSUPPORTED_FACTS entities=['Health', 'Organization', "Organization's", 'World'].
+    Ledger fact F75 says "the WHO's ICF diagnostic model"; the prose wrote "the World
+    Health Organization's ICF model". Same organisation, four tokens the licensed surface
+    never carried.
+
+    IT IS NOT A FALSE POSITIVE IN THE ENGINE'S OWN TERMS. The ONE RULE already says to use
+    exactly the identity the material gives and not to complete a partial name. An acronym
+    evidently does not read to a model as a partial name, so this says it.
+
+    AND IT RESOLVES A REAL COLLISION. ACCESSIBLE_READING asks that every technical term be
+    explained at first use in plain words, which is why expanding looked like the right
+    move. Explaining what a thing IS and renaming it are different acts, and the
+    instruction now says so rather than leaving the Writer to choose between two rules.
+
+    THE OTHER HALF OF THIS HOLD CLASS IS NOT FIXED HERE and must not be. Of 17 entities
+    flagged across Ledger-era runs, 14 are surface variants of licensed material -- but
+    Italy -> Italian and Korea -> Korean are morphology, and no prompt should tell a writer
+    to avoid an adjective. That half is an entity-screen change, in territory an adversary
+    has twice stopped work in, and it needs the owner."""
+    system = _flat(FC.free_writer_system())
+    check("an abbreviation is named as an identity",
+          "AN ABBREVIATION IS AN IDENTITY TOO" in system)
+    check("expansion is refused in both directions",
+          "do not expand it to World Health Organization" in system
+          and "do not contract a name the material spells out" in system)
+    check("explaining is explicitly still allowed",
+          "This does not stop you explaining anything" in system)
+    check("and the difference is named",
+          "is not the same as renaming it" in system)
+    # The rule this extends, which must still be intact.
+    check("source identity is still a fact",
+          "SOURCE IDENTITY IS A FACT LIKE ANY OTHER" in system)
+    check("and a partial name may still not be completed",
+          "Do not complete a partial name" in system)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
