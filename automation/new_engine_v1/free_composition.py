@@ -717,8 +717,63 @@ def free_writer_system() -> str:
     return "\n\n".join(parts)
 
 
+def tension_block(candidate: dict | None) -> str:
+    """Worth's reading of what this evidence contradicts -- the question the piece holds.
+
+    THE ENGINE ALREADY WORKS THIS OUT AND THEN THROWS IT AWAY. `worth_gate` fills
+    `story_candidate.tension` on every run, and on 2026-10-05 its value for that morning's
+    article was: the same official insists the directive only highlights realities that
+    already exist, yet the number he gives exceeds what that can mean. Measured against
+    the prompt actually sent that day -- 22,917 characters -- the string does not appear.
+    135 tension strings exist in the record and not one has ever reached a Writer.
+
+    WHY IT IS WORTH CARRYING. Every craft source on narrative says the same thing in
+    different words: tension is an unanswered question that persists, and a piece stops
+    reading as writing at the moment it stops making the reader ask one. The contract
+    already says "let each answer create the next interesting question" -- and never says
+    what the question is, on a path where nothing else could tell it.
+
+    IT IS NOT A PLAN, and that distinction is the reason only this field is carried.
+    `reader_first_sees` and `reader_later_discovers` describe the ARTICLE'S ARC -- what is
+    revealed when -- which is a plan by any reading, and `opening_possibility` names an
+    opening outright. Those stay withheld. A contradiction in the evidence is an
+    observation about the evidence; it narrows no fact and orders no paragraph.
+
+    IT IS NOT EVIDENCE EITHER. It is model-written, derived from the Ledger but never
+    frozen, so it is rendered inside the EDITORIAL INTENT block whose header already says
+    nothing in it may be asserted -- the same footing as the owner's own mechanism and
+    false move -- and says so again in its own words.
+
+    FAIL-SAFE ON A PLANNING MARKER. `writer_inputs_are_plan_free` HOLDS the run when the
+    user prompt carries one, and `beat` is matched as an ordinary word, so a tension string
+    about music could kill a run before the model is called -- the blocker that stopped
+    `feat/writer-sees-the-sources`. None of the 135 in the record contains one, but the
+    block OMITS ITSELF rather than risk it: a missing question costs an article nothing,
+    and a held run costs it everything.
+    """
+    t = str((candidate or {}).get("tension") or "").strip()
+    if not t:
+        return ""
+    for marker in PLAN_LEAK_MARKERS:
+        pattern = (r"\b%s\b" % re.escape(marker) if marker.lower() == "beat"
+                   else re.escape(marker))
+        if re.search(pattern, t):
+            return ""
+    return "\n".join([
+        "THE CONTRADICTION THIS EVIDENCE HOLDS -- one reading of it, made before you "
+        "wrote. It is the question this piece can be built to keep open:",
+        "  " + t,
+        "  IT IS A READING, NOT A FINDING. Do not assert it, do not quote it, do not "
+        "treat it as established. Every fact you write still comes from the frozen "
+        "propositions below, and if they do not bear this reading out then the evidence "
+        "wins and the reading was wrong.",
+        "  IT IS NOT A PLAN. It says nothing about where the piece starts, what order "
+        "anything arrives in, or how it ends. Those are yours, exactly as they were.",
+    ])
+
+
 def free_writer_user(instrument: dict | None, ledger: dict, pack: dict | None = None,
-                     subject: str = "", relations=None) -> str:
+                     subject: str = "", relations=None, candidate=None) -> str:
     """The editorial intent and the whole frozen evidence universe.
 
     THE INSTRUMENT IS THE OWNER'S, AND IT IS NOT EVIDENCE. Each approved instrument
@@ -818,6 +873,12 @@ def free_writer_user(instrument: dict | None, ledger: dict, pack: dict | None = 
     if q.get("false_move"):
         L += ["THE WRONG VERSION OF THIS STORY, named by the owner. Do not write this:",
               "  " + str(q["false_move"]), ""]
+    # Last in the intent block and inside its header, which already says none of this is
+    # evidence and none of it may be asserted. Worth's reading belongs on exactly the same
+    # footing as the owner's mechanism: it says what the run is for, and licenses nothing.
+    tb = tension_block(candidate)
+    if tb:
+        L += [tb, ""]
     if L:
         L.insert(0, "EDITORIAL INTENT. None of the following is evidence and none of it "
                     "may be asserted as a fact about this story. It says what the run is "
@@ -1277,14 +1338,14 @@ def writer_inputs_are_plan_free(system: str, user: str) -> list:
 
 def write_article_free(provider, ledger: dict, instrument: dict | None = None,
                        pack: dict | None = None, subject: str = "",
-                       relations=None) -> dict:
+                       relations=None, candidate=None) -> dict:
     """STAGE: the free argumentative Writer. ONE call, one mechanical retry.
 
     The retry is mechanical only -- same prompt, no feedback, no instruction to do better
     -- exactly like `composition.write_article`. Nothing here regenerates for quality.
     """
     system = free_writer_system()
-    user = free_writer_user(instrument, ledger, pack, subject, relations)
+    user = free_writer_user(instrument, ledger, pack, subject, relations, candidate)
 
     leaks = writer_inputs_are_plan_free(system, user)
     if leaks:
@@ -1501,7 +1562,8 @@ def run_free_argumentative_composition(
         # ── WRITER. Free. ────────────────────────────────────────────────────────────
         wr = record(CP.WRITER, write_article_free(
             P, ledger, instrument=instrument, pack=pack, subject=subject,
-            relations=relations))
+            relations=relations,
+            candidate=(w.get("story_candidate") if isinstance(w, dict) else None)))
         final = wr["article_text"]
         lineage = wr["negative_lineage_verified"]
 

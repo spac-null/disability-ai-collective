@@ -2444,6 +2444,70 @@ def test_an_abbreviation_is_an_identity() -> None:
           "Do not complete a partial name" in system)
 
 
+def test_the_writer_is_told_the_question_the_evidence_holds() -> None:
+    """THE ENGINE COMPUTED THE QUESTION AND THREW IT AWAY. `worth_gate` fills
+    `story_candidate.tension` on every run -- 135 of them in the record -- and not one
+    ever reached a Writer. Checked against the 22,917-character prompt actually sent on
+    2026-10-05: the string is absent.
+
+    Every craft source on narrative says tension is an unanswered question that persists,
+    and that a piece stops reading as writing when it stops making the reader ask one. The
+    contract already says "let each answer create the next interesting question" and never
+    says what the question is, on a path where nothing else could.
+
+    ONLY `tension` IS CARRIED. `reader_first_sees` and `reader_later_discovers` describe
+    what is revealed when -- an arc, which is a plan -- and `opening_possibility` names an
+    opening outright. A contradiction in the evidence orders no paragraph and narrows no
+    fact, which is why it is not the thing Story Architecture was retired for."""
+    cand = {"tension": "The official insists the directive only highlights realities that "
+                       "already exist, yet the number he gives exceeds what that can mean.",
+            "opening_possibility": "A ministry official reads out a list of numbers.",
+            "reader_first_sees": "A reform counting pupils who had been overlooked.",
+            "reader_later_discovers": "That the count is an artefact of the definition."}
+    user = free_writer_user_text(cand)
+    check("the contradiction reaches the Writer",
+          "THE CONTRADICTION THIS EVIDENCE HOLDS" in user)
+    check("and carries Worth's own words", "exceeds what that can mean" in user)
+
+    # The three fields that ARE a plan, and stay withheld.
+    check("the opening possibility does NOT reach it",
+          "reads out a list of numbers" not in user)
+    check("nor what the reader first sees", "had been overlooked" not in user)
+    check("nor what they later discover", "artefact of the definition" not in user)
+
+    # It licenses nothing, and says so twice over.
+    check("it sits under the EDITORIAL INTENT header",
+          user.index("EDITORIAL INTENT") < user.index("THE CONTRADICTION"))
+    check("it names itself a reading, not a finding",
+          "IT IS A READING, NOT A FINDING" in user)
+    check("and the evidence is said to win over it",
+          "the evidence wins and the reading was wrong" in _flat(user))
+    check("it disclaims being a plan", "IT IS NOT A PLAN" in user)
+
+    # The contract this path exists to keep.
+    check("the prompt is still plan-free",
+          FC.writer_inputs_are_plan_free(FC.free_writer_system(), user) == [])
+
+    # FAIL-SAFE. `beat` is matched as an ordinary word and would HOLD the run before the
+    # model is called -- the blocker that stopped feat/writer-sees-the-sources. A missing
+    # question costs an article nothing; a held run costs it everything.
+    marked = free_writer_user_text({"tension": "You can hear the beat change here."})
+    check("a tension carrying a planning marker omits itself",
+          "THE CONTRADICTION" not in marked)
+    check("and the run is still plan-free with it omitted",
+          FC.writer_inputs_are_plan_free(FC.free_writer_system(), marked) == [])
+    check("no candidate renders no block",
+          "THE CONTRADICTION" not in free_writer_user_text(None))
+    check("an empty tension renders no block",
+          "THE CONTRADICTION" not in free_writer_user_text({"tension": "   "}))
+
+
+def free_writer_user_text(candidate) -> str:
+    """The user prompt for a minimal run, with `candidate` as the only variable."""
+    return FC.free_writer_user({"question": "What does the count count?"}, {},
+                               None, "A subject", None, candidate)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
