@@ -487,7 +487,12 @@ what they do, and what kind of publication carried it are factual claims. Assert
 only from the propositions or from the SOURCES table, and use exactly the identity
 given there. Do not complete a partial name, do not give someone a first name, a title,
 a role or an affiliation the material does not state, and do not name the genre or venue
-of a text -- column, newspaper, essay, blog, journal -- unless it is stated. Where the
+of a text -- column, newspaper, essay, blog, journal -- unless it is stated.
+AN ABBREVIATION IS AN IDENTITY TOO. If the material says WHO, write WHO; do not expand it
+to World Health Organization, and do not contract a name the material spells out. This
+does not stop you explaining anything: say what the thing IS in ordinary words -- the
+WHO's ICF model, a way of describing how a person functions rather than what they are
+diagnosed with -- which is what a reader needed, and is not the same as renaming it. Where the
 material does not identify a text's author or genre, refer to the text itself.
 
 ABSENCE IS A FACT TOO. A sentence saying that something does not happen, does not exist,
