@@ -911,7 +911,32 @@ def free_writer_user(instrument: dict | None, ledger: dict, pack: dict | None = 
               "evidence may support it, refuse it or complicate it, and all three are "
               "real outcomes:", "  " + str(q["mechanism"]), ""]
     if q.get("disconfirming_shape"):
-        L += ["WHAT WOULD REFUTE IT:", "  " + str(q["disconfirming_shape"]), ""]
+        # THE SAME DEFECT B1 FIXED FOR THE QUESTION, ONE FIELD LOWER. This arrived as a
+        # bare label with nothing saying what to do with it, and the result was measured:
+        # 0 concessions across 19 articles, unmoved by a general "concede at full
+        # strength" instruction placed elsewhere in the prompt. The instruction has to sit
+        # ON the field that holds the other side, as "WHAT THE ARTICLE OWES THAT QUESTION"
+        # sits on the question.
+        #
+        # THE WRITER SELECTS THE FACTS, NOT A LEXICAL TEST. `counterevidence_left_out`
+        # tries the same job with `_bears_on` and finds nothing: measured over 11 runs
+        # with a real disconfirming shape, it matched 0 facts in 10 of them and 1 in the
+        # other, because the shape is abstract institutional language and the facts are
+        # concrete. The Writer has every frozen fact in front of it and is better at
+        # relevance than a content-word overlap, so it is asked rather than pre-filtered.
+        L += ["WHAT WOULD REFUTE IT:", "  " + str(q["disconfirming_shape"]),
+              "WHAT THE ARTICLE OWES THAT: build it, at full strength, before you "
+              "disagree with it. Go through the frozen evidence for whatever supports "
+              "this version and put that case in its own best terms -- not a sentence "
+              "conceding a point, the actual case, as its holder would make it. THEN say "
+              "what it still does not account for.",
+              "  Every fact you use for it is a frozen proposition like any other, so "
+              "this costs you no licence: you are stating approved material, not "
+              "inventing an opponent. If the evidence genuinely does support the "
+              "refutation, that is the article -- say so, and do not write around it.",
+              "  If nothing in the evidence supports it, say nothing. An invented "
+              "counter-position is a fabrication like any other, and a concession to a "
+              "case nobody could make is worse than none.", ""]
     if q.get("carriers"):
         L += ["WHAT CAN CARRY THIS QUESTION (the kinds of concrete subject that hold it):",
               "  " + str(q["carriers"]), ""]
