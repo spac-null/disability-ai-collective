@@ -2307,8 +2307,23 @@ def test_the_writer_is_told_not_to_write_about_its_own_research() -> None:
           "Name the thing itself" in system)
     check("an honest absence is still sayable, with an owner",
           "say WHO does not know it" in system)
-    check("and a sentence may not announce the next one",
-          "announce the sentence after it" in system)
+    # CUT 2026-10-07 AS A DUPLICATE. `DO NOT LET A SENTENCE ANNOUNCE ITS OWN STRUCTURAL
+    # JOB` was already in the contract when this clause was added, and says the same
+    # thing far better: five concrete examples, the reason ("tell the reader what the
+    # article is doing instead of telling them about the world"), and a positive
+    # alternative ("put the surprising fact next to the one it overturns and the reader
+    # will feel the turn without being told one is coming"). This was a bare restatement
+    # bolted onto a block about something else.
+    #
+    # The saturation test at 09f170b showed that removing competing text raises
+    # compliance with what remains -- first person +73%, direct address +48% on an
+    # identical instruction set -- so a duplicate is not free, it is a cost.
+    check("the real block still carries the instruction",
+          "DO NOT LET A SENTENCE ANNOUNCE ITS OWN STRUCTURAL JOB" in system)
+    check("with its examples intact",
+          "Write the thing, not a note about the thing" in system)
+    check("and the duplicate is gone",
+          "announce the sentence after it" not in system)
     # The decision this change deliberately does not reverse.
     check("the dimension is still NOT named", "ENGINE_LANGUAGE_LEAK" not in system)
     check("nor is CRIP_MINDS_FIT", "CRIP_MINDS_FIT" not in system)

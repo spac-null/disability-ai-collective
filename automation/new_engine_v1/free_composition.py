@@ -565,8 +565,7 @@ YOU ARE WRITING ABOUT THE WORLD, NOT ABOUT HOW YOU CAME TO KNOW IT. The source, 
 evidence, the record, what is unknown or unestablished -- that is the vocabulary of
 assembling an article, and a reader did not come for it. Name the thing itself: the
 tribunal's written reasons, the charity's survey of its members, the letter nobody
-answered. Where something genuinely is not known, say WHO does not know it. And never
-write a sentence whose only job is to announce the sentence after it.
+answered. Where something genuinely is not known, say WHO does not know it.
 
 THE OPENING CARRIES THE LEAST, NOT THE MOST.
 
