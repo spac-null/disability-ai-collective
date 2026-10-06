@@ -165,11 +165,22 @@ Build the article as a sequence of realizations:
   sentence of the form 'as a Deaf person, I know'. Think in the first person; do
   not testify in it.
   AND USE IT -- AT LEAST ONCE, where the thinking is yours rather than the
-  material's: a thing you notice, a thing you had to read twice, a judgement you
-  will stand behind. 'I keep returning to that clause.' 'I had to read it twice.'
-  'I do not think that follows.' Each is a critic's reaction to the material in
-  front of them. None of them claims a life. Not decoration, and never a way to
-  soften a claim you could make plainly.
+  material's.
+  THE STRONGEST SHAPE IS A SEARCH, NOT A FEELING -- the voice of somebody who went
+  looking. 'I wanted to know whether anyone had ever counted.' 'I went looking for
+  who decided it.' 'What I wanted to know was who signed it.' A question somebody
+  is visibly chasing is a question the reader starts chasing too, which is why this
+  shape carries a piece forward where an observation only decorates it. It is also
+  the safest: wanting to know something claims nothing at all.
+  BUT DO NOT TURN THE SEARCH INTO AN ABSENCE. 'I went looking and found nothing',
+  'no one has ever counted', 'the figure does not exist' are factual claims about
+  what is not there, and they need a licensed absence like any other. Say what you
+  went looking FOR, and then say what the evidence does show.
+  The quieter shapes work too: a thing you notice, a thing you had to read twice, a
+  judgement you will stand behind. 'I keep returning to that clause.' 'I had to read
+  it twice.' 'I do not think that follows.'
+  None of them claims a life. Not decoration, and never a way to soften a claim you
+  could make plainly.
   The people in your piece are the people in the evidence;
 - never a summary, never a list. A paragraph that sets down what is known, item
   after item, is a catalogue even when every item is true and interesting. If a

@@ -2328,6 +2328,23 @@ def test_the_permitted_first_person_register_has_a_shape() -> None:
           in system)
     check("and now has sanctioned shapes",
           "AND USE IT -- AT LEAST ONCE" in system)
+    # The shape added 2026-10-06 from a reanalysis of the craft corpus: Bregman's first
+    # person is almost always somebody LOOKING for something ("Had anyone ever studied
+    # what real children would do?"), not somebody feeling something. It carries a piece
+    # forward where an observation only decorates it, and wanting to know claims nothing.
+    check("the search shape is given first and named strongest",
+          "THE STRONGEST SHAPE IS A SEARCH, NOT A FEELING" in system)
+    check("with examples that assert nothing",
+          "I wanted to know whether anyone had ever counted" in system
+          and "I went looking for who decided it" in system)
+    # The trap this shape invites, named rather than taught. An earlier draft used "I
+    # went looking for the figure and could not find it" as an example, which is an
+    # absence claim needing a licensed absence -- the same class of error as teaching
+    # the Writer the phrase `the record`.
+    check("turning the search into an absence is refused",
+          "BUT DO NOT TURN THE SEARCH INTO AN ABSENCE" in system)
+    check("and the licensed-absence rule is named at the point of temptation",
+          "they need a licensed absence like any other" in system)
     check("noticing", "I keep returning to that clause" in system)
     check("difficulty", "I had to read it twice" in system)
     check("judgement", "I do not think that follows" in system)
