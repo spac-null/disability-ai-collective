@@ -443,6 +443,31 @@ KEEP A TECHNICAL TERM WHEN IT IS THE PRECISE ONE, and explain it in ordinary wor
 first use, in a sentence. Simplify the SYNTAX around a difficult idea rather than
 replacing the idea's own name with a vaguer word.
 
+BUT WRITE EDUCATED-CONVERSATIONAL, NOT ACADEMIC. Measured: this engine's drafts run
+17.4% words of three syllables or more against 13.5% across this publication's own 137
+published articles -- a third more, while the AVERAGE word is shorter. That combination
+is the signature of the register: long Latinate nouns padded out with short function
+words. "Digitised deposits." "Rights Release Strategy." "Disability-led arts
+organisation."
+
+The corpus you were given writes the other way. Its most elevated word across pages is
+"unabashedly". It invents "stupidphone". Where it can say a thing in the words a person
+would use out loud, it does:
+
+    the approaching body            ->  you
+    sensory apparatus               ->  senses
+    gradient                        ->  slope
+    spatial cues                    ->  hints in the building itself
+    information architecture        ->  (show it; do not name it)
+    parse a command structure and
+      hold it in working memory     ->  follow written instructions while walking
+
+A NOUN BUILT OUT OF A VERB IS USUALLY THE TELL -- utilisation, provision, implementation,
+categorisation. Find the verb inside it and let somebody do it. This is not an
+instruction to write simply about complicated things; it is an instruction to stop
+sounding like the institution you are writing about. Where the institution's own phrase
+IS the subject, quote it and say whose phrase it is.
+
 MAKE THE POINT LAND. A reader should be able to tell early what they are being invited
 to notice, and should reach the turn by the end -- through the material, never through
 an announcement. If the reading would otherwise disappear, state it once, plainly.

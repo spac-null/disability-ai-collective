@@ -2648,6 +2648,46 @@ def test_the_refutation_is_owed_a_case() -> None:
           system.index("EDITORIAL INTENT") < system.index("WHAT WOULD REFUTE IT"))
 
 
+def test_the_register_is_conversational_not_academic() -> None:
+    """THE OWNER ASKED FOR AN EASIER WORD CORPUS AND IT IS MEASURABLE.
+
+        137 published Crip Minds articles   13.5% words of 3+ syllables, mean length 5.48
+        19 engine drafts                    17.4%,                        mean length 5.05
+
+    A third more long words while the average word is SHORTER -- long Latinate nouns
+    padded with short function words, which is the institutional register exactly.
+
+    THE ANALYSIS ALREADY HELD THE ANSWER AND NOTHING USED IT.
+    `bregman-write-economy-analysis.md` carries a substitution table -- "the approaching
+    body" -> "you", "sensory apparatus" -> "senses", "spatial cues" -> "hints in the
+    building itself" -- and notes the corpus's most elevated word across pages is
+    "unabashedly". It is loaded into every prompt through `craft_corpus.block()` as prose
+    to learn from, and the concrete table was never stated as an instruction.
+
+    IT MUST NOT BECOME DUMBING DOWN. The existing rule -- keep a technical term when it is
+    the precise one, explain it at first use, simplify the SYNTAX rather than the idea --
+    is immediately above and stays. This targets the register around the idea, not the
+    idea, and the nominalisation tell (utilisation, provision) is the operational test."""
+    system = _flat(FC.free_writer_system())
+    check("the register is named", "EDUCATED-CONVERSATIONAL, NOT ACADEMIC" in system)
+    check("with the measurement behind it",
+          "17.4% words of three syllables or more against 13.5%" in system)
+    check("the substitution table reaches the Writer",
+          "the approaching body" in system and "sensory apparatus" in system)
+    check("and shows the plain form beside it", "hints in the building itself" in system)
+    check("the nominalisation tell is given as an operational test",
+          "A NOUN BUILT OUT OF A VERB IS USUALLY THE TELL" in system)
+    check("it is not an instruction to simplify the idea",
+          "not an instruction to write simply about complicated things" in system)
+    check("and an institution's own phrase may still be quoted as theirs",
+          "quote it and say whose phrase it is" in system)
+    # The rule it sits under, which must survive.
+    check("a precise technical term is still kept",
+          "KEEP A TECHNICAL TERM WHEN IT IS THE PRECISE ONE" in system)
+    check("and syntax is still what gets simplified, not the idea",
+          "Simplify the SYNTAX around a difficult idea" in system)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
