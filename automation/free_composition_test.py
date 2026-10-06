@@ -2749,6 +2749,59 @@ def test_the_received_version_comes_first() -> None:
           "None is a structure, none is required" in system)
 
 
+def test_the_sentence_band_is_a_shape_not_an_average() -> None:
+    """THE GUIDANCE WAS CAUSING THE DEFECT. `TEMPO_AND_STANDARD` gives the Writer "words
+    per sentence 17.6 (most articles 15.7 - 21.4)" -- a MEAN over 142 articles. The
+    median of the same corpus is 11. A mean that far above its median describes a
+    lopsided distribution, and a writer who hits the mean consistently produces a flat
+    one. Measured over 7,403 published sentences against three recent drafts:
+
+                        published   drafts
+        3-8 words          39.3%     23.9%
+        9-15 words         27.6%     28.4%
+        16-25 words        18.6%     26.4%
+        26+ words          14.4%     21.3%
+
+    Nearly two published sentences in five are eight words or shorter; the drafts manage
+    one in four and make up the difference at the long end, with single sentences of 46,
+    60 and 67 words. The owner, on one of them: "this is also very long sentence ...
+    shouldnt be like that."
+
+    THE BECAUSE-CLAUSE IS THE SPECIFIC MECHANISM HE CAUGHT. The search-shaped first
+    person shipped in 88d8e5d used nine-word examples and came back as "I wanted to know
+    what decided whose name ends up under a photograph in a collection like this, because
+    the answer turns out not to be..." -- the short shape with an explanation glued on.
+    Naming that join is more use than another instruction to be brief.
+
+    The mean is kept in the table above, because an article far outside it is still worth
+    stopping over. What changes is that the distribution is now given too, so the mean
+    cannot be read as a target."""
+    system = _flat(FC.free_writer_system())
+    check("the mean is named as the wrong target",
+          "THE AVERAGE IS THE WRONG TARGET" in system)
+    check("and identified as a mean over a lopsided distribution",
+          "MEAN over a lopsided distribution" in system)
+    check("the shape is given, published against drafts",
+          "3-8 words" in system and "39%" in system and "24%" in system)
+    check("the headline comparison is stated plainly",
+          "NEARLY TWO SENTENCES IN FIVE ARE EIGHT WORDS OR SHORTER" in system)
+    check("the absence of short sentences is named as the defect",
+          "not any single sentence, but the absence of short ones" in system)
+    check("a four-word sentence is explicitly allowed",
+          "A sentence can be four words" in system)
+    check("and the glued-on explanation is named",
+          'explains it with "because" or "which" is usually two' in system)
+    # A PER-PARAGRAPH FLOOR WAS TRIED AND MADE IT WORSE. "At least one sentence of eight
+    # words or fewer per paragraph" took short sentences from 25.0% DOWN to 20.8% and
+    # grew the 16-25 bucket to 32%: the model satisfied the floor with exactly one and
+    # wrote the rest longer. A count became a ceiling. Reverted; the distribution is
+    # described and not quantified into a per-paragraph rule.
+    # The measured band it qualifies rather than replaces.
+    check("the original band is still there", "17.6" in system)
+    check("still framed as description, not a rule",
+          "not a target to hit and not a rule" in system)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
