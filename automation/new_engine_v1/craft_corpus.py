@@ -35,6 +35,31 @@ CORPUS_FILES = (
     (".claude/bregman-write-economy-analysis.md", "BREGMAN WRITE ECONOMY ANALYSIS"),
 )
 
+# NINE TENTHS OF THE ANCHOR CORPUS IS NOT CRAFT MATERIAL (2026-10-06). The file is 26,472
+# characters and the Writer was being handed all of it. Measured by section:
+#
+#     Section 1  ESSAY/REPORTAGE register      2,540   the ONLY part marked "use these"
+#     Section 2  ORATORY/LECTURE register      1,508   marked "do NOT use for calibration"
+#     Section 3  how to use this file            869   says it is a JUDGE reference
+#     Section 4  a rejected 10-section template 5,200   described in followable detail
+#     Sections 5-7  session notes, audits, blueprints  15,849
+#
+# Section 3 states the point in its own words: this file's value is "as a fixed, reusable
+# judge reference ... not as a magic ingredient that fixes generation on its own if fed to
+# a writer or fixer model." It was being fed to a writer model on every run.
+#
+# Three of those sections are worse than noise. Section 2 is a register the file itself
+# says calibrates toward "different, sometimes contradictory targets". Section 4 sets out
+# a fixed 10-section essay template -- Opening Scene 200-300w, Surprise, Zoom Out ... --
+# that was CONSIDERED AND REJECTED for this pipeline, in enough detail to be followed by a
+# model that does not reach the paragraph explaining it was rejected. Sections 5-7 are
+# minutes.
+#
+# So the anchor corpus is cut at the first heading after Section 1, and the other two
+# files are sent whole because they ARE craft documents end to end -- the seven-technique
+# architecture analysis and the write-economy substitution table.
+ANCHOR_STOP = "## Section 2"
+
 
 def _root(start: pathlib.Path | None = None) -> pathlib.Path | None:
     """The repository root, found by walking up to the directory holding `.claude/`.
@@ -70,6 +95,8 @@ def load(start: pathlib.Path | None = None) -> str:
             text = path.read_text(encoding="utf-8").strip()
         except OSError:
             continue
+        if rel.endswith("bregman-anchor-corpus.md") and ANCHOR_STOP in text:
+            text = text.split(ANCHOR_STOP, 1)[0].strip()
         if text:
             parts.append("=== %s ===\n%s" % (heading, text))
     return "\n\n".join(parts)
