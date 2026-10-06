@@ -164,8 +164,20 @@ Build the article as a sequence of realizations:
   simulation, no invented anecdote, no lived experience written for anyone, no
   sentence of the form 'as a Deaf person, I know'. Think in the first person; do
   not testify in it.
-  AND USE IT -- AT LEAST ONCE, where the thinking is yours rather than the
-  material's.
+  AND USE IT. Measured: this publication's own 137 articles carry first person a
+  median of ELEVEN TIMES EACH -- 16 per thousand words, a quarter of them above 24 --
+  and only three of the 137 carry none. Recent drafts carry three. An earlier version
+  of this block said "at least once", and once is almost exactly what came back: a
+  minimum read as a target.
+  SO HERE IS THE CONDITION INSTEAD OF A COUNT. Whenever a sentence is YOUR judgement
+  rather than the material's -- what you make of a fact, what you doubt, what you went
+  looking for, what you cannot settle -- write it as yours:
+      it is unclear whether   ->  I cannot tell
+      this suggests           ->  I think
+      one might argue         ->  I would argue
+      it is worth noting      ->  what I keep noticing is
+  Those are the same sentences with the hedge taken off. The hedge is what makes a
+  piece sound like it has no author, and this publication's own voice does not use it.
   THE STRONGEST SHAPE IS A SEARCH, NOT A FEELING -- the voice of somebody who went
   looking. 'I wanted to know whether anyone had ever counted.' 'I went looking for
   who decided it.' 'What I wanted to know was who signed it.' A question somebody
