@@ -2600,6 +2600,54 @@ def test_the_writer_may_talk_to_the_reader() -> None:
     check("and the one rule is intact", "THE ONE RULE" in system)
 
 
+def test_the_refutation_is_owed_a_case() -> None:
+    """CONCESSION MEASURED AT ZERO AND WOULD NOT MOVE. Across 19 articles: 0 concessions
+    before disagreeing. `267405d` added "CONCEDE AT FULL STRENGTH" to the reader-facing
+    moves and three compositions produced 0, 0, 0 -- no movement at all.
+
+    THE CAUSE IS THE SAME ONE B1 FIXED ONE FIELD HIGHER. `disconfirming_shape` reaches
+    the Writer as the bare label WHAT WOULD REFUTE IT, with nothing saying what to do
+    with it -- exactly as the commissioning question did before it was told to ANSWER it.
+    A general instruction elsewhere in the prompt does not reach a field three thousand
+    characters away. The instruction now sits on the field.
+
+    NO LEXICAL PRE-SELECTION, DELIBERATELY. `counterevidence_left_out` attempts the same
+    job with `_bears_on` and finds nothing to work with: measured over the 11 runs that
+    carry a real disconfirming shape, it matches 0 facts in 10 and 1 in the eleventh. The
+    shape is abstract ("Show the archive's accession policy is documented and its
+    exclusions were deliberate") and the propositions are concrete, so a content-word
+    overlap of five letters or more almost never fires. Building this on that test would
+    have shipped a block that does nothing -- the inert-change mistake already made once
+    today. The Writer holds every frozen fact and judges relevance better than the filter.
+
+    IT COSTS NO LICENCE, which is what makes conceding possible at all. Every fact used
+    for the opposing case is an approved proposition; the Writer is stating licensed
+    material, not inventing an opponent. The one real risk -- manufacturing a counter-case
+    the evidence cannot support -- is named and refused in the same block."""
+    system = _flat(FC.free_writer_user({"disconfirming_shape": "Show the policy was "
+                                        "documented and the exclusions deliberate."},
+                                       {}, None, "S", None, None))
+    check("the refutation still reaches the Writer", "WHAT WOULD REFUTE IT" in system)
+    check("and now carries an instruction",
+          "WHAT THE ARTICLE OWES THAT: build it, at full strength" in system)
+    check("the case is built, not merely conceded in a sentence",
+          "not a sentence conceding a point, the actual case" in system)
+    check("it is built from the frozen evidence",
+          "Go through the frozen evidence" in system)
+    check("and only then answered", "THEN say what it still does not account for" in system)
+    check("conceding costs no licence, which is why it is possible",
+          "this costs you no licence" in system)
+    check("the evidence is allowed to win outright",
+          "that is the article -- say so, and do not write around it" in system)
+    check("an invented opponent is refused",
+          "An invented counter-position is a fabrication like any other" in system)
+    check("and silence is the answer when nothing supports it",
+          "If nothing in the evidence supports it, say nothing" in system)
+    # It still sits inside the licensing header, like every other intent field.
+    check("still under EDITORIAL INTENT",
+          system.index("EDITORIAL INTENT") < system.index("WHAT WOULD REFUTE IT"))
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
