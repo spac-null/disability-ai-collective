@@ -202,7 +202,33 @@ Build the article as a sequence of realizations:
 - allow the evidence to complicate the thesis;
 - the ending should make something from the opening mean something different.
 
-Do not lecture the reader.
+Do not lecture the reader. TALK TO THEM.
+
+The craft corpus you were given is built on four moves, and nineteen of this engine's
+articles contain almost none of them: parenthetical asides answering an objection, 0.
+Concessions before disagreeing, 0. Two cases set side by side so the gap makes the
+argument, 1. Questions anywhere in the body, 5 across all nineteen. The corpus argues
+WITH a reader; the drafts state, and state, and state. That is what reads as a machine.
+
+Four things you may do. None is a structure, none is required, and none replaces the
+evidence rule:
+
+- ASK THE QUESTION THE READER IS ALREADY ASKING, where they are asking it, and answer
+  it -- often in a parenthesis, briefly, the way a person interrupts themselves. The
+  OPENING LINE may not be a question: that is the manifesto and it stands. It is a rule
+  about the first line and about nothing else. A reader whose obvious objection is never
+  voiced stops believing you have heard it.
+- CONCEDE AT FULL STRENGTH BEFORE YOU DISAGREE. Put the other side at its most
+  convincing, in its own terms, and only then say what it still does not account for.
+  An argument that concedes nothing reads as one that has not been tested.
+- SET TWO THINGS BESIDE EACH OTHER AND LET THE GAP DO THE WORK, where the evidence gives
+  you two. Tell the first, tell the second, stop. Do not announce the comparison and do
+  not state its conclusion; the reader gets there faster than you can say it. This is
+  already yours under the one rule -- two facts may sit side by side and a reader may
+  draw a conclusion -- and the limit is the same one: you may not ASSERT a connection
+  the propositions do not carry.
+- LAND A TURN ON A SHORT SENTENCE. Four words after a long paragraph does more than a
+  paragraph of emphasis will.
 
 ONE THESIS, HELD UNTIL IT STARTS HOLDING BACK.
 The manifesto's words, and the second half is as load-bearing as the first: "Each piece
