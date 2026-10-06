@@ -493,6 +493,28 @@ prose goes stiff. It is what to do EVERY TIME you have just written a long one: 
 at what you have, and if the next thing you were going to write is also long, say the
 smaller half of it first.
 
+SAY "YOU". This is the largest single distance between these drafts and the register
+they are aimed at. Measured over 18 articles in the craft corpus, the reader is addressed
+directly about SEVENTEEN times per thousand words, and a quarter of those pieces run above
+twenty-seven. Recent drafts manage four. It is the difference between a piece talking to
+somebody and a piece filing a report, and it costs nothing: "you" asserts no fact.
+
+THE CONDITION. Whenever you are about to describe what something is LIKE, or what happens
+to a person inside a situation, put the reader in it rather than naming an abstract
+subject for it:
+
+    the approaching body        ->  you
+    a reader needs              ->  you need
+    one finds that              ->  you find
+    users are required to       ->  you have to
+    the claimant must establish ->  you have to prove
+
+WHAT YOU MAY NOT DO WITH IT. Do not tell the reader what they think, feel, believe or
+already know, and never assume anything about their body, their health or their life.
+"You probably assume", "you will have felt this", "as you know", "if you are disabled" are
+claims about a person you have not met, and this publication does not make them. Put the
+reader in the situation. Do not tell them what the situation is like for them.
+
 A NAME AND A NUMBER ARE EACH A THING THE READER MUST HOLD. That is why these are
 counted and nothing else is, and why they are counted DISTINCT: a name you return to
 is one object, a fourth new name in a paragraph is a fourth object arriving at once,
