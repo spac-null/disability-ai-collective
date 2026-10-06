@@ -2326,8 +2326,24 @@ def test_the_permitted_first_person_register_has_a_shape() -> None:
     system = _flat(FC.free_writer_system())
     check("the register is still declared", "FIRST PERSON IS THIS PUBLICATION'S REGISTER"
           in system)
-    check("and now has sanctioned shapes",
-          "AND USE IT -- AT LEAST ONCE" in system)
+    check("and now has sanctioned shapes", "AND USE IT." in system)
+    # THE FLOOR BECAME THE TARGET, AGAIN. "AT LEAST ONCE" produced almost exactly once:
+    # 3 first-person words per draft against a published median of ELEVEN per article
+    # (16.1 per 1000 words, q3 23.6, and only 3 of 137 articles carry none). The same
+    # failure as the per-paragraph sentence floor reverted hours earlier -- a count is
+    # read as a quota and satisfied. Replaced with the measured rate as shape plus a
+    # condition, which is what worked for the long-then-short habit.
+    check("the house rate is given as shape, not a floor",
+          "median of ELEVEN TIMES EACH" in system)
+    check("and the old floor is named as having capped it",
+          "a minimum read as a target" in system)
+    check("the condition replaces the count",
+          "SO HERE IS THE CONDITION INSTEAD OF A COUNT" in system)
+    check("with the hedge-removal pairs",
+          "it is unclear whether" in system and "I cannot tell" in system
+          and "this suggests" in system and "I think" in system)
+    check("and the hedge is named as what removes the author",
+          "The hedge is what makes a piece sound like it has no author" in system)
     # The shape added 2026-10-06 from a reanalysis of the craft corpus: Bregman's first
     # person is almost always somebody LOOKING for something ("Had anyone ever studied
     # what real children would do?"), not somebody feeling something. It carries a piece
@@ -2351,7 +2367,7 @@ def test_the_permitted_first_person_register_has_a_shape() -> None:
     check("each is marked as a reaction to material, not a life",
           "None of them claims a life" in system)
     check("and it asks for the register rather than merely allowing it",
-          "AT LEAST ONCE" in system)
+          "AND USE IT." in system)
     check("and the register is not decoration",
           "Not decoration" in system)
     # The prohibition this must not weaken.
