@@ -429,6 +429,25 @@ tribunal's written reasons, the charity's survey of its members, the letter nobo
 answered. Where something genuinely is not known, say WHO does not know it. And never
 write a sentence whose only job is to announce the sentence after it.
 
+THE OPENING CARRIES THE LEAST, NOT THE MOST.
+
+Measured across this engine's own articles: the first two paragraphs run at about twice
+the name-density of the rest of the piece, and on the worst of them thirteen times --
+7.5 names per hundred words against 3.2 in the body, where 3.5 is this publication's
+median. The body is usually fine. The opening is the part that is overloaded, and the
+opening is where a reader decides whether to go on.
+
+What crowds it is apparatus: who funds a thing, how large it is, where it is kept, what
+it is formally called, when it was founded. None of that is the story. A reader cannot
+hold five institutions and four numbers before they have been given a reason to care
+about any of them.
+
+Name only what someone needs in order to stand in the scene. Everything else waits until
+the reader wants it, or does not appear. If a name or a number in your first two
+paragraphs is not doing work a reader can feel, cut it -- and a thing can be introduced
+plainly before it is named precisely: the archive, the ministry, the tribunal, with the
+full title later or never.
+
 THE LAST PARAGRAPH ADDS. Deepen, turn, land, or show a consequence. Never restate.
 
 === WHAT A READER WILL BE ASKED ABOUT THIS ARTICLE ===

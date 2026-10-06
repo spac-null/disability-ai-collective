@@ -2508,6 +2508,48 @@ def free_writer_user_text(candidate) -> str:
                                None, "A subject", None, candidate)
 
 
+def test_the_opening_is_told_to_carry_less() -> None:
+    """THE DENSITY GUIDANCE IS AN ARTICLE AVERAGE AND THE DEFECT IS POSITIONAL.
+    `TEMPO_AND_STANDARD` carries the measured house band -- 3.5 names per 100 words --
+    for the article as a whole, so a piece can sit perfectly in band while its opening
+    is many times over it. Measured across 18 articles since 2026-09-25, first two
+    paragraphs against the rest:
+
+        median opening   7.5 names / 100 words
+        median body      3.2            -- i.e. the body is already in band
+        worst case       17.6 vs 1.3, a ratio of 13.5x (20261006T070559)
+
+    That worst case is the article the owner was reading when he said it still felt like
+    a robot. He reads in cards; card 1 is systematically the densest thing in the piece.
+
+    IT IS THE APPARATUS THAT CROWDS IT -- funder, size, location, formal title, founding
+    date. The owner's own desk presses say the same thing from the other side:
+    INFORMATION_DENSITY_TOO_HIGH 17, IDEA_VELOCITY_TOO_HIGH 16, INSTITUTIONAL_REGISTER 9.
+
+    The instruction is positional and gives the way out (introduce plainly, name
+    precisely later), because a prohibition alone produces a vague opening, and the
+    opening rules already demand a concrete one."""
+    system = _flat(FC.free_writer_system())
+    check("the opening is told it carries the least",
+          "THE OPENING CARRIES THE LEAST, NOT THE MOST" in system)
+    check("with the measurement that says so",
+          "7.5 names per hundred words against 3.2 in the body" in system)
+    check("the apparatus is named for what it is",
+          "who funds a thing, how large it is, where it is kept" in system)
+    check("and said not to be the story", "None of that is the story" in system)
+    check("the test is whether a reader can feel the work",
+          "not doing work a reader can feel" in system)
+    check("and there is a way out, not only a prohibition",
+          "introduced plainly before it is named precisely" in system)
+    # It must not fight the rules it sits beside.
+    check("the opening must still land the reader inside the story",
+          "land the reader inside the story" in system)
+    check("the whole-article band is still described, not targeted",
+          "not a target to hit and not a rule" in system)
+    check("and the last paragraph rule survived the splice",
+          "THE LAST PARAGRAPH ADDS" in system)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
