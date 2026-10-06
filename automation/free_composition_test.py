@@ -2791,6 +2791,21 @@ def test_the_sentence_band_is_a_shape_not_an_average() -> None:
           "A sentence can be four words" in system)
     check("and the glued-on explanation is named",
           'explains it with "because" or "which" is usually two' in system)
+    # THE RULE THAT REPLACED THE FLOOR IS RELATIONAL, NOT A COUNT. Measured: in the
+    # published corpus 37.9% of sentences of 16+ words are followed immediately by one
+    # of 8 or fewer; in recent drafts 25.0%. A relational rule is applied continuously
+    # rather than satisfied once, which is the exact failure the floor hit.
+    check("the adjacency habit is given", "AFTER A LONG SENTENCE, GO SHORT" in system)
+    check("with the measurement behind it",
+          "38% of sentences of sixteen words or more" in system)
+    check("and it is explicitly not a quota",
+          "not a quota to satisfy once in a paragraph" in system)
+    check("counting is named as the thing that stiffens prose",
+          "counting is how prose goes stiff" in system)
+    # SENTENCE OPENINGS WERE MEASURED AND RULED OUT rather than addressed: the drafts
+    # open 81.5% subject-first against 75.3% in the published corpus, so structural
+    # monotony at the start of sentences is not the defect and nothing here targets it.
+    #
     # A PER-PARAGRAPH FLOOR WAS TRIED AND MADE IT WORSE. "At least one sentence of eight
     # words or fewer per paragraph" took short sentences from 25.0% DOWN to 20.8% and
     # grew the 16-25 bucket to 32%: the model satisfied the floor with exactly one and

@@ -471,6 +471,16 @@ Write the short ones. One clause. A sentence can be four words. And a sentence t
 states something and then explains it with "because" or "which" is usually two
 sentences that have been glued together -- say the thing, stop, then say why.
 
+AFTER A LONG SENTENCE, GO SHORT. This is the habit underneath the numbers and it is
+the one worth having. In this publication 38% of sentences of sixteen words or more
+are followed immediately by one of eight words or fewer; in recent drafts, 25%. The
+long sentence opens something up; the short one lands it, and the reader catches up
+in the gap.
+It is not a quota to satisfy once in a paragraph and then forget -- counting is how
+prose goes stiff. It is what to do EVERY TIME you have just written a long one: look
+at what you have, and if the next thing you were going to write is also long, say the
+smaller half of it first.
+
 A NAME AND A NUMBER ARE EACH A THING THE READER MUST HOLD. That is why these are
 counted and nothing else is, and why they are counted DISTINCT: a name you return to
 is one object, a fourth new name in a paragraph is a fourth object arriving at once,
