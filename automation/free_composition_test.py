@@ -2550,6 +2550,56 @@ def test_the_opening_is_told_to_carry_less() -> None:
           "THE LAST PARAGRAPH ADDS" in system)
 
 
+def test_the_writer_may_talk_to_the_reader() -> None:
+    """THE CORPUS IS IN THE PROMPT AND THE MOVES ARE NOT IN THE PROSE. 43KB of Bregman
+    craft analysis reaches every run through `craft_corpus.block()`, and
+    `bregman-architecture-analysis.md` names the comparative case as his most powerful
+    structural move with the note "0 of 14 cripminds articles use this. Every article
+    argues straight through." That was written 2026-08. Re-measured over 19 articles
+    since 2026-09-25:
+
+        parenthetical asides answering an objection   0
+        concessions before disagreeing                0
+        two cases set side by side                    1
+        questions anywhere in the body                5 (3 of 19 articles)
+        short punch sentences (1-6 words)             median 2 per article
+
+    The owner's reading of the same gap: "feels like robot, i want read like story."
+    His desk presses: REPORT_REGISTER 31, the most frequent signal by nearly 2x.
+
+    THE QUESTION BAN WAS BEING OVER-APPLIED. "NOT a question" appears three times in the
+    prompt, every one scoped to the OPENING LINE, and nothing anywhere said a question
+    mid-piece is good. Five questions across nineteen articles is near-total suppression
+    of a move the corpus uses constantly, so the scope is now stated rather than implied.
+
+    THESE ARE PERMISSIONS, NOT A TEMPLATE. Each is available at any point and none
+    prescribes an order -- the distinction that keeps this out of Story Architecture's
+    territory. The comparative case is explicitly tied back to the ONE RULE's existing
+    licence, because "set two things beside each other" is one word away from the
+    unlicensed join that is this project's oldest failure."""
+    system = _flat(FC.free_writer_system())
+    check("the bare 'do not lecture' now has something behind it",
+          "Do not lecture the reader. TALK TO THEM" in system)
+    check("the measurement that justifies it is carried",
+          "Questions anywhere in the body, 5 across all nineteen" in system)
+    check("the reader's own question may be asked and answered",
+          "ASK THE QUESTION THE READER IS ALREADY ASKING" in system)
+    check("the opening ban is scoped rather than implied",
+          "a rule about the first line and about nothing else" in system)
+    check("concession at full strength", "CONCEDE AT FULL STRENGTH" in system)
+    check("the comparative case", "SET TWO THINGS BESIDE EACH OTHER" in system)
+    check("a turn may land on a short sentence",
+          "LAND A TURN ON A SHORT SENTENCE" in system)
+    check("they are offered as permissions, not a structure",
+          "None is a structure, none is required" in system)
+    # The two rules this sits closest to and must not loosen.
+    check("the comparison may still not assert an unlicensed connection",
+          "may not ASSERT a connection the propositions do not carry" in system)
+    check("the opening may still not BE a question",
+          "NOT a question" in system)
+    check("and the one rule is intact", "THE ONE RULE" in system)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
