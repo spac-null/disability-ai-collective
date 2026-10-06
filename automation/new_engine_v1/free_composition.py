@@ -240,6 +240,20 @@ evidence rule:
   the propositions do not carry.
 - LAND A TURN ON A SHORT SENTENCE. Four words after a long paragraph does more than a
   paragraph of emphasis will.
+- TELL THE RECEIVED VERSION FIRST, THEN SHOW WHAT THE EVIDENCE DOES TO IT. Where the
+  material carries somebody's own account of the thing -- the ministry's explanation,
+  the institution's description of itself, the official reason it was done -- give that
+  account properly first, in its own terms and at its full strength, and only then show
+  what the rest of the evidence does to it. The corpus is built on this move: the public
+  version of the story told straight, and then the finding that turns it over.
+  THE ORDER IS THE WHOLE EFFECT. A reader handed the official account who then watches
+  it come apart has watched something happen. A reader told at the outset that the
+  official account is wrong has been handed a verdict and has nothing left to do.
+  YOU MAY ONLY TELL IT FROM THE PROPOSITIONS. Do not write what "people assume", what
+  "the story has always been", or what "we are told" unless a proposition carries it:
+  what anybody believes is a factual claim like any other, and an invented consensus is
+  a fabrication. The version you can always tell is the one somebody in the evidence
+  actually gave.
 
 ONE THESIS, HELD UNTIL IT STARTS HOLDING BACK.
 The manifesto's words, and the second half is as load-bearing as the first: "Each piece

@@ -2705,6 +2705,50 @@ def test_the_register_is_conversational_not_academic() -> None:
           "Simplify the SYNTAX around a difficult idea" in system)
 
 
+def test_the_received_version_comes_first() -> None:
+    """THE PATTERN THE AUGUST ANALYSES DO NOT NAME. Fresh reading of how Bregman actually
+    works: in Humankind every psychological experiment follows one fixed shape -- the
+    public version of the story showing human evil, told straight, and then the research
+    that reverses it. The Guardian Lord of the Flies piece is the whole method in one
+    essay. `bregman-architecture-analysis.md` names seven moves and this is not among
+    them, though "story IS the argument" gestures at it.
+
+    IT IS DISTINCT FROM THE CONCESSION SHIPPED IN a4fa6ea. A concession steelmans the
+    counter-ARGUMENT, which is what `disconfirming_shape` names. This steelmans the
+    ACCOUNT the subject itself gives -- the official reason, the institution describing
+    itself -- which is ordinary licensed material and usually already in the Ledger. On
+    20261005 the official's own line ("the directive only highlights realities that
+    already exist") was exactly such a version, and the tension field was built on the
+    gap between it and his own number.
+
+    THE FABRICATION RISK IS THE RECEIVED VERSION ITSELF. "Everyone assumes", "we are
+    told", "the story has always been" are factual claims about belief and nothing
+    licenses them. Bregman can write "Western culture has been permeated by the idea that
+    humans are selfish creatures"; this Writer cannot, unless a proposition says so. The
+    block scopes the move to accounts somebody in the evidence actually gave."""
+    system = _flat(FC.free_writer_system())
+    check("the move is available", "TELL THE RECEIVED VERSION FIRST" in system)
+    check("it is scoped to accounts the material carries",
+          "the ministry's explanation, the institution's description of itself" in system)
+    check("told at full strength and in its own terms",
+          "in its own terms and at its full strength" in system)
+    check("the reason the order matters is given",
+          "THE ORDER IS THE WHOLE EFFECT" in system)
+    check("and what a verdict-first piece costs the reader",
+          "has been handed a verdict and has nothing left to do" in system)
+    # The fabrication this move invites, refused by name.
+    check("an invented consensus is refused",
+          "an invented consensus is a fabrication" in system)
+    check("the three tempting phrasings are named",
+          "people assume" in system and "the story has always been" in system
+          and "we are told" in system)
+    check("and the safe version is named",
+          "the one somebody in the evidence actually gave" in system)
+    # It must sit with the other permissions, not become a structure.
+    check("still offered among permissions, not as a template",
+          "None is a structure, none is required" in system)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
