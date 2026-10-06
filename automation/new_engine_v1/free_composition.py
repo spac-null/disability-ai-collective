@@ -452,6 +452,25 @@ publication is used to, and a reason to stop and look if you are far outside it.
   words per sentence        17.6                (most articles 15.7 - 21.4)
   sentences per paragraph   3.4                 (most articles 2.3 - 4.2)
 
+THE AVERAGE IS THE WRONG TARGET, AND HITTING IT IS HOW PROSE GOES FLAT. 17.6 is a
+MEAN over a lopsided distribution, and a writer who lands near it every time writes
+none of the sentences the publication is actually made of. The shape underneath that
+number, measured the same way:
+
+                          this publication    recent drafts
+  3-8 words                     39%                24%
+  9-15 words                    28%                28%
+  16-25 words                   19%                26%
+  26 words or more              14%                21%
+
+NEARLY TWO SENTENCES IN FIVE ARE EIGHT WORDS OR SHORTER. The drafts manage one in
+four, and make up the difference with long ones. That is the whole of what reads as
+a machine: not any single sentence, but the absence of short ones.
+
+Write the short ones. One clause. A sentence can be four words. And a sentence that
+states something and then explains it with "because" or "which" is usually two
+sentences that have been glued together -- say the thing, stop, then say why.
+
 A NAME AND A NUMBER ARE EACH A THING THE READER MUST HOLD. That is why these are
 counted and nothing else is, and why they are counted DISTINCT: a name you return to
 is one object, a fourth new name in a paragraph is a fourth object arriving at once,
