@@ -274,7 +274,17 @@ def test_exact_writer_request_bytes() -> None:
           bool(EL.load()) and EL.load()[:60] in system)
     check("the craft corpus reaches the exact system bytes, not a comment about it",
           bool(CC.load()) and CC.load()[:200] in system)
-    check("the craft corpus is the real 39KB asset", len(CC.load()) > 30_000,
+    # WAS `> 30_000`, FOR THE 39KB WHOLE-FILE LOAD (2026-10-06). The threshold was a
+    # proxy for the invariant in craft_corpus.py's docstring -- the corpus is QUOTED,
+    # NOT SUMMARISED, so a hand-derived paraphrase cannot silently replace it. That
+    # invariant is unchanged and is asserted directly by the check above, which requires
+    # the real bytes in the system prompt. What changed is that nine tenths of the anchor
+    # corpus turned out not to be craft material: an oratory register marked "do NOT use
+    # for calibration", a rejected 10-section essay template in followable detail, a note
+    # saying the file is a JUDGE reference rather than a generation input, and three
+    # sections of session minutes. Those are cut; Section 1 and both analyses go whole
+    # and verbatim. 16.5KB of craft beats 39KB of craft-plus-counter-instruction.
+    check("the craft corpus is the real asset, verbatim", len(CC.load()) > 12_000,
           len(CC.load()))
     check("the reader contract reaches the exact system bytes",
           "Engineer discovery." in system and "sequence of realizations" in system)
@@ -2831,6 +2841,52 @@ def test_the_sentence_band_is_a_shape_not_an_average() -> None:
     check("the original band is still there", "17.6" in system)
     check("still framed as description, not a rule",
           "not a target to hit and not a rule" in system)
+
+
+def test_the_corpus_sends_craft_and_not_minutes() -> None:
+    """NINE TENTHS OF THE ANCHOR CORPUS WAS NOT CRAFT MATERIAL. 26,472 characters reached
+    the Writer on every run. By section:
+
+        1  ESSAY/REPORTAGE register       2,540   the ONLY part marked "use these"
+        2  ORATORY/LECTURE register       1,508   marked "do NOT use for calibration"
+        3  how to use this file             869   says it is a JUDGE reference
+        4  a rejected 10-section template 5,200   in followable detail
+        5-7 session notes, audits, blueprints   15,849
+
+    Section 3 says it in the file's own words: its value is "as a fixed, reusable judge
+    reference ... not as a magic ingredient that fixes generation on its own if fed to a
+    writer or fixer model." It was being fed to a writer model on every run.
+
+    THREE SECTIONS ARE WORSE THAN NOISE. Section 2 is a register the file says calibrates
+    toward "different, sometimes contradictory targets" and tells the reader not to use
+    it. Section 4 lays out a fixed essay template -- Opening Scene 200-300w, Surprise,
+    Zoom Out -- that was CONSIDERED AND REJECTED for this pipeline, set out in enough
+    detail for a model to follow before it reaches the paragraph saying it was rejected.
+    Sections 5-7 are minutes.
+
+    The owner's question was "cant we do rutger writing exactly?" Part of the answer is
+    that the Writer had never read craft material at full strength: one page of habits
+    inside 24KB of meeting notes. The two analyses go whole, because they are craft
+    documents end to end."""
+    from new_engine_v1 import craft_corpus as _CC
+    block = _CC.block()
+    # The part that is supposed to be there.
+    check("Section 1's habits reach the Writer",
+          "use these for anchor calibration" in block)
+    check("the architecture analysis goes whole",
+          "BREGMAN ARCHITECTURE ANALYSIS" in block and "comparative case" in block)
+    check("so does the write-economy analysis",
+          "BREGMAN WRITE ECONOMY" in block)
+    # The parts that must not be.
+    check("the oratory register is gone", "ORATORY" not in block)
+    check("the rejected template is gone", "rigid 10-section" not in block
+          and "Opening Scene 200-300w" not in block)
+    check("the judge-reference note is gone", "judge reference" not in block)
+    check("and the session minutes are gone",
+          "weekly full audit" not in block and "architecture migration" not in block)
+    # Size, as the blunt check that the trim happened at all.
+    check("the corpus block is roughly a third smaller", len(block) < 20000,
+          "%d chars" % len(block))
 
 
 def main() -> None:
