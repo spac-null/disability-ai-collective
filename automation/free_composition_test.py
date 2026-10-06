@@ -2889,6 +2889,66 @@ def test_the_corpus_sends_craft_and_not_minutes() -> None:
           "%d chars" % len(block))
 
 
+def test_the_reader_is_addressed_directly() -> None:
+    """THE LARGEST MEASURED GAP TO THE CRAFT CORPUS, AND THE LAST ONE OUTSTANDING.
+    `.claude/story-architecture/craft-research-v2/sources/craft_corpus_v2.jsonl` holds
+    derived statistics for 61 sources, 18 of them Bregman, and nothing in this pipeline
+    had ever read it. Compared against three current compositions on the metrics whose
+    definitions are unambiguous:
+
+                              engine   corpus
+        median sentence         14.0     14.8
+        short (<=10 words)      0.40     0.29
+        long (>=30 words)       0.08     0.07
+        one-sentence paragraphs 0.12     0.09
+        paragraph words         65.5     56.5
+        questions per 1k         2.7      4.0
+        DIRECT ADDRESS per 1k    4.0     16.9   <-- 4.2x
+
+    Seven of eight sit inside the corpus range. Direct address is 4.2x short, q3 27.19.
+
+    AND IT CORRECTED AN EARLIER CLAIM OF MINE. I had reported short sentences as the
+    unsolved problem; against this corpus the engine is at 0.40 versus 0.29 -- past it.
+    That gap existed only against the publication's own back catalogue, which is shorter
+    than the craft corpus, and I had been treating the back catalogue as the target
+    without checking it against the register actually being aimed at.
+
+    SIGNPOSTING WAS CONSIDERED AND DELIBERATELY NOT BUILT. `PR62_CRAFT_GAP_ANALYSIS.md`
+    names signpost-opener rate as the metric that discriminates hardest, but also records
+    that the source "signposts constantly and explicitly", that it is genre-bound good
+    craft for argumentative essays, and that the existing SIGNPOST_SHAPES detector "flags
+    exactly the class this source teaches as good craft". A prior research pass already
+    confused outline transitions with content transitions. Left alone.
+
+    THE RATE IS GIVEN AS SHAPE AND THE RULE AS A CONDITION, never as a count -- the
+    lesson from the per-paragraph sentence floor, which took short sentences DOWN when it
+    was phrased as a quota.
+
+    THE PROHIBITION IS THE POINT OF CARE. Direct address makes it easy to claim things
+    about the reader, and for this publication the dangerous version is assuming the
+    reader's body or health. Named and refused explicitly."""
+    system = _flat(FC.free_writer_system())
+    check("direct address is asked for", 'SAY "YOU"' in system)
+    check("with the measured rate as shape",
+          "SEVENTEEN times per thousand words" in system)
+    check("and the drafts' own figure beside it", "Recent drafts manage four" in system)
+    check("it is given as a condition, not a count",
+          "THE CONDITION. Whenever you are about to describe what something is LIKE"
+          in system)
+    check("with the abstract-subject substitutions",
+          "the approaching body" in system and "the claimant must establish" in system)
+    check("and it is noted to assert no fact", '"you" asserts no fact' in system)
+    # The half that matters most for this publication.
+    check("claims about the reader are refused",
+          "WHAT YOU MAY NOT DO WITH IT" in system)
+    check("including about their body or health",
+          "never assume anything about their body, their health or their life" in system)
+    check("the four tempting phrasings are named",
+          "You probably assume" in system and "if you are disabled" in system)
+    check("and the line is drawn explicitly",
+          "Do not tell them what the situation is like for them" in system)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
