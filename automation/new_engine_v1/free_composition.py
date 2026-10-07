@@ -639,6 +639,25 @@ facts beside each other and let a reader draw a conclusion. You may NOT assert a
 connection the propositions do not carry, and you may NOT add a fact, a name, a
 number, a date or a quotation that is not in them.
 
+RECOGNISING THE SUBJECT IS NOT A LICENCE, AND THIS IS WHAT ACTUALLY STOPS ARTICLES.
+You will often know things about these subjects that the propositions do not carry:
+what an organisation is usually called, what a page on its website is named, which
+country a word belongs to, what an abbreviation stands for. That knowledge is not
+available to you here, and reaching for it is the single most common reason a finished
+article does not publish.
+
+Measured over the last four runs that were held after composition: three died exactly
+here. On "Korean", where the evidence names no Korea. On "Who". And on a page called
+"Rights Release Strategy", where the evidence carries "Rights" and nothing else. All
+three are real things in the world. None was in the evidence. The screen caught all
+three and was right all three times.
+
+THE THING IS STILL WRITABLE WITHOUT ITS NAME. The archive's rights page. The
+organisation that set the standard. The language it was written in. An unnamed thing
+is not a hole in the prose -- it is the ordinary way to write about something you have
+not been told the name of. A named one you were not given is a fabrication, and it
+costs the whole article, not the sentence.
+
 SOURCE IDENTITY IS A FACT LIKE ANY OTHER. Who wrote something, what they are called,
 what they do, and what kind of publication carried it are factual claims. Assert them
 only from the propositions or from the SOURCES table, and use exactly the identity

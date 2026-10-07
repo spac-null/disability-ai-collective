@@ -2964,6 +2964,55 @@ def test_the_reader_is_addressed_directly() -> None:
           "Do not tell them what the situation is like for them" in system)
 
 
+def test_recognising_the_subject_is_not_a_licence() -> None:
+    """THE TOP PUBLISH BLOCKER, AND IT IS NOT A FALSE POSITIVE.
+    26 production runs since 2026-09-29, zero ACCEPT. Nine never reached a Writer
+    (research). Of the seventeen that composed: READER 6, SAFETY 6, GROUNDING 3, WORTH 2.
+
+    All four recent SAFETY holds are NEW_UNSUPPORTED_FACTS on entities. Hand-checked
+    against each run's own Ledger:
+
+        20261001  'Korean'                      Korea absent too   -> INVENTED
+        20261003  'Who'                         absent             -> INVENTED
+        20261005  'World Health Organization'   WHO present        -> expansion, fixed 0f85f26
+        20261006  'Release', 'Strategy'         only 'Rights'      -> INVENTED page name
+
+    THREE OF FOUR ARE GENUINE FABRICATIONS. The screen is right.
+
+    THIS CORRECTS AN EARLIER MEASUREMENT OF MINE. I reported "14 of 17 flagged entities
+    are surface variants of licensed material" and nearly loosened the entity screen on
+    it. That figure came from a crude stemmer which, re-run, marks 'Release' and
+    'Strategy' as variants of licensed material when they are absent from the Ledger
+    entirely. Hand-checking inverts the conclusion.
+
+    THE COMMON SHAPE IS RECOGNITION. Every invented name is a real thing in the world --
+    the WHO, a real page on the NDACA site, a real language. The Writer is supplying
+    what it knows about a subject it recognises. The ONE RULE already forbids adding a
+    name; what was missing is that this is where the names come from, and that the thing
+    can be written without one.
+
+    No count, no allowance: a named failure mode and a positive alternative."""
+    system = _flat(FC.free_writer_system())
+    check("recognition is named as the failure", "RECOGNISING THE SUBJECT IS NOT A LICENCE"
+          in system)
+    check("and named as the publish blocker it is",
+          "the single most common reason a finished article does not publish" in system)
+    check("the measurement is carried", "three died exactly here" in system)
+    check("with the actual cases",
+          "Korean" in system and "Rights Release Strategy" in system)
+    check("the screen is credited rather than blamed",
+          "caught all three and was right all three times" in system)
+    check("the way out is given", "THE THING IS STILL WRITABLE WITHOUT ITS NAME" in system)
+    check("with unnamed examples", "The archive's rights page" in system)
+    check("and the cost is stated",
+          "costs the whole article, not the sentence" in system)
+    # The rules it sits between, which must survive.
+    check("the one rule still forbids adding a name",
+          "you may NOT add a fact, a name, a number, a date or a quotation" in system)
+    check("and source identity still follows it",
+          "SOURCE IDENTITY IS A FACT LIKE ANY OTHER" in system)
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
