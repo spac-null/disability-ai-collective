@@ -552,6 +552,36 @@ def test_the_porter_exclusivity_hold_is_preserved():
           r2["blocking"])
 
 
+def test_a_possessive_is_not_a_separate_entity():
+    """A LICENSED NAME IN THE POSSESSIVE HELD PUBLISHABLE ARTICLES. `_entities` emitted
+    both `Italy's` and `Italy`, so a Ledger licensing the bare name left the possessive
+    in the prose-minus-approved difference. On production-20261006T070559, after the
+    invented names were fixed, `Television's`, `Act's` and `Crow's` were the ONLY
+    remaining flags across three recompositions.
+
+    THE DETECTION ARGUMENT IS A PROOF, not a judgement call, which is what separates it
+    from making entities advisory: the bare form is emitted alongside, so the possessive
+    token is redundant. Where the bare form is licensed the possessive asserts nothing
+    new; where it is not, the bare form still flags. All seventeen call sites use this
+    function as a set difference."""
+    ents = ST._entities("The directive named Italy\u2019s ministry.")
+    check("the possessive is not its own entity", "Italy\u2019s" not in ents)
+    check("the bare name is still there", "Italy" in ents)
+    check("straight apostrophes too",
+          "Italy's" not in ST._entities("The directive named Italy's ministry."))
+    approved = ST._entities("The ministry of Italy issued a directive.",
+                            skip_sentence_initial=False)
+    check("a licensed name in the possessive is no longer unapproved",
+          sorted(ST._entities("It named Italy\u2019s ministry.") - approved) == [])
+    # Detection, which must never regress.
+    check("an unlicensed possessive still flags via its bare form",
+          "NASA" in ST._entities("A note on NASA\u2019s budget."))
+    check("an all-caps acronym is still an entity",
+          "NASA" in ST._entities("Why NASA counted twice."))
+    check("a new name mid-sentence is still caught",
+          "Avanti" in ST._entities("The work was delivered by Avanti Architects in May."))
+
+
 def main():
     for fn in (test_literal_cut_is_token_wise,
                test_inflection_branch_is_untouched,
@@ -567,7 +597,8 @@ def main():
                test_a_genuinely_novel_name_still_blocks,
                test_the_helpers_themselves,
                test_licence_is_morphology_and_ledger_aware,
-               test_the_porter_exclusivity_hold_is_preserved):
+               test_the_porter_exclusivity_hold_is_preserved,
+               test_a_possessive_is_not_a_separate_entity):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)
