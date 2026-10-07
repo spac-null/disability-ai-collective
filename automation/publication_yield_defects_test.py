@@ -309,8 +309,13 @@ def test_a_ledger_only_name_is_approved_for_its_possessive():
           "Morgan" not in approved, approved[:80])
     art = "The table is the record. It rests on Morgan's table and nothing else."
     surface = ST.factual_surface_audit(art, pkt, led)
-    check("the bare name is approved by the Ledger, only the possessive is flagged",
-          surface["unapproved_entities"] == ["Morgan's"],
+    # UPDATED 2026-10-07, SAME INTENT, DIFFERENT ROUTE. This test exists to ensure a
+    # name the Ledger grants is not blocked on its apostrophe -- its own docstring says
+    # so. It achieved that by flagging the possessive and exempting it downstream; the
+    # possessive is now never emitted, so there is nothing to exempt. The intent is met
+    # more completely and the assertion is updated to match, not dropped.
+    check("a Ledger-only name is not blocked on its apostrophe at all",
+          surface["unapproved_entities"] == [],
           str(surface["unapproved_entities"]))
     # The fix: the exemption's own set now includes the Ledger, so the base is found.
     ledger_text = " ".join("%s %s" % (v["proposition"], v["support_span"])
@@ -320,8 +325,12 @@ def test_a_ledger_only_name_is_approved_for_its_possessive():
     check("an invented name is still NOT approved", "Quilter" not in ents)
     art2 = "The table is the record. It rests on Quilter's table and nothing else."
     s2 = ST.factual_surface_audit(art2, pkt, led)
-    check("and an invented possessive still blocks",
-          "Quilter's" in s2["unapproved_entities"], str(s2["unapproved_entities"]))
+    # DETECTION IS THE HALF THAT MATTERS AND IT IS UNCHANGED -- only the token form is.
+    # An invented possessive still blocks, now reported as the bare name.
+    check("and an invented possessive still blocks, as its bare name",
+          "Quilter" in s2["unapproved_entities"], str(s2["unapproved_entities"]))
+    check("...and nothing invented slipped through",
+          s2["unapproved_entities"] != [], str(s2["unapproved_entities"]))
 
 
 # ── 6. A HOLD RETURNS THE TEXT THE RUN ENDED ON ──────────────────────────────

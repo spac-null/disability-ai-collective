@@ -2062,9 +2062,29 @@ def _entities(text: str, skip_sentence_initial: bool = True) -> set:
             if skip_sentence_initial and not s[:m.start()].strip("\n\r \t'\"“‘([#*_-"):
                 continue
             tok = m.group(0).rstrip(".,")
-            out.add(tok)
-            out.add(re.sub(r"['’]s$", "", tok))          # Curated's -> Curated
-            for part in re.split(r"[-.]", tok):          # Jakarta-based -> Jakarta
+            # A POSSESSIVE IS NOT A SEPARATE ENTITY (2026-10-07). This emitted BOTH
+            # `Italy's` and `Italy`, so a Ledger licensing "Italy" left `Italy's` in the
+            # prose-minus-approved difference and the run was held for factual surface
+            # the packet never granted. Measured on production-20261006T070559, where
+            # `Television's`, `Act's` and `Crow's` were the only remaining flags after
+            # the invented names were fixed, and on three recompositions of it.
+            #
+            # DROPPING IT CANNOT ADMIT AN UNLICENSED ENTITY, which is what separates this
+            # from making entities advisory. The bare form was already emitted alongside
+            # the possessive, so the possessive token is redundant by construction: where
+            # the bare form is licensed the possessive asserts nothing new, and where it
+            # is NOT licensed the bare form stays in the difference and still flags. An
+            # invented `NASA's` continues to block, as `NASA`.
+            #
+            # BOTH EXITS MUST AGREE. A first attempt dropped `out.add(tok)` and stopped
+            # there; `re.split(r"[-.]", "Italy's")` has nothing to split on, so the loop
+            # below re-added the whole possessive and nothing changed.
+            #
+            # A name that genuinely ends in 's is unaffected: the approved side runs this
+            # same function, so a licensed "Lloyd's" contributes "Lloyd" there too.
+            bare = re.sub(r"['’]s$", "", tok)            # Curated's -> Curated
+            out.add(bare)
+            for part in re.split(r"[-.]", bare):         # Jakarta-based -> Jakarta
                 if len(part) > 2:
                     out.add(part)
     return out
