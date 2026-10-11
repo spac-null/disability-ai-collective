@@ -6117,6 +6117,49 @@ def safety_repair(provider, article_text: str, findings: list, ledger: dict,
 SUBTRACTIVE_MAX_SHARE = 1.0 / 6.0
 
 
+# A NAME CAN USUALLY LEAVE WITHOUT ITS SENTENCE (2026-10-11). The first version of the
+# fallback deleted whole sentences, and on production-20261006T070559 that cost more than
+# it needed to: the only defect in "there is a page called Rights Release Strategy, which
+# sets out the terms on which all of this went up" was the invented NAME. Deleting the
+# sentence stranded the pronoun in the sentence after it -- "One sentence in IT says ..."
+# -- and the READER gate then held the article on the antecedent the repair had just
+# orphaned. The factual screens cannot see that by construction; only reading can.
+#
+# So the name is lifted out first, with whatever introduces it, and the sentence stays.
+# Sentence deletion remains the fallback when that cannot be done cleanly.
+_NAME_INTRO = re.compile(
+    r"\s*\b(?:called|named|titled|known as|entitled|labelled|labeled)\s+"
+    r"(?:the\s+|a\s+|an\s+)?[A-Z][\w'’-]*(?:\s+(?:of|the|and|for|to)?\s*[A-Z][\w'’-]*)*")
+
+
+def _strip_name_phrase(sentence: str, token: str) -> str | None:
+    """The sentence without the named phrase carrying `token`, or None if not clean.
+
+    Only the introducer form is handled -- `called X`, `named X` -- because it is the one
+    that appears in practice and the one that can be removed without leaving a hole. The
+    result must still read as a sentence: no doubled or orphaned punctuation, no loss of
+    its terminator, and the offending token actually gone.
+    """
+    out = None
+    for m in _NAME_INTRO.finditer(sentence):
+        if token in m.group(0):
+            out = sentence[:m.start()] + sentence[m.end():]
+            break
+    if out is None:
+        return None
+    out = re.sub(r"\s+,", ",", out)
+    out = re.sub(r",\s*,", ",", out)
+    out = re.sub(r"\s{2,}", " ", out).strip()
+    if token in out:
+        return None
+    if not out or out[-1] not in ".!?\"’”":
+        return None
+    # A sentence reduced to a fragment helps nobody; keep enough of it to be a sentence.
+    if len(out.split()) < 5 or len(out.split()) < 0.4 * len(sentence.split()):
+        return None
+    return out
+
+
 def subtractive_safety_removal(article_text: str, sa: dict,
                                max_share: float = SUBTRACTIVE_MAX_SHARE) -> dict | None:
     """Delete whole sentences carrying unlicensed factual surface. None if inapplicable.
@@ -6129,11 +6172,11 @@ def subtractive_safety_removal(article_text: str, sa: dict,
     tokens = ([str(t) for t in (surf.get("unapproved_entities") or [])]
               + [str(t) for t in (surf.get("unapproved_numbers") or [])]
               + [str(t) for t in (surf.get("unapproved_sensory") or [])])
-    if not tokens:
-        return None
-
+    # NO EARLY RETURN ON AN EMPTY TOKEN LIST. The first version bailed here, so an
+    # article flagged ONLY for unsupported negatives never reached the negatives pass
+    # below -- which is every article this was built to rescue (20261009, 20261010).
     text = article_text
-    removed, hit = [], []
+    removed, trims, hit = [], [], []
     # Re-locate after every deletion: one sentence commonly carries several tokens, and a
     # token commonly recurs in a later sentence (measured: deleting the sentence holding
     # Principles/Rules/Spiral left `Ramps` standing elsewhere).
@@ -6151,13 +6194,48 @@ def subtractive_safety_removal(article_text: str, sa: dict,
             if not sent or not sent.strip() or tok not in sent:
                 break
             before = text
-            text = text.replace(sent, "", 1)
-            if text == before:
-                break
-            removed.append(sent.strip())
+            # Lift the name out and keep the sentence, where that can be done cleanly.
+            trimmed = _strip_name_phrase(sent, tok)
+            if trimmed:
+                text = text.replace(sent, trimmed, 1)
+                if text == before:
+                    break
+                trims.append({"from": sent.strip(), "to": trimmed})
+            else:
+                text = text.replace(sent, "", 1)
+                if text == before:
+                    break
+                removed.append(sent.strip())
             if tok not in hit:
                 hit.append(tok)
-    if not removed:
+    # UNSUPPORTED NEGATIVES, article surface. A sentence claiming an absence with no
+    # licensed negative behind it -- "the draft changes none of them" -- is a factual
+    # claim like any other and cannot publish. There is nothing to trim here: the claim
+    # IS the sentence, so the sentence goes. `negative_admission` reports the full
+    # sentence rather than a fragment, so no span search is needed.
+    #
+    # This is what actually blocks the articles worth publishing. Measured 2026-10-11:
+    # the three most recent drafts carrying the house voice -- 20261009, 20261010 and
+    # 20261011 -- are held on UNSUPPORTED_NEGATIVES, not on invented names, and the
+    # factual-surface pass alone left all three exactly where they were.
+    #
+    # PACKAGE_UNSUPPORTED_NEGATIVES is deliberately NOT handled: it is package surface,
+    # it is outside SAFETY_REPAIRABLE_PREFIXES, and the package is regenerated from the
+    # article anyway.
+    neg = ((sa.get("audits") or {}).get("continuity_final") or {}).get(
+        "negative_admission") or {}
+    for h in (neg.get("unmatched") or []):
+        sent = str((h or {}).get("sentence") or "").strip()
+        if not sent or sent not in text:
+            continue
+        before = text
+        text = text.replace(sent, "", 1)
+        if text == before:
+            continue
+        removed.append(sent)
+        hit.append("negative: %s" % sent[:40])
+
+    if not removed and not trims:
         return None
 
     text = re.sub(r"\n{3,}", "\n\n", text).strip()
@@ -6165,8 +6243,8 @@ def subtractive_safety_removal(article_text: str, sa: dict,
     share = (orig_words - len(text.split())) / orig_words
     if share > max_share:
         return None
-    return {"article_text": text, "removed": removed, "tokens": hit,
-            "share": round(share, 4)}
+    return {"article_text": text, "removed": removed, "trimmed": trims,
+            "tokens": hit, "share": round(share, 4)}
 
 
 PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES = ("PACKAGE_MACHINE_LANGUAGE", "PACKAGE_CUT_LEAKAGE")
