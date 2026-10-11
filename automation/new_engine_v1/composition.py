@@ -6093,6 +6093,82 @@ def safety_repair(provider, article_text: str, findings: list, ledger: dict,
 #
 # ONE CALL, then the SAME final safety recheck Stage 9b already runs. No second package
 # repair, no article regeneration, no roulette.
+# ── SUBTRACTIVE SAFETY FALLBACK ───────────────────────────────────────────────
+# WHAT THIS EXISTS FOR. `safety_repair` is a MODEL rewrite and it gets one attempt. When
+# the rewrite fails to remove the surface it was pointed at, the run dies with a finished
+# article on disk. Measured on production-20261008T070542: the repair RAN
+# (`after_safety_repair: True`, `repairs_by_stage {SAFETY: 1}`), and the re-audit still
+# carried entities=['Principles', 'Ramps', 'Rules', 'Spiral'] -- four invented names the
+# rewrite left in place. Same shape on 20261007T070220 (an invented date, 1974).
+#
+# DELETION CANNOT ADD UNLICENSED SURFACE. That is the whole safety argument and it is
+# structural, not a judgement: removing a sentence removes tokens and adds none, so the
+# factual-surface screen can only improve. This is the opposite of relaxing the screen --
+# nothing unlicensed is admitted; the sentence carrying it leaves.
+#
+# IT IS A LAST RESORT, NOT A FIRST ONE. It runs only after the model repair has already
+# been tried and failed, and only on surface the locator can place verbatim. Anything it
+# cannot place is left alone and the run holds exactly as before.
+#
+# THE BOUND IS A SAFETY STOP, NOT A TARGET. If clearing the article would cost more than
+# a sixth of it, the piece is not a few bad sentences -- it is a draft built on material
+# it was never given, and deleting its way to a pass would produce something nobody
+# wrote. Hold instead.
+SUBTRACTIVE_MAX_SHARE = 1.0 / 6.0
+
+
+def subtractive_safety_removal(article_text: str, sa: dict,
+                               max_share: float = SUBTRACTIVE_MAX_SHARE) -> dict | None:
+    """Delete whole sentences carrying unlicensed factual surface. None if inapplicable.
+
+    Returns {article_text, removed, tokens, share} or None when there is nothing
+    locatable to remove, or when removal would exceed `max_share` of the article.
+    """
+    surf = ((sa.get("audits") or {}).get("continuity_final") or {}).get(
+        "factual_surface") or {}
+    tokens = ([str(t) for t in (surf.get("unapproved_entities") or [])]
+              + [str(t) for t in (surf.get("unapproved_numbers") or [])]
+              + [str(t) for t in (surf.get("unapproved_sensory") or [])])
+    if not tokens:
+        return None
+
+    text = article_text
+    removed, hit = [], []
+    # Re-locate after every deletion: one sentence commonly carries several tokens, and a
+    # token commonly recurs in a later sentence (measured: deleting the sentence holding
+    # Principles/Rules/Spiral left `Ramps` standing elsewhere).
+    for tok in tokens:
+        guard = 0
+        while guard < 12:
+            guard += 1
+            sent = _sentence_containing(text, tok)
+            # VERIFY THE SENTENCE ACTUALLY CARRIES THE TOKEN. `_sentence_containing` does
+            # not guarantee it: on production-20261007T070220 the second call for
+            # 'Federation', after its one real sentence was already gone, returned a
+            # sentence containing neither 'Federation' nor '1974' -- and without this
+            # check the loop deleted it. Innocent prose is the one thing a subtractive
+            # pass must never remove, so an unverifiable hit ends the loop for that token.
+            if not sent or not sent.strip() or tok not in sent:
+                break
+            before = text
+            text = text.replace(sent, "", 1)
+            if text == before:
+                break
+            removed.append(sent.strip())
+            if tok not in hit:
+                hit.append(tok)
+    if not removed:
+        return None
+
+    text = re.sub(r"\n{3,}", "\n\n", text).strip()
+    orig_words = max(len(article_text.split()), 1)
+    share = (orig_words - len(text.split())) / orig_words
+    if share > max_share:
+        return None
+    return {"article_text": text, "removed": removed, "tokens": hit,
+            "share": round(share, 4)}
+
+
 PACKAGE_ONLY_SAFETY_REPAIRABLE_PREFIXES = ("PACKAGE_MACHINE_LANGUAGE", "PACKAGE_CUT_LEAKAGE")
 
 

@@ -1826,6 +1826,24 @@ def run_free_argumentative_composition(
                     repairs[CP.SAFETY] = 1
                     calls[CP.SAFETY] = calls.get(CP.SAFETY, 0) + srep.get("model_calls", 0)
 
+        # ── SUBTRACTIVE FALLBACK, after the model repair has been tried and failed ────
+        # A finished article was dying over a handful of sentences. The model rewrite is
+        # one attempt and when it leaves the surface in place there is nothing after it;
+        # 20261008T070542 recorded `after_safety_repair: True` and still held on four
+        # invented names. Deleting the sentences that carry them removes tokens and adds
+        # none, so this can only improve the screen it answers to -- and the run is
+        # re-audited afterwards exactly as a repair is, never waved through.
+        if sa["status"] != CP.PASS:
+            sub = CP.subtractive_safety_removal(final, sa)
+            if sub:
+                final = sub["article_text"]
+                pkg = make_package(final)
+                sa = record(CP.SAFETY, audit(final, pkg))
+                sa["after_subtractive_removal"] = {
+                    "sentences": len(sub["removed"]), "tokens": sub["tokens"],
+                    "share_of_article": sub["share"]}
+                repairs[CP.SAFETY] = repairs.get(CP.SAFETY, 0) + 1
+
         # ── ONE PACKAGE-ONLY SAFETY REPAIR, the planned path's Stage 9c ──────────────
         # NOT PORTED WHEN THIS LADDER WAS WRITTEN, and rehearsal-20260930T173120Z-2cc116d7
         # is what that cost. `_safety_locate_findings` refuses the whole attempt unless
