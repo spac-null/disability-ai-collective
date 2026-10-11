@@ -3013,6 +3013,84 @@ def test_recognising_the_subject_is_not_a_licence() -> None:
           "SOURCE IDENTITY IS A FACT LIKE ANY OTHER" in system)
 
 
+def test_the_subtractive_safety_fallback() -> None:
+    """A FINISHED ARTICLE WAS DYING OVER TWO SENTENCES. `safety_repair` is a MODEL
+    rewrite with one attempt, and when it fails to remove the surface it was pointed at
+    there is nothing after it. Measured on production-20261008T070542: the repair RAN
+    (`after_safety_repair: True`, `repairs_by_stage {SAFETY: 1}`) and the re-audit still
+    carried entities ['Principles', 'Ramps', 'Rules', 'Spiral'] -- four invented names
+    the rewrite left standing. 20261007T070220 is the same shape with an invented date.
+
+    Replaying both through the fallback:
+
+        20261008   2 sentences, 2.6% of the article, 0 tokens left
+        20261007   2 sentences, 3.0% of the article, 0 tokens left
+
+    DELETION CANNOT ADD UNLICENSED SURFACE. That is the safety argument and it is
+    structural rather than a judgement: removing a sentence removes tokens and adds
+    none, so the screen it answers to can only improve. Nothing unlicensed is admitted --
+    the sentence carrying it leaves. The result is re-audited afterwards exactly as a
+    repair is.
+
+    THE INNOCENT-SENTENCE GUARD IS THE PART THAT NEEDED CATCHING. `_sentence_containing`
+    does not guarantee the sentence it returns holds the token: on 20261007, the second
+    lookup for 'Federation' -- after its one real sentence was gone -- returned a
+    sentence containing neither flagged token, and the first version of this deleted it.
+    A subtractive pass removing innocent prose is worse than the hold it is fixing."""
+    from new_engine_v1 import composition as _CP
+
+    # A REALISTIC LENGTH, because the bound is real: one sentence is half of a
+    # twenty-word fixture, so the first version of this test was refused by
+    # SUBTRACTIVE_MAX_SHARE and read as a code failure when the code was correct.
+    filler = ("The committee published its findings in the spring. "
+              "The minutes record a long discussion and no vote. "
+              "Three delegates asked for the text to be circulated again. "
+              "The chair agreed and set a date. "
+              "Nobody objected to the date. ") * 4
+    art = ("The report was published. " + filler +
+           "The committee met in Geneva and the Federation signed it. " + filler +
+           "Nothing else happened that year.")
+    sa = {"audits": {"continuity_final": {"factual_surface": {
+        "unapproved_entities": ["Federation"], "unapproved_numbers": [],
+        "unapproved_sensory": []}}}}
+    r = _CP.subtractive_safety_removal(art, sa)
+    check("the carrying sentence is removed", r and "Federation" not in r["article_text"])
+    check("and only that sentence", r and "The report was published." in r["article_text"]
+          and "Nothing else happened that year." in r["article_text"])
+    check("the removal is reported", r and r["tokens"] == ["Federation"]
+          and len(r["removed"]) == 1)
+
+    # Deletion can only subtract: no token present after it that was not before.
+    check("no surface is added", r and set(r["article_text"].split()) <=
+          set(art.split()))
+
+    # Nothing to do -> None, so the caller holds exactly as before.
+    clean = {"audits": {"continuity_final": {"factual_surface": {
+        "unapproved_entities": [], "unapproved_numbers": [], "unapproved_sensory": []}}}}
+    check("a clean audit is not applicable", _CP.subtractive_safety_removal(art, clean)
+          is None)
+
+    # THE BOUND. An article that is mostly unlicensed is not a few bad sentences.
+    tiny = "Only the Federation did it."
+    bad = _CP.subtractive_safety_removal(tiny, sa)
+    check("removing most of the article is refused instead", bad is None)
+
+    # The guard: a token the locator cannot genuinely place must not cost a sentence.
+    nomatch = {"audits": {"continuity_final": {"factual_surface": {
+        "unapproved_entities": ["Nonexistent"], "unapproved_numbers": [],
+        "unapproved_sensory": []}}}}
+    check("a token absent from the text removes nothing",
+          _CP.subtractive_safety_removal(art, nomatch) is None)
+
+    # It is wired in AFTER the model repair, never instead of it.
+    src = open(FC.__file__, encoding="utf-8").read()
+    check("the model repair is still tried first",
+          src.index("CP.safety_repair(") < src.index("CP.subtractive_safety_removal("))
+    check("and the result is re-audited, not waved through",
+          "sa = record(CP.SAFETY, audit(final, pkg))" in
+          src[src.index("CP.subtractive_safety_removal("):][:600])
+
+
 def main() -> None:
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
