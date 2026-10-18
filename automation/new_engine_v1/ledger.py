@@ -129,6 +129,32 @@ def validate_ledger(ledger: dict, evidence_text: str) -> list:
     return errs
 
 
+def validate_ledger_against_pack(ledger: dict, pack: dict) -> list:
+    """Check that every permission still cites bytes carried by this exact pack.
+
+    This is needed when a pack is re-windowed after Ledger creation: preserving a late
+    passage can evict an earlier support span without changing the Ledger's IDs.
+    """
+    sources = {s.get("source_id"): s for s in pack.get("sources") or []}
+    errors = []
+    for fid, fact in sorted(ledger.items()):
+        if fact.get("fact_id") != fid:
+            errors.append("%s: fact_id disagrees with its key" % fid)
+        ids = fact.get("evidence_ids") or []
+        missing = [sid for sid in ids if sid not in sources]
+        if missing:
+            errors.append("%s: evidence source absent from pack: %s" % (fid, missing))
+        available = [sources[sid].get("text") or "" for sid in ids if sid in sources]
+        span = _n(fact.get("support_span"))
+        carrying = next((source for source in available if span and span in _n(source)),
+                        None)
+        if fact.get("claim_type") != INTERPRETATION and not carrying:
+            errors.append("%s: support_span absent from cited packed source text" % fid)
+        if carrying or fact.get("claim_type") == INTERPRETATION:
+            errors += validate_fact(fact, carrying or "")
+    return errors
+
+
 def propositions(ledger: dict) -> dict:
     """fact_id -> readable proposition. This is the ONLY text a packet may carry."""
     return {fid: f["proposition"] for fid, f in ledger.items()}
