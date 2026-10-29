@@ -1815,11 +1815,17 @@ def test_a_provenance_frame_needs_an_apparatus_SUBJECT():
     check("and the article-level screen agrees",
           ST.prose_leaks(" ".join(clean))["ok"]
           and not ST.prose_leaks(" ".join(leaky))["ok"])
-    # PR #62's own contract: a subjectless auditing sentence IS a leak, and the pronoun
-    # half of the anchor exists to keep it one. Asserted here so a future narrowing
-    # cannot quietly drop it.
-    check("a subjectless auditing sentence is still a leak",
-          ST.prose_leaks("It does not describe the building's form.")["total"] > 0)
+    # Real published prose gives pronouns referents. The packet screen stays strict;
+    # the article screen blocks explicit apparatus without holding ordinary syntax.
+    check("a pronoun does not hold finished prose",
+          ST.prose_leaks("It does not describe the building's form.")["ok"])
+    check("ordinary evidence language does not hold finished prose",
+          ST.prose_leaks("The evidence did not identify a concrete act.")["ok"])
+    check("the October production false positives clear",
+          ST.prose_leaks("It does not tell you whose hands it is in. ") ["ok"]
+          and ST.prose_leaks("It does not say where the cuts fell.")["ok"])
+    check("explicit packet language still holds finished prose",
+          not ST.prose_leaks("The research pack does not say who built it.")["ok"])
     check("and a bare mention of a document still is not",
           ST.prose_leaks("The newspaper printed a correction the next "
                          "morning.")["ok"])

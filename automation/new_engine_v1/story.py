@@ -103,6 +103,12 @@ BEAT_FUNCTIONS = (REVEAL, COMPLICATE, EXPLAIN, REVERSE, RESOLVE)
 # anywhere in a writer packet. The bare word "source" is NOT here: a newspaper's own
 # source can be story material, and banning the word would be the phrase-blacklist
 # mistake the brief rules out. What is banned is the auditing frame.
+_AMBIGUOUS_PROVENANCE_FRAME = (
+    r"(?:\bthe (?:source|anchor|brief|evidence|material|research pack|reading)s?\b"
+    r"[^.]{0,30}?|\b(?:it|this|that|there)\s+)"
+    r"does not (?:establish|say|state|tell|report|describe|show|prove)\b"
+)
+
 PROVENANCE_FRAMES = [
     r"\bthe source\b", r"\bthe anchor\b", r"\bthe brief\b", r"\bthe evidence\b",
     # "the material" alone is ordinary English -- a telescope's data is material, and a
@@ -119,18 +125,15 @@ PROVENANCE_FRAMES = [
     # which is a claim about a MEASURE, not about the research apparatus -- the very
     # distinction this list already draws for "material".
     #
-    # The anchor is an apparatus noun OR A BARE PRONOUN, and the pronoun half is not
-    # optional: story_architecture_test asserts that "It does not describe the building's
-    # form." is caught, which is a deliberate contract and correct -- a subjectless
-    # auditing sentence is exactly the shape that leaks. What separates the two is that
-    # the flagged canary sentence has a CONCRETE subject ("Rent alone", "the survey", "a
-    # photograph") and the leak has none worth naming.
-    r"(?:\bthe (?:source|anchor|brief|evidence|material|research pack|reading)s?\b"
-    r"[^.]{0,30}?|\b(?:it|this|that|there)\s+)"
-    r"does not (?:establish|say|state|tell|report|describe|show|prove)\b",
+    # Keep this strict for packets, where these frames refer to the research apparatus.
+    # Finished prose needs a narrower screen: a pronoun may refer to a person, object or
+    # claim in the preceding sentence, and "the evidence" may mean a court's evidence.
+    _AMBIGUOUS_PROVENANCE_FRAME,
     r"\bno such claim\b", r"\bnothing in the (?:source|anchor|evidence)\b",
     r"\bcontains no\b", r"\bgives none\b", r"\bis not supported by\b",
-    r"\bS\d+\b",                                  # source-id markers
+    # The pack has at most S0..S5 today; allow two digits for future expansion.
+    # An unrestricted S\d+ also held a real essay for NIST paper number S475.
+    r"\bS\d{1,2}\b",                              # source-id markers
     # ROLE TAXONOMY, AS A FRAME AND NOT AS VOCABULARY (corrected 2026-09-07).
     #
     # `leaks()` applies re.I to every pattern in this list, so the old
@@ -1868,8 +1871,22 @@ def scaffold_adherence(article_text: str) -> dict:
 
 
 def prose_leaks(article_text: str) -> dict:
-    """The reader-facing measure this whole module exists to move."""
-    found = leaks(article_text)
+    """Block explicit research apparatus in reader-facing text.
+
+    A packet can prohibit ambiguous language. In an essay, context resolves pronouns
+    and domain nouns. Grounding and Reader audits handle claims and clarity there.
+    """
+    ambiguous = {r"\bthe evidence\b", _AMBIGUOUS_PROVENANCE_FRAME,
+                 r"\bthe material (?:does not|gives|establishes|shows|says|contains)\b"}
+    patterns = [p for p in PROVENANCE_FRAMES if p not in ambiguous]
+    patterns.append(r"\bthe (?:source|anchor|brief|research pack|reading)s?\b"
+                    r"[^.]{0,30}?does not (?:establish|say|state|tell|report|describe|show|prove)\b")
+    found = []
+    for pattern in patterns:
+        count = len(re.findall(pattern, article_text, re.I))
+        if count:
+            found.append((pattern.replace(r"\b", "").replace(r"(?:", "("), count))
+    found.sort(key=lambda item: -item[1])
     return {"frames": found, "total": sum(n for _, n in found), "ok": not found}
 
 
@@ -2062,6 +2079,21 @@ def _entities(text: str, skip_sentence_initial: bool = True) -> set:
             if skip_sentence_initial and not s[:m.start()].strip("\n\r \t'\"“‘([#*_-"):
                 continue
             tok = m.group(0).rstrip(".,")
+            # A quoted question can begin in the middle of a prose sentence:
+            # `The question “Can I be there?” ...`. Its capitalised auxiliary is
+            # grammar, not a new named entity. Only exempt question starters at
+            # the opening quote, before that quote's question mark; a proper name
+            # inside the question (or at the start of a statement) still counts.
+            if skip_sentence_initial and tok in {
+                    "Can", "Could", "What", "Why", "How", "Who", "Where",
+                    "When", "Would", "Should", "Is", "Are"}:
+                prefix = s[:m.start()].rstrip()
+                if prefix.endswith(('“', '"')):
+                    tail = s[m.end():]
+                    question = tail.find("?")
+                    close = re.search(r'[”"]', tail)
+                    if question >= 0 and (close is None or question < close.start()):
+                        continue
             # A POSSESSIVE IS NOT A SEPARATE ENTITY (2026-10-07). This emitted BOTH
             # `Italy's` and `Italy`, so a Ledger licensing "Italy" left `Italy's` in the
             # prose-minus-approved difference and the run was held for factual surface

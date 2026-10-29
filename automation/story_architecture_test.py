@@ -299,8 +299,10 @@ def test_the_cut_check_reports_its_own_blind_spots():
 
 
 def test_prose_and_scaffold_screens_work_on_finished_articles():
-    check("an auditing sentence is detected in prose",
-          ST.prose_leaks("It does not describe the building's form.")["total"] > 0)
+    check("a pronoun with an ordinary referent is allowed in prose",
+          ST.prose_leaks("It does not describe the building's form.")["ok"])
+    check("an explicit research apparatus is detected in prose",
+          ST.prose_leaks("The research pack does not describe the building's form.")["total"] > 0)
     check("a bare mention of a document is NOT flagged",
           ST.prose_leaks("The newspaper printed a correction the next morning.")["ok"],
           ST.prose_leaks("The newspaper printed a correction the next morning."))
