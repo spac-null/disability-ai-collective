@@ -96,6 +96,28 @@ def validate_fact(fact: dict, evidence_text: str) -> list:
         errs.append("%s: support_span is not verbatim in the evidence: %r"
                     % (fid, fact.get("support_span")[:70]))
 
+    # The freeze prompt already forbids adding a gendered pronoun that its own quoted
+    # span does not carry. Enforce that contract here: an anonymous participant's
+    # Korean-language account was frozen as "she/her" although its cited sentence
+    # established no sex. The Writer then repeated the attribute and Grounding could
+    # only call it uncertain after the draft had been written.
+    gendered = re.compile(r"\b(?:he|him|his|she|her|hers)\b", re.I)
+    def genders(s: str) -> set[str]:
+        words = {m.group(0).lower() for m in gendered.finditer(s)}
+        found = set()
+        if words & {"he", "him", "his"}:
+            found.add("male")
+        if words & {"she", "her", "hers"}:
+            found.add("female")
+        return found
+
+    unlicensed_genders = genders(str(fact.get("proposition") or "")) - genders(
+        str(fact.get("support_span") or ""))
+    if unlicensed_genders:
+        errs.append("%s: gendered pronoun(s) %s absent from this fact's support_span; "
+                    "use the person's name or a neutral role" %
+                    (fid, sorted(unlicensed_genders)))
+
     # The rule silence cannot satisfy.
     if ct in NEGATIVE_TYPES:
         if fact.get("scope") == AUDITED_CORPUS:
