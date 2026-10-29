@@ -382,15 +382,22 @@ def test_l_an_accept_stops_the_search():
     check("the day committed to B", out["decision"] == "ACCEPT")
 
 
-def test_m_a_post_worth_hold_ends_the_day():
-    print("\nM. Worth PASS then a later gate HOLD -> the day ends, no candidate C")
+def test_m_a_post_worth_hold_triggers_one_distinct_ordinary_story():
+    print("\nM. A late editorial HOLD permits one distinct ordinary-world story")
     for code in (CP.ARCHITECTURE_HOLD, CP.GROUNDING_HOLD, CP.FACT_CHECK_HOLD,
                  CP.SAFETY_HOLD, CP.READER_HOLD, CP.CONTINUITY_HOLD, CP.WRITER_HOLD):
         out, seeds = _desk([_hold(code), _accept(), _accept()])
-        check("%s ends the day on candidate A" % code, len(seeds) == 1, seeds)
-        check("  and is recorded as a commitment already made",
+        check("%s draws one different story" % code,
+              len(seeds) == 2 and len(set(seeds)) == 2, seeds)
+        check("  and the second story is ordinary-world",
+              out["commissioning_day"]["attempts"][1]["lane"] == KF.LANE_SECONDARY)
+        check("  and the first hold remains recorded",
               out["commissioning_day"]["attempts"][0]["terminal_reason"]
               == "COMMITTED_%s" % code)
+
+    out, seeds = _desk([_hold(CP.GROUNDING_HOLD,
+                              run_status={"status": "PROVIDER_FAILURE"}), _accept()])
+    check("a technical failure still stops the day", len(seeds) == 1, seeds)
 
 
 def test_n_a_candidate_is_never_rerun():
@@ -553,7 +560,7 @@ def main():
               test_j_two_worth_holds_allow_a_third,
               test_k_three_holds_end_the_day,
               test_l_an_accept_stops_the_search,
-              test_m_a_post_worth_hold_ends_the_day,
+              test_m_a_post_worth_hold_triggers_one_distinct_ordinary_story,
               test_n_a_candidate_is_never_rerun,
               test_o_every_rejected_pitch_is_retained,
               test_a_screen_rejection_does_not_come_back_tomorrow,
