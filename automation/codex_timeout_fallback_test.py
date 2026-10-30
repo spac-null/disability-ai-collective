@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Claude timeout can use ChatGPT subscription without touching a paid endpoint."""
 import os
-import time
 from unittest.mock import patch
 
 import claude_cli_provider as CCP
@@ -39,44 +38,10 @@ def paid_endpoint(*args, **kwargs):
 
 
 def run():
-    import new_engine_production as PROD
-
-    FakeCodex.calls.clear()
-    with patch.object(CCP, "complete_via_subscription", paid_endpoint), \
-         patch.object(CCP, "ClaudeCLIProvider", paid_endpoint), \
-         patch.object(CDP, "CodexSubscriptionProvider", FakeCodex), \
-         patch.object(NEP, "_post", paid_endpoint), \
-         patch.dict(os.environ, {"CRIPMINDS_CODEX_PRIMARY": "1",
-                                 "COMPOSITION_ENGINE": "free_argumentative"}):
-        result = NEP.Provider().complete("system", "user", max_tokens=7000)
-        composition = PROD._composition_provider(NEP.DEFAULT_MODEL)
-        assert isinstance(composition, NEP.Provider)
-        composed = composition.complete("writer", "evidence")
-    assert result.identity()["route"] == "primary"
-    assert result.identity()["requested_model"] == "gpt-6-astra"
-    assert composed.identity()["route"] == "primary"
-    assert FakeCodex.calls[0][1]["reasoning_effort"] == "medium"
-    assert FakeCodex.calls[0][1]["timeout_seconds"] == 900
-    assert [call[0] for call in FakeCodex.calls] == [
-        "init", "complete", "init", "complete"]
-
-    FakeCodex.calls.clear()
-    with patch.object(CDP, "CodexSubscriptionProvider", FakeCodex), \
-         patch.dict(os.environ, {"CRIPMINDS_CODEX_PRIMARY": "1"}):
-        try:
-            NEP.Provider().complete("system", "user",
-                                    deadline=time.monotonic() - 1)
-        except NEP.ProviderError as error:
-            assert "deadline reached" in str(error)
-        else:
-            raise AssertionError("expired Codex call crossed its deadline")
-    assert not FakeCodex.calls
-
     with patch.object(CCP, "complete_via_subscription", timeout), \
          patch.object(CDP, "CodexSubscriptionProvider", FakeCodex), \
          patch.object(NEP, "_post", paid_endpoint), \
-         patch.dict(os.environ, {"CRIPMINDS_CODEX_PRIMARY": "0",
-                                 "CRIPMINDS_CODEX_TIMEOUT_FALLBACK": "1"}):
+         patch.dict(os.environ, {"CRIPMINDS_CODEX_TIMEOUT_FALLBACK": "1"}):
         result = NEP.Provider().complete("system", "user", max_tokens=2000)
     assert result.text == '{"ok": true}'
     assert result.identity()["fallback_from"] == CCP.CLAUDE_SUBSCRIPTION_TIMEOUT
@@ -87,8 +52,7 @@ def run():
     FakeCodex.calls.clear()
     with patch.object(CCP, "complete_via_subscription", timeout), \
          patch.object(CDP, "CodexSubscriptionProvider", FakeCodex), \
-         patch.dict(os.environ, {"CRIPMINDS_CODEX_PRIMARY": "0",
-                                 "CRIPMINDS_CODEX_TIMEOUT_FALLBACK": "0"}):
+         patch.dict(os.environ, {"CRIPMINDS_CODEX_TIMEOUT_FALLBACK": "0"}):
         try:
             NEP.Provider().complete("system", "user")
         except NEP.ProviderError as error:
@@ -97,7 +61,7 @@ def run():
             raise AssertionError("a disabled fallback hid the Claude timeout")
     assert not FakeCodex.calls
 
-    print("Codex subscription primary and fallback routes: PASS")
+    print("Codex subscription fallback on Claude timeout: PASS")
 
 
 if __name__ == "__main__":

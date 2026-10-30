@@ -63,20 +63,11 @@ import title_coherence as TC                             # noqa: E402
 from new_engine_v1 import contracts as C                 # noqa: E402
 from new_engine_v1 import runner as R                    # noqa: E402
 from new_engine_v1 import composition as CP             # noqa: E402
-from new_engine_v1.provider import Provider, DEFAULT_MODEL, codex_primary_enabled  # noqa: E402
+from new_engine_v1.provider import Provider, DEFAULT_MODEL  # noqa: E402
 
 # Private evidence root. Never inside the repo: raw runs stay out of the public tree.
 DEFAULT_EVIDENCE_ROOT = os.environ.get(
     "NEW_ENGINE_EVIDENCE_ROOT", "/srv/data/cripminds-new-engine-v1")
-
-
-def _composition_provider(model: str):
-    if CP.current_composition_engine() not in (
-            CP.COMPOSITION_STORY_ARCHITECTURE, CP.COMPOSITION_FREE_ARGUMENTATIVE):
-        return None
-    if codex_primary_enabled():
-        return Provider(model=model)
-    return CCP.ClaudeCLIProvider()
 
 
 def _anchor_source_title(seed: dict, lane: str) -> str:
@@ -87,6 +78,7 @@ def _anchor_source_title(seed: dict, lane: str) -> str:
     if lane == KF.LANE or seed.get("source_name") == "knowledge_first":
         return ""
     return seed.get("title") or ""
+
 
 
 def _slug(text: str) -> str:
@@ -615,9 +607,13 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     # The authoritative Fact Check is injected rather than imported by the engine: it is
     # part of the legacy orchestrator, and new_engine_v1 may import no part of that. Used
     # only by the story-architecture composition path; the legacy path ignores it.
-    # The explicit Astra trial uses the same subscription route for composition as for
-    # commissioning and research. The default path keeps its Claude CLI injection.
-    comp_provider = _composition_provider(model)
+    # Claude-family composition runs on the owner's Claude subscription via the local
+    # Claude Code CLI. Built only when the story-architecture path is selected, so a
+    # legacy run neither needs the CLI installed nor pays for one.
+    comp_provider = None
+    if CP.current_composition_engine() in (CP.COMPOSITION_STORY_ARCHITECTURE,
+                                           CP.COMPOSITION_FREE_ARGUMENTATIVE):
+        comp_provider = CCP.ClaudeCLIProvider()
     # THE APPROVED INSTRUMENT REACHES COMPOSITION (2026-09-30). The owner writes a
     # MECHANISM, a DISCONFIRMING SHAPE, CARRIERS and a FALSE MOVE for every approved
     # question, `knowledge_first` has loaded all four since 2026-09-29, and until now they
