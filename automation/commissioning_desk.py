@@ -422,12 +422,14 @@ def run_day(orch, *, rehearsal: bool = False, evidence_root=None,
     last: dict | None = None
     late_editorial_hold = False
 
-    for n, lane in enumerate(plan[:MAX_DISTINCT_CANDIDATES], 1):
+    for n, scheduled_lane in enumerate(plan[:MAX_DISTINCT_CANDIDATES], 1):
+        lane = scheduled_lane
         if late_editorial_hold and lane != KF.LANE_SECONDARY:
-            # A composed Knowledge First story already received its full editorial
-            # attempt. Try one genuinely different ordinary-world story, not a second
-            # sample of the same prompt or another question-library pitch.
-            continue
+            # Use the remaining pitch slot for an ordinary-world candidate. If its
+            # cheap screen rejects it before Research, a later slot can still try a
+            # different ordinary-world seed. Only one ordinary story may receive a
+            # full editorial run after the Knowledge First HOLD.
+            lane = KF.LANE_SECONDARY
         seed = commission = screen = selection = None
         terminal = ""
 

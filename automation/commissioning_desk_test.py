@@ -314,7 +314,7 @@ def test_h_no_access_origin_is_enforced():
 # ══════════════════════════════════════════════════════════════════════════════
 # I - N -- bounded distinct retry, and the gate-shopping boundary
 # ══════════════════════════════════════════════════════════════════════════════
-def _desk(results, *, lanes=None):
+def _desk(results, *, lanes=None, ordinary_screens=None):
     """Run a day with canned per-attempt outcomes. Returns (out, seeds_run)."""
     orch = _Orch()
     seeds, box = [], list(results)
@@ -333,9 +333,12 @@ def _desk(results, *, lanes=None):
 
     CD.commission_knowledge_first = _kf
     CD.select_ordinary_world = _ow
-    CD.screen_ordinary_world = lambda o, s, m: {
+    default_screen = {
         "verdict": SCREEN.PASS, "carrier": "c", "question": "q", "access_origin": False,
         "reject_reason": "", "perspective_or_axis": "", "why_this_might_matter": "w"}
+    screen_results = list(ordinary_screens or [])
+    CD.screen_ordinary_world = lambda o, s, m: (
+        screen_results.pop(0) if screen_results else dict(default_screen))
 
     def _run(o, **kw):
         seeds.append(kw["seed"]["id"])
@@ -398,6 +401,28 @@ def test_m_a_post_worth_hold_triggers_one_distinct_ordinary_story():
     out, seeds = _desk([_hold(CP.GROUNDING_HOLD,
                               run_status={"status": "PROVIDER_FAILURE"}), _accept()])
     check("a technical failure still stops the day", len(seeds) == 1, seeds)
+
+
+def test_m2_screen_rejection_does_not_waste_the_spare_pitch_slot():
+    print("\nM2. A late HOLD can screen another ordinary pitch after a cheap rejection")
+    reject = {"verdict": SCREEN.REJECT, "carrier": "", "question": "",
+              "access_origin": False, "reject_reason": "NO_CRIP_MINDS_QUESTION",
+              "perspective_or_axis": "", "why_this_might_matter": ""}
+    pass_screen = {"verdict": SCREEN.PASS, "carrier": "a real subject",
+                   "question": "what does it show?", "access_origin": False,
+                   "reject_reason": "", "perspective_or_axis": "",
+                   "why_this_might_matter": "a tested mechanism"}
+    out, seeds = _desk([_hold(CP.GROUNDING_HOLD), _accept()],
+                       ordinary_screens=[reject, pass_screen])
+    attempts = out["commissioning_day"]["attempts"]
+    check("only one ordinary story received a full editorial run",
+          len(seeds) == 2 and len(set(seeds)) == 2, seeds)
+    check("the first ordinary pitch was recorded as a screen rejection",
+          len(attempts) == 3 and attempts[1]["terminal_reason"] == CD.SCREEN_REJECTED)
+    check("the next distinct ordinary pitch reached the full run",
+          attempts[2]["lane"] == KF.LANE_SECONDARY
+          and attempts[2]["terminal_reason"] == "ACCEPT")
+    check("the day ended with the accepted story", out["decision"] == "ACCEPT")
 
 
 def test_n_a_candidate_is_never_rerun():
@@ -561,6 +586,7 @@ def main():
               test_k_three_holds_end_the_day,
               test_l_an_accept_stops_the_search,
               test_m_a_post_worth_hold_triggers_one_distinct_ordinary_story,
+              test_m2_screen_rejection_does_not_waste_the_spare_pitch_slot,
               test_n_a_candidate_is_never_rerun,
               test_o_every_rejected_pitch_is_retained,
               test_a_screen_rejection_does_not_come_back_tomorrow,
