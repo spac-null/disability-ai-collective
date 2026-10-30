@@ -2,7 +2,9 @@
 
 Codex CLI is an agent surface, so its instructions are not byte-equivalent to a direct
 Responses API call. The CLI is run outside the repository, read-only, with no persisted
-session. Any tool use fails the completion. The requested model is recorded separately
+session. Apps are disabled because they try to initialize a hosted MCP connection that
+is irrelevant to this text-only call and can fail before the model answers. Any tool use
+fails the completion. The requested model is recorded separately
 from the unresolved server model reported by the CLI.
 """
 from __future__ import annotations
@@ -79,6 +81,7 @@ class CodexSubscriptionProvider:
             cmd = [
                 self.executable, "--ask-for-approval", "never", "exec",
                 "--ephemeral", "--ignore-user-config", "--ignore-rules",
+                "--disable", "apps",
                 "--skip-git-repo-check", "--sandbox", "read-only",
                 "--model", self.model, "-c",
                 'model_reasoning_effort="%s"' % self.reasoning_effort,

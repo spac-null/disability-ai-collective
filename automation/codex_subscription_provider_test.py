@@ -45,6 +45,7 @@ def run():
     assert result.identity()["actual_model"] is None
     assert "--sandbox" in fake.command and "read-only" in fake.command
     assert "--ephemeral" in fake.command
+    assert fake.command[fake.command.index("--disable") + 1] == "apps"
     assert "gpt-6-astra" in fake.command
     assert result.identity()["tool_calls"] == 0
     assert "OPENAI_API_KEY" not in fake.env and "CODEX_API_KEY" not in fake.env
