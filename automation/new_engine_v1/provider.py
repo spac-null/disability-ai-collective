@@ -11,15 +11,18 @@ before falling through. Phase 2A removed it, leaving direct OpenRouter. Phase 2B
 is where the legacy path now goes too -- so fidelity is preserved by following it.
 
 The split is by MODEL FAMILY, not by call site. A Claude-family model goes to the shared
-subscription adapter; anything else keeps the direct OpenRouter POST below. That matters
+subscription adapter; anything else keeps the direct OpenRouter POST below. A timed-out
+Claude call may use the owner's ChatGPT-authenticated Codex subscription, never a paid
+HTTP endpoint. That matters
 because this package is also how a non-Claude model would be reached if one were ever
 configured here, and a blanket cutover would have quietly turned it into a Claude call.
 
 The OpenRouter POST is still a ~40-line stdlib implementation rather than an import from
 `orchestrator.llm`, for one reason only: this package must carry NO legacy prompt surface,
-and a test asserts that by scanning imports. `claude_cli_provider` is the single permitted
-transport import -- it carries no prompt machinery, only a subprocess. It is imported
-LAZILY inside complete(), because the package may not import `subprocess` itself and a
+and a test asserts that by scanning imports. `claude_cli_provider` is the primary
+transport import; the Codex subscription adapter is imported only after a timeout.
+Neither carries prompt machinery. They are imported LAZILY inside complete(), because
+the package may not import `subprocess` itself and a
 module-level import would put a shelling-out dependency in the package's import graph for
 every consumer, including the ones that never make a call.
 
@@ -121,7 +124,8 @@ def _extract(body: dict) -> tuple[str, str, dict]:
 
 class Provider:
     """Claude subscription for Claude-family models, direct OpenRouter otherwise.
-    Raises rather than degrading."""
+    A Claude timeout may use the ChatGPT-authenticated Codex subscription. Raises
+    rather than silently degrading on other failures."""
 
     def __init__(self, model: str = DEFAULT_MODEL, url: str | None = None):
         self.model = model
@@ -139,10 +143,9 @@ class Provider:
         it is the caller's own upper bound on a complete(), independent of how many rungs
         happen to exist, and dropping it would silently loosen every caller that passes it.
         """
-        # PHASE 2B. Claude-family work runs on the subscription; everything else keeps the
-        # direct OpenRouter POST below. A subscription refusal is TERMINAL -- it raises a
-        # ProviderError carrying the explicit subscription code, and is never answered by
-        # buying the same completion from OpenRouter.
+        # Claude-family work runs on the subscription; everything else keeps the direct
+        # OpenRouter POST below. A timeout may use another subscription, but a Claude
+        # request is never answered by buying the completion from OpenRouter.
         import claude_cli_provider                                   # lazy: see docstring
         if claude_cli_provider.is_claude_family(self.model):
             if deadline is not None:
