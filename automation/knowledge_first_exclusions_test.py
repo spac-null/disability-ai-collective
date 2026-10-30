@@ -303,6 +303,14 @@ def test_retained_commission_artifacts_seed_the_exclusions():
                   "https://example.org/retained")}), "")
         check("the retained story identity (quoted title) is claimed",
               KF.is_story_claimed(conn, {"title:old story"}), "")
+        conn.execute(
+            "UPDATE %s SET claimed_at='2000-01-01T00:00:00+00:00' "
+            "WHERE kind='question' AND key='ZZ006-01'" % KF.STATE_TABLE)
+        conn.commit()
+        KF.seed_exclusions_from_retained(conn, str(evidence_root))
+        at = KF.load_question_claim_times(conn)["ZZ006-01"]
+        check("rereading the retained record does not refresh its cooldown",
+              at == "2000-01-01T00:00:00+00:00", at)
         conn.close()
 
 
