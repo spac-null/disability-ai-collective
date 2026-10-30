@@ -167,7 +167,41 @@ class Provider:
                     system, user, self.model, timeout=timeout, temperature=temperature,
                     temperature_required=False)
             except claude_cli_provider.ClaudeCLIError as e:
-                raise ProviderError("%s: %s" % (getattr(e, "code", "CLAUDE_SUBSCRIPTION_ERROR"), e))
+                code = getattr(e, "code", "CLAUDE_SUBSCRIPTION_ERROR")
+                if (code == claude_cli_provider.CLAUDE_SUBSCRIPTION_TIMEOUT
+                        and os.environ.get("CRIPMINDS_CODEX_TIMEOUT_FALLBACK", "1").lower()
+                        not in ("0", "off", "false", "no")):
+                    # A timeout says nothing about the editorial content. Try the
+                    # owner's second subscription, never a paid HTTP endpoint. The
+                    # identity states that Astra was requested and leaves the actual
+                    # server-resolved model unknown, as the CLI does.
+                    from codex_subscription_provider import CodexSubscriptionProvider
+                    import pathlib
+                    local_bin = pathlib.Path.home() / ".local/bin/codex"
+                    executable = os.environ.get("CRIPMINDS_CODEX_BIN") or (
+                        str(local_bin) if local_bin.exists() else "codex")
+                    budget = 900 if max_tokens >= 6000 else 240
+                    if deadline is not None:
+                        remaining = deadline - time.monotonic()
+                        if remaining <= 0:
+                            raise ProviderError("%s: %s; deadline reached before Codex "
+                                                "subscription fallback" % (code, e)) from e
+                        budget = max(1, min(budget, int(remaining)))
+                    try:
+                        result = CodexSubscriptionProvider(
+                            executable=executable, reasoning_effort="low",
+                            timeout_seconds=budget).complete(
+                                system, user, max_tokens=max_tokens,
+                                temperature=temperature)
+                    except Exception as fallback_error:
+                        raise ProviderError("%s: %s; Codex subscription fallback failed: "
+                                            "%s: %s" % (code, e,
+                                                       type(fallback_error).__name__,
+                                                       fallback_error)) from fallback_error
+                    result.metadata["fallback_from"] = code
+                    result.metadata["original_requested_model"] = self.model
+                    return result
+                raise ProviderError("%s: %s" % (code, e))
 
         payload = {
             "model": self.model,
