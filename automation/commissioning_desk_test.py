@@ -237,6 +237,18 @@ def test_e_perspective_contributes_a_question_never_a_fact():
     check("no engine stage imports or reads the screen", not readers, readers)
 
 
+def test_e2_commission_premise_is_not_source_title():
+    print("\nE2. Knowledge First proposal is not source metadata")
+    seed = {"source_name": "knowledge_first",
+            "title": "A model-written premise about a report"}
+    check("proposal does not become the anchor's title",
+          NEP._anchor_source_title(seed, KF.LANE) == "")
+    check("a normal feed headline remains available",
+          NEP._anchor_source_title(
+              {"source_name": "NRC", "title": "A verified feed headline"},
+              KF.LANE_SECONDARY) == "A verified feed headline")
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # F / G / H -- the light screen's judgements
 # ══════════════════════════════════════════════════════════════════════════════
@@ -578,6 +590,7 @@ def main():
               test_c_knowledge_first_supplies_the_daily_candidate,
               test_d_owner_approved_questions_participate,
               test_e_perspective_contributes_a_question_never_a_fact,
+              test_e2_commission_premise_is_not_source_title,
               test_f_generic_tech_news_is_rejected_pre_research,
               test_g_a_strong_arts_candidate_passes,
               test_h_no_access_origin_is_enforced,

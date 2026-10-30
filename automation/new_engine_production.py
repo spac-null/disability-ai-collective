@@ -79,6 +79,16 @@ def _composition_provider(model: str):
     return CCP.ClaudeCLIProvider()
 
 
+def _anchor_source_title(seed: dict, lane: str) -> str:
+    # A Knowledge First seed's title is a model-written story proposal. It is not
+    # metadata from the acquired page. Passing it as S0's title made the CIE Writer
+    # attribute a commission premise to the source, and could do the same to every
+    # Knowledge First essay. Keep that proposal in COMMISSION.json only.
+    if lane == KF.LANE or seed.get("source_name") == "knowledge_first":
+        return ""
+    return seed.get("title") or ""
+
+
 def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", (text or "candidate").lower()).strip("-")[:70]
 
@@ -563,7 +573,8 @@ def run_scheduled(orch, *, rehearsal: bool = False,
         "provenance": {
             "origin": orch.get_source_origin(seed["url"]),
             "url": seed["url"], "seed_id": seed["id"],
-            "source_name": seed.get("source_name"), "title": seed.get("title"),
+            "source_name": seed.get("source_name"),
+            "title": _anchor_source_title(seed, lane),
             "original_length_chars": orch.get_source_original_length(seed["url"]),
             "paragraph_count": orch.get_source_paragraph_count(seed["url"]),
             # Harvested from the anchor's own markup during the fetch above -- no extra
