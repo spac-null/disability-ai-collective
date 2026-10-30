@@ -95,8 +95,10 @@ def main() -> int:
 
     if (run_dir / "SOURCE_SNAPSHOT.json").exists():
         snap = _load_json(run_dir / "SOURCE_SNAPSHOT.json")
-        source_text = snap["source_text"]
-        source_sha = snap.get("source_sha256") or _sha256(source_text)
+        # Artifact schema wraps payload; fall back to flat shape for older files
+        snap_data = snap.get("payload") or snap
+        source_text = snap_data["source_text"]
+        source_sha = snap_data.get("source_sha256") or _sha256(source_text)
     else:
         print("SOURCE_SNAPSHOT.json absent — deriving source text from RESEARCH_PACK")
         source_text, source_sha = _source_text_from_pack(pack)
