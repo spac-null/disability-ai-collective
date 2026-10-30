@@ -90,6 +90,23 @@ def test_a_fact_needs_a_verbatim_span_in_the_evidence():
                    claim_type=LG.INTERPRETATION, evidence_ids=[]), EVIDENCE)))
 
 
+def test_gendered_pronoun_needs_support_in_its_span():
+    evidence = "The participant said the surveyor told them to wait. He left after the visit."
+    unsupported = fact(fact_id="F08", proposition="She was told to wait.",
+                       claim_type=LG.POSITIVE, evidence_ids=["S0"],
+                       support_span="The participant said the surveyor told them to wait.")
+    errs = LG.validate_fact(unsupported, evidence)
+    check("an unsupported gender added to an anonymous account is refused",
+          any("gendered pronoun" in e for e in errs), errs)
+    neutral = dict(unsupported, proposition="The participant was told to wait.")
+    check("a neutral rewrite of the same fact validates",
+          LG.validate_fact(neutral, evidence) == [], LG.validate_fact(neutral, evidence))
+    supported = dict(unsupported, proposition="The surveyor left after his visit.",
+                     support_span="He left after the visit.")
+    check("a supported gender allows a different grammatical form",
+          LG.validate_fact(supported, evidence) == [], LG.validate_fact(supported, evidence))
+
+
 # ── silence is not evidence of absence ───────────────────────────────────────
 def test_a_world_negative_needs_evidence_that_states_the_negative():
     """The Roman ending, reproduced as a unit test."""
@@ -316,6 +333,7 @@ def test_roman_is_held_and_the_reason_is_recorded():
 
 def main() -> None:
     for fn in (test_a_fact_needs_a_verbatim_span_in_the_evidence,
+               test_gendered_pronoun_needs_support_in_its_span,
                test_a_world_negative_needs_evidence_that_states_the_negative,
                test_the_architect_cannot_mint_a_fact_id,
                test_the_architect_cannot_launder_an_attribute_through_its_own_prose,

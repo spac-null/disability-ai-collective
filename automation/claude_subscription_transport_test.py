@@ -433,7 +433,8 @@ check("the shared adapter is reachable from the live entry points",
 # which is the whole point of routing centrally. And `urlopen` alone does not either --
 # news_fetcher reads RSS with it, bsky_outreach_auto talks to Bluesky with it, social.py
 # uses it a dozen times for posting. So the ban is on the request BUILDERS, and there must
-# be exactly three of them, each accounted for.
+# be exactly four of them, each accounted for. Research's fourth builder is the
+# Perplexity search answer endpoint; it does not carry Claude editorial work.
 CLAUDE_LITERAL = re.compile(r"""["'](?:anthropic|openrouter)/claude[-.][\w.\-]*["']""")
 builders = []
 for name, path in sorted(LIVE.items()):
@@ -441,8 +442,9 @@ for name, path in sorted(LIVE.items()):
     code = "\n".join(ln for ln in src.splitlines() if not ln.lstrip().startswith("#"))
     if "chat/completions" in code:
         builders.append(name)
-check("exactly the three known modules build an OpenRouter request",
-      sorted(builders) == ["gen_images", "new_engine_v1.provider", "orchestrator.llm"],
+check("exactly the four known modules build an OpenRouter request",
+      sorted(builders) == ["gen_images", "new_engine_v1.provider",
+                           "new_engine_v1.research", "orchestrator.llm"],
       ", ".join(sorted(builders)))
 
 # gen_images is the third builder and must stay non-Claude: Recraft has no Claude
@@ -496,8 +498,8 @@ check("news_fetcher calls the shared adapter",
 prov_src = open(os.path.join(AUTOMATION, "new_engine_v1", "provider.py")).read()
 check("new_engine_v1 routes Claude-family to the subscription",
       "claude_cli_provider.is_claude_family(self.model)" in prov_src)
-check("new_engine_v1 turns a subscription refusal into a ProviderError, not a retry",
-      "raise ProviderError(\"%s: %s\" % (getattr(e, \"code\"" in prov_src)
+check("new_engine_v1 retains ProviderError for non-timeout subscription refusals",
+      'raise ProviderError("%s: %s" % (code, e))' in prov_src)
 bo_src = open(os.path.join(AUTOMATION, "bsky_outreach_auto.py")).read()
 check("the weekly outreach cron no longer posts to OpenRouter",
       "chat/completions" not in bo_src)

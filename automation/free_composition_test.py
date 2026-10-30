@@ -869,6 +869,12 @@ def test_a_contradictory_prompt_holds_rather_than_writing() -> None:
     errs2 = FC.writer_inputs_are_plan_free("write the first beat as what it is", "")
     check("a leaked 'write the first beat' in the system prompt is detected",
           bool(errs2), errs2)
+    check("a planned BEAT heading is detected",
+          bool(FC.writer_inputs_are_plan_free("", "BEAT B1: open on the ward")))
+    check("an ordinary beat in a fact is not a planning marker",
+          FC.writer_inputs_are_plan_free(
+              FC.free_writer_system(),
+              "F06 Iqbal completed the introduction without missing a beat.") == [])
 
 
 # ── 9. source attribution ─────────────────────────────────────────────────────
@@ -2546,14 +2552,16 @@ def test_the_writer_is_told_the_question_the_evidence_holds() -> None:
     check("the prompt is still plan-free",
           FC.writer_inputs_are_plan_free(FC.free_writer_system(), user) == [])
 
-    # FAIL-SAFE. `beat` is matched as an ordinary word and would HOLD the run before the
-    # model is called -- the blocker that stopped feat/writer-sees-the-sources. A missing
-    # question costs an article nothing; a held run costs it everything.
+    # Ordinary language in the editorial reading is allowed. Only a planned-path
+    # heading is omitted before the prompt reaches the Writer.
     marked = free_writer_user_text({"tension": "You can hear the beat change here."})
-    check("a tension carrying a planning marker omits itself",
-          "THE CONTRADICTION" not in marked)
-    check("and the run is still plan-free with it omitted",
+    check("an ordinary beat in the tension survives",
+          "THE CONTRADICTION" in marked)
+    check("and the run is still plan-free",
           FC.writer_inputs_are_plan_free(FC.free_writer_system(), marked) == [])
+    planned = free_writer_user_text({"tension": "BEAT B1: open on the ward"})
+    check("a planned heading in a tension omits that block",
+          "THE CONTRADICTION" not in planned)
     check("no candidate renders no block",
           "THE CONTRADICTION" not in free_writer_user_text(None))
     check("an empty tension renders no block",

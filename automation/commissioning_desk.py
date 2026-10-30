@@ -36,16 +36,11 @@ taking whatever general news arrived at 06:05 and looking for a reading of it. T
 ordinary-world lane keeps the third slot and keeps Selector V2's real strengths; it just
 stops being the entire commissioning intelligence.
 
-THE RETRY BOUNDARY IS THE ONE RULE THAT MATTERS MOST HERE. A candidate may be replaced
-only while the publication has not yet committed to it -- that is, while the rejection is
-a COMMISSIONING answer: research could not find enough, the Ledger could not grant
-permission, or Worth said this is not our story. The moment Worth PASSES and architect()
-begins, the day is committed to that candidate. A hold at Architecture, Writer, Claim
-Mapper, Safety, Grounding, Fact Check or Reader ENDS THE DAY. Trying another story
-because a late gate objected is gate shopping: it would let a run keep drawing candidates
-until one slipped past the gates that exist to catch exactly that, and it would quietly
-convert every quality gate into a suggestion. Publishing nothing is a correct outcome and
-this module is willing to reach it.
+THE RETRY BOUNDARY IS THE ONE RULE THAT MATTERS MOST HERE. Research, Ledger and Worth
+may reject a pitch before composition. If a Knowledge First essay later holds at an
+editorial gate, the desk may try one distinct ordinary-world story under the same gates.
+A technical failure ends the day. No story is rerun, no gate is bypassed, and at most
+one article publishes. Publishing nothing is a correct outcome.
 
 And a candidate is never reconsidered. Worth is not deterministic; re-running the same
 seed hoping for a different verdict is the same gate shopping wearing a different hat.
@@ -412,7 +407,7 @@ def _persist_day(evidence_root, day: dict) -> pathlib.Path | None:
 # ══════════════════════════════════════════════════════════════════════════════
 def run_day(orch, *, rehearsal: bool = False, evidence_root=None,
             model: str, research_fn=None, plan=LANE_PLAN) -> dict:
-    """One morning. At most MAX_DISTINCT_CANDIDATES distinct pitches; exactly one article.
+    """One morning. At most MAX_DISTINCT_CANDIDATES distinct pitches; at most one article.
 
     Returns the DECIDING attempt's own result -- the same dict shape run_scheduled has
     always returned -- with the day's record attached, so production_orchestrator's
@@ -425,8 +420,16 @@ def run_day(orch, *, rehearsal: bool = False, evidence_root=None,
     spent_seed_ids: set = set()
     used_question_ids: set = set()
     last: dict | None = None
+    late_editorial_hold = False
 
-    for n, lane in enumerate(plan[:MAX_DISTINCT_CANDIDATES], 1):
+    for n, scheduled_lane in enumerate(plan[:MAX_DISTINCT_CANDIDATES], 1):
+        lane = scheduled_lane
+        if late_editorial_hold and lane != KF.LANE_SECONDARY:
+            # Use the remaining pitch slot for an ordinary-world candidate. If its
+            # cheap screen rejects it before Research, a later slot can still try a
+            # different ordinary-world seed. Only one ordinary story may receive a
+            # full editorial run after the Knowledge First HOLD.
+            lane = KF.LANE_SECONDARY
         seed = commission = screen = selection = None
         terminal = ""
 
@@ -526,13 +529,17 @@ def run_day(orch, *, rehearsal: bool = False, evidence_root=None,
         attempts.append(_attempt_record(n, lane, seed, commission, screen, last, terminal))
 
         if not is_pre_composition_rejection(last):
-            # ACCEPT, a post-Worth hold, or a technical failure. Either the day has its
-            # article or the day is over. No further candidate is drawn.
-            if last.get("decision") != "ACCEPT":
-                orch.logger.warning(
-                    "DESK: attempt %d held at %s -- the publication had already committed "
-                    "to this candidate; the day ends here rather than selecting another "
-                    "article", n, last.get("reason_code") or "an unnamed stage")
+            # A technical failure still stops the day. A factual or reader hold on one
+            # finished story does not make a distinct ordinary-world pitch unworthy of
+            # consideration. Every candidate keeps its own full gates and artifact trail.
+            if (last.get("decision") != "ACCEPT" and not last.get("run_status")
+                    and lane == KF.LANE and KF.LANE_SECONDARY in plan[n:]):
+                late_editorial_hold = True
+                orch.logger.info(
+                    "DESK: attempt %d held at %s; trying one distinct ordinary-world "
+                    "story under the same publication gates", n,
+                    last.get("reason_code") or "an unnamed stage")
+                continue
             return _finish(orch, root, day_id, attempts, last)
 
         orch.logger.info("DESK: attempt %d rejected at %s -- drawing a distinct candidate",

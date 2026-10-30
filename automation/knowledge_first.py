@@ -686,7 +686,20 @@ def seed_exclusions_from_retained(conn, evidence_root) -> int:
         q = rec.get("question") or {}
         qid = q.get("id")
         if qid:
-            claim_question(conn, qid, run_id="retained:%s" % f.parent.name)
+            # A retained record supplies an exclusion once. The normal claim_question
+            # refreshes claimed_at; using it here made every old question look newly
+            # commissioned on every run and broke cooldown rotation.
+            try:
+                retained_at = datetime.datetime.fromtimestamp(
+                    f.stat().st_mtime, datetime.timezone.utc).isoformat()
+            except OSError:
+                retained_at = _utcnow()
+            conn.execute(
+                "INSERT OR IGNORE INTO %s "
+                "(kind, key, question_id, run_id, status, claimed_at) "
+                "VALUES ('question', ?, ?, ?, 'attempted', ?)" % STATE_TABLE,
+                (qid, qid, "retained:%s" % f.parent.name, retained_at))
+            conn.commit()
         chosen = rec.get("chosen") or {}
         seed = rec.get("seed") or {}
         subject = chosen.get("subject") or seed.get("title") or ""

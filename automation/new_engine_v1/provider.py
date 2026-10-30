@@ -11,15 +11,18 @@ before falling through. Phase 2A removed it, leaving direct OpenRouter. Phase 2B
 is where the legacy path now goes too -- so fidelity is preserved by following it.
 
 The split is by MODEL FAMILY, not by call site. A Claude-family model goes to the shared
-subscription adapter; anything else keeps the direct OpenRouter POST below. That matters
+subscription adapter; anything else keeps the direct OpenRouter POST below. A timed-out
+Claude call may use the owner's ChatGPT-authenticated Codex subscription, never a paid
+HTTP endpoint. That matters
 because this package is also how a non-Claude model would be reached if one were ever
 configured here, and a blanket cutover would have quietly turned it into a Claude call.
 
 The OpenRouter POST is still a ~40-line stdlib implementation rather than an import from
 `orchestrator.llm`, for one reason only: this package must carry NO legacy prompt surface,
-and a test asserts that by scanning imports. `claude_cli_provider` is the single permitted
-transport import -- it carries no prompt machinery, only a subprocess. It is imported
-LAZILY inside complete(), because the package may not import `subprocess` itself and a
+and a test asserts that by scanning imports. `claude_cli_provider` is the primary
+transport import; the Codex subscription adapter is imported only after a timeout.
+Neither carries prompt machinery. They are imported LAZILY inside complete(), because
+the package may not import `subprocess` itself and a
 module-level import would put a shelling-out dependency in the package's import graph for
 every consumer, including the ones that never make a call.
 
@@ -55,6 +58,11 @@ OPENROUTER_URL = "https://openrouter.ai/api/v1"
 # subscription id (claude-opus-5) and Completion keeps requested_model and actual_model
 # apart, so the substitution is recorded rather than assumed.
 DEFAULT_MODEL = "anthropic/claude-opus-4.8"
+
+
+def codex_primary_enabled() -> bool:
+    return os.environ.get("CRIPMINDS_CODEX_PRIMARY", "").lower() in (
+        "1", "on", "true", "yes")
 
 
 class ProviderError(Exception):
@@ -121,7 +129,8 @@ def _extract(body: dict) -> tuple[str, str, dict]:
 
 class Provider:
     """Claude subscription for Claude-family models, direct OpenRouter otherwise.
-    Raises rather than degrading."""
+    A Claude timeout may use the ChatGPT-authenticated Codex subscription. Raises
+    rather than silently degrading on other failures."""
 
     def __init__(self, model: str = DEFAULT_MODEL, url: str | None = None):
         self.model = model
@@ -139,10 +148,38 @@ class Provider:
         it is the caller's own upper bound on a complete(), independent of how many rungs
         happen to exist, and dropping it would silently loosen every caller that passes it.
         """
-        # PHASE 2B. Claude-family work runs on the subscription; everything else keeps the
-        # direct OpenRouter POST below. A subscription refusal is TERMINAL -- it raises a
-        # ProviderError carrying the explicit subscription code, and is never answered by
-        # buying the same completion from OpenRouter.
+        # Explicit production trial: every new-engine model call, including commissioning,
+        # research, checks and composition, uses the owner's ChatGPT-authenticated Codex
+        # subscription. This branch precedes the model-family split so a configured
+        # Claude identifier cannot silently send a trial call to Claude or OpenRouter.
+        if codex_primary_enabled():
+            from codex_subscription_provider import CodexSubscriptionProvider
+            import pathlib
+            local_bin = pathlib.Path.home() / ".local/bin/codex"
+            executable = os.environ.get("CRIPMINDS_CODEX_BIN") or (
+                str(local_bin) if local_bin.exists() else "codex")
+            budget = 900 if max_tokens >= 6000 else 240
+            if deadline is not None:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise ProviderError("deadline reached before Codex subscription call")
+                budget = max(1, min(budget, int(remaining)))
+            try:
+                result = CodexSubscriptionProvider(
+                    executable=executable, reasoning_effort="medium",
+                    timeout_seconds=budget).complete(
+                        system, user, max_tokens=max_tokens,
+                        temperature=temperature)
+            except Exception as error:
+                raise ProviderError("Codex subscription primary failed: %s: %s"
+                                    % (type(error).__name__, error)) from error
+            result.metadata["route"] = "primary"
+            result.metadata["original_requested_model"] = self.model
+            return result
+
+        # Claude-family work runs on the subscription; everything else keeps the direct
+        # OpenRouter POST below. A timeout may use another subscription, but a Claude
+        # request is never answered by buying the completion from OpenRouter.
         import claude_cli_provider                                   # lazy: see docstring
         if claude_cli_provider.is_claude_family(self.model):
             if deadline is not None:
@@ -167,7 +204,41 @@ class Provider:
                     system, user, self.model, timeout=timeout, temperature=temperature,
                     temperature_required=False)
             except claude_cli_provider.ClaudeCLIError as e:
-                raise ProviderError("%s: %s" % (getattr(e, "code", "CLAUDE_SUBSCRIPTION_ERROR"), e))
+                code = getattr(e, "code", "CLAUDE_SUBSCRIPTION_ERROR")
+                if (code == claude_cli_provider.CLAUDE_SUBSCRIPTION_TIMEOUT
+                        and os.environ.get("CRIPMINDS_CODEX_TIMEOUT_FALLBACK", "1").lower()
+                        not in ("0", "off", "false", "no")):
+                    # A timeout says nothing about the editorial content. Try the
+                    # owner's second subscription, never a paid HTTP endpoint. The
+                    # identity states that Astra was requested and leaves the actual
+                    # server-resolved model unknown, as the CLI does.
+                    from codex_subscription_provider import CodexSubscriptionProvider
+                    import pathlib
+                    local_bin = pathlib.Path.home() / ".local/bin/codex"
+                    executable = os.environ.get("CRIPMINDS_CODEX_BIN") or (
+                        str(local_bin) if local_bin.exists() else "codex")
+                    budget = 900 if max_tokens >= 6000 else 240
+                    if deadline is not None:
+                        remaining = deadline - time.monotonic()
+                        if remaining <= 0:
+                            raise ProviderError("%s: %s; deadline reached before Codex "
+                                                "subscription fallback" % (code, e)) from e
+                        budget = max(1, min(budget, int(remaining)))
+                    try:
+                        result = CodexSubscriptionProvider(
+                            executable=executable, reasoning_effort="low",
+                            timeout_seconds=budget).complete(
+                                system, user, max_tokens=max_tokens,
+                                temperature=temperature)
+                    except Exception as fallback_error:
+                        raise ProviderError("%s: %s; Codex subscription fallback failed: "
+                                            "%s: %s" % (code, e,
+                                                       type(fallback_error).__name__,
+                                                       fallback_error)) from fallback_error
+                    result.metadata["fallback_from"] = code
+                    result.metadata["original_requested_model"] = self.model
+                    return result
+                raise ProviderError("%s: %s" % (code, e))
 
         payload = {
             "model": self.model,
