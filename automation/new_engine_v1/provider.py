@@ -60,6 +60,11 @@ OPENROUTER_URL = "https://openrouter.ai/api/v1"
 DEFAULT_MODEL = "anthropic/claude-opus-4.8"
 
 
+def codex_primary_enabled() -> bool:
+    return os.environ.get("CRIPMINDS_CODEX_PRIMARY", "").lower() in (
+        "1", "on", "true", "yes")
+
+
 class ProviderError(Exception):
     """Transport or response-shape failure. Never swallowed into a fake completion."""
 
@@ -143,6 +148,35 @@ class Provider:
         it is the caller's own upper bound on a complete(), independent of how many rungs
         happen to exist, and dropping it would silently loosen every caller that passes it.
         """
+        # Explicit production trial: every new-engine model call, including commissioning,
+        # research, checks and composition, uses the owner's ChatGPT-authenticated Codex
+        # subscription. This branch precedes the model-family split so a configured
+        # Claude identifier cannot silently send a trial call to Claude or OpenRouter.
+        if codex_primary_enabled():
+            from codex_subscription_provider import CodexSubscriptionProvider
+            import pathlib
+            local_bin = pathlib.Path.home() / ".local/bin/codex"
+            executable = os.environ.get("CRIPMINDS_CODEX_BIN") or (
+                str(local_bin) if local_bin.exists() else "codex")
+            budget = 900 if max_tokens >= 6000 else 240
+            if deadline is not None:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise ProviderError("deadline reached before Codex subscription call")
+                budget = max(1, min(budget, int(remaining)))
+            try:
+                result = CodexSubscriptionProvider(
+                    executable=executable, reasoning_effort="medium",
+                    timeout_seconds=budget).complete(
+                        system, user, max_tokens=max_tokens,
+                        temperature=temperature)
+            except Exception as error:
+                raise ProviderError("Codex subscription primary failed: %s: %s"
+                                    % (type(error).__name__, error)) from error
+            result.metadata["route"] = "primary"
+            result.metadata["original_requested_model"] = self.model
+            return result
+
         # Claude-family work runs on the subscription; everything else keeps the direct
         # OpenRouter POST below. A timeout may use another subscription, but a Claude
         # request is never answered by buying the completion from OpenRouter.
