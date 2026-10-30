@@ -36,16 +36,11 @@ taking whatever general news arrived at 06:05 and looking for a reading of it. T
 ordinary-world lane keeps the third slot and keeps Selector V2's real strengths; it just
 stops being the entire commissioning intelligence.
 
-THE RETRY BOUNDARY IS THE ONE RULE THAT MATTERS MOST HERE. A candidate may be replaced
-only while the publication has not yet committed to it -- that is, while the rejection is
-a COMMISSIONING answer: research could not find enough, the Ledger could not grant
-permission, or Worth said this is not our story. The moment Worth PASSES and architect()
-begins, the day is committed to that candidate. A hold at Architecture, Writer, Claim
-Mapper, Safety, Grounding, Fact Check or Reader ENDS THE DAY. Trying another story
-because a late gate objected is gate shopping: it would let a run keep drawing candidates
-until one slipped past the gates that exist to catch exactly that, and it would quietly
-convert every quality gate into a suggestion. Publishing nothing is a correct outcome and
-this module is willing to reach it.
+THE RETRY BOUNDARY IS THE ONE RULE THAT MATTERS MOST HERE. Research, Ledger and Worth
+may reject a pitch before composition. If a Knowledge First essay later holds at an
+editorial gate, the desk may try one distinct ordinary-world story under the same gates.
+A technical failure ends the day. No story is rerun, no gate is bypassed, and at most
+one article publishes. Publishing nothing is a correct outcome.
 
 And a candidate is never reconsidered. Worth is not deterministic; re-running the same
 seed hoping for a different verdict is the same gate shopping wearing a different hat.
@@ -72,7 +67,7 @@ import news_fetcher as NF                                   # noqa: E402
 import selector_v2 as SV                                    # noqa: E402
 from new_engine_v1 import composition as CP                 # noqa: E402
 from new_engine_v1 import research as RS                    # noqa: E402
-from new_engine_v1.provider import Provider                 # noqa: E402
+from new_engine_v1.provider import Provider, ProviderError  # noqa: E402
 
 DESK_ENV = "CRIPMINDS_COMMISSIONING_DESK"
 
@@ -88,6 +83,47 @@ MAX_DISTINCT_CANDIDATES = 3
 # does within the week. See knowledge_first.load_claimed_question_ids.
 QUESTION_COOLDOWN_DAYS = 21
 DIVERSITY_WINDOW = 20
+
+
+class CommissioningSubscriptionProvider:
+    """Retry a timed-out Claude commission through the owner's Codex subscription.
+
+    The same question and prompt go to the second subscription. No API key or paid
+    transport is used. The returned completion identifies which provider answered.
+    This is deliberately limited to the cheap commissioning call; editorial stages
+    keep their own model and their own failure semantics.
+    """
+
+    def __init__(self, model: str, *, primary=None, codex_factory=None):
+        self.primary = primary or Provider(model=model)
+        self.codex_factory = codex_factory
+
+    def complete(self, system: str, user: str, max_tokens: int = 3000,
+                 temperature=None):
+        try:
+            return self.primary.complete(system=system, user=user,
+                                         max_tokens=max_tokens, temperature=temperature)
+        except ProviderError as error:
+            if not str(error).startswith("CLAUDE_SUBSCRIPTION_TIMEOUT:"):
+                raise
+            if os.environ.get("CRIPMINDS_KF_CODEX_TIMEOUT_FALLBACK", "1").lower() \
+                    in ("0", "off", "false", "no"):
+                raise
+            if self.codex_factory is None:
+                from codex_subscription_provider import CodexSubscriptionProvider
+                local_bin = pathlib.Path.home() / ".local/bin/codex"
+                executable = os.environ.get("CRIPMINDS_CODEX_BIN") or (
+                    str(local_bin) if local_bin.exists() else "codex")
+                backup = CodexSubscriptionProvider(
+                    executable=executable, reasoning_effort="low",
+                    timeout_seconds=240)
+            else:
+                backup = self.codex_factory()
+            result = backup.complete(system=system, user=user,
+                                     max_tokens=max_tokens, temperature=temperature)
+            if hasattr(result, "metadata"):
+                result.metadata["fallback_from"] = "CLAUDE_SUBSCRIPTION_TIMEOUT"
+            return result
 
 
 def _diversity_history() -> dict:
@@ -153,7 +189,7 @@ def commission_knowledge_first(orch, model: str, evidence_root, *,
     run_id = datetime.datetime.now(datetime.timezone.utc).strftime("kf-%Y%m%dT%H%M%SZ")
     conn = sqlite3.connect(str(orch.discovery_db))
     try:
-        rec = KF.commission(Provider(model=model), search_fn=search_urls,
+        rec = KF.commission(CommissioningSubscriptionProvider(model), search_fn=search_urls,
                             fetch_fn=lambda u: orch.get_source_text(u) or "",
                             api_key=KF.search_key(), state_conn=conn, run_id=run_id,
                             evidence_root=evidence_root,

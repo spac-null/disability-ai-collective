@@ -13,11 +13,13 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import pathlib
 import shutil
 import sqlite3
 import sys
 import tempfile
+from unittest.mock import patch
 
 HERE = pathlib.Path(__file__).parent
 if str(HERE) not in sys.path:
@@ -31,6 +33,7 @@ import new_engine_production as NEP
 import selector_v2 as SV
 from new_engine_v1 import composition as CP
 from new_engine_v1 import research as RS
+from new_engine_v1.provider import ProviderError
 
 FAILURES = []
 
@@ -76,6 +79,38 @@ class _Provider:
         if isinstance(r, Exception):
             raise r
         return _Completion(r if isinstance(r, str) else json.dumps(r))
+
+
+def test_commissioning_timeout_uses_codex_subscription_once():
+    print("\nClaude commissioning timeout gets one Codex subscription attempt")
+    primary = _Provider(ProviderError("CLAUDE_SUBSCRIPTION_TIMEOUT: two attempts"))
+    codex = _Provider({"candidates": []})
+    with patch.dict(os.environ, {"CRIPMINDS_KF_CODEX_TIMEOUT_FALLBACK": "1"}):
+        result = CD.CommissioningSubscriptionProvider(
+            "claude-opus-5", primary=primary,
+            codex_factory=lambda: codex).complete("instructions", "question")
+    check("a timeout reaches the second subscription", codex.calls == 1)
+    check("the second subscription's answer is returned", result.text == '{"candidates": []}')
+    check("the first provider was called once", primary.calls == 1)
+
+    primary = _Provider(ProviderError("CLAUDE_SUBSCRIPTION_AUTH_FAILURE: signed out"))
+    codex = _Provider({"candidates": []})
+    try:
+        CD.CommissioningSubscriptionProvider(
+            "claude-opus-5", primary=primary,
+            codex_factory=lambda: codex).complete("instructions", "question")
+    except ProviderError:
+        pass
+    else:
+        check("auth errors are not disguised as a timeout", False)
+    check("a non-timeout failure does not spend Codex", codex.calls == 0)
+
+    primary = _Provider({"candidates": []})
+    codex = _Provider({"candidates": []})
+    CD.CommissioningSubscriptionProvider(
+        "claude-opus-5", primary=primary,
+        codex_factory=lambda: codex).complete("instructions", "question")
+    check("a successful Claude call does not spend Codex", codex.calls == 0)
 
 
 def _seed(i, source="Aeon"):
@@ -549,6 +584,7 @@ def test_worth_and_fast_lane_are_untouched():
 
 def main():
     for t in (test_a_verge_is_no_longer_an_origin_feed,
+              test_commissioning_timeout_uses_codex_subscription_once,
               test_b_verge_remains_researchable,
               test_c_knowledge_first_supplies_the_daily_candidate,
               test_d_owner_approved_questions_participate,
