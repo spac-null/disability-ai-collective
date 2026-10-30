@@ -921,20 +921,17 @@ def tension_block(candidate: dict | None) -> str:
     false move -- and says so again in its own words.
 
     FAIL-SAFE ON A PLANNING MARKER. `writer_inputs_are_plan_free` HOLDS the run when the
-    user prompt carries one, and `beat` is matched as an ordinary word, so a tension string
-    about music could kill a run before the model is called -- the blocker that stopped
-    `feat/writer-sees-the-sources`. None of the 135 in the record contains one, but the
-    block OMITS ITSELF rather than risk it: a missing question costs an article nothing,
-    and a held run costs it everything.
+    user prompt carries a planned-path heading. A common word inside the evidence, such
+    as "beat" in "without missing a beat", is not a plan.
     """
     t = str((candidate or {}).get("tension") or "").strip()
     if not t:
         return ""
     for marker in PLAN_LEAK_MARKERS:
-        pattern = (r"\b%s\b" % re.escape(marker) if marker.lower() == "beat"
-                   else re.escape(marker))
-        if re.search(pattern, t):
+        if marker in t:
             return ""
+    if any(re.search(pattern, t) for pattern, _ in PLAN_LEAK_LINE_PATTERNS):
+        return ""
     return "\n".join([
         "THE CONTRADICTION THIS EVIDENCE HOLDS -- one reading of it, made before you "
         "wrote. It is the question this piece can be built to keep open:",
@@ -1498,10 +1495,13 @@ def licensing_record(ledger: dict, relations=None) -> dict:
 # by `writer_inputs_are_plan_free` and asserted by the tests: source-code review is not
 # enough, because the defect this guards against is a prompt assembled at runtime.
 PLAN_LEAK_MARKERS = (
-    "THE PATH, IN ORDER", "OPEN ON", "WHAT THE STORY IS", "beat", "BEAT",
+    "THE PATH, IN ORDER", "OPEN ON", "WHAT THE STORY IS",
     "ending_move", "ENDING", "not yet:", "carried by:", "story_spine",
     "what carries the reader on from here", "explain plainly, once, here",
     "write the first beat", "LOAD_BEARING", "SUPPORTING",
+)
+PLAN_LEAK_LINE_PATTERNS = (
+    (r"(?mi)^\s*BEAT(?:\s+(?:B?\d+)\b|:)", "BEAT heading"),
 )
 
 
@@ -1515,17 +1515,16 @@ def writer_inputs_are_plan_free(system: str, user: str) -> list:
     that are about to be sent, it runs on every free composition, and the run HOLDs rather
     than writing an article whose contract is self-contradictory.
 
-    `beat` is matched as a whole word only: the craft corpus is prose about writing and may
-    legitimately discuss how a paragraph beats, and the lens may say anything the owner
-    wrote. The markers that matter are the packet renderer's own headings, which nothing
-    else produces.
+    The markers are the packet renderer's headings. Source evidence may use ordinary
+    words such as "beat", and that must not prevent a Writer call.
     """
     errs = []
     for marker in PLAN_LEAK_MARKERS:
-        pattern = (r"\b%s\b" % re.escape(marker) if marker.lower() == "beat"
-                   else re.escape(marker))
-        if re.search(pattern, user):
+        if marker in user:
             errs.append("the Writer's user prompt carries the planning marker %r" % marker)
+    for pattern, label in PLAN_LEAK_LINE_PATTERNS:
+        if re.search(pattern, user):
+            errs.append("the Writer's user prompt carries the planning marker %r" % label)
     # The system prompt is the lens, the corpus, the contract and the rule. The packet
     # renderer's headings must not be in it either, but the corpus is prose ABOUT writing,
     # so only the unambiguous machine-generated headings are checked there.
