@@ -163,7 +163,9 @@ Build the article as a sequence of realizations:
   forbidden is a different thing: INVENTED TESTIMONY. No fictional human
   simulation, no invented anecdote, no lived experience written for anyone, no
   sentence of the form 'as a Deaf person, I know'. Think in the first person; do
-  not testify in it.
+  not testify in it. You may write what you notice or ask of the evidence. Do not
+  claim that you visited, interviewed, requested records or otherwise did original
+  reporting unless the run contains a record of you doing it.
   AND USE IT. Measured: this publication's own 137 articles carry first person a
   median of ELEVEN TIMES EACH -- 16 per thousand words, a quarter of them above 24 --
   and only three of the 137 carry none. Recent drafts carry three. An earlier version
@@ -531,6 +533,11 @@ KEEP A TECHNICAL TERM WHEN IT IS THE PRECISE ONE, and explain it in ordinary wor
 first use, in a sentence. Simplify the SYNTAX around a difficult idea rather than
 replacing the idea's own name with a vaguer word.
 
+When a name appears in a script many readers cannot read, give its role in English on
+first use (a court, local office, organisation, place or person). If the exact name does
+no work, use the English role alone. Translate or romanise a name only when the evidence
+supports that rendering; do not guess it.
+
 BUT WRITE EDUCATED-CONVERSATIONAL, NOT ACADEMIC. Measured: this engine's drafts run
 17.4% words of three syllables or more against 13.5% across this publication's own 137
 published articles -- a third more, while the AVERAGE word is shorter. That combination
@@ -891,6 +898,253 @@ def free_writer_system() -> str:
     parts.append(TEMPO_AND_STANDARD)
     parts.append(ONE_RULE)
     return "\n\n".join(parts)
+
+
+def lean_writer_system() -> str:
+    """Opt-in comparison contract: editorial freedom within the same evidence boundary.
+
+    It deliberately omits the craft corpus, reader contract, surface quotas and examples
+    of preferred turns. The output bookkeeping and every downstream gate stay the same.
+    This is not selected by the live runner unless explicitly passed as a contract.
+    """
+    return """You are writing one Crip Minds essay for an intelligent general reader.
+Find the essay's shape from the material. Let a concrete fact, person, object or
+document lead where it genuinely leads. The reader should understand something
+different at the end. Write in a clear first-person critical voice when it helps
+the inquiry; do not claim lived experience or original reporting you were not given.
+Where the evidence offers a reported action or exchange, let the reader encounter it
+early; do not invent a scene around it.
+
+The commissioning question is editorial intent, not evidence. Every factual claim
+must be supported by a numbered proposition below. Use only the source identities
+given. Do not invent a person, scene, quotation, action, motive, date, number or
+consequence. Do not turn two neighbouring facts into a causal connection without
+support. Claim an absence only when a numbered proposition establishes it. Quote
+only verbatim words in the evidence. You may choose, challenge or discard the
+commission's initial reading; you may also decide the material cannot answer it.
+
+Write a complete essay, choosing its opening, order, length and ending yourself.
+Do not imitate any reference writer's wording.
+
+Output the article in Markdown beginning with one '# title' line, followed by:
+---FACTS USED---
+the proposition IDs used;
+---NEGATIVE CLAIMS---
+one line per sentence asserting a factual absence, as:
+<exact sentence> :: F12
+Leave that final section empty when there are no such claims."""
+
+
+def lean_longform_writer_system() -> str:
+    """The lean evidence contract with an explicit publication-length commission."""
+    return lean_writer_system().replace(
+        "Write a complete essay, choosing its opening, order, length and ending yourself.",
+        "Write a complete long-form essay, choosing its opening, order and ending "
+        "yourself. Aim for roughly 1,400 to 2,200 words when the evidence sustains "
+        "it; do not pad. Follow each concrete part of the commissioning question, "
+        "or make the unsupported part's limit clear in the article.")
+
+
+# ── FOOTNOTE WRITER CONTRACT (2026-10-31) ──────────────────────────────────────
+# Every factual claim the Writer makes carries a [^F01] marker tied to a Ledger fact.
+# At the published end: [^F01]: [Source title](url) — "support span".
+# With inline links the editor can verify each claim before publishing; grounding
+# becomes advisory rather than a blocking gate on this contract.
+_FOOTNOTE_WRITER_SYSTEM = """\
+You are writing one essay for Crip Minds, a disability-led editorial publication.
+
+The publication's core claim: the disability lens reveals the hidden mechanism of the
+subject — what the dominant framing misses. The reader should discover the argument
+through the material, not be handed a verdict.
+
+═══════════════════════════════════════════════════════════════
+EVIDENCE: THE LEDGER IS YOUR ONLY SOURCE OF FACTS
+═══════════════════════════════════════════════════════════════
+
+Every numbered proposition in the Ledger has been checked against its source. You may
+state any of them directly. You may interpret, compare, juxtapose and reason across them.
+You may NOT invent a scene, a line of dialogue, a motive, a chronology, a source identity,
+an institution, a number, or a causal relation that no proposition carries.
+
+Interpretation is not invention. "This suggests the committee knew" is an inference and
+yours to make if the evidence supports it. "The committee met on Thursday" is a new
+factual state and requires a proposition.
+
+═══════════════════════════════════════════════════════════════
+FOOTNOTES: EVERY FACTUAL CLAIM CARRIES ITS SOURCE
+═══════════════════════════════════════════════════════════════
+
+Attach a footnote marker to every sentence that makes a specific factual claim — a
+number, a date, a name, an institutional action, an outcome, a quote, a measurement.
+
+Use the fact ID from the Ledger as the marker: [^F01]
+
+After the article body, write a footnote definition for every marker you used:
+
+[^F01]: [Source title](url) — "support span from the source"
+
+The source title and URL come from the SOURCE IDENTITIES block below. The support span
+is the fact's quoted span in the FROZEN EVIDENCE block. Copy it verbatim, in quotation
+marks. Do not paraphrase it.
+
+A claim you cannot tie to a Ledger fact:
+— rewrite it as visible inference: "this suggests", "the likely reading", "it follows
+  from this that"
+— or cut it
+
+An inference does not need a footnote. A fact does.
+
+═══════════════════════════════════════════════════════════════
+QUOTATION MARKS MEAN VERBATIM
+═══════════════════════════════════════════════════════════════
+
+Put quotation marks around somebody's words ONLY when the Ledger gives you those exact
+words. Where it does not, report what was said without marks.
+
+A quotation assembled from a paraphrase is a fabrication. Combining two separated clauses,
+presenting an ellipsis as a verified sentence, or paraphrasing inside the marks are all
+fabrications.
+
+Where the source wrote in another language, translate and say so: "in her words,
+translated from the Dutch".
+
+═══════════════════════════════════════════════════════════════
+SHAPE AND REGISTER
+═══════════════════════════════════════════════════════════════
+
+You decide the structure, the order, and the length. No beats are prescribed.
+
+Write to one reader you take seriously. Closer to a letter than a lecture. The disability
+perspective must do something to the subject — change what it means, reveal what the
+standard account omits — not merely accompany it.
+
+The ending should make something from the opening mean something different.
+
+═══════════════════════════════════════════════════════════════
+HARD PROHIBITIONS
+═══════════════════════════════════════════════════════════════
+
+Do not invent a named person not in the Ledger.
+Do not fabricate a direct quote: words in quotation marks must be verbatim from the source.
+Do not invent a statistic, measurement, or number not in a proposition.
+Do not assert an absence ("there is no evidence that X") unless the Ledger licenses it.
+
+═══════════════════════════════════════════════════════════════
+OUTPUT FORMAT
+═══════════════════════════════════════════════════════════════
+
+Start with exactly one line: # Your title here
+
+Then the article body with inline [^F01] footnote markers on every factual sentence.
+
+After the body, the footnote definitions:
+[^F01]: [Source title](url) — "verbatim support span"
+
+Then the pipeline bookkeeping markers:
+---FACTS USED---
+F01 F03 F07
+---NEGATIVE CLAIMS---
+(one line per absence claim: <exact sentence> :: F12)
+(leave this section empty if there are none)"""
+
+
+def footnote_writer_system() -> str:
+    return _FOOTNOTE_WRITER_SYSTEM
+
+
+def footnote_writer_user(instrument: dict | None, ledger: dict,
+                         pack: dict | None = None, subject: str = "",
+                         relations=None, candidate=None) -> str:
+    """Evidence universe with per-fact source metadata for inline footnotes.
+
+    Each fact carries its source ID and verbatim support span so the Writer can
+    construct [^F01]: [title](url) — "span" lines without inventing the title,
+    URL, or span.
+    """
+    sources = {s.get("source_id"): s
+               for s in (pack or {}).get("sources") or []
+               if isinstance(s, dict)}
+
+    q = instrument or {}
+    question = str(q.get("question") or "").strip()
+    if not question:
+        question = str((candidate or {}).get("tension") or "").strip()
+
+    L = ["SUBJECT", "  " + (subject or "").strip()]
+    scope = narrower_scope_block(pack or {})
+    if scope:
+        L += ["", scope]
+    if question:
+        L += ["", "COMMISSIONING QUESTION (a question, not a finding)",
+              "  " + question]
+
+    L += ["", "SOURCE IDENTITIES (use title and url in footnote definitions)"]
+    for s in (pack or {}).get("sources") or []:
+        if not isinstance(s, dict):
+            continue
+        L.append("  %s  title=%s  publisher=%s  url=%s" % (
+            s.get("source_id") or "?",
+            s.get("title") or "(not established)",
+            s.get("publisher") or "(not established)",
+            s.get("url") or ""))
+
+    fact_lines = []
+    for fid, f in sorted((ledger or {}).items()):
+        if not isinstance(f, dict):
+            continue
+        prop = str(f.get("proposition") or "").strip()
+        span = str(f.get("support_span") or "").strip()
+        eids = list(f.get("evidence_ids") or [])
+        src_id = eids[0] if eids else ""
+        line = "  %s  %s" % (fid, prop)
+        if span:
+            line += (("\n    [%s] \"%s\"" % (src_id, span[:300]))
+                     if src_id else ("\n    \"%s\"" % span[:300]))
+        fact_lines.append(line)
+
+    L += ["",
+          "FROZEN EVIDENCE — the only licensed factual claims",
+          "(Each fact shows its source ID and verbatim support span for your "
+          "footnote definitions.)",
+          "\n".join(fact_lines)]
+    L += ["", negative_permissions_block(ledger or {})]
+    joins = relation_block(ledger or {}, relations)
+    if joins:
+        L += ["", joins]
+    return "\n".join(L)
+
+
+def lean_writer_user(instrument: dict | None, ledger: dict,
+                     pack: dict | None = None, subject: str = "",
+                     relations=None, candidate=None) -> str:
+    """One question, source identities and the whole licensed factual record."""
+    q = instrument or {}
+    question = str(q.get("question") or "").strip()
+    if not question:
+        question = str((candidate or {}).get("tension") or "").strip()
+    L = ["SUBJECT", "  " + (subject or "").strip()]
+    scope = narrower_scope_block(pack or {})
+    if scope:
+        L += ["", scope]
+    if question:
+        L += ["", "COMMISSIONING QUESTION (a question, not a finding)",
+              "  " + question]
+    L += ["", "SOURCE IDENTITIES (no unstated author, role or genre)"]
+    for s in (pack or {}).get("sources") or []:
+        if not isinstance(s, dict):
+            continue
+        L.append("  %s  title=%s  publisher=%s  url=%s" % (
+            s.get("source_id") or "?", s.get("title") or "(not established)",
+            s.get("publisher") or "(not established)", s.get("url") or ""))
+    facts = "\n".join("  %s  %s" % (
+        fid, str((f or {}).get("proposition") or "").strip())
+        for fid, f in sorted((ledger or {}).items()))
+    L += ["", "FROZEN EVIDENCE (the only licensed factual claims)", facts,
+          "", negative_permissions_block(ledger or {})]
+    joins = relation_block(ledger or {}, relations)
+    if joins:
+        L += ["", joins]
+    return "\n".join(L)
 
 
 def tension_block(candidate: dict | None) -> str:
@@ -1538,14 +1792,25 @@ def writer_inputs_are_plan_free(system: str, user: str) -> list:
 
 def write_article_free(provider, ledger: dict, instrument: dict | None = None,
                        pack: dict | None = None, subject: str = "",
-                       relations=None, candidate=None) -> dict:
+                       relations=None, candidate=None,
+                       writer_contract: str = "current") -> dict:
     """STAGE: the free argumentative Writer. ONE call, one mechanical retry.
 
     The retry is mechanical only -- same prompt, no feedback, no instruction to do better
     -- exactly like `composition.write_article`. Nothing here regenerates for quality.
     """
-    system = free_writer_system()
-    user = free_writer_user(instrument, ledger, pack, subject, relations, candidate)
+    if writer_contract == "current":
+        system = free_writer_system()
+        user = free_writer_user(instrument, ledger, pack, subject, relations, candidate)
+    elif writer_contract == "footnote":
+        system = footnote_writer_system()
+        user = footnote_writer_user(instrument, ledger, pack, subject, relations, candidate)
+    elif writer_contract in ("lean", "lean_longform"):
+        system = (lean_writer_system() if writer_contract == "lean"
+                  else lean_longform_writer_system())
+        user = lean_writer_user(instrument, ledger, pack, subject, relations, candidate)
+    else:
+        raise ValueError("unknown writer contract: %s" % writer_contract)
 
     leaks = writer_inputs_are_plan_free(system, user)
     if leaks:
@@ -1578,6 +1843,7 @@ def write_article_free(provider, ledger: dict, instrument: dict | None = None,
                     "prompt": user, "prompt_sha256": C.sha256_text(user),
                     "system_sha256": C.sha256_text(system),
                     "system_prompt_chars": len(system),
+                    "writer_contract": writer_contract,
                     "code_identity": CP.PV.code_identity(),
                     "provider": CP._identity(comp, attempt),
                     "model_calls": attempt, "repairs": 0,
@@ -1626,7 +1892,8 @@ def run_free_argumentative_composition(
         provider, *, pack: dict, source_text: str, source_sha: str,
         subject: str = "", fact_check: bool = True, reader: bool = True,
         package: bool = True, stop_after: str = "", fact_check_fn=None,
-        out_dir=None, instrument: dict | None = None) -> dict:
+        out_dir=None, instrument: dict | None = None,
+        writer_contract: str = "current") -> dict:
     """Approved research material in; a free argumentative article out, or a HOLD.
 
     Returns a result of exactly the shape `run_story_architecture_composition` returns.
@@ -1638,6 +1905,9 @@ def run_free_argumentative_composition(
     story, one composition, one HOLD or one article.
     """
     import time
+
+    if writer_contract not in ("current", "footnote", "lean", "lean_longform"):
+        raise ValueError("unknown writer contract: %s" % writer_contract)
 
     P = CP.composition_provider(provider)
     subject = subject or pack.get("subject") or ""
@@ -1684,6 +1954,7 @@ def run_free_argumentative_composition(
             "advisories": (st.get(CP.SAFETY) or {}).get("advisories") or [],
             "runtime_by_stage": dict(elapsed),
             "compose_mode": COMPOSE_FREE,
+            "writer_contract": writer_contract,
             "replay": False,
             "replayed_stages": [],
             "runtime_seconds": round(time.time() - t0, 1),
@@ -1763,7 +2034,8 @@ def run_free_argumentative_composition(
         wr = record(CP.WRITER, write_article_free(
             P, ledger, instrument=instrument, pack=pack, subject=subject,
             relations=relations,
-            candidate=(w.get("story_candidate") if isinstance(w, dict) else None)))
+            candidate=(w.get("story_candidate") if isinstance(w, dict) else None),
+            writer_contract=writer_contract))
         final = wr["article_text"]
         lineage = wr["negative_lineage_verified"]
 
@@ -1922,13 +2194,23 @@ def run_free_argumentative_composition(
                 repairs[CP.GROUNDING] = 1
 
         if g["status"] != CP.PASS:
-            return out(CP.GROUNDING,
-                       "grounding status %r; %d blocking finding(s): %s"
-                       % (g["grounding_status"], len(g["blocking"]),
-                          [("%s %s" % (f.get("classification"),
-                                       str(f.get("quote") or "")[:70]))
-                           for f in g["blocking"]][:4]),
-                       CP.GROUNDING_HOLD, final, pkg)
+            if writer_contract == "footnote":
+                # ADVISORY ON FOOTNOTE CONTRACT. Findings are recorded on the result
+                # and travel with the article to Jascha for editorial review. The
+                # inline [^F01] citations make each factual claim independently
+                # checkable before publishing; an automated verbatim-match gate is
+                # no longer the last defence. Only the three hard Safety checks
+                # (invented names, fabricated quotes, invented statistics) remain as
+                # automated blocks -- they already ran above.
+                g["advisory_only"] = True
+            else:
+                return out(CP.GROUNDING,
+                           "grounding status %r; %d blocking finding(s): %s"
+                           % (g["grounding_status"], len(g["blocking"]),
+                              [("%s %s" % (f.get("classification"),
+                                           str(f.get("quote") or "")[:70]))
+                               for f in g["blocking"]][:4]),
+                           CP.GROUNDING_HOLD, final, pkg)
 
         # ── FACT CHECK. Unchanged. ───────────────────────────────────────────────────
         if fact_check:

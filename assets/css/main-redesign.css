@@ -5740,3 +5740,102 @@ h1, .text-h1 { font-weight: 800; letter-spacing: -0.02em; }
   max-width: 42rem;
   margin: 0 0 2rem;
 }
+
+
+/* ── Article footnotes (2026-10-31) ───────────────────────────────────────────
+   Kramdown renders [^F01] as <sup> inline and a <div class="footnotes"> block
+   at the article end.
+────────────────────────────────────────────────────────────────────────────── */
+
+sup[id^="fnref:"] a,
+sup[id^="fnref:"] a:visited {
+  color: var(--color-text-brand);
+  font-size: 0.7em;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0 0.1em;
+  vertical-align: super;
+  line-height: 0;
+}
+
+sup[id^="fnref:"] a:hover,
+sup[id^="fnref:"] a:focus {
+  text-decoration: underline;
+  color: var(--color-text-accent);
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
+.footnotes {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border-primary);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.footnotes::before {
+  content: "Sources";
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.footnotes ol {
+  margin: 0;
+  padding-left: 1.5rem;
+  list-style-type: decimal;
+}
+
+.footnotes li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.footnotes li em,
+.footnotes li q {
+  color: var(--color-text-muted);
+  font-style: normal;
+}
+
+.footnotes li a[href^="#fnref:"] {
+  margin-left: 0.25em;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 0.85em;
+}
+
+.footnotes li a[href^="#fnref:"]:hover {
+  color: var(--color-text-brand);
+}
+
+.footnotes li a:not([href^="#fnref:"]) {
+  color: var(--color-text-brand);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.footnotes li a:not([href^="#fnref:"]):hover {
+  color: var(--color-text-accent);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .footnotes {
+    border-top-color: var(--color-border-secondary);
+  }
+}
+
+:root[data-theme="dark"] .footnotes {
+  border-top-color: var(--color-border-secondary);
+}
+
+@media (max-width: 640px) {
+  .footnotes {
+    font-size: var(--font-size-xs);
+  }
+}

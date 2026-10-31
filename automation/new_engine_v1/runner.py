@@ -180,6 +180,7 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
             anchor={"url": prov_anchor.get("url", ""), "text": src,
                     "title": prov_anchor.get("title", ""),
                     "canonical_url": prov_anchor.get("canonical_url", ""),
+                    "original_length_chars": prov_anchor.get("original_length_chars"),
                     # Acquisition harvested these from the anchor's markup before the
                     # extractor discarded it; build_pack already had the seam for them.
                     # Absent on any snapshot recorded before 2026-09-06, hence .get().
@@ -504,7 +505,8 @@ def _run_story_architecture(provider, A: dict, prov: dict, pack: dict, src: str,
         result = FC.run_free_argumentative_composition(
             provider, pack=pack, source_text=src, source_sha=sha,
             subject=pack.get("subject", ""), out_dir=out_dir,
-            fact_check_fn=fact_check_fn, instrument=instrument)
+            fact_check_fn=fact_check_fn, instrument=instrument,
+            writer_contract=os.environ.get("FREE_WRITER_CONTRACT", "current"))
     else:
         # TWO COMPOSITIONS PER WORTH-PASS STORY (owner-directed, 2026-09-10). This returns
         # a composition result of the SAME shape as before -- the WINNING attempt's own --
