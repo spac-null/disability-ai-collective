@@ -3807,7 +3807,16 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
             "cut_adherence": ST.cut_adherence(text, arch, cut_terms, ledger=ledger),
         }
 
-    a = {"writer_draft": screens(draft_text), "continuity_final": screens(final_text)}
+    # Footnote definition lines ([^F01]: [Title](url) — "quote") are attribution markup,
+    # not prose claims. Their URLs, numbers and non-English source quotes would otherwise
+    # be flagged as unsupported factual surface. Strip them before any surface scan.
+    # Inline markers ([^F01] in body text) are left; they carry no factual surface.
+    _fn_def = re.compile(r"^\s*\[\^", re.MULTILINE)
+    def _prose_only(text: str) -> str:
+        lines = text.split("\n")
+        return "\n".join(l for l in lines if not _fn_def.match(l))
+    a = {"writer_draft": screens(_prose_only(draft_text)),
+         "continuity_final": screens(_prose_only(final_text))}
     # THE PACKAGE IS PUBLIC PROSE and is screened by the same functions, on its own text.
     # It is a third surface, not part of the article: the semantic delta below compares the
     # draft with the final and a title has no draft to differ from. What it does share is
