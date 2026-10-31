@@ -3810,11 +3810,19 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
     # Footnote definition lines ([^F01]: [Title](url) — "quote") are attribution markup,
     # not prose claims. Their URLs, numbers and non-English source quotes would otherwise
     # be flagged as unsupported factual surface. Strip them before any surface scan.
-    # Inline markers ([^F01] in body text) are left; they carry no factual surface.
+    # Inline markers ([^F01] in body text) also block sentence splitting: the period in
+    # "companies.[^F61]\n\nSet against that..." is followed immediately by "[", which is
+    # not whitespace, so the sentence splitter never fires there. The word "Set" then
+    # appears mid-segment and is treated as a named entity. Removing inline markers
+    # restores the period-then-whitespace pattern that the splitter requires.
     _fn_def = re.compile(r"^\s*\[\^", re.MULTILINE)
+    _fn_inline = re.compile(r"\[\^[A-Za-z0-9_-]+\]")
     def _prose_only(text: str) -> str:
         lines = text.split("\n")
-        return "\n".join(l for l in lines if not _fn_def.match(l))
+        return "\n".join(
+            _fn_inline.sub("", l)
+            for l in lines if not _fn_def.match(l)
+        )
     a = {"writer_draft": screens(_prose_only(draft_text)),
          "continuity_final": screens(_prose_only(final_text))}
     # THE PACKAGE IS PUBLIC PROSE and is screened by the same functions, on its own text.
