@@ -29,13 +29,16 @@ WHAT IT DELIBERATELY DOES NOT DO
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import sys
 import time
+import unicodedata
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections import Counter
 
 _HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _HERE not in sys.path:
@@ -677,25 +680,115 @@ def _blank(url: str) -> dict:
             "content_length": 0, "sha256": "", "route": "", "attempts": 0}
 
 
-def _from_html(rec: dict, html: str) -> dict:
+def _focus_words(value: str) -> list[str]:
+    plain = unicodedata.normalize("NFKD", value.lower())
+    plain = "".join(ch for ch in plain if not unicodedata.combining(ch))
+    return re.findall(r"[a-z0-9]+", plain)
+
+
+def select_html_windows(source_text: str, focus: list[str],
+                        budget: int) -> tuple[str, dict | None]:
+    """Select verbatim windows on a long page using the research questions.
+
+    A fixed opening keeps source identity. Query terms and contiguous phrases choose
+    later passages; their exact offsets and the full extracted-text hash are recorded.
+    A match is a navigation aid, never evidence that a query's premise is true.
+    """
+    if len(source_text) <= budget or budget < 3000 or not focus:
+        return source_text[:budget], None
+    focus_lines = [_focus_words(x) for x in focus if isinstance(x, str)]
+    wanted = {word for line in focus_lines for word in line if len(word) >= 4}
+    if not wanted:
+        return source_text[:budget], None
+    phrases = set()
+    for line in focus_lines:
+        for n in (3, 4):
+            for i in range(len(line) - n + 1):
+                phrase = line[i:i + n]
+                if sum(len(word) >= 4 for word in phrase) >= 2:
+                    phrases.add(" ".join(phrase))
+
+    width, stride = 1600, 1200
+    chunks = [(start, min(len(source_text), start + width))
+              for start in range(0, len(source_text), stride)]
+    words_by_chunk = [_focus_words(source_text[a:b]) for a, b in chunks]
+    frequency = Counter()
+    for words in words_by_chunk:
+        frequency.update(set(words) & wanted)
+    weights = {word: math.log((len(chunks) + 1) / (count + 1)) + 1
+               for word, count in frequency.items()}
+
+    scored = []
+    deep_phrase_match = False
+    for (start, end), words in zip(chunks, words_by_chunk):
+        score = sum(weights[word] for word in set(words) & wanted)
+        joined = " ".join(words)
+        phrase_bonus = sum((4 if len(phrase.split()) == 4 else 2)
+                           for phrase in phrases if phrase in joined)
+        score += phrase_bonus
+        deep_phrase_match |= bool(phrase_bonus and start >= budget)
+        scored.append((score, start, end))
+    # Ordinary repeated topic words do not justify cutting the page into fragments.
+    # Require a phrase from the research question in material the prefix would miss.
+    if not deep_phrase_match:
+        return source_text[:budget], None
+    scored.sort(key=lambda row: (-row[0], row[1]))
+
+    windows = [(0, min(1200, len(source_text)))]
+
+    def merged_size(parts):
+        merged = []
+        for start, end in sorted(parts):
+            if merged and start - merged[-1][1] <= len(_SOURCE_OMISSION):
+                merged[-1] = (merged[-1][0], max(end, merged[-1][1]))
+            else:
+                merged.append((start, end))
+        size = (sum(end - start for start, end in merged)
+                + max(0, len(merged) - 1) * len(_SOURCE_OMISSION))
+        return size, merged
+
+    for score, start, end in scored:
+        if score <= 0:
+            break
+        if any(min(end, b) - max(start, a) > width // 4 for a, b in windows):
+            continue
+        size, merged = merged_size(windows + [(start, end)])
+        if size <= budget:
+            windows = merged
+    _, windows = merged_size(windows)
+    if len(windows) == 1:
+        return source_text[:budget], None
+    selected = _SOURCE_OMISSION.join(source_text[a:b] for a, b in windows)
+    return selected, {
+        "strategy": "query_windowed_html_v1",
+        "fetched_text_sha256": sha256_text(source_text),
+        "fetched_text_length": len(source_text),
+        "windows": [{"char_start": a, "char_end": b} for a, b in windows],
+        "omitted_chars": len(source_text) - sum(b - a for a, b in windows),
+    }
+
+
+def _from_html(rec: dict, html: str, html_focus=None) -> dict:
     """The single definition of what a fetched page yields. Both legs parse here, so
     an impersonated page cannot enter the pack by a different rule than an ordinary
     one -- same extraction, same 60-word floor, same hash over the same text.
 
     Figures ride along from here for the same reason: this is the only place both legs
     hold the HTML, so an impersonated page cannot acquire captions under a different
-    rule either. `text`, `content_length` and `sha256` are computed exactly as before --
-    the harvest reads the same string and writes to a separate key, so a pack built
-    before this existed and one built after are byte-identical in every field that was
-    already there. No image is fetched; see figures.py.
+    rule either. Short pages keep their previous text and hash; long pages may carry
+    selected verbatim windows rather than a prefix. No image is fetched; see figures.py.
     """
-    text = strip_html(html)[:PER_SOURCE_CHARS]
+    extracted = strip_html(html)
+    text, selection = select_html_windows(extracted, html_focus or [],
+                                          PER_SOURCE_CHARS)
     if len(text.split()) < 60:
         rec["status"] = "empty_or_blocked"
         return rec
     rec.update(status="ok", text=text, title=_title_from_html(html),
                canonical_url=_canonical_from_html(html),
                content_length=len(text), sha256=sha256_text(text))
+    if selection is not None:
+        rec["text_selection"] = selection
     figs = FIG.harvest(html, rec.get("url", ""))
     if figs:
         rec["figures"] = figs
@@ -710,7 +803,7 @@ def _unsupported(ctype: str) -> str:
     return "unsupported_content_type:%s" % (ctype.split(";")[0] or "?")
 
 
-def _fetch_ordinary(url: str, timeout: int, terms=None) -> dict:
+def _fetch_ordinary(url: str, timeout: int, terms=None, html_focus=None) -> dict:
     """The original attempt. For an HTML or text response it is unchanged, down to the
     two-megabyte read.
 
@@ -737,7 +830,7 @@ def _fetch_ordinary(url: str, timeout: int, terms=None) -> dict:
         if not _texty(ctype):
             return _as_document(rec, raw, ctype, terms)
         html = raw.decode(r.headers.get_content_charset() or "utf-8", "replace")
-        return _from_html(rec, html)
+        return _from_html(rec, html, html_focus)
     except urllib.error.HTTPError as e:
         rec["status"] = "http_%s" % e.code
     except Exception as e:
@@ -789,7 +882,7 @@ def _as_document(rec: dict, raw: bytes, ctype: str, terms) -> dict:
 
 def fetch_source(url: str, *, timeout: int = FETCH_TIMEOUT,
                  fallback_budget: "FallbackBudget | None" = None,
-                 terms=None) -> dict:
+                 terms=None, html_focus=None) -> dict:
     """At most two attempts. Returns a record whose `status` decides whether it may
     contribute.
 
@@ -802,7 +895,7 @@ def fetch_source(url: str, *, timeout: int = FETCH_TIMEOUT,
     and only while the run's shared budget can pay for it. There is no third attempt
     and no loop: this function's whole contract is MAX_ATTEMPTS_PER_SOURCE.
     """
-    rec = _fetch_ordinary(url, timeout, terms)
+    rec = _fetch_ordinary(url, timeout, terms, html_focus)
     if rec["status"] not in FALLBACK_STATUSES:
         return rec
     if not IMP.available():
@@ -835,7 +928,7 @@ def fetch_source(url: str, *, timeout: int = FETCH_TIMEOUT,
         alt = _as_document(alt, got.get("content") or b"", ctype, terms)
         return alt if alt["status"] == "ok" else rec
     alt["route"] = "impersonated"
-    alt = _from_html(alt, got["text"])
+    alt = _from_html(alt, got["text"], html_focus)
     # If the impersonated page is no better, keep the ordinary answer: the honest
     # status for a source we still have not read is the one we already had.
     return alt if alt["status"] == "ok" else rec
@@ -996,7 +1089,8 @@ def assess_prompt(subject: str, anchor_text: str, sources: list) -> str:
     blocks = []
     for s in sources:
         blocks.append("SOURCE %s  url=%s  publisher=%s\n<<<TEXT\n%s\nTEXT>>>"
-                      % (s["source_id"], s["url"], s["publisher"], s["text"][:8000]))
+                      % (s["source_id"], s["url"], s["publisher"],
+                         s["text"][:12000 if s.get("anchor_extension") else 8000]))
     return (
         "SUBJECT: %s\n\nANCHOR (for comparison only):\n<<<ANCHOR\n%s\nANCHOR>>>\n\n%s\n\n"
         "Reply with JSON only:\n"
@@ -1031,6 +1125,103 @@ def verified_excerpts(claimed, source_text: str) -> tuple:
         elif isinstance(e, str) and e.strip():
             dropped.append(e.strip()[:120])
     return kept, dropped
+
+
+_SOURCE_OMISSION = "\n\n[OMITTED SOURCE TEXT]\n\n"
+
+
+def _normalised_offsets(source_text: str) -> tuple[str, list[int]]:
+    """Normalise whitespace like `_norm`, retaining positions in the fetched text."""
+    chars, offsets = [], []
+    for pos, ch in enumerate(source_text):
+        if ch.isspace():
+            if chars and chars[-1] != " ":
+                chars.append(" ")
+                offsets.append(pos)
+            continue
+        for lower in ch.lower():
+            chars.append(lower)
+            offsets.append(pos)
+    if chars and chars[-1] == " ":
+        chars.pop()
+        offsets.pop()
+    return "".join(chars), offsets
+
+
+def source_excerpt_windows(source_text: str, budget: int,
+                           claimed_excerpts: list) -> tuple[str, list[dict]]:
+    """Keep verified evidence across a long page within the pack's character budget.
+
+    A prefix can end immediately before the fact Research selected. Each window is an
+    unchanged substring of the fetched text; explicit omission markers prevent two
+    distant passages from appearing adjacent. The returned offsets make the selection
+    auditable without putting omitted bytes into the pack.
+    """
+    if budget <= 0:
+        return "", []
+    if len(source_text) <= budget:
+        return source_text, [{"char_start": 0, "char_end": len(source_text)}]
+    hay, offsets = _normalised_offsets(source_text)
+    spans = []
+    for excerpt in claimed_excerpts or []:
+        if not isinstance(excerpt, str) or len(excerpt.split()) < 4:
+            continue
+        needle = _norm(excerpt)
+        at = hay.find(needle)
+        if at >= 0:
+            spans.append((offsets[at], offsets[at + len(needle) - 1] + 1))
+    if not spans:
+        return source_text[:budget], [{"char_start": 0, "char_end": budget}]
+
+    def intervals(margin: int, chosen: list[tuple[int, int]]) -> list[tuple[int, int]]:
+        merged = []
+        for start, end in sorted((max(0, a - margin),
+                                  min(len(source_text), b + margin))
+                                 for a, b in chosen):
+            if merged and start - merged[-1][1] <= len(_SOURCE_OMISSION):
+                merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+            else:
+                merged.append((start, end))
+        return merged
+
+    def size(windows: list[tuple[int, int]]) -> int:
+        return (sum(end - start for start, end in windows)
+                + max(0, len(windows) - 1) * len(_SOURCE_OMISSION))
+
+    chosen = list(spans)
+    while chosen and size(intervals(0, chosen)) > budget:
+        chosen.pop()  # assessor order is the only available priority
+    if not chosen:
+        return source_text[:budget], [{"char_start": 0, "char_end": budget}]
+
+    low, high = 0, budget
+    while low < high:
+        mid = (low + high + 1) // 2
+        if size(intervals(mid, chosen)) <= budget:
+            low = mid
+        else:
+            high = mid - 1
+    selected = intervals(low, chosen)
+    text = _SOURCE_OMISSION.join(source_text[a:b] for a, b in selected)
+    return text, [{"char_start": a, "char_end": b} for a, b in selected]
+
+
+def remap_document_locators(locators: list, windows: list[dict]) -> list[dict]:
+    """Map page ranges from fetched PDF text onto selected pack text windows."""
+    mapped, cursor = [], 0
+    for index, window in enumerate(windows):
+        start, end = window["char_start"], window["char_end"]
+        if index:
+            cursor += len(_SOURCE_OMISSION)
+        for loc in locators:
+            lo = max(start, loc["char_start"])
+            hi = min(end, loc["char_end"])
+            if lo < hi:
+                mapped.append({"kind": "page", "page_no": loc["page_no"],
+                               "char_start": cursor + lo - start,
+                               "char_end": cursor + hi - start})
+        cursor += end - start
+    return mapped
 
 
 def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
@@ -1080,6 +1271,8 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
     # production-20260930T073754Z-54ca6694 and dropped National Geographic, Smithsonian,
     # Wikipedia and archive.org after fetching and assessing all four.
     def _role_of(s):
+        if s.get("anchor_extension"):
+            return ROLE_CONTEXT  # another window on S0, not a new first-party source
         r = (labels.get(s["source_id"], {}) or {}).get("role")
         r = r if r in ROLES else ROLE_CONTEXT
         return ROLE_CONTEXT if r == ROLE_ANCHOR else r
@@ -1103,16 +1296,25 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
             continue
         lab = labels.get(s["source_id"], {})
         role = _role_of(s)
-        cluster = None
-        for i, group in enumerate(clusters):
-            if any(near_duplicate(s["text"], g["text"]) for g in group):
-                cluster = i
-                group.append(s)
-                break
+        cluster = 0 if s.get("anchor_extension") else None
+        if cluster is None:
+            for i, group in enumerate(clusters):
+                if any(near_duplicate(s["text"], g["text"]) for g in group):
+                    cluster = i
+                    group.append(s)
+                    break
         if cluster is None:
             clusters.append([s])
             cluster = len(clusters) - 1
-        text = s["text"][:max(0, allocation.get(s["source_id"], 0))]
+        allowance = max(0, allocation.get(s["source_id"], 0))
+        text = s["text"][:allowance]
+        windows = None
+        if allowance < len(s["text"]):
+            claimed = lab.get("excerpts") or []
+            full_kept, _ = verified_excerpts(claimed, s["text"])
+            prefix_kept, _ = verified_excerpts(claimed, text)
+            if len(full_kept) > len(prefix_kept):
+                text, windows = source_excerpt_windows(s["text"], allowance, full_kept)
         budget -= len(text)
         # Excerpts are verified against the text the pack will actually CARRY, not the
         # text that was fetched. The two differ once the budget truncates a source, and
@@ -1130,6 +1332,16 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
             "why_relevant": (lab.get("why_relevant") or "")[:300],
             "text": text, "excerpts": kept, "excerpts_dropped": dropped,
         }
+        if windows is not None:
+            src["text_windows"] = {
+                "strategy": "verified_excerpt_windows_v1",
+                "fetched_text_sha256": sha256_text(s["text"]),
+                "windows": windows,
+                "omitted_chars": len(s["text"]) - sum(
+                    w["char_end"] - w["char_start"] for w in windows),
+            }
+        if s.get("text_selection"):
+            src["fetch_text_selection"] = s["text_selection"]
         # Document provenance rides along ONLY on a source that is a document, so an
         # HTML-only pack serialises exactly as it did before this existed.
         if s.get("document"):
@@ -1139,10 +1351,14 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
             # grounding nothing -- the same failure the excerpt verifier exists for. So
             # locators are clipped to what the pack actually carries, and a clip is
             # recorded as a truncation.
-            locs, clipped = DOC.clip_locators(doc.get("locators") or [], len(text))
+            if windows is not None:
+                locs = remap_document_locators(doc.get("locators") or [], windows)
+                clipped = True
+            else:
+                locs, clipped = DOC.clip_locators(doc.get("locators") or [], len(text))
             doc["locators"] = locs
             sel = dict(doc.get("selection") or {})
-            sel["pages_selected"] = [l["page_no"] for l in locs]
+            sel["pages_selected"] = list(dict.fromkeys(l["page_no"] for l in locs))
             sel["truncated"] = bool(sel.get("truncated")) or clipped
             doc["selection"] = sel
             src["document"] = doc
@@ -1207,6 +1423,8 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
             "context_only_words": context_words,
         },
     }
+    if searched.get("anchor_extension"):
+        pack["anchor_extension"] = searched["anchor_extension"]
     pack["sufficiency"] = sufficiency(pack)
     pack["pack_sha256"] = sha256_text(json.dumps(
         {k: v for k, v in pack.items() if k != "pack_sha256"},
@@ -1499,6 +1717,8 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "",
     # yet, and a model call here would be a second one nobody asked for.
     doc_terms = DOC.selection_terms(scoped.get("subject", ""), queries,
                                     scoped.get("named_entities") or [])
+    html_focus = [scoped.get("subject", "")] + queries + list(
+        scoped.get("questions") or [])
     # ONE PER PUBLISHER BEFORE ANY SECOND. `candidates` keeps search order and is what the
     # pack records; this is the order they are TRIED in. See by_publisher_diversity for
     # the run that made it necessary.
@@ -1506,7 +1726,8 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "",
     for i, url in enumerate(fetch_order, 1):
         if len(fetched) >= MAX_FETCHED_SOURCES:
             break
-        rec = fetch_source(url, fallback_budget=fallback_budget, terms=doc_terms)
+        rec = fetch_source(url, fallback_budget=fallback_budget, terms=doc_terms,
+                           html_focus=html_focus)
         if rec["status"] != "ok":
             failures.append({"url": url, "status": rec["status"]})
             continue
@@ -1542,7 +1763,8 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "",
             if canonical_url(url) in seen:
                 continue
             seen.add(canonical_url(url))
-            rec = fetch_source(url, fallback_budget=fallback_budget, terms=doc_terms)
+            rec = fetch_source(url, fallback_budget=fallback_budget, terms=doc_terms,
+                               html_focus=html_focus)
             if rec["status"] != "ok":
                 failures.append({"url": url, "status": rec["status"], "lens_probe": True})
                 continue
@@ -1581,7 +1803,8 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "",
             if canonical_url(url) in seen:
                 continue
             seen.add(canonical_url(url))
-            rec = fetch_source(url, fallback_budget=fallback_budget, terms=doc_terms)
+            rec = fetch_source(url, fallback_budget=fallback_budget, terms=doc_terms,
+                               html_focus=html_focus)
             if rec["status"] != "ok":
                 failures.append({"url": url, "status": rec["status"], "perspective_explorer": True})
                 continue
@@ -1591,6 +1814,29 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "",
             explorer["kept"].append(rec["source_id"])
             kept += 1
 
+    # Upstream acquisition keeps only the first 20k of an anchor. A long law can have
+    # its operative provision hundreds of thousands of characters later. Re-fetch one
+    # query-selected window after scoping, as an explicitly same-source supplement. It
+    # cannot buy source independence or first-party status and is never a second anchor.
+    anchor_extension = {"attempted": False, "kept": False}
+    try:
+        original_length = int(anchor.get("original_length_chars") or 0)
+    except (TypeError, ValueError):
+        original_length = 0
+    if original_length > len(anchor["text"]) and anchor.get("url"):
+        anchor_extension["attempted"] = True
+        extra = fetch_source(anchor["url"], fallback_budget=fallback_budget,
+                             terms=doc_terms, html_focus=html_focus)
+        if extra.get("status") == "ok" and extra.get("text_selection"):
+            extra.update(source_id="S%d" % (len(fetched) + 1),
+                         accessed_at=now_iso, publisher=registrable(anchor["url"]),
+                         anchor_extension=True)
+            fetched.append(extra)
+            anchor_extension.update(kept=True, source_id=extra["source_id"],
+                                    fetched_text_sha256=extra["text_selection"].get(
+                                        "fetched_text_sha256"))
+        else:
+            anchor_extension["reason"] = extra.get("status") or "no_deep_query_match"
     assessment = assess(provider, scoped.get("subject", ""), anchor["text"], fetched)
     pack = build_pack(anchor=anchor, scoped=scoped, fetched=fetched,
                       assessment=assessment,
@@ -1599,7 +1845,8 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "",
                                 # order search returned them. Without it "why was that
                                 # source never fetched" is unanswerable from the artifact.
                                 "fetch_order": fetch_order,
-                                "failures": failures})
+                                "failures": failures,
+                                "anchor_extension": anchor_extension})
     pack["lens_probe"] = {k: v for k, v in probe.items() if k != "_provider"}
     pack["perspective_explorer"] = {k: v for k, v in explorer.items() if k != "_provider"}
     pack["_provider"] = {"scope": scoped.get("_provider", {}),

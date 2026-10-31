@@ -7026,6 +7026,10 @@ READER_REPAIR_SYSTEM = (
     "ADDRESS ONLY THE HELD DIMENSIONS. One dimension may need edits in more than one "
     "paragraph -- submit one edit per paragraph, never one edit spanning two. A "
     "dimension not named was already passing.\n"
+    "If ACCESSIBLE_READING held because a name is in a script the reader cannot read, "
+    "identify the person's or institution's role in ordinary English. You may instead "
+    "remove an exact name that the essay does not need. Keep the claim and its scope; "
+    "do not guess a translation or a romanisation.\n"
     "\n"
     "RETURN ONLY THE EDIT OPERATIONS, not the article. No preamble, no notes, no prose "
     "outside the JSON."
@@ -7070,7 +7074,7 @@ def reader_repair_prompt(article_text: str, held: dict, packet: dict,
     # fallback inside the renderer.
     L += ["", "PERMITTED MATERIAL -- what this article was licensed from. "
              "Nothing outside the article and this material may be added:",
-         (permitted_text if permitted_text is not None else ST.render(packet))[:6000]]
+         (permitted_text if permitted_text is not None else ST.render(packet))[:24000]]
     if rejection:
         # CONCISE AND STRUCTURED, never a transcript -- the same shape
         # grounding_completion_prompt() already uses on its own retries.
@@ -9632,6 +9636,15 @@ def persist(out_dir, result: dict) -> None:
     if det.get(READER, {}).get("dimensions"):
         dump("READER_AUDIT.json", {k: det[READER].get(k)
                                    for k in ("dimensions", "held", "one_line", "status")})
+    if det.get(READER, {}).get("reader_completion_history") is not None:
+        # Keep the proposals and rejection reasons for a near miss. The stage summary
+        # omits `detail`, and READER_AUDIT records only the final verdict.
+        dump("READER_COMPLETION.json", {
+            k: det[READER].get(k) for k in (
+                "reader_completion_iterations", "reader_repair_proposals",
+                "reader_repairs_accepted", "reader_repairs_rejected",
+                "reader_initial_blocker_count", "reader_final_blocker_count",
+                "reader_completion_history")})
 
 
 # ══════════════════════════════════════════════════════════════════════════════

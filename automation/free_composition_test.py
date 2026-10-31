@@ -95,6 +95,31 @@ INSTRUMENT = {
                   "abstract; that is their use.",
 }
 
+
+def test_lean_writer_contract_is_a_real_prompt_comparison():
+    current_system = FC.free_writer_system()
+    lean_system = FC.lean_writer_system()
+    lean_user = FC.lean_writer_user(INSTRUMENT, LEDGER, PACK,
+                                    PACK["subject"], RELATIONS)
+    check("the lean system removes the long craft corpus",
+          len(lean_system) < len(current_system) // 5,
+          (len(lean_system), len(current_system)))
+    check("one commissioning question reaches the lean Writer",
+          INSTRUMENT["question"] in lean_user)
+    check("mechanism and disconfirming shape do not pre-script its reading",
+          INSTRUMENT["mechanism"] not in lean_user
+          and INSTRUMENT["disconfirming_shape"] not in lean_user)
+    check("the whole frozen Ledger and source identities still reach it",
+          all(fid in lean_user for fid in LEDGER)
+          and all(s["source_id"] in lean_user for s in PACK["sources"]))
+    check("licensed negative facts and joins still reach it",
+          "F03" in FC.negative_permissions_block(LEDGER)
+          and "CONTEMPORANEOUS" in lean_user)
+    check("the lean prompt carries no plan architecture",
+          not FC.writer_inputs_are_plan_free(lean_system, lean_user))
+    check("the output contract still declares factual lineage",
+          FC.FACTS_MARKER in lean_system and FC.NEGATIVES_MARKER in lean_system)
+
 ARCH = {"article_type": "FEATURE", "use_facts": ["F01", "F02", "F03"],
         "cut_evidence": [{"evidence_id": "F04", "why": "REDUNDANT_PROOF"}],
         "beats": [{"beat_id": "B1", "happens": "the curriculum is emptied",

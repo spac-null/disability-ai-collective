@@ -237,6 +237,16 @@ for label, cut_tokens, genuine in MIXED:
 check("Roman grave: 'the evidence' is still engine language in PROSE",
       bool(ST.leaks("The evidence gives no cause of death.")),
       "the safety stack scans the finished ARTICLE, which is model-written")
+check("a real bibliographic paper number is not mistaken for an internal source ID",
+      not ST.leaks("NIST lists Visibility of radiant energy as paper S475."))
+check("a quoted question's opening auxiliary is not a new entity",
+      "Can" not in ST._entities('The question “Can I be there?” becomes practical.'))
+check("a new name inside that quoted question still counts",
+      "Microsyn" in ST._entities('The question “Can Microsyn attend?” remains.'))
+check("a new name opening a quoted statement still counts",
+      "Microsyn" in ST._entities('She wrote “Microsyn is ready.”'))
+check("an actual internal source ID still counts as machine language",
+      bool(ST.leaks("The evidence is in S5.")))
 check("Roman grave: that same phrase in a GENERATED packet field still HOLDs",
       any("provenance frame" in e
           for e in ST.validate_packet(packet(crip_turn="The evidence gives no cause."))))

@@ -8,13 +8,22 @@ from __future__ import annotations
 
 from .provider import parse_json_object
 
-SYSTEM = """You are commissioning one Crip Minds essay from a frozen research record.
-Find one question that the particular evidence can actually investigate. Select only
-the numbered propositions needed to let that question develop, including any fact
-that limits, complicates or could change the first reading. If the record cannot
-support a worthwhile essay, say HOLD and name the missing evidence. The supplied
-question is editorial intent, not a factual finding. Do not add a fact, scene, person,
-date, number or causal claim. Do not outline the article or prescribe its beats.
+SYSTEM = """You are commissioning one fully reported Crip Minds long-form essay from
+a frozen research record. Find one consequential question that the particular evidence
+can actually answer through distinct concrete particulars, a credible complication
+and enough development to sustain roughly 1,400–2,200 words without repetition.
+Select only the numbered propositions needed for that question. If the central answer
+depends on missing outcomes, participant accounts, cohort details or implementation,
+say HOLD and name the reporting needed. Do not turn a gap in the record into the
+essay's main revelation or shrink the question until it becomes a thin explainer.
+Where the record offers a witnessed action, exchange, document or physical object that
+lets a reader enter the problem, keep the best such propositions. A list of categories
+and outcomes alone is not enough material for a reported essay. The Writer decides
+where those details belong; do not prescribe an opening or ending.
+The supplied question is editorial intent, not a factual finding. Source IDs show
+which propositions share a source; several facts from one source are not several
+independent reports. Do not add a fact, scene, person, date, number or causal claim.
+Do not outline the article or prescribe its beats.
 Reply with one JSON object: {"decision":"WRITE|HOLD", "question":"...",
 "fact_ids":["F01"], "reason":"one or two sentences", "missing_evidence":"..."}.
 For HOLD, leave question empty and fact_ids empty."""
@@ -30,7 +39,9 @@ def propose(provider, *, subject: str, question: str, ledger: dict) -> dict:
     lines = ["SUBJECT: " + subject.strip(), "ORIGINAL QUESTION: " + question.strip(),
              "FROZEN PROPOSITIONS:"]
     for fid, fact in sorted(ledger.items()):
-        lines.append("%s  %s" % (fid, str(fact.get("proposition") or "").strip()))
+        sources = ",".join(str(x) for x in (fact.get("evidence_ids") or [])) or "unspecified"
+        lines.append("%s  [%s] %s" % (
+            fid, sources, str(fact.get("proposition") or "").strip()))
     user = "\n".join(lines)
     completion = provider.complete(SYSTEM, user, max_tokens=1800)
     obj = parse_json_object(completion.text)

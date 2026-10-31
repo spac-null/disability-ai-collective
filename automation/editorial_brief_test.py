@@ -10,8 +10,10 @@ class FakeProvider:
     def __init__(self, reply):
         self.reply = reply
         self.user = ""
+        self.system = ""
 
     def complete(self, system, user, max_tokens=1800):
+        self.system = system
         self.user = user
         return Completion(json.dumps(self.reply), "test", "test", "offline")
 
@@ -19,7 +21,8 @@ class FakeProvider:
 def run():
     ledger = {
         "F01": {"proposition": "The venue asks for silence."},
-        "F02": {"proposition": "The revised policy permits audience noise."},
+        "F02": {"proposition": "The revised policy permits audience noise.",
+                "evidence_ids": ["S1", "S2"]},
     }
     provider = FakeProvider({"decision": "WRITE", "question": "Who sets the rule?",
                              "fact_ids": ["F01", "F02"], "reason": "The policy changed.",
@@ -27,7 +30,10 @@ def run():
     brief = propose(provider, subject="A theatre", question="A broad question",
                     ledger=ledger)
     assert brief["fact_ids"] == ["F01", "F02"]
-    assert "F01  The venue asks for silence." in provider.user
+    assert "F01  [unspecified] The venue asks for silence." in provider.user
+    assert "F02  [S1,S2] The revised policy permits audience noise." in provider.user
+    assert "fully reported Crip Minds long-form essay" in provider.system
+    assert "Source IDs show" in provider.system
     assert brief["provider"]["actual_model"] == "test"
 
     held = FakeProvider({"decision": "HOLD", "question": "", "fact_ids": [],

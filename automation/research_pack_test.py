@@ -127,6 +127,179 @@ def test_excerpt_must_be_verbatim_span_of_fetched_bytes():
           len(kept) == 1 and len(dropped) == 1, (kept, dropped))
 
 
+def test_selected_excerpt_survives_pack_budget():
+    """The BAC run lost its decisive commitment just past an equal-share cut."""
+    early = "The venue launched a programme to change how audiences enter."
+    late = ("Access requirements should be understood and embedded so that "
+            "arranging them becomes seamless for audiences.")
+    full = early + (" surrounding context" * 180) + "\n" + late + (
+        " later context" * 180)
+    anchor = {"url": "https://anchor.example/a", "text": "anchor " * 3334,
+              "title": "", "accessed_at": AT}
+    fetched = [dict(source_id="S%d" % i, url="https://publisher%d.example/a" % i,
+                    publisher="publisher%d.example" % i,
+                    text=full if i == 1 else ("different context %d " % i) * 400,
+                    status="ok", accessed_at=AT, title="", canonical_url="")
+               for i in range(1, 8)]
+    assessment = {"sources": [dict(source_id="S%d" % i, role="PRIMARY",
+                                   relation="extends",
+                                   excerpts=[early, late] if i == 1 else [])
+                              for i in range(1, 8)]}
+    pack = RS.build_pack(anchor=anchor,
+                         scoped={"subject": "audience access", "anchor_kind": "article",
+                                 "anchor_subject_words": 100},
+                         fetched=fetched, assessment=assessment,
+                         searched={"queries": [], "candidates": [], "failures": []})
+    s1 = next(s for s in pack["sources"] if s["source_id"] == "S1")
+    check("the opening and late selected fact both survive", early in s1["text"]
+          and late in s1["text"], s1["excerpts_dropped"])
+    check("the selection remains inside the 40k pack budget",
+          sum(len(s["text"]) for s in pack["sources"]) <= RS.PACK_TEXT_BUDGET)
+    selection = s1.get("text_windows") or {}
+    windows = selection.get("windows") or []
+    check("every selected window is an unchanged fetched span",
+          len(windows) >= 2 and all(full[w["char_start"]:w["char_end"]]
+                                    in s1["text"] for w in windows), selection)
+    check("the omitted region is explicit to the Writer and Grounder",
+          "[OMITTED SOURCE TEXT]" in S.pack_material_block(pack))
+    try:
+        _validate(pack)
+        check("the windowed pack satisfies the provenance contract", True)
+    except C.ContractViolation as e:
+        check("the windowed pack satisfies the provenance contract", False, e)
+
+
+def test_long_html_keeps_the_provision_the_query_targets():
+    """A long official page can change law after the first 12k characters."""
+    opening = "Official consolidated statute on support measures. " * 30
+    preamble = ("General history of legal capacity and judicial support. " * 500)
+    provision = ("Disposición transitoria quinta. Revisión de las medidas ya acordadas. "
+                 "The current maximum period for review is six years. ")
+    full = opening + preamble + provision + ("Final provisions and signatures. " * 300)
+    focus = ["revisión sentencias disposición transitoria quinta plazo tres años"]
+    selected, meta = RS.select_html_windows(full, focus, RS.PER_SOURCE_CHARS)
+    check("the revised provision survives a long-page fetch",
+          provision in selected and len(selected) <= RS.PER_SOURCE_CHARS)
+    check("a stale query does not become source text",
+          "maximum period for review is three years" not in selected)
+    windows = (meta or {}).get("windows") or []
+    rebuilt = RS._SOURCE_OMISSION.join(
+        full[w["char_start"]:w["char_end"]] for w in windows)
+    check("HTML selection is reconstructible from original offsets and hash",
+          selected == rebuilt and meta["fetched_text_sha256"] == C.sha256_text(full))
+    unchanged, none = RS.select_html_windows(opening, focus, RS.PER_SOURCE_CHARS)
+    check("short HTML keeps its full previous representation",
+          unchanged == opening and none is None)
+
+
+def test_document_excerpt_survives_pack_budget_with_page_locator():
+    """The CIE workshop counterargument was selected, then cut off mid-page."""
+    early = "The workshop discussed a different luminous efficiency function."
+    late = ("Rescaling below one violates the normalization convention and "
+            "still leaves product values changed by several percent.")
+    page3 = "[PAGE 3]\n" + early + (" background details" * 210)
+    page5 = "[PAGE 5]\n" + (" technical context" * 120) + late
+    full = page3 + "\n\n" + page5
+    p3_start = len("[PAGE 3]\n")
+    p5_start = len(page3) + 2 + len("[PAGE 5]\n")
+    doc = {"media_type": "application/pdf", "file_sha256": "x" * 64,
+           "extractor": {"name": "test", "version": "1"},
+           "selection": {"pages_available": 5, "pages_selected": [3, 5],
+                         "pages_omitted_for_budget": [], "truncated": False},
+           "locators": [
+               {"kind": "page", "page_no": 3, "char_start": p3_start,
+                "char_end": len(page3)},
+               {"kind": "page", "page_no": 5, "char_start": p5_start,
+                "char_end": len(full)}]}
+    anchor = {"url": "https://anchor.example/a", "text": "anchor " * 3334,
+              "title": "", "accessed_at": AT}
+    fetched = [dict(source_id="S%d" % i, url="https://publisher%d.example/a" % i,
+                    publisher="publisher%d.example" % i,
+                    text=full if i == 1 else ("other material %d " % i) * 350,
+                    status="ok", accessed_at=AT, title="", canonical_url="",
+                    **({"document": doc} if i == 1 else {}))
+               for i in range(1, 8)]
+    assessment = {"sources": [dict(source_id="S%d" % i, role="PRIMARY",
+                                   relation="extends",
+                                   excerpts=[early, late] if i == 1 else [])
+                              for i in range(1, 8)]}
+    pack = RS.build_pack(anchor=anchor,
+                         scoped={"subject": "candela", "anchor_kind": "article",
+                                 "anchor_subject_words": 100},
+                         fetched=fetched, assessment=assessment,
+                         searched={"queries": [], "candidates": [], "failures": []})
+    s1 = next(s for s in pack["sources"] if s["source_id"] == "S1")
+    locators = s1["document"]["locators"]
+    check("the late PDF counterargument survives the shared pack budget",
+          late in s1["text"] and late in s1["excerpts"])
+    check("its page locator points to the carried counterargument",
+          any(l["page_no"] == 5 and late in s1["text"][l["char_start"]:l["char_end"]]
+              for l in locators), locators)
+    check("the PDF windowed text stays within the same pack budget",
+          sum(len(s["text"]) for s in pack["sources"]) <= RS.PACK_TEXT_BUDGET)
+    try:
+        _validate(pack)
+        check("a PDF windowed pack still validates", True)
+    except C.ContractViolation as e:
+        check("a PDF windowed pack still validates", False, e)
+
+
+def test_long_anchor_gets_a_same_source_extension():
+    """A later legal provision is reachable without treating one law as two sources."""
+    anchor_text = "The law's preamble discusses support measures. " * 90
+    late = "Disposición transitoria quinta now allows six years for review."
+    extra_text = "Official law text.\n\n[OMITTED SOURCE TEXT]\n\n" + late
+    original = {name: getattr(RS, name) for name in (
+        "scope", "search_urls", "fetch_source", "assess", "lens_probe_enabled",
+        "perspective_explorer_enabled")}
+    calls = []
+    try:
+        RS.scope = lambda *_: {
+            "subject": "the law's transition", "queries": ["disposición transitoria quinta"],
+            "questions": ["What is the current review deadline?"],
+            "anchor_kind": "other", "anchor_subject_words": 50}
+        RS.search_urls = lambda *_a, **_k: []
+
+        def fake_fetch(url, **kwargs):
+            calls.append((url, kwargs))
+            return {"url": url, "status": "ok", "text": extra_text,
+                    "title": "", "canonical_url": "", "text_selection": {
+                        "strategy": "query_windowed_html_v1",
+                        "fetched_text_sha256": "a" * 64,
+                        "windows": [{"char_start": 0, "char_end": 18},
+                                    {"char_start": 200000, "char_end": 200000 + len(late)}]}}
+
+        RS.fetch_source = fake_fetch
+        RS.assess = lambda *_: {"sources": [{"source_id": "S1", "role": "PRIMARY",
+                                             "relation": "extends", "excerpts": [late]}]}
+        RS.lens_probe_enabled = lambda: False
+        RS.perspective_explorer_enabled = lambda: False
+        pack = RS.research(None, anchor={"url": "https://law.example/act",
+                                         "text": anchor_text, "title": "",
+                                         "original_length_chars": 225000,
+                                         "accessed_at": AT}, now_iso=AT)
+    finally:
+        for name, value in original.items():
+            setattr(RS, name, value)
+    supplement = next(s for s in pack["sources"] if s["source_id"] == "S1")
+    check("the long anchor triggers exactly one query-focused refetch",
+          len(calls) == 1 and calls[0][1].get("html_focus"))
+    check("the later provision reaches the pack as verbatim source text",
+          late in supplement["text"] and late in supplement["excerpts"])
+    check("one law does not buy a new independent source or primary role",
+          supplement["duplicate_cluster"] == 0
+          and supplement["role"] == "CONTEXT"
+          and pack["coverage"]["independent_publishers"] == 0)
+    check("the anchor extension is visible in the research record",
+          pack["anchor_extension"]["kept"]
+          and pack["anchor_extension"]["source_id"] == "S1")
+    try:
+        _validate(pack)
+        check("an anchor-extension pack still validates", True)
+    except C.ContractViolation as e:
+        check("an anchor-extension pack still validates", False, e)
+
+
 def test_unfetched_and_failed_sources_supply_nothing():
     anchor = _src("anchor", "S0", role="ANCHOR")
     for status in ("http_403", "empty_or_blocked", "TimeoutError",
@@ -849,6 +1022,10 @@ def test_subject_span_must_be_verbatim_in_the_anchor():
 def main() -> None:
     for fn in (test_pack_contract,
                test_excerpt_must_be_verbatim_span_of_fetched_bytes,
+               test_selected_excerpt_survives_pack_budget,
+               test_long_html_keeps_the_provision_the_query_targets,
+               test_document_excerpt_survives_pack_budget_with_page_locator,
+               test_long_anchor_gets_a_same_source_extension,
                test_unfetched_and_failed_sources_supply_nothing,
                test_search_result_is_not_a_source,
                test_writer_input_references_the_exact_pack_and_replays_from_disk,
