@@ -100,6 +100,7 @@ non-deterministic, and asking it twice until it agrees is not a check.
 """
 from __future__ import annotations
 
+import html as _html
 import re
 
 from . import composition as CP
@@ -1048,6 +1049,14 @@ F01 F03 F07
 (leave this section empty if there are none)"""
 
 
+def _clean_source_title(raw: str, max_len: int = 100) -> str:
+    """Unescape HTML entities and truncate to a readable link label."""
+    t = _html.unescape(str(raw or "")).strip()
+    if len(t) > max_len:
+        t = t[:max_len].rsplit(" ", 1)[0].rstrip(" —|")
+    return t or "(no title established)"
+
+
 def footnote_writer_system() -> str:
     return _FOOTNOTE_WRITER_SYSTEM
 
@@ -1084,7 +1093,7 @@ def footnote_writer_user(instrument: dict | None, ledger: dict,
             continue
         L.append("  %s  title=%s  publisher=%s  url=%s" % (
             s.get("source_id") or "?",
-            s.get("title") or "(not established)",
+            _clean_source_title(s.get("title") or ""),
             s.get("publisher") or "(not established)",
             s.get("url") or ""))
 
