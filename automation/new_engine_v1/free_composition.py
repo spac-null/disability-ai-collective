@@ -2169,6 +2169,20 @@ def run_free_argumentative_composition(
         # agreed on. It runs before every factual gate, so they all judge the revision.
         if writer_contract == "footnote" and reader:
             pre = CP.agreed_reader_gate(P, final, [])
+            # Claims the sources do not support go to the Writer as notes too, so it
+            # rewrites them in context. A deleting repair after the fact cut 20-37% of
+            # the Spain drafts and left dangling references the Reader then held.
+            g0 = CP.ground_candidate(P, CP.bundle_text(final, None), source_text,
+                                     source_sha, pack)
+            unsupported = [f for f in (g0.get("blocking") or []) if f.get("quote")]
+            if unsupported:
+                held = dict(pre.get("held") or {})
+                held["UNSUPPORTED_CLAIM"] = {
+                    "verdict": CP.HOLD,
+                    "note": "The sources do not support these. Cut each one, or rewrite "
+                            "it to say only what the Ledger says.",
+                    "passages": [str(f["quote"]) for f in unsupported][:8]}
+                pre = dict(pre, held=held, status=CP.HOLD)
             tells = structure_tells(final)
             if tells:
                 held = dict(pre.get("held") or {})
@@ -2183,8 +2197,11 @@ def run_free_argumentative_composition(
                      "held": {d: (v or {}).get("passages") or []
                               for d, v in (pre.get("held") or {}).items()},
                      "structure_tells": tells,
+                     "unsupported_claims": [str(f["quote"])[:200] for f in unsupported],
+                     "grounding_model_calls": g0.get("model_calls", 0),
                      "reader_disagreements": pre.get("reader_disagreements") or []}
-            spent = calls.get(CP.WRITER, 0) + pre.get("model_calls", 0)
+            spent = (calls.get(CP.WRITER, 0) + pre.get("model_calls", 0)
+                     + g0.get("model_calls", 0))
             if pre["status"] != CP.PASS:
                 try:
                     wr2 = write_article_free(
@@ -2328,7 +2345,10 @@ def run_free_argumentative_composition(
         # ONE ROUND. Then the required checks run again on the EXACT repaired bytes, and
         # whatever they say is the answer. The Grounder is non-deterministic; re-grounding
         # identical bytes until it agrees is not a check, and there is no path back here.
-        if g["status"] != CP.PASS and CP.repairable_findings(g.get("blocking")):
+        # On the footnote contract the Writer already revised against Grounding's
+        # findings; a second, deleting repair here only carves holes in the prose.
+        if (writer_contract != "footnote" and g["status"] != CP.PASS
+                and CP.repairable_findings(g.get("blocking"))):
             try:
                 grep = CP.grounding_repair(P, final, g["blocking"], ledger, licensing)
             except CP.CompositionHold as e:

@@ -1594,13 +1594,16 @@ def test_density_survives_a_real_grounding_hold() -> None:
 def test_a_refused_grounding_repair_does_not_hold_a_footnote_article() -> None:
     """Grounding is advisory on the footnote contract. A repair that is refused raised a
     CompositionHold and held the article anyway (Talking Book replay, 2026-11-01)."""
-    res, _prov, _n = _run([HOLD_G, HOLD_G], writer_contract="footnote")
+    res, prov, _n = _run([HOLD_G, HOLD_G], writer_contract="footnote")
     check("footnote: the run does not stop at GROUNDING",
           res.get("failure_stage") != CP.GROUNDING,
           (res.get("failure_stage"), res.get("failure_reason")))
     g = res["detail"].get(CP.GROUNDING) or {}
-    check("the refused repair and the advisory findings are both recorded",
-          bool(g.get("refused_repair")) and g.get("advisory_only"), sorted(g))
+    check("no deleting repair runs, and the findings stay as advisories",
+          not g.get("after_surgical_repair") and g.get("advisory_only"), sorted(g))
+    asks = [c for c in prov.calls if "=== YOUR FIRST DRAFT ===" in c["user"]]
+    check("the unsupported claim went to the Writer as a note instead",
+          bool(asks) and "UNSUPPORTED_CLAIM" in asks[0]["user"], len(asks))
     res2, _p2, _n2 = _run([HOLD_G, HOLD_G])
     check("current contract: a refused repair still holds",
           res2["status"] != CP.PASS and res2.get("failure_stage") == CP.GROUNDING,
