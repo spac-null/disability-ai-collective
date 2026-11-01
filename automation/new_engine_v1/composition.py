@@ -7147,7 +7147,7 @@ def _beat_local_licensing(packet: dict, paragraph_index: int,
 
 
 def apply_reader_repair(article_text: str, edits: list, held: dict,
-                        packet: dict) -> tuple:
+                        packet: dict, within_flagged: bool = False) -> tuple:
     """Apply LOCAL, mechanically-verified edits. Returns (text, provenance, errs).
 
     The same discipline apply_grounding_repair() already enforces for Safety and
@@ -7205,6 +7205,15 @@ def apply_reader_repair(article_text: str, edits: list, held: dict,
                         "(whitespace or punctuation drift) -- refused rather than "
                         "guessed at" % i)
             continue
+        if within_flagged:
+            # Only what the Reader quoted may move. A paragraph-wide span let a repair
+            # delete an article's thesis and keep the flagged line beside it.
+            flagged = [normalize_span(str(p)) for v in held.values()
+                       for p in ((v or {}).get("passages") or []) if str(p).strip()]
+            if flagged and not any(normalize_span(orig) in p for p in flagged):
+                errs.append("edit %d reaches outside every passage the Reader quoted: %r"
+                            % (i, orig[:80]))
+                continue
         lic_nums, lic_ents = _beat_local_licensing(packet, host_idx, n_paras)
         new_nums = sorted(_numbers_of(rep) - _numbers_of(orig) - lic_nums)
         new_ents = sorted(ST._entities(rep) - ST._entities(orig) - lic_ents)
@@ -7229,7 +7238,8 @@ def apply_reader_repair(article_text: str, edits: list, held: dict,
         # factual claim needing its own licence and is not a copy edit either way.
         lost_neg = _NEGATION_TOKENS.findall(orig.lower())
         kept_neg = _NEGATION_TOKENS.findall(rep.lower())
-        if sorted(lost_neg) != sorted(kept_neg):
+        if (sorted(lost_neg) != sorted(kept_neg)
+                and not (within_flagged and _negation_left_only_in_whole_clauses(orig, rep))):
             errs.append("edit %d changes the polarity of its own span -- negation before "
                         "%s, after %s. A repair may rephrase a claim; it may not reverse "
                         "one." % (i, sorted(lost_neg), sorted(kept_neg)))
@@ -7315,7 +7325,9 @@ def reader_completion_loop(provider, article_text: str, package: dict | None, rg
                            audit_fn, package_fn, gate_fn,
                            package_completion_fn=None,
                            permitted_text: str | None = None,
-                           max_iterations: int = READER_COMPLETION_MAX_ITERATIONS
+                           max_iterations: int = READER_COMPLETION_MAX_ITERATIONS,
+                           grounding_relative: bool = False,
+                           within_flagged: bool = False
                            ) -> dict:
     """TRANSACTIONAL, PROGRESS-BOUNDED Reader completion. Replaces the one-repair budget
     with a loop that keeps proposing local editorial repairs only as long as each one
@@ -7365,7 +7377,7 @@ def reader_completion_loop(provider, article_text: str, package: dict | None, rg
             break
         iterations += 1
         prop = reader_repair(provider, accepted_text, held, packet, rejection,
-                             permitted_text)
+                             permitted_text, within_flagged=within_flagged)
         proposals += 1
         reader_calls += prop.get("model_calls", 0)
 
@@ -7373,7 +7385,12 @@ def reader_completion_loop(provider, article_text: str, package: dict | None, rg
             rejected += 1
             history.append({"iteration": iterations, "outcome": "no_usable_proposal",
                             "reason": prop.get("reason", "the proposal was refused"),
+                            "failures": (prop.get("failures") or [])[:8],
                             "blockers_before": len(before_sig)})
+            if within_flagged and prop.get("failures"):
+                rejection = {"reason": "EDITS_REFUSED_BY_THE_LOCAL_EDIT_GUARD",
+                             "detail": prop["failures"][:4]}
+                continue
             break
 
         sig = _reader_edit_signature(prop.get("edits"))
@@ -7418,14 +7435,22 @@ def reader_completion_loop(provider, article_text: str, package: dict | None, rg
                                        source_text, source_sha, pack, arch, packet)
         grounding_calls += candidate_g.get("model_calls", 0)
         entry["grounding"] = candidate_g["status"]
-        if candidate_g["status"] != PASS:
+        introduced = candidate_g.get("blocking") or []
+        if candidate_g["status"] != PASS and grounding_relative:
+            # Grounding was advisory when this article was accepted, so its own findings
+            # are already on it. Only a finding on text the proposal wrote counts.
+            introduced = grounding_findings_introduced(
+                introduced, bundle_text(accepted_text, accepted_pkg))
+            entry["grounding_preexisting"] = (len(candidate_g.get("blocking") or [])
+                                              - len(introduced))
+        if candidate_g["status"] != PASS and (introduced or not grounding_relative):
             # THE POINT OF THE WHOLE MECHANISM. Not "now repair these findings" -- the
             # Reader's proposal is simply refused, and the factually clean article that
             # reached this stage is still the accepted one.
             rejected += 1
             rejection = {"reason": READER_REJECTED_GROUNDING,
                          "detail": [str(f.get("quote") or f.get("claim") or "")[:120]
-                                    for f in (candidate_g.get("blocking") or [])[:4]]}
+                                    for f in introduced[:4]]}
             entry.update(outcome="grounding_rejected", reason=rejection["detail"])
             history.append(entry)
             continue
@@ -7472,6 +7497,59 @@ def reader_completion_loop(provider, article_text: str, package: dict | None, rg
             "reader_final_blocker_count": len(before_sig)}
 
 
+_CLAUSE_LEAD = re.compile(r"^\s*[,;:—–]")
+_SENTENCE_END = re.compile(r"[.!?][\"'”’)]*(?:\[\^[^\]\s]+\])*\s*$")
+
+
+def _negation_left_only_in_whole_clauses(orig: str, rep: str) -> bool:
+    """True when `rep` is `orig` with pieces cut, nothing added, and every cut piece that
+    carries a negation is a whole sentence or a clause opened by , ; : or a dash.
+
+    Cutting "did not" out of "The board did not approve it" fails: the piece is two
+    words inside a clause. Cutting ", and the evidence does not let me" passes.
+    """
+    import difflib
+    sm = difflib.SequenceMatcher(None, orig, rep, autojunk=False)
+    for tag, i1, i2, _j1, _j2 in sm.get_opcodes():
+        if tag == "equal":
+            continue
+        if tag != "delete":
+            piece = orig[i1:i2]
+            if _NEGATION_TOKENS.search(piece.lower()) or rep[_j1:_j2].strip(" .,;:"):
+                return False
+            continue
+        piece = orig[i1:i2]
+        if not _NEGATION_TOKENS.search(piece.lower()):
+            continue
+        starts_sentence = i1 == 0 or bool(_SENTENCE_END.search(orig[:i1]))
+        if _CLAUSE_LEAD.match(piece):
+            continue
+        if starts_sentence and (i2 == len(orig) or _SENTENCE_END.search(piece)):
+            continue
+        return False
+    return True
+
+
+def grounding_findings_introduced(findings: list, before_text: str) -> list:
+    """Findings whose quoted span was not already in `before_text`.
+
+    A span that spans old and new text is not in `before_text`, so it counts as
+    introduced. A finding with no quote cannot be placed and counts as introduced.
+    """
+    def bare(s):
+        return _FOOTNOTE_MARK.sub("", str(s or ""))
+    before = bare(before_text)
+    out = []
+    for f in findings or []:
+        q = bare((f or {}).get("quote")).strip()
+        if not q or not span_in(q, before):
+            out.append(f)
+    return out
+
+
+_FOOTNOTE_MARK = re.compile(r"\[\^[^\]\s]+\]")
+
+
 def _reader_edit_signature(edits: list) -> tuple:
     """A hashable fingerprint of a Reader proposal, to catch the model re-proposing an
     edit that was already refused. Same idea as _edit_signature, keyed on the fields a
@@ -7483,7 +7561,8 @@ def _reader_edit_signature(edits: list) -> tuple:
 
 def reader_repair(provider, article_text: str, held: dict, packet: dict,
                   rejection: dict | None = None,
-                  permitted_text: str | None = None) -> dict:
+                  permitted_text: str | None = None,
+                  within_flagged: bool = False) -> dict:
     """STAGE 10b. ONE proposal, local edits only -- never a full-article rewrite.
     Mechanically verified by apply_reader_repair(), the same discipline
     apply_grounding_repair() already applies to Safety and Grounding's own repairs.
@@ -7501,7 +7580,8 @@ def reader_repair(provider, article_text: str, held: dict, packet: dict,
     if not isinstance(edits, list) or not edits:
         return {"status": HOLD, "reason": "the editorial repair returned no edits",
                 "model_calls": 1, "provider": ident}
-    text, prov, errs = apply_reader_repair(article_text, edits, held, packet)
+    text, prov, errs = apply_reader_repair(article_text, edits, held, packet,
+                                           within_flagged=within_flagged)
     if not prov or not text.strip():
         return {"status": HOLD,
                 "reason": "the editorial repair did not stay within its permissions"

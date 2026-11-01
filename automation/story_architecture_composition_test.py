@@ -5312,6 +5312,118 @@ def test_reader_completion_is_still_local_edits_only():
               {"reason": CP.READER_REJECTED_GROUNDING, "detail": ["x"]}))
 
 
+_PREEXISTING = ("The room was built from Himalayan salt bricks, and the pavilion was "
+                "dug partway into the ground.")
+
+
+def _loop_with_grounding(findings, relative):
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    pkg = {"title": "t", "dek": "d", "homepage_excerpt": "h",
+           "meta_description": "m", "social_hook": "s"}
+    import new_engine_v1.stages as S
+    real = S.ground
+    S.ground = lambda *a, **k: {"status": "settled", "findings": list(findings)}
+    try:
+        return CP.reader_completion_loop(
+            Scripted([_RE1, _RE1]), DRAFT, pkg,
+            CP.reader_gate(Scripted([_reader_hold(READABILITY=[_RP1])]), DRAFT, []),
+            packet, LEDGER, DRAFT, PACK, ARCH, S0, "x",
+            audit_fn=lambda a, p, **k: {"status": CP.PASS, "blocking": [],
+                                        "model_calls": 0, "advisories": []},
+            package_fn=lambda t: dict(pkg),
+            gate_fn=lambda t, adv: CP.reader_gate(Scripted([READER_OK]), t, adv),
+            max_iterations=2, grounding_relative=relative)
+    finally:
+        S.ground = real
+
+
+def test_relative_grounding_accepts_a_repair_over_preexisting_advisories():
+    """The footnote contract lets an article reach the Reader with advisory Grounding
+    findings. A repair that leaves those sentences untouched adds nothing, and must not
+    be refused for them -- that refusal held every such article (0 of 5 accepted)."""
+    old = [{"id": "G1", "classification": "TRUE_UNSUPPORTED", "quote": _PREEXISTING,
+            "why": "advisory on the accepted draft"}]
+    check("precondition: the flagged sentence is in the draft",
+          CP.normalize_span(_PREEXISTING) in CP.normalize_span(DRAFT))
+    rc = _loop_with_grounding(old, relative=True)
+    check("relative: a pre-existing finding does not refuse the repair",
+          rc["reader_repairs_accepted"] == 1 and rc["status"] == CP.PASS, rc["reader_completion_history"])
+    check("the history says how many findings were pre-existing",
+          rc["reader_completion_history"][0].get("grounding_preexisting") == 1,
+          rc["reader_completion_history"])
+    rc2 = _loop_with_grounding(old, relative=False)
+    check("strict (planned path): the same finding still refuses",
+          rc2["reader_repairs_accepted"] == 0, rc2["reader_completion_history"])
+
+
+def test_relative_grounding_still_refuses_a_finding_on_new_text():
+    new = [{"id": "G1", "classification": "TRUE_UNSUPPORTED",
+            "quote": "Each entry states its purpose.", "why": "the repair's own wording"}]
+    rc = _loop_with_grounding(new, relative=True)
+    check("a finding on the repaired wording refuses the repair",
+          rc["reader_repairs_accepted"] == 0
+          and rc["reader_completion_history"][0]["outcome"] == "grounding_rejected",
+          rc["reader_completion_history"])
+
+
+def test_within_flagged_refuses_an_edit_beyond_the_quoted_passage():
+    """The replay failure: a paragraph-wide span deleted the thesis and kept the flagged
+    scaffold line. With within_flagged, only text the Reader quoted may move."""
+    flag = "Here is the asymmetry."
+    thesis = "The sector had the delivery and went and got the technology."
+    art = "Opening line.\n\n%s %s\n\nClose." % (flag, thesis)
+    held = {"ENGINE_LANGUAGE_LEAK": {"passages": [flag]}}
+    wide = {"dimension": "ENGINE_LANGUAGE_LEAK", "operation": "DELETE",
+            "original": "%s %s" % (flag, thesis), "repaired": flag}
+    t, prov, errs = CP.apply_reader_repair(art, [wide], held, {}, within_flagged=True)
+    check("a span wider than the quoted passage is refused", not prov and thesis in t, errs)
+    narrow = {"dimension": "ENGINE_LANGUAGE_LEAK", "operation": "DELETE",
+              "original": flag, "repaired": ""}
+    t2, prov2, errs2 = CP.apply_reader_repair(art, [narrow], held, {}, within_flagged=True)
+    check("deleting exactly the quoted passage is allowed",
+          prov2 and flag not in t2 and thesis in t2, errs2)
+    _t3, prov3, _e3 = CP.apply_reader_repair(art, [wide], held, {})
+    check("without the flag the old paragraph-local rule is unchanged", bool(prov3))
+
+
+def test_clause_deletion_with_a_negation_is_allowed_but_a_reversal_is_not():
+    f = CP._negation_left_only_in_whole_clauses
+    check("cutting a comma clause that carries 'not' is allowed",
+          f("I do not want to overstate it, and the evidence does not let me.",
+            "I do not want to overstate it."))
+    check("cutting a whole sentence that carries 'no' is allowed",
+          f("It has no record. Notes were taken, but no contract exists.",
+            "It has no record."))
+    check("cutting 'not' out of a clause is refused",
+          not f("The board did not approve it.", "The board did approve it."))
+    check("cutting a leading negative word is refused",
+          not f("Nobody approved it.", "approved it."))
+    check("adding words while dropping a negation is refused",
+          not f("It was not approved.", "It was approved quickly."))
+    art = "One.\n\nI do not overstate it, and the evidence does not let me.\n\nEnd."
+    held = {"ENGINE_LANGUAGE_LEAK": {"passages": [
+        "I do not overstate it, and the evidence does not let me."]}}
+    e = {"dimension": "ENGINE_LANGUAGE_LEAK", "operation": "DELETE",
+         "original": "I do not overstate it, and the evidence does not let me.",
+         "repaired": "I do not overstate it."}
+    _t, prov, errs = CP.apply_reader_repair(art, [e], held, {}, within_flagged=True)
+    check("free path: the clause cut is applied", bool(prov), errs)
+    _t2, prov2, _e2 = CP.apply_reader_repair(art, [e], held, {})
+    check("planned path: the old strict count still refuses it", not prov2)
+
+
+def test_grounding_findings_introduced_matches_conservatively():
+    before = "He wrote to Meyer,[^F01] marked it confidential.[^F14] It ended there."
+    f = lambda q: {"quote": q}
+    check("a footnote marker inside the sentence does not make it new",
+          CP.grounding_findings_introduced([f("He wrote to Meyer, marked it confidential.")],
+                                           before) == [])
+    check("a span across old and new text counts as new",
+          len(CP.grounding_findings_introduced([f("It ended there. Then more.")], before)) == 1)
+    check("a finding with no quote counts as new",
+          len(CP.grounding_findings_introduced([f("")], before)) == 1)
+
+
 def test_reader_completion_history_is_persisted_in_full():
     """The audit requirement: what happened must be readable off the persisted run
     without inference -- the blocker counts, the proposed edits, and each iteration's

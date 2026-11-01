@@ -2342,7 +2342,9 @@ def run_free_argumentative_composition(
                     source_text, source_sha,
                     audit_fn=audit, package_fn=make_package,
                     gate_fn=lambda t, adv: CP.reader_gate(P, t, adv),
-                    permitted_text=permitted_material_block(ledger))
+                    permitted_text=permitted_material_block(ledger),
+                    grounding_relative=bool(g.get("advisory_only")),
+                    within_flagged=True)
                 before_repair = final
                 if rc["reader_repairs_accepted"]:
                     # Article and package move together or not at all: the package is the
@@ -2365,6 +2367,10 @@ def run_free_argumentative_composition(
                         "reader_repairs_accepted", "reader_repairs_rejected",
                         "reader_completion_history", "reader_initial_blocker_count",
                         "reader_final_blocker_count")})
+                if rc["reader_repairs_accepted"] and rc.get("final_grounding"):
+                    st[CP.GROUNDING]["after_reader_repair"] = {
+                        k: rc["final_grounding"].get(k)
+                        for k in ("status", "grounding_status", "blocking")}
                 if rc["reader_repairs_accepted"]:
                     repairs[CP.READER] = 1
                     st[CP.READER]["reader_repair_byte_delta"] = repair_byte_delta(
