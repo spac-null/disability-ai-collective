@@ -1998,6 +1998,70 @@ def _figures_with_units(text: str) -> set:
             if not _GRAMMATICAL_SUFFIX.match(t)}
 
 
+_UNIT_CANON = {
+    "g": {"g"}, "gram": {"g"}, "grams": {"g"}, "gramme": {"g"}, "grammes": {"g"},
+    "kg": {"kg"}, "kilo": {"kg"}, "kilos": {"kg"}, "kilogram": {"kg"},
+    "kilograms": {"kg"}, "mg": {"mg"}, "milligram": {"mg"}, "milligrams": {"mg"},
+    "km": {"km"}, "kilometre": {"km"}, "kilometres": {"km"}, "kilometer": {"km"},
+    "kilometers": {"km"}, "cm": {"cm"}, "centimetre": {"cm"}, "centimetres": {"cm"},
+    "centimeter": {"cm"}, "centimeters": {"cm"}, "mm": {"mm"}, "millimetre": {"mm"},
+    "millimetres": {"mm"}, "millimeter": {"mm"}, "millimeters": {"mm"},
+    "m": {"million", "metre"}, "mn": {"million"}, "million": {"million"},
+    "metre": {"metre"}, "metres": {"metre"}, "meter": {"metre"}, "meters": {"metre"},
+    "bn": {"billion"}, "b": {"billion"}, "billion": {"billion"},
+    "k": {"thousand"}, "thousand": {"thousand"},
+    "lb": {"lb"}, "lbs": {"lb"}, "pound": {"lb"}, "pounds": {"lb"},
+    "oz": {"oz"}, "ounce": {"oz"}, "ounces": {"oz"},
+    "ft": {"ft"}, "foot": {"ft"}, "feet": {"ft"},
+    "mi": {"mile"}, "mile": {"mile"}, "miles": {"mile"},
+    "rpm": {"rpm"}, "mph": {"mph"},
+    "h": {"hour"}, "hr": {"hour"}, "hrs": {"hour"}, "hour": {"hour"}, "hours": {"hour"},
+    "min": {"minute"}, "mins": {"minute"}, "minute": {"minute"}, "minutes": {"minute"},
+    "yr": {"year"}, "yrs": {"year"}, "year": {"year"}, "years": {"year"},
+}
+
+
+def _num_value(s: str):
+    try:
+        return float(str(s).replace(",", "").rstrip("."))
+    except ValueError:
+        return None
+
+
+def _same_quantity(n: str, body: str, approved_units: dict, a_vals: set) -> bool:
+    """Is prose figure `n` an approved quantity written another way?
+
+    Same value ("395" for "395.00", "5000" for "5,000"), or the same value with the same
+    unit ("150 to 200 grams" for "150g to 200g", "90 million" for "90m"). Every
+    occurrence must carry the unit: "150 grams ... 150 deaths" still holds.
+    """
+    v = _num_value(n)
+    if v is None:
+        return False
+    if v in a_vals:
+        return True
+    units = approved_units.get(v)
+    if not units:
+        return False
+    pat = re.compile(r"(?<![\d.,])%s(?![\d])(?:\s*(?:to|-|–|—|or|and)\s*"
+                     r"\d[\d,.]*)?\s*([A-Za-z]+)" % re.escape(n))
+    hits = list(re.finditer(r"(?<![\d.,])%s(?![\d])" % re.escape(n), body))
+    matched = [m for m in pat.finditer(body)
+               if _UNIT_CANON.get(m.group(1).lower(), set()) & units]
+    return bool(hits) and len(matched) >= len(hits)
+
+
+def _approved_units(approved: str) -> dict:
+    out: dict = {}
+    for tok in _figures_with_units(approved):
+        m = _NUMERAL_OF.match(tok)
+        v = _num_value(m.group(0)) if m else None
+        units = _UNIT_CANON.get(tok[m.end():] if m else "")
+        if v is not None and units:
+            out.setdefault(v, set()).update(units)
+    return out
+
+
 def _unit_figure_leaks(body: str, approved: str, a_nums: set) -> set:
     """Suffixed figures in the prose that the approved material never granted.
 
@@ -2296,8 +2360,11 @@ def factual_surface_audit(article_text: str, packet: dict, ledger: dict | None =
         if (int(m.group("y")), _MONTH_NUMBER.get(m.group("mname").lower()))
         in licensed_months}
 
-    nums = sorted((_numbers(body) - a_nums)
-                  | _unit_figure_leaks(body, approved, a_nums))
+    a_vals = {x for x in (_num_value(n) for n in a_nums) if x is not None}
+    a_units = _approved_units(approved)
+    nums = sorted(n for n in ((_numbers(body) - a_nums)
+                              | _unit_figure_leaks(body, approved, a_nums))
+                  if not _same_quantity(n, body, a_units, a_vals))
     # NAMES ARE COMPARED WITH THEIR ACCENTS FOLDED, ON BOTH SIDES, AND THE SECOND HALF OF
     # THAT IS THE IMPORTANT ONE. `_entities` matches [A-Z][A-Za-z'.-]{2,}, which is ASCII,
     # so an accented name is invisible to it: on "Yalcin Cetinkaya writes that Huseyin

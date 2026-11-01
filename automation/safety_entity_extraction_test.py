@@ -230,6 +230,27 @@ def test_a_dotted_ledger_date_licenses_its_month_and_year():
           r2["unapproved_numbers"])
 
 
+def test_the_same_quantity_written_another_way_is_licensed():
+    print("\n3e. Same quantity, different notation")
+    pk = _packet("The pickups were heavy.")
+
+    def flags(ledger_text, prose):
+        return ST.factual_surface_audit("# T\n\n%s\n" % prose, pk,
+                                        _ledger(ledger_text))["unapproved_numbers"]
+    check("'150g to 200g' licenses '150 to 200 grams'",
+          flags("They weighed 150g to 200g.", "They weighed 150 to 200 grams.") == [])
+    check("'A$90m' licenses 'A$90 million'",
+          flags("It cost A$90m.", "It cost A$90 million.") == [])
+    check("'$395.00' licenses '$395'", flags("It sold for $395.00.", "It sold for $395.") == [])
+    check("'5,000' licenses '5000'", flags("A goal of 5,000 machines.", "A goal of 5000 machines.") == [])
+    check("'A$90m' does not license '90 deaths'",
+          flags("It cost A$90m.", "There were 90 deaths.") == ["90"])
+    check("a bare repeat of the figure without its unit still holds",
+          flags("They weighed 150g.", "They weighed 150 grams, and 150 people came.") == ["150"])
+    check("a different value still holds",
+          flags("They weighed 150g.", "They weighed 160 grams.") == ["160"])
+
+
 def test_a_partial_phrase_match_is_not_a_licence():
     """The Ledger licenses what it contains. It must not license a name merely adjacent
     to one it contains."""
@@ -323,20 +344,18 @@ def test_separators_are_untouched():
           ST._numbers("It cost 90.") == {"90"}, ST._numbers("It cost 90."))
 
 
-def test_the_two_notations_still_disagree_and_that_is_on_purpose():
-    """WHAT THIS CHANGE DELIBERATELY LEAVES BROKEN, pinned so nobody reads it as an
-    oversight. production-20260905T210605Z-2d62633a: packet "A$90m", prose "A$90
-    million", `90` blocked -- the only number ever to block a run in the record, and a
-    genuine false positive. Closing it requires the two notations to produce the SAME
-    token, and that is exactly the loosening test_a_suffixed_figure_does_not_license_the
-    _bare_numeral exists to prevent. The trade is the owner's; this test fails the day
-    someone makes it quietly."""
-    print("\n4f. The false positive is still here, deliberately")
+def test_the_two_notations_now_agree_by_owner_decision():
+    """production-20260905T210605Z-2d62633a: packet "A$90m", prose "A$90 million", `90`
+    blocked. The owner accepted the trade on 2026-11-01 ("150g is totally fine ... it
+    still has the same meaning"), bounded by unit: a suffixed figure licenses its bare
+    numeral only where the prose writes the same unit -- see
+    test_the_same_quantity_written_another_way_is_licensed for "90 deaths"."""
+    print("\n4f. The two notations agree, by owner decision")
     pk = _packet("The deal covers up to A$75 million of Tamboran's A$90m share.")
     r = ST.factual_surface_audit(
         "# T\n\nIt covers up to A$75 million of the A$90 million share.\n", pk)
-    check("90 is still unapproved -- the known false positive",
-          "90" in r["unapproved_numbers"], r["unapproved_numbers"])
+    check("90 million is licensed by A$90m",
+          "90" not in r["unapproved_numbers"], r["unapproved_numbers"])
 
 
 def test_an_invented_suffixed_figure_blocks():
@@ -445,7 +464,7 @@ def main():
               test_a_suffixed_figure_does_not_license_the_bare_numeral,
               test_a_grammatical_suffix_is_not_a_unit,
               test_separators_are_untouched,
-              test_the_two_notations_still_disagree_and_that_is_on_purpose,
+              test_the_two_notations_now_agree_by_owner_decision,
               test_an_invented_suffixed_figure_blocks,
               test_sentence_initial_after_a_closing_quote_is_not_an_entity,
               test_the_sentence_initial_tradeoff_is_now_uniform,
@@ -455,6 +474,7 @@ def main():
               test_a_genuinely_new_entity_still_holds,
               test_a_genuinely_new_number_still_holds,
               test_a_dotted_ledger_date_licenses_its_month_and_year,
+              test_the_same_quantity_written_another_way_is_licensed,
               test_a_partial_phrase_match_is_not_a_licence):
         t()
     print()
