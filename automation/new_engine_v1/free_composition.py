@@ -991,8 +991,12 @@ You may NOT invent a scene, a line of dialogue, a motive, a chronology, a source
 an institution, a number, or a causal relation that no proposition carries.
 
 Interpretation is not invention. "This suggests the committee knew" is an inference and
-yours to make if the evidence supports it. "The committee met on Thursday" is a new
+yours to make if the facts carry it. "The committee met on Thursday" is a new
 factual state and requires a proposition.
+
+A LICENSED CONNECTION IS PERMISSION, NOT WORDING. An arrow such as --CONSEQUENCE--> means
+you may set those two facts side by side. It is not a phrase to write out: never "The
+consequence is...". Put the facts next to each other and let the reader see the link.
 
 ═══════════════════════════════════════════════════════════════
 FOOTNOTES: EVERY FACTUAL CLAIM CARRIES ITS SOURCE
@@ -1007,6 +1011,10 @@ the facts do not generate the story.
 Attach a footnote marker to sentences that make a specific verifiable claim — a
 number, a date, a name, an institutional action, an outcome, a direct quote.
 Interpretive sentences and inferences do not need markers.
+
+ONE FACT, ONE SENTENCE, ONE MARKER. When several propositions say the same thing, say it
+once and cite the clearest one. Saying it three ways because three sources said it is a
+list of what you found, not writing.
 
 Use the fact ID from the Ledger as the marker: [^F01]
 
@@ -1049,7 +1057,21 @@ Write to one reader you take seriously. Closer to a letter than a lecture. The d
 perspective must do something to the subject — change what it means, reveal what the
 standard account omits — not merely accompany it.
 
-The ending should make something from the opening mean something different.
+The ending should make something from the opening mean something different. When the
+ending returns to the opening's person, object or word, stop there: one sentence after
+the return, never a paragraph explaining it.
+
+800 to 1,100 words. Stop when the argument is made. No section headings; a section break
+is a blank line.
+
+WRITE ABOUT THE WORLD, NOT ABOUT YOUR MATERIAL. Never write "the evidence", "the record",
+"the source", "the Ledger", "documented" or "what is known" -- the footnote is where the
+sourcing lives. Name the thing itself: the letter, the court's ruling, the museum's own
+account.
+
+DO NOT ANNOUNCE YOUR STRUCTURE. "Here is where", "I want to dwell on", "what happened
+next is", "this is worth pausing on" are notes to yourself. Make the move instead. If a
+sentence promises something ("it is comic"), pay it in the next sentence or cut it.
 
 ═══════════════════════════════════════════════════════════════
 HARD PROHIBITIONS
@@ -1087,8 +1109,22 @@ def _clean_source_title(raw: str, max_len: int = 100) -> str:
     return t or "(no title established)"
 
 
+def reader_questions_for_writer() -> str:
+    """The Reader's own dimension text, so the Writer and its judge cannot drift apart."""
+    s = CP.READER_SYSTEM
+    start = s.index("  OPENING ")
+    end = s.index("\n\nBe a hard reader")
+    return ("=== HOW THE FINISHED ARTICLE WILL BE READ ===\n"
+            "An editor will judge the finished article on these questions, in these words. "
+            "Write so they are true, not so they are answerable.\n\n" + s[start:end])
+
+
+_OUTPUT_FORMAT_HEAD = "═" * 63 + "\nOUTPUT FORMAT"
+
+
 def footnote_writer_system() -> str:
-    return _FOOTNOTE_WRITER_SYSTEM
+    head, sep, tail = _FOOTNOTE_WRITER_SYSTEM.partition(_OUTPUT_FORMAT_HEAD)
+    return head + reader_questions_for_writer() + "\n\n" + sep + tail
 
 
 def footnote_writer_user(instrument: dict | None, ledger: dict,
