@@ -994,6 +994,11 @@ Interpretation is not invention. "This suggests the committee knew" is an infere
 yours to make if the facts carry it. "The committee met on Thursday" is a new
 factual state and requires a proposition.
 
+KNOWING THE SUBJECT IS NOT A LICENCE. You will know things the Ledger does not say: a
+rival company, the exact day of a ruling, the usual spelling of a name. Leave them out.
+A date the Ledger gives as "October 2024" stays "October 2024". A name is spelled as the
+Ledger spells it. A comparison to anything the Ledger does not mention is cut.
+
 A LICENSED CONNECTION IS PERMISSION, NOT WORDING. An arrow such as --CONSEQUENCE--> means
 you may set those two facts side by side. It is not a phrase to write out: never "The
 consequence is...". Put the facts next to each other and let the reader see the link.
