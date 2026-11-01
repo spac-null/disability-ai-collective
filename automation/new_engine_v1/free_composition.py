@@ -2238,7 +2238,16 @@ def run_free_argumentative_composition(
         # whatever they say is the answer. The Grounder is non-deterministic; re-grounding
         # identical bytes until it agrees is not a check, and there is no path back here.
         if g["status"] != CP.PASS and CP.repairable_findings(g.get("blocking")):
-            grep = CP.grounding_repair(P, final, g["blocking"], ledger, licensing)
+            try:
+                grep = CP.grounding_repair(P, final, g["blocking"], ledger, licensing)
+            except CP.CompositionHold as e:
+                if writer_contract != "footnote":
+                    raise
+                # Grounding is advisory here, so a refused repair leaves the article
+                # as it was rather than holding it.
+                grep = {"status": CP.HOLD, "reason": "; ".join(e.reasons)[:400],
+                        "model_calls": (e.payload or {}).get("model_calls", 1)}
+                g["refused_repair"] = grep["reason"]
             calls[CP.GROUNDING] = calls.get(CP.GROUNDING, 0) + grep.get("model_calls", 0)
             if grep["status"] == CP.PASS:
                 before = final

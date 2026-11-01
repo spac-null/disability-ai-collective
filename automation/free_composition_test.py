@@ -213,7 +213,8 @@ def _restore(monkey: dict):
     CP.reader_gate = monkey["reader"]
 
 
-def _run(grounding_results, writer_reply=REPLY, tmp=None, repair_reply=None):
+def _run(grounding_results, writer_reply=REPLY, tmp=None, repair_reply=None,
+         writer_contract="current"):
     """Run the free ladder with canned upstream and a scripted grounder."""
     monkey: dict = {}
     _canned_upstream(monkey)
@@ -234,7 +235,7 @@ def _run(grounding_results, writer_reply=REPLY, tmp=None, repair_reply=None):
         res = FC.run_free_argumentative_composition(
             prov, pack=PACK, source_text="source bytes", source_sha="abc",
             subject=PACK["subject"], fact_check=False, out_dir=tmp,
-            instrument=INSTRUMENT,
+            instrument=INSTRUMENT, writer_contract=writer_contract,
             fact_check_fn=lambda t: {"status": CP.PASS, "model_calls": 0})
         return res, prov, ground_calls["n"]
     finally:
@@ -1588,6 +1589,22 @@ def test_density_survives_a_real_grounding_hold() -> None:
                                                  "numbers_per_100w")),
               {k: (pd.get(k), recomputed.get(k))
                for k in ("words", "names_per_100w", "numbers_per_100w")})
+
+
+def test_a_refused_grounding_repair_does_not_hold_a_footnote_article() -> None:
+    """Grounding is advisory on the footnote contract. A repair that is refused raised a
+    CompositionHold and held the article anyway (Talking Book replay, 2026-11-01)."""
+    res, _prov, _n = _run([HOLD_G, HOLD_G], writer_contract="footnote")
+    check("footnote: the run does not stop at GROUNDING",
+          res.get("failure_stage") != CP.GROUNDING,
+          (res.get("failure_stage"), res.get("failure_reason")))
+    g = res["detail"].get(CP.GROUNDING) or {}
+    check("the refused repair and the advisory findings are both recorded",
+          bool(g.get("refused_repair")) and g.get("advisory_only"), sorted(g))
+    res2, _p2, _n2 = _run([HOLD_G, HOLD_G])
+    check("current contract: a refused repair still holds",
+          res2["status"] != CP.PASS and res2.get("failure_stage") == CP.GROUNDING,
+          (res2.get("failure_stage"), res2.get("reason_code")))
 
 
 def test_density_survives_the_exception_path_too() -> None:
