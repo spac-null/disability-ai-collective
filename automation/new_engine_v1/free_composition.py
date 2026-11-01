@@ -2078,28 +2078,11 @@ def run_free_argumentative_composition(
         final = wr["article_text"]
         lineage = wr["negative_lineage_verified"]
 
-        # CONTINUITY is a full rewrite from scratch -- still skipped.
-        st[CP.CONTINUITY] = {"status": CP.SKIPPED,
-                             "reason": "a whole-article rewrite of free prose",
-                             "model_calls": 0, "repairs": 0}
-        calls[CP.CONTINUITY] = repairs[CP.CONTINUITY] = 0
-
-        # PROSE_FINISH is now enabled on this path. WHY THIS CHANGED.
-        # The repair loop (reader_completion_loop) runs AFTER Grounding. Any rephrasing it
-        # proposes gets re-checked by Grounding, which rejects it because Grounding only
-        # approved the original draft's wording. Result: 0/5 edits accepted, articles held.
-        #
-        # PROSE_FINISH runs BEFORE Safety and Grounding. The factual gates then check clean
-        # prose. PROSE_FINISH handles exactly the READER dimensions that keep failing:
-        # scaffold phrases ("here is where", "what this means is"), manufactured clinchers,
-        # rhythm, transitions. It is fail-safe: if it breaks anything, Safety/Grounding catch
-        # it. No arch exists on this path, so {} is passed; story_spine and ending_move show
-        # empty, which is acceptable -- the polish works from the article text alone.
-        pf = record(CP.PROSE_FINISH, CP.prose_finish(P, final, {}))
-        if pf.get("applied"):
-            final = pf["article_text"]
-            # lineage was set from wr["negative_lineage_verified"] above and does not
-            # change: PROSE_FINISH rewrites sentences but adds no new factual permissions.
+        # The two rewriting stages this path exists to avoid. Recorded, so a run says so.
+        for s, why in ((CP.CONTINUITY, "a whole-article rewrite of free prose"),
+                       (CP.PROSE_FINISH, "a whole-article polish of free prose")):
+            st[s] = {"status": CP.SKIPPED, "reason": why, "model_calls": 0, "repairs": 0}
+            calls[s] = repairs[s] = 0
 
         licensing = licensing_record(ledger, relations)
 
