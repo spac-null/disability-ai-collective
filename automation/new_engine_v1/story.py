@@ -2135,7 +2135,9 @@ _DATE_PATTERNS = (
     re.compile(r"\b(?P<y>\d{4})-(?P<mo>\d{2})-(?P<d>\d{2})\b"),
     re.compile(r"\b(?P<d>\d{1,2})\s+(?P<mname>[A-Za-z]{3,9})\s+(?P<y>\d{4})\b"),
     re.compile(r"\b(?P<mname>[A-Za-z]{3,9})\s+(?P<d>\d{1,2}),?\s+(?P<y>\d{4})\b"),
+    re.compile(r"\b(?P<d>\d{1,2})\.(?P<mo>\d{1,2})\.(?P<y>\d{4})\b"),
 )
+_MONTH_YEAR = re.compile(r"\b(?P<mname>[A-Za-z]{3,9})\s+(?P<y>\d{4})\b")
 
 
 def _calendar_dates(text: str) -> list:
@@ -2285,6 +2287,14 @@ def factual_surface_audit(article_text: str, packet: dict, ledger: dict | None =
     licensed_dates = {d for d, _ in _calendar_dates(approved)}
     excused_month_tokens = {tok for d, tok in _calendar_dates(body)
                             if tok and d in licensed_dates}
+    # A licensed full date licenses its own year, and its month written as "May 2019".
+    # "13.05.2019" otherwise reads as one token and "May 2019" as two inventions.
+    licensed_months = {(y, mo) for (y, mo, _d) in licensed_dates}
+    a_nums = a_nums | {str(y) for (y, _mo, _d) in licensed_dates}
+    excused_month_tokens |= {
+        m.group("mname") for m in _MONTH_YEAR.finditer(body)
+        if (int(m.group("y")), _MONTH_NUMBER.get(m.group("mname").lower()))
+        in licensed_months}
 
     nums = sorted((_numbers(body) - a_nums)
                   | _unit_figure_leaks(body, approved, a_nums))

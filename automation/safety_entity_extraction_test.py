@@ -212,6 +212,24 @@ def test_a_genuinely_new_number_still_holds():
     check("hard_ok is False", r["hard_ok"] is False)
 
 
+def test_a_dotted_ledger_date_licenses_its_month_and_year():
+    """India, 2026-10-22 and 2026-11-01: the Ledger wrote "13.05.2019" and the prose
+    "May 2019"; both tokens were held as inventions."""
+    print("\n3d. A dd.mm.yyyy Ledger date licenses 'May 2019'")
+    pk = _packet("The board amended the rules.")
+    led = _ledger("The board amended the rules by notification dated 13.05.2019.")
+    r = ST.factual_surface_audit("# T\n\nIn May 2019 the board amended the rules.\n", pk, led)
+    check("the year is licensed", "2019" not in r["unapproved_numbers"],
+          r["unapproved_numbers"])
+    check("the month is licensed", "May" not in r["unapproved_entities"],
+          r["unapproved_entities"])
+    r2 = ST.factual_surface_audit("# T\n\nIn June 2019, 13 members met.\n", pk, led)
+    check("a different month still holds", "June" in r2["unapproved_entities"],
+          r2["unapproved_entities"])
+    check("the day does not license a bare figure", "13" in r2["unapproved_numbers"],
+          r2["unapproved_numbers"])
+
+
 def test_a_partial_phrase_match_is_not_a_licence():
     """The Ledger licenses what it contains. It must not license a name merely adjacent
     to one it contains."""
@@ -436,6 +454,7 @@ def main():
               test_omitting_the_ledger_reproduces_the_old_behaviour_exactly,
               test_a_genuinely_new_entity_still_holds,
               test_a_genuinely_new_number_still_holds,
+              test_a_dotted_ledger_date_licenses_its_month_and_year,
               test_a_partial_phrase_match_is_not_a_licence):
         t()
     print()
