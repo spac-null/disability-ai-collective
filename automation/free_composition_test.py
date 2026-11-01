@@ -1607,6 +1607,37 @@ def test_a_refused_grounding_repair_does_not_hold_a_footnote_article() -> None:
           (res2.get("failure_stage"), res2.get("reason_code")))
 
 
+def test_footnote_writer_revises_once_from_agreed_reader_notes() -> None:
+    """Two reads agree on a passage; the same Writer revises its draft against it, and
+    every gate after that judges the revision."""
+    flagged = ARTICLE.split("\n\n")[1].split(".")[0] + "."
+    revised = ARTICLE.replace(flagged, "")
+    seq = [{"status": CP.HOLD, "held": {"ENGINE_LANGUAGE_LEAK": {
+               "verdict": "HOLD", "note": "process language", "passages": [flagged]}},
+            "model_calls": 1}] * 2 + [{"status": CP.PASS, "held": {}, "model_calls": 1}] * 4
+    reads = iter(seq)
+    monkey: dict = {}
+    _canned_upstream(monkey)
+    CP.reader_gate = lambda p, text, adv=None: dict(next(reads))
+    CP.ground_candidate = lambda *a, **k: dict(PASS_G, model_calls=1)
+    prov = Recorder([REPLY, REPLY.replace(ARTICLE, revised)])
+    try:
+        res = FC.run_free_argumentative_composition(
+            prov, pack=PACK, source_text="source bytes", source_sha="abc",
+            subject=PACK["subject"], fact_check=False, instrument=INSTRUMENT,
+            writer_contract="footnote")
+    finally:
+        _restore(monkey)
+    writer_calls = [c for c in prov.calls if "=== YOUR FIRST DRAFT ===" in c["user"]]
+    check("the Writer was asked to revise once, with the agreed passage",
+          len(writer_calls) == 1 and flagged in writer_calls[0]["user"], len(writer_calls))
+    check("the revision is the article that went on", flagged not in (res.get("article_text") or ""),
+          res.get("failure_reason"))
+    fd = res["detail"][CP.WRITER].get("first_draft") or {}
+    check("the first draft and what was flagged are recorded",
+          fd.get("status") == CP.HOLD and "ENGINE_LANGUAGE_LEAK" in fd.get("held", {}), fd)
+
+
 def test_density_survives_the_exception_path_too() -> None:
     """The other way out of the ladder: a CompositionHold raised rather than returned.
 

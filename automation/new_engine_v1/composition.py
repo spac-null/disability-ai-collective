@@ -6962,6 +6962,54 @@ def reader_gate(provider, article_text: str, advisories: list | None = None) -> 
             "provider": ident, "model_calls": 1}
 
 
+def agreed_reader_gate(provider, article_text: str, advisories: list | None = None) -> dict:
+    """Two independent reads; a passage blocks only when both reads quote it.
+
+    Measured on six reads of one unchanged article: the real defect was quoted 6/6, a
+    second 4/6, everything else 1-2/6. A single read therefore holds on a different set
+    each time. Passages only one read quotes travel as `reader_disagreements`.
+    """
+    r1 = reader_gate(provider, article_text, advisories)
+    if r1["status"] == PASS:
+        return dict(r1, reads=1, reader_disagreements=[])
+    r2 = reader_gate(provider, article_text, advisories)
+
+    def quotes(r):
+        return [(d, str(p)) for d, v in (r.get("held") or {}).items()
+                for p in ((v or {}).get("passages") or []) if str(p).strip()]
+
+    def same(a, b):
+        a, b = normalize_span(a), normalize_span(b)
+        return bool(a and b) and (a in b or b in a)
+
+    q1, q2 = quotes(r1), quotes(r2)
+    held, disagreements = {}, []
+    for d, p in q1:
+        if any(same(p, p2) for _d2, p2 in q2):
+            held.setdefault(d, {"verdict": HOLD,
+                                "note": (r1["held"].get(d) or {}).get("note", ""),
+                                "passages": []})["passages"].append(p)
+        else:
+            disagreements.append({"dimension": d, "passage": p[:200], "read": 1})
+    for d, p in q2:
+        if not any(same(p, p1) for _d1, p1 in q1):
+            disagreements.append({"dimension": d, "passage": p[:200], "read": 2})
+    for d in set(r1.get("held") or {}) & set(r2.get("held") or {}):
+        if (not (r1["held"][d] or {}).get("passages")
+                and not (r2["held"][d] or {}).get("passages") and d not in held):
+            held[d] = dict(r1["held"][d] or {}, verdict=HOLD)
+    return {"status": HOLD if held else PASS,
+            "dimensions": r1.get("dimensions"),
+            "held": held,
+            "passages": {d: v.get("passages") or [] for d, v in held.items()},
+            "one_line": r1.get("one_line", ""),
+            "advisories_shown": len(advisories or []),
+            "provider": r1.get("provider"),
+            "model_calls": 2, "reads": 2,
+            "reader_disagreements": disagreements,
+            "read_held": [sorted(r1.get("held") or {}), sorted(r2.get("held") or {})]}
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # STAGE 10b -- ONE READER REPAIR, LOCAL EDITS ONLY (owner-directed, 2026-09-09;
 # revised to a surgical local-edit contract 2026-09-09 after real production evidence)

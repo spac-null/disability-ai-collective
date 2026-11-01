@@ -5412,6 +5412,21 @@ def test_clause_deletion_with_a_negation_is_allowed_but_a_reversal_is_not():
     check("planned path: the old strict count still refuses it", not prov2)
 
 
+def test_agreed_reader_gate_blocks_only_on_passages_both_reads_quote():
+    g = CP.agreed_reader_gate(Scripted([_reader_hold(READABILITY=[_RP1, _RP2]),
+                                        _reader_hold(READABILITY=[_RP1, _RP3])]), DRAFT, [])
+    check("the passage both reads quote blocks",
+          g["status"] == CP.HOLD and g["held"]["READABILITY"]["passages"] == [_RP1], g["held"])
+    check("each one-read passage is a disagreement, not a blocker",
+          sorted(x["passage"] for x in g["reader_disagreements"]) == sorted([_RP2, _RP3]),
+          g["reader_disagreements"])
+    g2 = CP.agreed_reader_gate(Scripted([_reader_hold(READABILITY=[_RP2]),
+                                         _reader_hold(READABILITY=[_RP3])]), DRAFT, [])
+    check("two reads that quote nothing in common pass", g2["status"] == CP.PASS, g2)
+    g3 = CP.agreed_reader_gate(Scripted([READER_OK]), DRAFT, [])
+    check("a first-read pass costs one read", g3["status"] == CP.PASS and g3["reads"] == 1, g3)
+
+
 def test_grounding_findings_introduced_matches_conservatively():
     before = "He wrote to Meyer,[^F01] marked it confidential.[^F14] It ended there."
     f = lambda q: {"quote": q}

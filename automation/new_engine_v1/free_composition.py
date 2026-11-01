@@ -1106,6 +1106,26 @@ F01 F03 F07
 (leave this section empty if there are none)"""
 
 
+def revision_brief(draft: str, gate: dict) -> str:
+    """The Writer's own draft and the passages two readers agreed on, as a revision ask."""
+    notes = []
+    for dim, v in sorted((gate.get("held") or {}).items()):
+        note = " ".join(str((v or {}).get("note") or "").split())[:400]
+        for p in (v or {}).get("passages") or [""]:
+            notes.append("- %s: \"%s\"%s" % (dim, str(p)[:300],
+                                             (" -- " + note) if note else ""))
+    return ("=== YOUR FIRST DRAFT ===\n%s\n\n"
+            "=== THE EDITOR'S NOTES ===\n"
+            "Two independent readers both flagged these:\n%s\n\n"
+            "=== REVISE ===\n"
+            "Write the article again, in full. Keep what the notes do not name: the "
+            "opening, the argument, the voice, the ending, the facts and their markers. "
+            "Fix what they name by cutting, by saying it plainer, or by letting the "
+            "material carry it. The same rules apply: no fact that is not in the Ledger. "
+            "Return the complete article in the same output format."
+            % (draft.strip(), "\n".join(notes)))
+
+
 def _clean_source_title(raw: str, max_len: int = 100) -> str:
     """Unescape HTML entities and truncate to a readable link label."""
     t = _html.unescape(str(raw or "")).strip()
@@ -1873,7 +1893,7 @@ def writer_inputs_are_plan_free(system: str, user: str) -> list:
 def write_article_free(provider, ledger: dict, instrument: dict | None = None,
                        pack: dict | None = None, subject: str = "",
                        relations=None, candidate=None,
-                       writer_contract: str = "current") -> dict:
+                       writer_contract: str = "current", revision: str = "") -> dict:
     """STAGE: the free argumentative Writer. ONE call, one mechanical retry.
 
     The retry is mechanical only -- same prompt, no feedback, no instruction to do better
@@ -1891,6 +1911,8 @@ def write_article_free(provider, ledger: dict, instrument: dict | None = None,
         user = lean_writer_user(instrument, ledger, pack, subject, relations, candidate)
     else:
         raise ValueError("unknown writer contract: %s" % writer_contract)
+    if revision:
+        user = user + "\n\n" + revision
 
     leaks = writer_inputs_are_plan_free(system, user)
     if leaks:
@@ -2119,6 +2141,36 @@ def run_free_argumentative_composition(
         final = wr["article_text"]
         lineage = wr["negative_lineage_verified"]
 
+        # ONE REVISION FROM THE EDITOR'S NOTES, footnote contract only. The same Writer,
+        # under the same contract, revises its own draft against what two Reader reads
+        # agreed on. It runs before every factual gate, so they all judge the revision.
+        if writer_contract == "footnote" and reader:
+            pre = CP.agreed_reader_gate(P, final, [])
+            first = {"article_text": final, "status": pre["status"],
+                     "held": {d: (v or {}).get("passages") or []
+                              for d, v in (pre.get("held") or {}).items()},
+                     "reader_disagreements": pre.get("reader_disagreements") or []}
+            spent = calls.get(CP.WRITER, 0) + pre.get("model_calls", 0)
+            if pre["status"] != CP.PASS:
+                try:
+                    wr2 = write_article_free(
+                        P, ledger, instrument=instrument, pack=pack, subject=subject,
+                        relations=relations,
+                        candidate=(w.get("story_candidate") if isinstance(w, dict)
+                                   else None),
+                        writer_contract=writer_contract,
+                        revision=revision_brief(final, pre))
+                except CP.CompositionHold as e:
+                    first["revision_failed"] = "; ".join(e.reasons)[:300]
+                else:
+                    spent += wr2.get("model_calls", 0)
+                    wr = record(CP.WRITER, dict(wr2, first_draft=first))
+                    final = wr["article_text"]
+                    lineage = wr["negative_lineage_verified"]
+            if wr.get("first_draft") is None:
+                st[CP.WRITER]["first_draft"] = first
+            calls[CP.WRITER] = spent
+
         # The two rewriting stages this path exists to avoid. Recorded, so a run says so.
         for s, why in ((CP.CONTINUITY, "a whole-article rewrite of free prose"),
                        (CP.PROSE_FINISH, "a whole-article polish of free prose")):
@@ -2343,7 +2395,9 @@ def run_free_argumentative_composition(
         # own paragraph, which is STRICTER than the planned path, not looser: an edit may
         # not introduce a number or a name at all.
         if reader:
-            rg = record(CP.READER, CP.reader_gate(P, final, sa.get("advisories")))
+            gate = (CP.agreed_reader_gate if writer_contract == "footnote"
+                    else CP.reader_gate)
+            rg = record(CP.READER, gate(P, final, sa.get("advisories")))
             if rg["status"] != CP.PASS:
                 rc = CP.reader_completion_loop(
                     # `draft_text` is the Writer's own first article, which the
@@ -2355,7 +2409,7 @@ def run_free_argumentative_composition(
                     P, final, pkg, rg, {}, ledger, wr["article_text"], pack, None,
                     source_text, source_sha,
                     audit_fn=audit, package_fn=make_package,
-                    gate_fn=lambda t, adv: CP.reader_gate(P, t, adv),
+                    gate_fn=lambda t, adv: gate(P, t, adv),
                     permitted_text=permitted_material_block(ledger),
                     grounding_relative=bool(g.get("advisory_only")),
                     within_flagged=True)
