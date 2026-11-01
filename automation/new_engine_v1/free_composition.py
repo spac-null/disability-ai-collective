@@ -583,6 +583,12 @@ assembling an article, and a reader did not come for it. Name the thing itself: 
 tribunal's written reasons, the charity's survey of its members, the letter nobody
 answered. Where something genuinely is not known, say WHO does not know it.
 
+DO NOT ANNOUNCE YOUR STRUCTURE. "Here is the asymmetry", "Then the slow part",
+"What happened next is a matter of record", "This is worth pausing on" -- these are
+notes you left yourself, not sentences for a reader. Every sentence that names the
+move you are about to make can be replaced by making the move. If you need to say
+"here is the point", the point has not been made yet. Make it.
+
 THE OPENING CARRIES THE LEAST, NOT THE MOST.
 
 Measured across this engine's own articles: the first two paragraphs run at about twice
@@ -604,6 +610,11 @@ full title later or never.
 
 THE LAST PARAGRAPH ADDS. Deepen, turn, land, or show a consequence. Never restate.
 
+WHEN THE RETURN IS MADE, STOP. If the piece opens on a person, an object, or a word,
+and the ending returns to it -- that return is the ending. One sentence after the
+return, not a paragraph. The paragraph that explains the return is the paragraph that
+should not exist. The reader felt it land; explaining it removes the landing.
+
 === WHAT A READER WILL BE ASKED ABOUT THIS ARTICLE ===
 These are the questions, in their own words, that an editor puts to the finished piece.
 You are writing against them, so you may as well know them.
@@ -624,7 +635,11 @@ You are writing against them, so you may as well know them.
                        Is every technical term explained at first use, in a sentence,
                        in plain words?
   MOMENTUM             Does each paragraph earn the next? A paragraph that restates an
-                       earlier one in different abstract vocabulary fails.
+                       earlier one in different abstract vocabulary fails. A sentence
+                       that promises ("it is comic", "what happened next is
+                       remarkable", "slowing a turntable is simple") must pay within
+                       the same paragraph or the next. If you cannot pay it, cut the
+                       promise.
   BREATHING            Is concrete material given room, or is every sentence carrying
                        fact plus interpretation plus atmosphere plus conclusion at once?
   RESEARCH_LOAD        Does the piece read as written selectively from wide research,
