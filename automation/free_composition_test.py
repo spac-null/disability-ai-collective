@@ -1638,6 +1638,31 @@ def test_footnote_writer_revises_once_from_agreed_reader_notes() -> None:
           fd.get("status") == CP.HOLD and "ENGINE_LANGUAGE_LEAK" in fd.get("held", {}), fd)
 
 
+def test_a_structure_tell_triggers_the_revision_even_when_the_reader_passes() -> None:
+    tell = "This is not a figure of speech."
+    paras = ARTICLE.split("\n\n")
+    paras[1] = paras[1] + " " + tell
+    drafted = "\n\n".join(paras)
+    monkey: dict = {}
+    _canned_upstream(monkey)
+    CP.ground_candidate = lambda *a, **k: dict(PASS_G, model_calls=1)
+    prov = Recorder([REPLY.replace(ARTICLE, drafted), REPLY])
+    try:
+        res = FC.run_free_argumentative_composition(
+            prov, pack=PACK, source_text="source bytes", source_sha="abc",
+            subject=PACK["subject"], fact_check=False, instrument=INSTRUMENT,
+            writer_contract="footnote")
+    finally:
+        _restore(monkey)
+    asks = [c for c in prov.calls if "=== YOUR FIRST DRAFT ===" in c["user"]]
+    check("the Reader passed, yet the tell sent the draft back once",
+          len(asks) == 1 and tell in asks[0]["user"], len(asks))
+    check("the revised article no longer carries the tell",
+          tell not in (res.get("article_text") or ""), res.get("failure_reason"))
+    check("the scanner leaves plain prose alone",
+          FC.structure_tells("# T\n\nThe board met. It voted no.\n") == [])
+
+
 def test_density_survives_the_exception_path_too() -> None:
     """The other way out of the ladder: a CompositionHold raised rather than returned.
 

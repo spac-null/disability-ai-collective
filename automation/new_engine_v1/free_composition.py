@@ -1062,9 +1062,13 @@ Write to one reader you take seriously. Closer to a letter than a lecture. The d
 perspective must do something to the subject — change what it means, reveal what the
 standard account omits — not merely accompany it.
 
-The ending should make something from the opening mean something different. When the
-ending returns to the opening's person, object or word, stop there: one sentence after
-the return, never a paragraph explaining it.
+The ending should make something from the opening mean something different. Echoing
+the opening's image is one way to do that, not the expected one: a consequence, a fact
+that reframes, or a plain stop can end a piece as well. If the ending does return to
+the opening's person, object or word, stop there: one sentence after the return, never
+a paragraph explaining it.
+
+SAY THE ARGUMENT ONCE. A second sentence that restates it in other words is cut.
 
 800 to 1,100 words. Stop when the argument is made. No section headings; a section break
 is a blank line.
@@ -1074,9 +1078,12 @@ WRITE ABOUT THE WORLD, NOT ABOUT YOUR MATERIAL. Never write "the evidence", "the
 sourcing lives. Name the thing itself: the letter, the court's ruling, the museum's own
 account.
 
-DO NOT ANNOUNCE YOUR STRUCTURE. "Here is where", "I want to dwell on", "what happened
-next is", "this is worth pausing on" are notes to yourself. Make the move instead. If a
-sentence promises something ("it is comic"), pay it in the next sentence or cut it.
+DO NOT ANNOUNCE YOUR STRUCTURE. "Here is where", "This is the point at which", "That is
+the sentence the whole X turns on", "Which is why the real question is", "The honest
+answer is", "This is not a figure of speech", "Consider what", "Read that again", "What
+replaces it has a name" are notes to yourself. A good writer does not say a turn is
+coming; they turn. If a sentence promises something ("it is comic"), pay it in the next
+sentence or cut it.
 
 ═══════════════════════════════════════════════════════════════
 HARD PROHIBITIONS
@@ -1106,6 +1113,22 @@ F01 F03 F07
 (leave this section empty if there are none)"""
 
 
+_STRUCTURE_TELLS = re.compile(
+    r"\b(?:here is (?:where|the|what|how|why)|this is (?:the point|where|the moment|the "
+    r"part|not a figure of speech|not an analogy)|that is the (?:sentence|moment|point|"
+    r"detail)\b[^.]*\bturns on|which is why the (?:real )?question|the (?:honest|short|"
+    r"real) answer is|consider what|read (?:that|it) again|what replaces it has a name|"
+    r"i want to dwell|what happened next is|worth (?:pausing|noting|dwelling)|"
+    r"the point is|to be clear|in other words|it is worth)\b", re.I)
+
+
+def structure_tells(article: str) -> list:
+    """Sentences that narrate the essay's own structure instead of making the move."""
+    body = re.sub(r"\[\^F\d+\]", "", article.split("\n[^F", 1)[0])
+    sentences = re.split(r"(?<=[.!?])\s+", body)
+    return [s.strip() for s in sentences if _STRUCTURE_TELLS.search(s)][:8]
+
+
 def revision_brief(draft: str, gate: dict) -> str:
     """The Writer's own draft and the passages two readers agreed on, as a revision ask."""
     notes = []
@@ -1116,7 +1139,7 @@ def revision_brief(draft: str, gate: dict) -> str:
                                              (" -- " + note) if note else ""))
     return ("=== YOUR FIRST DRAFT ===\n%s\n\n"
             "=== THE EDITOR'S NOTES ===\n"
-            "Two independent readers both flagged these:\n%s\n\n"
+            "Flagged by two independent readers or by the house-style check:\n%s\n\n"
             "=== REVISE ===\n"
             "Write the article again, in full. Keep what the notes do not name: the "
             "opening, the argument, the voice, the ending, the facts and their markers. "
@@ -2146,9 +2169,20 @@ def run_free_argumentative_composition(
         # agreed on. It runs before every factual gate, so they all judge the revision.
         if writer_contract == "footnote" and reader:
             pre = CP.agreed_reader_gate(P, final, [])
+            tells = structure_tells(final)
+            if tells:
+                held = dict(pre.get("held") or {})
+                leak = dict(held.get("ENGINE_LANGUAGE_LEAK") or {})
+                leak["passages"] = list(leak.get("passages") or []) + tells
+                leak["note"] = (leak.get("note") or "") + (
+                    " The house-style check: these sentences narrate the essay's "
+                    "structure. Cut them, or make the move they announce.")
+                held["ENGINE_LANGUAGE_LEAK"] = leak
+                pre = dict(pre, held=held, status=CP.HOLD)
             first = {"article_text": final, "status": pre["status"],
                      "held": {d: (v or {}).get("passages") or []
                               for d, v in (pre.get("held") or {}).items()},
+                     "structure_tells": tells,
                      "reader_disagreements": pre.get("reader_disagreements") or []}
             spent = calls.get(CP.WRITER, 0) + pre.get("model_calls", 0)
             if pre["status"] != CP.PASS:
