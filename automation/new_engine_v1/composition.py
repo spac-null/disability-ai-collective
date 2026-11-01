@@ -3818,10 +3818,13 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
     _fn_def = re.compile(r"^\s*\[\^", re.MULTILINE)
     _fn_inline = re.compile(r"\[\^[A-Za-z0-9_-]+\]")
     def _prose_only(text: str) -> str:
-        lines = text.split("\n")
+        # Footnote definitions close the article; a quoted span that wraps onto a second
+        # line would otherwise survive as prose ("... admission to Post Grad").
+        m = re.search(r"^\s*\[\^[A-Za-z0-9_-]+\]:", text, re.MULTILINE)
+        body = text[:m.start()] if m else text
         return "\n".join(
             _fn_inline.sub("", l)
-            for l in lines if not _fn_def.match(l)
+            for l in body.split("\n") if not _fn_def.match(l)
         )
     a = {"writer_draft": screens(_prose_only(draft_text)),
          "continuity_final": screens(_prose_only(final_text))}

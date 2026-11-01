@@ -2369,6 +2369,9 @@ def factual_surface_audit(article_text: str, packet: dict, ledger: dict | None =
     # "13.05.2019" otherwise reads as one token and "May 2019" as two inventions.
     licensed_months = {(y, mo) for (y, mo, _d) in licensed_dates}
     a_nums = a_nums | {str(y) for (y, _mo, _d) in licensed_dates}
+    # A full date in the prose that IS a licensed date licenses its own day as well.
+    a_nums = a_nums | {s for (y, mo, d), _t in _calendar_dates(body)
+                       if (y, mo, d) in licensed_dates for s in (str(d), "%02d" % d)}
     excused_month_tokens |= {
         m.group("mname") for m in _MONTH_YEAR.finditer(body)
         if (int(m.group("y")), _MONTH_NUMBER.get(m.group("mname").lower()))
@@ -2398,8 +2401,16 @@ def factual_surface_audit(article_text: str, packet: dict, ledger: dict | None =
     # an invention: "Salvador" against the Ledger's "Salvator". It travels as a variant
     # for the editor and does not hold the article.
     variants = []
+    a_lower = {w.lower() for w in a_words}
     for e in list(ents):
+        el = _fold_accents(e).lower()
         near = next((a for a in sorted(a_ents_folded) if _one_letter_apart(e, a)), None)
+        if near is None and len(el) >= 6:
+            # A word the material carries in lower case, capitalised in the prose, or
+            # one letter off it: "Incapacitado" for the Ledger's "incapacitados".
+            near = el if el in a_lower else next(
+                (w for w in sorted(a_lower) if w[:1] == el[:1] and _one_letter_apart(el, w)),
+                None)
         if near:
             variants.append([e, near])
             ents.remove(e)

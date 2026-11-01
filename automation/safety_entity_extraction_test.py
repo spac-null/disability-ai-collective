@@ -269,6 +269,24 @@ def test_a_one_letter_spelling_variant_is_advisory_not_a_hold():
           r3["unapproved_entities"])
 
 
+def test_full_date_day_and_lowercase_word_variants():
+    print("\n3g. A matching full date licenses its day; a capitalised Ledger word is a variant")
+    pk = _packet("The board amended the rules.")
+    led = _ledger("The rules were amended by notification dated 13.05.2019, and the "
+                  "Libro de incapacitados was suppressed.")
+    r = ST.factual_surface_audit("# T\n\nA notification of 13 May 2019 amended them.\n", pk, led)
+    check("'13 May 2019' for '13.05.2019' licenses the day", "13" not in r["unapproved_numbers"],
+          r["unapproved_numbers"])
+    r2 = ST.factual_surface_audit("# T\n\nOn 14 May 2019 it met.\n", pk, led)
+    check("a different day still holds", "14" in r2["unapproved_numbers"], r2["unapproved_numbers"])
+    r3 = ST.factual_surface_audit("# T\n\n«Incapacitado» was a place you were put.\n", pk, led)
+    check("'Incapacitado' against 'incapacitados' is a variant, not a hold",
+          "Incapacitado" not in r3["unapproved_entities"], r3["unapproved_entities"])
+    r4 = ST.factual_surface_audit("# T\n\nThe Columbia team arrived.\n", pk, led)
+    check("an unrelated new name still holds", "Columbia" in r4["unapproved_entities"],
+          r4["unapproved_entities"])
+
+
 def test_a_partial_phrase_match_is_not_a_licence():
     """The Ledger licenses what it contains. It must not license a name merely adjacent
     to one it contains."""
@@ -494,6 +512,7 @@ def main():
               test_a_dotted_ledger_date_licenses_its_month_and_year,
               test_the_same_quantity_written_another_way_is_licensed,
               test_a_one_letter_spelling_variant_is_advisory_not_a_hold,
+              test_full_date_day_and_lowercase_word_variants,
               test_a_partial_phrase_match_is_not_a_licence):
         t()
     print()
