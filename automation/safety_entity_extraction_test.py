@@ -251,6 +251,24 @@ def test_the_same_quantity_written_another_way_is_licensed():
           flags("They weighed 150g.", "They weighed 160 grams.") == ["160"])
 
 
+def test_a_one_letter_spelling_variant_is_advisory_not_a_hold():
+    print("\n3f. A one-letter typo of a licensed name does not hold")
+    pk = _packet("Laurenson cites a book.")
+    led = _ledger("Laurenson cites Salvator Munoz-Vinas on conservation.")
+    r = ST.factual_surface_audit("# T\n\nLaurenson cites Salvador Munoz-Vinas.\n", pk, led)
+    check("'Salvador' against 'Salvator' is not an unapproved entity",
+          "Salvador" not in r["unapproved_entities"], r["unapproved_entities"])
+    check("it is reported as a spelling variant",
+          ["Salvador", "Salvator"] in r["spelling_variants"], r["spelling_variants"])
+    led2 = _ledger("Irwin wrote to Meyer.")
+    r2 = ST.factual_surface_audit("# T\n\nIrwin wrote to Mayer.\n", pk, led2)
+    check("a short name one letter off still holds", "Mayer" in r2["unapproved_entities"],
+          r2["unapproved_entities"])
+    r3 = ST.factual_surface_audit("# T\n\nLaurenson cites Columbia.\n", pk, led)
+    check("a genuinely new name still holds", "Columbia" in r3["unapproved_entities"],
+          r3["unapproved_entities"])
+
+
 def test_a_partial_phrase_match_is_not_a_licence():
     """The Ledger licenses what it contains. It must not license a name merely adjacent
     to one it contains."""
@@ -475,6 +493,7 @@ def main():
               test_a_genuinely_new_number_still_holds,
               test_a_dotted_ledger_date_licenses_its_month_and_year,
               test_the_same_quantity_written_another_way_is_licensed,
+              test_a_one_letter_spelling_variant_is_advisory_not_a_hold,
               test_a_partial_phrase_match_is_not_a_licence):
         t()
     print()

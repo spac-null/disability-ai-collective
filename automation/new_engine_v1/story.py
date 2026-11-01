@@ -2021,6 +2021,20 @@ _UNIT_CANON = {
 }
 
 
+def _one_letter_apart(a: str, b: str) -> bool:
+    """One substitution, insertion or deletion apart; names of six letters or more that
+    share their first letter, so short distinct names ("Mann", "Marn") stay distinct."""
+    a, b = a.lower(), b.lower()
+    if a == b or min(len(a), len(b)) < 6 or a[0] != b[0] or abs(len(a) - len(b)) > 1:
+        return False
+    if len(a) == len(b):
+        return sum(x != y for x, y in zip(a, b)) == 1
+    if len(a) > len(b):
+        a, b = b, a
+    i = next((k for k in range(len(a)) if a[k] != b[k]), len(a))
+    return a[i:] == b[i + 1:]
+
+
 def _num_value(s: str):
     try:
         return float(str(s).replace(",", "").rstrip("."))
@@ -2380,12 +2394,22 @@ def factual_surface_audit(article_text: str, packet: dict, ledger: dict | None =
     a_ents_folded = _entities(_fold_accents(approved), skip_sentence_initial=False)
     ents = sorted((_entities(_fold_accents(body)) - a_ents_folded)
                   - {_fold_accents(t) for t in excused_month_tokens})
+    # A one-letter spelling difference from a name the material carries is a typo, not
+    # an invention: "Salvador" against the Ledger's "Salvator". It travels as a variant
+    # for the editor and does not hold the article.
+    variants = []
+    for e in list(ents):
+        near = next((a for a in sorted(a_ents_folded) if _one_letter_apart(e, a)), None)
+        if near:
+            variants.append([e, near])
+            ents.remove(e)
     terms = sorted(_content_words(body) - a_words)
     sensory = sorted(t for t in terms if t in SENSORY_RISK)
     scene = sorted(t for t in terms if t in SCENE_RISK)
     spatial = sorted(t for t in terms if t in SPATIAL_RISK)
     return {"unapproved_numbers": nums,
             "unapproved_entities": ents,
+            "spelling_variants": variants,
             "unapproved_sensory": sensory,
             "unapproved_scene": scene,
             "unapproved_spatial": spatial,

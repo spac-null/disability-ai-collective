@@ -4085,6 +4085,12 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
         "rule": "story.SENSORY_RISK",
         "why_not_hard": _WHY_ADVISORY}
         for tok in f["factual_surface"].get("advisory_sensory") or []]
+    advisories.extend({
+        "kind": "SPELLING_VARIANT", "token": prose, "ledger_spelling": ledger_name,
+        "sentence": _sentence_containing(final_text, prose),
+        "why_not_hard": "one letter from a name the Ledger carries -- a typo, not a "
+                        "new name; the editor decides which spelling is right"}
+        for prose, ledger_name in f["factual_surface"].get("spelling_variants") or [])
 
     return {"status": HOLD if blocking else PASS,
             "blocking": blocking,
