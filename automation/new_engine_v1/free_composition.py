@@ -31,9 +31,16 @@ THE DOCTRINE THIS PATH IMPLEMENTS
     FREEDOM IN REASONING AND ARGUMENT. STRICTNESS ON NEW FACTUAL STATE.
 
 The Writer may interpret, compare, notice, ask, juxtapose, complicate its own thesis, and
-decide its own structure, order, headings and length. It may NOT invent a scene, a line of
+decide its own structure, order and length. It may NOT invent a scene, a line of
 dialogue, testimony, a motive, a chronology, a source identity, an author name, a
 publication genre, an institution, a number, a causal relation, or a claim of absence.
+
+DO NOT USE MARKDOWN SECTION HEADINGS (## or ###). This publication runs as unbroken
+prose. If the piece moves in sections, the section break is a blank line or a rule (---),
+never a heading. A heading above a section tells the reader what is coming; this
+publication earns the transition instead. The Spain article, the India article, the
+Haneda article: none of them have headings. That is the register.
+
 Interpretation is not invention, and this path deliberately does not treat it as such --
 that distinction is Grounding's, and Grounding has demonstrated it can make it.
 
@@ -458,10 +465,11 @@ without being told one is coming. One-sentence paragraphs are fine and normal.""
 # sit outside the band is a good article.
 TEMPO_AND_STANDARD = """=== HOW THIS PUBLICATION ACTUALLY READS ===
 Measured across 142 published Crip Minds articles. This is what its own prose does.
-It is not a target to hit and not a rule -- it is the shape a reader of this
-publication is used to, and a reason to stop and look if you are far outside it.
 
-  length                    about 1,060 words
+  length                    800 – 1,100 words. This is a real ceiling, not a median.
+                            If your draft is running past 1,200 words, cut. A piece
+                            that covers eight things lightly is worse than one that
+                            covers three things fully. Stop when the argument is made.
   distinct proper names     3.5 per 100 words   (most articles 2.7 - 4.6)
   distinct numbers          0.7 per 100 words   (most articles 0.5 - 1.0)
   words per sentence        17.6                (most articles 15.7 - 21.4)
@@ -975,8 +983,15 @@ factual state and requires a proposition.
 FOOTNOTES: EVERY FACTUAL CLAIM CARRIES ITS SOURCE
 ═══════════════════════════════════════════════════════════════
 
-Attach a footnote marker to every sentence that makes a specific factual claim — a
-number, a date, a name, an institutional action, an outcome, a quote, a measurement.
+USE THE MINIMUM FACTS NEEDED TO MAKE THE ARGUMENT. The Ledger may contain 80 facts.
+A 1,000-word article uses 8-20 of them. Pick the ones the story cannot do without.
+A fact you cite is a fact you stop to explain; every citation costs the reader.
+Two sources handled well beat twenty sources listed. The story selects the facts —
+the facts do not generate the story.
+
+Attach a footnote marker to sentences that make a specific verifiable claim — a
+number, a date, a name, an institutional action, an outcome, a direct quote.
+Interpretive sentences and inferences do not need markers.
 
 Use the fact ID from the Ledger as the marker: [^F01]
 
