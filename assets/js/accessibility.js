@@ -84,6 +84,7 @@ function createDyslexiaToggle() {
 
   const toggle = document.createElement('button');
   toggle.className = 'accessibility-toggle dyslexia-toggle';
+  if (!/^en\b/i.test(document.documentElement.lang || 'en')) toggle.lang = 'en';
   toggle.type = 'button';
   toggle.setAttribute('aria-label', 'Toggle dyslexia-friendly font');
 

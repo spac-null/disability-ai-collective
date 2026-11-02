@@ -184,11 +184,18 @@
     {% endunless %}
 </head>
 <body>
+    {% comment %} Page furniture follows the page's language. A Dutch page (page.lang nl:
+       the nl collection and /nl/) gets Dutch labels; links that lead to pages which exist
+       only in English say so with hreflang="en". The tagline is the publication's English
+       motto and is marked lang="en" rather than translated. {% endcomment %}
+    {% assign _nl = false %}
+    {% if page.lang == 'nl' %}{% assign _nl = true %}{% endif %}
+    {% if _nl %}{% assign _en = ' hreflang="en"' %}{% else %}{% assign _en = '' %}{% endif %}
     <!-- Skip links for screen readers -->
     <div class="skip-links">
-        <a href="#main-content" class="skip-link">Skip to main content</a>
-        <a href="#navigation" class="skip-link">Skip to navigation</a>
-        <a href="#footer" class="skip-link">Skip to footer</a>
+        <a href="#main-content" class="skip-link">{% if _nl %}Naar de inhoud{% else %}Skip to main content{% endif %}</a>
+        <a href="#navigation" class="skip-link">{% if _nl %}Naar de navigatie{% else %}Skip to navigation{% endif %}</a>
+        <a href="#footer" class="skip-link">{% if _nl %}Naar de voettekst{% else %}Skip to footer{% endif %}</a>
     </div>
 
     <!-- Header with navigation -->
@@ -196,7 +203,7 @@
         <div class="container">
             <a href="{{ '/' | relative_url }}" class="site-title-wrap">
               <span class="site-title">{{ site.title }}</span>
-              <span class="site-tagline">Not writing about disability — seeing the world through it.</span>
+              <span class="site-tagline"{% if _nl %} lang="en"{% endif %}>Not writing about disability — seeing the world through it.</span>
             </a>
             
             <!-- Main navigation -->
@@ -205,7 +212,7 @@
                    button now says which way it goes -- "Open menu" / "Close menu" -- and shows
                    a cross while the menu is open, so the control is not ambiguous once it has
                    acted. Both marks are in the DOM; CSS shows one. {% endcomment %}
-                <button class="site-nav__toggle" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
+                <button class="site-nav__toggle" aria-expanded="false" aria-controls="site-nav-menu" aria-label="{% if _nl %}Menu openen{% else %}Open menu{% endif %}" data-label-open="{% if _nl %}Menu openen{% else %}Open menu{% endif %}" data-label-close="{% if _nl %}Menu sluiten{% else %}Close menu{% endif %}">
                     <svg class="site-nav__icon site-nav__icon--open" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
@@ -219,11 +226,19 @@
                    Everything else -- Collections, Works, the archive, Ethics, Accessibility --
                    stays reachable from the footer, which is the surface for breadth. {% endcomment %}
                 <ul id="site-nav-menu" class="site-nav__menu">
+                    {% if _nl %}
+                    <li><a href="{{ '/nl/' | relative_url }}" {% if page.url contains '/nl/' %}aria-current="page"{% endif %}>Artikelen</a></li>
+                    <li><a href="{{ '/about/' | relative_url }}"{{ _en }}>Over</a></li>
+                    <li><a href="{{ '/perspectives/' | relative_url }}"{{ _en }}>Perspectieven</a></li>
+                    <li><a href="{{ '/notes/' | relative_url }}"{{ _en }}>Redactienotities</a></li>
+                    <li class="site-nav__item--secondary"><a href="{{ '/press/' | relative_url }}"{{ _en }}>Pers</a></li>
+                    {% else %}
                     <li><a href="{{ '/research/' | relative_url }}" {% if page.url contains '/research' or page.layout == 'post' %}aria-current="page"{% endif %}>Articles</a></li>
                     <li><a href="{{ '/about/' | relative_url }}" {% if page.url contains '/about' %}aria-current="page"{% endif %}>About</a></li>
                     <li><a href="{{ '/perspectives/' | relative_url }}" {% if page.url contains '/perspectives' %}aria-current="page"{% endif %}>Perspectives</a></li>
                     <li><a href="{{ '/notes/' | relative_url }}" {% if page.url contains '/notes' %}aria-current="page"{% endif %}>Editor&rsquo;s notes</a></li>
                     <li class="site-nav__item--secondary"><a href="{{ '/press/' | relative_url }}" {% if page.url contains '/press' %}aria-current="page"{% endif %}>Press</a></li>
+                    {% endif %}
                 </ul>
             </nav>
         </div>
@@ -238,8 +253,9 @@
     <button 
         id="theme-toggle" 
         class="theme-toggle" 
-        aria-label="Switch to dark theme"
-        title="Switch to dark theme"
+        aria-label="{% if _nl %}Schakel naar donker thema{% else %}Switch to dark theme{% endif %}"
+        title="{% if _nl %}Schakel naar donker thema{% else %}Switch to dark theme{% endif %}"
+        {% if _nl %}data-label-dark="Donker" data-label-light="Licht" data-aria-dark="Schakel naar donker thema" data-aria-light="Schakel naar licht thema" data-announce="Thema gewijzigd"{% endif %}
     >
         <span class="theme-toggle__icon" aria-hidden="true">
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -247,7 +263,7 @@
                 <path class="moon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
             </svg>
         </span>
-        <span class="theme-toggle__label">Dark</span>
+        <span class="theme-toggle__label">{% if _nl %}Donker{% else %}Dark{% endif %}</span>
     </button>
 
     <!-- Footer -->
@@ -261,44 +277,54 @@
             <div class="site-footer__content">
                 <div class="site-footer__section site-footer__section--about">
                     <h3>{{ site.title }}</h3>
+                    {% if _nl %}
+                    <p>
+                        Crip Minds is een redactionele publicatie die met AI wordt gemaakt, opgezet en geleid door
+                        <a href="{{ '/jascha/' | relative_url }}"{{ _en }}>{{ site.creator }}</a>.
+                        &lsquo;Crip&rsquo; is een teruggeclaimde term uit de disability-justicebeweging &mdash;
+                        <a href="{{ '/about/#language-note' | relative_url }}"{{ _en }}>toelichting op de term</a> (Engels).
+                    </p>
+                    {% else %}
                     <p>
                         Crip Minds is an AI-assisted editorial publication created and directed by
                         <a href="{{ '/jascha/' | relative_url }}">{{ site.creator }}</a>.
                         &ldquo;Crip&rdquo; is a reclaimed disability-justice term &mdash;
                         <a href="{{ '/about/#language-note' | relative_url }}">language note</a>.
                     </p>
+                    {% endif %}
                 </div>
 
-                <nav class="site-footer__nav" aria-label="Footer">
+                <nav class="site-footer__nav" aria-label="{% if _nl %}Voettekst{% else %}Footer{% endif %}">
                     <div class="site-footer__section">
-                        <h3>Read</h3>
+                        <h3>{% if _nl %}Lezen{% else %}Read{% endif %}</h3>
                         <ul class="site-footer__links">
-                            <li><a href="{{ '/research/' | relative_url }}" {% if page.url contains '/research' or page.layout == 'post' %}aria-current="page"{% endif %}>Articles</a></li>
-                            <li><a href="{{ '/notes/' | relative_url }}" {% if page.url contains '/notes' %}aria-current="page"{% endif %}>Editor&rsquo;s notes</a></li>
+                            {% if _nl %}<li><a href="{{ '/nl/' | relative_url }}" {% if page.url contains '/nl/' %}aria-current="page"{% endif %}>Nederlandse artikelen</a></li>{% endif %}
+                            <li><a href="{{ '/research/' | relative_url }}" {% if page.url contains '/research' or page.layout == 'post' %}aria-current="page"{% endif %}{{ _en }}>{% if _nl %}Alle artikelen (Engels){% else %}Articles{% endif %}</a></li>
+                            <li><a href="{{ '/notes/' | relative_url }}" {% if page.url contains '/notes' %}aria-current="page"{% endif %}{{ _en }}>{% if _nl %}Redactienotities{% else %}Editor&rsquo;s notes{% endif %}</a></li>
                         </ul>
                     </div>
 
                     <div class="site-footer__section">
-                        <h3>About</h3>
+                        <h3>{% if _nl %}Over{% else %}About{% endif %}</h3>
                         <ul class="site-footer__links">
-                            <li><a href="{{ '/about/' | relative_url }}" {% if page.url contains '/about' %}aria-current="page"{% endif %}>About Crip Minds</a></li>
-                            <li><a href="{{ '/perspectives/' | relative_url }}" {% if page.url contains '/perspectives' %}aria-current="page"{% endif %}>Editorial perspectives</a></li>
-                            <li><a href="{{ '/ethics/' | relative_url }}" {% if page.url contains '/ethics' %}aria-current="page"{% endif %}>Ethics</a></li>
-                            <li><a href="{{ '/accessibility/' | relative_url }}" {% if page.url contains '/accessibility' %}aria-current="page"{% endif %}>Accessibility</a></li>
-                            <li><a href="{{ '/press/' | relative_url }}" {% if page.url contains '/press' %}aria-current="page"{% endif %}>Press</a></li>
+                            <li><a href="{{ '/about/' | relative_url }}" {% if page.url contains '/about' %}aria-current="page"{% endif %}{{ _en }}>{% if _nl %}Over Crip Minds{% else %}About Crip Minds{% endif %}</a></li>
+                            <li><a href="{{ '/perspectives/' | relative_url }}" {% if page.url contains '/perspectives' %}aria-current="page"{% endif %}{{ _en }}>{% if _nl %}Redactionele perspectieven{% else %}Editorial perspectives{% endif %}</a></li>
+                            <li><a href="{{ '/ethics/' | relative_url }}" {% if page.url contains '/ethics' %}aria-current="page"{% endif %}{{ _en }}>{% if _nl %}Ethiek{% else %}Ethics{% endif %}</a></li>
+                            <li><a href="{{ '/accessibility/' | relative_url }}" {% if page.url contains '/accessibility' %}aria-current="page"{% endif %}{{ _en }}>{% if _nl %}Toegankelijkheid{% else %}Accessibility{% endif %}</a></li>
+                            <li><a href="{{ '/press/' | relative_url }}" {% if page.url contains '/press' %}aria-current="page"{% endif %}{{ _en }}>{% if _nl %}Pers{% else %}Press{% endif %}</a></li>
                         </ul>
                     </div>
 
                     <div class="site-footer__section">
-                        <h3>History</h3>
+                        <h3>{% if _nl %}Geschiedenis{% else %}History{% endif %}</h3>
                         <ul class="site-footer__links">
-                            <li><a href="{{ '/archive/' | relative_url }}" {% if page.url contains '/archive' %}aria-current="page"{% endif %}>Legacy archive</a></li>
+                            <li><a href="{{ '/archive/' | relative_url }}" {% if page.url contains '/archive' %}aria-current="page"{% endif %}{{ _en }}>{% if _nl %}Eerder archief{% else %}Legacy archive{% endif %}</a></li>
                         </ul>
                     </div>
                 </nav>
 
                 <div class="site-footer__section site-footer__section--connect">
-                    <h3>Connect</h3>
+                    <h3>{% if _nl %}Volgen{% else %}Connect{% endif %}</h3>
                     {% comment %} Text only. The site has no social icon assets, and hand-drawing
                        three brand marks would add a logo wall and a maintenance burden for no
                        reader gain. {% endcomment %}
@@ -306,21 +332,26 @@
                         <li><a href="https://bsky.app/profile/cripminds.bsky.social" target="_blank" rel="noopener">Bluesky</a></li>
                         <li><a rel="me noopener" href="https://mastodon.social/@cripminds" target="_blank">Mastodon</a></li>
                         <li><a href="https://www.tumblr.com/cripminds" target="_blank" rel="noopener">Tumblr</a></li>
-                        <li><a href="https://ko-fi.com/T8K7Z04KYU" target="_blank" rel="noopener">Support</a></li>
+                        <li><a href="https://ko-fi.com/T8K7Z04KYU" target="_blank" rel="noopener">{% if _nl %}Steunen{% else %}Support{% endif %}</a></li>
                     </ul>
                 </div>
 
                 <div class="site-footer__section">
-                    <h3>Subscribe</h3>
-                    <p class="newsletter-desc">New essays, delivered to your inbox.</p>
+                    {% if _nl %}
+                      {% assign _nf = "Abonneren|Nieuwe essays (in het Engels) in je inbox.|E-mailadres|je@email.nl|Hoe vaak|Wekelijks overzicht|Elk artikel|Aanmelden|Je bent al aangemeld.|Kijk in je inbox om te bevestigen.|Er ging iets mis. Probeer het opnieuw." | split: "|" %}
+                    {% else %}
+                      {% assign _nf = "Subscribe|New essays, delivered to your inbox.|Email address|your@email.com|Delivery frequency|Weekly digest|Each article|Subscribe|You’re already subscribed.|Check your inbox to confirm.|Something went wrong. Try again." | split: "|" %}
+                    {% endif %}
+                    <h3>{{ _nf[0] }}</h3>
+                    <p class="newsletter-desc">{{ _nf[1] }}</p>
                     <form class="newsletter-form" id="newsletter-form">
-                        <label for="bd-email" class="sr-only">Email address</label>
-                        <input type="email" name="email" id="bd-email" placeholder="your@email.com" required>
-                        <div class="newsletter-frequency" role="group" aria-label="Delivery frequency">
-                          <label><input type="radio" name="frequency" value="weekly" checked> Weekly digest</label>
-                          <label><input type="radio" name="frequency" value="daily"> Each article</label>
+                        <label for="bd-email" class="sr-only">{{ _nf[2] }}</label>
+                        <input type="email" name="email" id="bd-email" placeholder="{{ _nf[3] }}" required>
+                        <div class="newsletter-frequency" role="group" aria-label="{{ _nf[4] }}">
+                          <label><input type="radio" name="frequency" value="weekly" checked> {{ _nf[5] }}</label>
+                          <label><input type="radio" name="frequency" value="daily"> {{ _nf[6] }}</label>
                         </div>
-                        <button type="submit">Subscribe</button>
+                        <button type="submit">{{ _nf[7] }}</button>
                         <p class="newsletter-msg" id="newsletter-msg" aria-live="polite"></p>
                     </form>
                     <script>
@@ -337,11 +368,11 @@
                         body: JSON.stringify({email: email, frequency: freq})
                       }).then(function(r){ return r.json(); }).then(function(d) {
                         msg.textContent = d.status === "already_confirmed"
-                          ? "You’re already subscribed."
-                          : "Check your inbox to confirm.";
+                          ? {{ _nf[8] | jsonify }}
+                          : {{ _nf[9] | jsonify }};
                         document.getElementById("bd-email").value = "";
                       }).catch(function() {
-                        msg.textContent = "Something went wrong. Try again.";
+                        msg.textContent = {{ _nf[10] | jsonify }};
                         btn.disabled = false;
                       });
                     });
@@ -351,7 +382,7 @@
 
             <div class="site-footer__bottom">
                 <p class="site-footer__copyright">&copy; {{ 'now' | date: "%Y" }} {{ site.title }}</p>
-                <p class="site-footer__version"><a href="{{ '/accessibility/' | relative_url }}">WCAG 2.1 AA target</a></p>
+                <p class="site-footer__version"><a href="{{ '/accessibility/' | relative_url }}"{{ _en }}>{% if _nl %}Streefdoel: WCAG 2.1 AA{% else %}WCAG 2.1 AA target{% endif %}</a></p>
             </div>
         </div>
     </footer>
