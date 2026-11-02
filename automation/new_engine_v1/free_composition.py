@@ -1070,6 +1070,10 @@ a paragraph explaining it.
 
 SAY THE ARGUMENT ONCE. A second sentence that restates it in other words is cut.
 
+NO HOUSE TEMPLATE. Not every piece opens on a scene, turns on a number and closes on a
+one-line punch. End on a fact when the fact is stronger. No stock moves: "I wanted to
+know", "I want to be fair to it", "The other side is not weak".
+
 ONE CLAIM, NAMED BY THE THIRD PARAGRAPH. Decide the one thing this piece argues and let
 the reader hold it by the end of the third paragraph. Every paragraph after that moves
 it forward; a paragraph that does not is cut, however good its material. Two questions
@@ -1101,6 +1105,15 @@ sentence or cut it.
 ═══════════════════════════════════════════════════════════════
 HARD PROHIBITIONS
 ═══════════════════════════════════════════════════════════════
+
+DISABLED PEOPLE SPEAK FOR THEMSELVES. If the Ledger quotes a disabled person, their own
+words carry part of the piece, attributed to them. If the Ledger quotes no disabled person,
+do not speak for disabled people: keep the argument on the mechanism, and where it
+matters, say plainly that the people it affects are not heard in the material.
+Language: no "vulnerable", "suffers from", "a case of", "these people"; a diagnosis is
+something a person has, not what they are ("has quadriplegia"); a person is never "a
+body"; disability is never a matter of personality or willpower. Court and medical
+wording appears only inside quotation marks, attributed.
 
 The byline has no body and no life. You may write "I read", "I notice", "I think this
 means". You may NEVER give yourself a disability, a body, a habit, a diagnosis or a
@@ -1139,7 +1152,8 @@ _STRUCTURE_TELLS = re.compile(
     r"the point is|to be clear|in other words|it is worth|"
     r"(?:is|was|makes [^.]{0,40}) the (?:interesting|strange|telling|revealing) part|"
     r"the part (?:worth|that should)|worth watching|set aside,? for a moment|ask instead|"
-    r"\band notice\b|notice what|the answer sits)\b",
+    r"\band notice\b|notice what|the answer sits|i wanted to know|i want to be fair|"
+    r"the other side is not weak)\b",
     re.I)
 
 
