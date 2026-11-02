@@ -714,6 +714,11 @@ def run_scheduled(orch, *, rehearsal: bool = False,
                                      source_url=payload["provenance"]["url"],
                                      provider_model=model,
                                      commissioning_metadata=seed)
+    # Plain-language label (owner, 2026-11-02): stamped only when the published text
+    # itself measures at B1.
+    from new_engine_v1 import free_composition as _FC
+    if _FC.plain_language_metrics(body or "").get("b1_ok"):
+        meta["reading_level"] = "B1"
     _wo = out["artifacts"][C.WRITER_OUTPUT].payload if C.WRITER_OUTPUT in out["artifacts"] else {}
     _src_headline = payload["provenance"].get("title") or "Untitled"
     # The editorial package titles the article when the composition produced one: it is

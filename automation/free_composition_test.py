@@ -1666,6 +1666,21 @@ def test_a_structure_tell_triggers_the_revision_even_when_the_reader_passes() ->
           FC.structure_tells("# T\n\nThe board met. It voted no.\n") == [])
 
 
+def test_plain_language_metrics_measure_b1() -> None:
+    plain = ("# T\n\nThe board met on Monday. It voted to close the school. Parents were not "
+             "asked. They heard it on the radio. Now they want an answer.[^F01]\n\n"
+             "[^F01]: [Src](http://x) — \"a very long footnote quote that must not count "
+             "toward anything at all because it is a citation and not the article\"")
+    m = FC.plain_language_metrics(plain)
+    check("short plain sentences pass B1", m["b1_ok"] and m["avg_words"] < 8, m)
+    dense = ("# T\n\n" + ("The regulator, whose mandate includes the preservation of academic "
+                          "standards, professional competence and patient safety, amended the "
+                          "appendix governing admission without consulting anyone. ") * 3)
+    d = FC.plain_language_metrics(dense)
+    check("long legal sentences fail B1 and are listed for splitting",
+          not d["b1_ok"] and d["longest"], d)
+
+
 def test_density_survives_the_exception_path_too() -> None:
     """The other way out of the ladder: a CompositionHold raised rather than returned.
 

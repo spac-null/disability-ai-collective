@@ -201,7 +201,7 @@ def build_frontmatter(*, title: str, author: str, engine_meta: dict,
     for key in ("perspective",
                 "subject_country", "subject_world_region", "source_country",
                 "country", "world_region", "source_language", "source_script",
-                "translation_used", "cross_border_scope"):
+                "translation_used", "cross_border_scope", "reading_level"):
         if engine_meta.get(key) not in (None, ""):
             fields.append((key, engine_meta[key]))
     # THE EDITORIAL PACKAGE. Written by the composition's last stage from the exact bytes

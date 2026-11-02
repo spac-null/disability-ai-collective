@@ -1068,6 +1068,17 @@ that reframes, or a plain stop can end a piece as well. If the ending does retur
 the opening's person, object or word, stop there: one sentence after the return, never
 a paragraph explaining it.
 
+PLAIN LANGUAGE AT B1, WITH NRC AND DE CORRESPONDENT QUALITY. Your reader is clever and
+curious and reads at CEFR B1. Write so they can follow every sentence first time:
+- sentences of about 12 to 15 words on average; split anything over 20 words
+- one idea per sentence; paragraphs of two to four sentences
+- everyday words; a hard word only when it is the precise one, explained in the same
+  sentence; no unexplained abbreviations (PwD, OBC, MBBS)
+- active voice and a concrete subject: who does what to whom
+This is not simpler thinking. The argument, the turn and the ending stay as sharp as
+NRC or De Correspondent. Short, plain sentences are how those papers land a point.
+The finished article is measured; it carries the B1 label only if it passes.
+
 SAY THE ARGUMENT ONCE. A second sentence that restates it in other words is cut.
 
 NO HOUSE TEMPLATE. Not every piece opens on a scene, turns on a number and closes on a
@@ -1141,6 +1152,34 @@ F01 F03 F07
 ---NEGATIVE CLAIMS---
 (one line per absence claim: <exact sentence> :: F12)
 (leave this section empty if there are none)"""
+
+
+# PLAIN LANGUAGE (B1). Owner, 2026-11-02: articles are written at CEFR B1 and labelled so.
+# Measured, not asserted: the label is only stamped when the final text passes.
+B1_MAX_AVG_WORDS = 15.0
+B1_LONG_SENTENCE = 20
+B1_MAX_LONG_SHARE = 0.10
+
+
+def plain_language_metrics(article: str) -> dict:
+    """Sentence-length measures of the article body (no title, no footnotes)."""
+    body = article.split("\n[^F", 1)[0]
+    body = re.sub(r"\[\^F\d+\]", "", body)
+    body = "\n".join(l for l in body.splitlines()
+                     if l.strip() and not l.lstrip().startswith(("#", "<", "---")))
+    sentences = [s for s in re.split(r"(?<=[.!?])[\"'”’)]*\s+", body) if len(s.split()) >= 2]
+    lengths = [len(s.split()) for s in sentences]
+    if not lengths:
+        return {"sentences": 0, "avg_words": 0.0, "long_share": 0.0, "b1_ok": False,
+                "longest": []}
+    avg = sum(lengths) / len(lengths)
+    long_share = sum(1 for n in lengths if n > B1_LONG_SENTENCE) / len(lengths)
+    longest = [s.strip() for s, n in sorted(zip(sentences, lengths), key=lambda x: -x[1])
+               if n > B1_LONG_SENTENCE][:8]
+    return {"sentences": len(lengths), "avg_words": round(avg, 1),
+            "long_share": round(long_share, 3),
+            "b1_ok": avg <= B1_MAX_AVG_WORDS and long_share <= B1_MAX_LONG_SHARE,
+            "longest": longest}
 
 
 _STRUCTURE_TELLS = re.compile(
@@ -2128,6 +2167,9 @@ def run_free_argumentative_composition(
                                       and not stop_after),
             "owner_review": bool(failure_stage is None and not package_out),
             "words": len((article or "").split()),
+            # Measured on the bytes that publish; the B1 label is only stamped from this.
+            "plain_language": ({k: v for k, v in plain_language_metrics(article).items()
+                                if k != "longest"} if article else None),
             "model_calls_by_stage": dict(calls),
             "model_calls_total": sum(calls.values()),
             "repairs_by_stage": {k: v for k, v in repairs.items() if v},
@@ -2238,6 +2280,18 @@ def run_free_argumentative_composition(
                             "it to say only what the Ledger says.",
                     "passages": [str(f["quote"]) for f in unsupported][:8]}
                 pre = dict(pre, held=held, status=CP.HOLD)
+            plain = plain_language_metrics(final)
+            if not plain["b1_ok"]:
+                held = dict(pre.get("held") or {})
+                held["PLAIN_LANGUAGE"] = {
+                    "verdict": CP.HOLD,
+                    "note": ("The article must read at B1: average %.1f words a sentence "
+                             "(target 15 or fewer), %d%% of sentences over 20 words "
+                             "(target 10%% or fewer). Split these sentences; keep their "
+                             "meaning and the article's voice."
+                             % (plain["avg_words"], round(plain["long_share"] * 100))),
+                    "passages": plain["longest"]}
+                pre = dict(pre, held=held, status=CP.HOLD)
             tells = structure_tells(final)
             if tells:
                 held = dict(pre.get("held") or {})
@@ -2252,6 +2306,8 @@ def run_free_argumentative_composition(
                      "held": {d: (v or {}).get("passages") or []
                               for d, v in (pre.get("held") or {}).items()},
                      "structure_tells": tells,
+                     "plain_language": {k: plain[k] for k in
+                                        ("avg_words", "long_share", "b1_ok")},
                      "unsupported_claims": [str(f["quote"])[:200] for f in unsupported],
                      "grounding_model_calls": g0.get("model_calls", 0),
                      "reader_disagreements": pre.get("reader_disagreements") or []}
