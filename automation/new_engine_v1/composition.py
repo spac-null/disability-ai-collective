@@ -3912,10 +3912,25 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
         # repeats it; one the article does not carry has to be licensed by the ledger like
         # any other, and nothing declared provenance for a title.
         art_norm = normalize_span(final_text)
+
+        def _absence_in_article(sentence):
+            # A card line may join the article's own absence to another clause ("...in
+            # photographs; it survives in staff..."). Each clause carrying a negation
+            # must be the article's words; the rest is not an absence claim.
+            clauses = [c.strip(" .,") for c in re.split(r"[;:—–]|\s-\s", sentence)]
+            negs = [c for c in clauses if _NEGATION_TOKENS.search(c.lower())]
+
+            def carried(c):
+                m = _NEGATION_TOKENS.search(c.lower())
+                pred = c[m.start():]
+                return (normalize_span(c) in art_norm
+                        or (len(pred.split()) >= 4 and normalize_span(pred) in art_norm))
+            return bool(negs) and all(carried(c) for c in negs)
         ps["negative_admission"] = dict(
             ps["negative_admission"],
             unmatched=[h for h in ps["negative_admission"]["unmatched"]
-                       if normalize_span(h["sentence"]) not in art_norm])
+                       if normalize_span(h["sentence"]) not in art_norm
+                       and not _absence_in_article(h["sentence"])])
         a["publication_package"] = ps
     f = a["continuity_final"]
     delta_errs = CE.validate_semantic_delta(draft_text, final_text,
