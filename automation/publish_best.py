@@ -943,6 +943,76 @@ def publish_candidate(draft_path, now=None, roots=None):
     return 0
 
 
+OWNER_BASIS = "OWNER_APPROVED_EDIT"
+
+
+def publish_owner_approved(draft_path, now=None):
+    """Publish an archived CURRENT_ENGINE article the owner edited and approved.
+
+    Owner decision 2026-11-02: held articles worth publishing after a manual edit go
+    out through the same mechanics as a direct publication. The front matter says what
+    happened -- the engine held it (`engine_decision` stays as recorded), and the owner
+    approved an edited text (`publication_basis: OWNER_APPROVED_EDIT`). Nothing here
+    stamps an ACCEPT or an eligibility the engine never granted.
+    """
+    draft = pathlib.Path(draft_path)
+    now = now or datetime.now()
+    if not draft.is_file():
+        print("OWNER PUBLISH REFUSED: %s does not exist" % (draft,), file=sys.stderr)
+        return 1
+    try:
+        in_repo = draft.resolve().is_relative_to(DRAFTS.resolve())
+    except OSError:
+        in_repo = False
+    if not in_repo:
+        print("OWNER PUBLISH REFUSED: %s is not in %s" % (draft, DRAFTS), file=sys.stderr)
+        return 1
+    text = draft.read_text(encoding="utf-8", errors="replace")
+    fm = parse_frontmatter(text)
+    approved = fm.get("owner_approved")
+    if not (approved is True or str(approved).strip().lower() == "true") \
+            or str(fm.get("publication_basis", "")).strip() != OWNER_BASIS:
+        print("OWNER PUBLISH REFUSED: no recorded owner approval (owner_approved: true, "
+              "publication_basis: %s)" % OWNER_BASIS, file=sys.stderr)
+        return 1
+    if not PA.is_current_engine(fm):
+        print("OWNER PUBLISH REFUSED: not a CURRENT_ENGINE article", file=sys.stderr)
+        return 1
+    ok, why = PA.retention_feasible(fm)
+    if not ok:
+        print("OWNER PUBLISH REFUSED: NEEDS_AUDIT_RETENTION: %s" % (why,), file=sys.stderr)
+        return 1
+    from publication_safety_bridge import check_persona_leakage
+    body = text.split("---", 2)[2] if text.startswith("---") else text
+    persona_ok, persona_why = check_persona_leakage(body)
+    if not persona_ok:
+        print("OWNER PUBLISH REFUSED: %s" % (persona_why,), file=sys.stderr)
+        return 1
+    dest = POSTS / draft.name
+    if dest.exists():
+        print("OWNER PUBLISH REFUSED: %s already exists in _posts/" % (dest.name,),
+              file=sys.stderr)
+        return 1
+    POSTS.mkdir(parents=True, exist_ok=True)
+    print("\nPublishing (owner-approved edit of held run %s): %s"
+          % (fm.get("engine_run"), draft.name))
+    res = promote_candidate(draft, dest, now)
+    if not res["ok"]:
+        print("OWNER PUBLISH FAILED: %s" % (res["reason"],), file=sys.stderr)
+        return 1
+    msg = ["publish (owner-approved edit): %s" % (dest.stem,)]
+    if res["image_failure"]:
+        msg.append("published without illustrations: %s" % (res["image_failure"],))
+    try:
+        _commit_and_push(res["mutated"], msg)
+    except subprocess.CalledProcessError as e:
+        print("OWNER PUBLISH FAILED: git error after promotion: %s" % (e,), file=sys.stderr)
+        return 1
+    _fire_pending_social(dest.stem, dest)
+    _publish_dutch_translation(dest)
+    return 0
+
+
 def main(dry_run=False):
     if dry_run:
         print("[DRY RUN — no files will be moved, no git actions will run]\n")

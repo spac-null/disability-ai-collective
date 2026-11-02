@@ -500,6 +500,46 @@ def test_the_call_site_is_where_it_says_it_is():
                                      "persona_score", "AGE_WINDOW_DAYS")), src[:0])
 
 
+def _owner_draft(root, name, run_id, *, approved=True, body_extra=""):
+    p = _candidate(root, name, run_id)
+    t = (p.read_text().replace('engine_decision: "ACCEPT"', 'engine_decision: "HOLD"')
+                      .replace("publication_eligible: true", "publication_eligible: false"))
+    if approved:
+        t = t.replace("---\nlayout:", "---\nowner_approved: true\npublication_basis: "
+                                      "\"OWNER_APPROVED_EDIT\"\nlayout:", 1)
+    p.write_text(t + body_extra, encoding="utf-8")
+    return p
+
+
+def test_an_owner_approved_edit_publishes_and_says_so():
+    """Owner, 2026-11-02: an archived held article, edited and approved, publishes
+    through the same mechanics, and its record keeps the engine's HOLD."""
+    rid = "production-20261102T000000Z-0000aaaa"
+    root = _repo()
+    with Env(root, run_ids=[rid]) as env:
+        d = _owner_draft(root, "the-held-one", rid)
+        rc = PB.publish_owner_approved(d)
+        check("the owner-approved edit publishes", rc == 0, rc)
+        post = PB.POSTS / d.name
+        check("the post keeps the engine's HOLD and the owner basis",
+              post.exists() and 'engine_decision: "HOLD"' in post.read_text()
+              and "OWNER_APPROVED_EDIT" in post.read_text())
+        msgs = [c for c in env.calls if c[:2] == ["git", "commit"]]
+        check("the commit says it was an owner-approved edit",
+              msgs and "owner-approved edit" in " ".join(msgs[0]), msgs)
+        check("the Dutch edition is handed over", env.dutch_calls == [post], env.dutch_calls)
+    root2 = _repo()
+    with Env(root2, run_ids=[rid]):
+        rc2 = PB.publish_owner_approved(_owner_draft(root2, "no-approval", rid,
+                                                     approved=False))
+        check("without a recorded owner approval it refuses", rc2 == 1, rc2)
+    root3 = _repo()
+    with Env(root3, run_ids=[rid]):
+        rc3 = PB.publish_owner_approved(_owner_draft(
+            root3, "persona", rid, body_extra="\nMy eyes go up when I think.\n"))
+        check("a persona leak in the body refuses", rc3 == 1, rc3)
+
+
 def main():
     saved = (PB.REPO, PB.DRAFTS, PB.POSTS, PB.ARCHIVE, PB.subprocess)
     saved_env = dict(os.environ)
@@ -514,7 +554,8 @@ def main():
                    test_direct_publication_uses_the_existing_mechanics,
                    test_zero_images_is_a_successful_publication,
                    test_a_candidate_outside_this_repo_is_refused,
-                   test_the_call_site_is_where_it_says_it_is):
+                   test_the_call_site_is_where_it_says_it_is,
+                   test_an_owner_approved_edit_publishes_and_says_so):
             print("\n" + fn.__name__)
             fn()
     finally:
