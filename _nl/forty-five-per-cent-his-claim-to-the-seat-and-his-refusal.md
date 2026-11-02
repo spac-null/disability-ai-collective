@@ -1,4 +1,6 @@
 ---
+image: "/assets/forty-five-per-cent-his-claim-to-the-seat-and-his-refusal_1_conceptual_cover.jpg"
+image_alt: "Een effen groenblauwe achtergrond met lichte, papierachtige vakjes in twee kruisende banen. Waar de banen elkaar kruisen, is \u00e9\u00e9n vakje donker."
 layout: "post"
 title: "Vijfenveertig procent: genoeg voor de plaats, te veel voor de opleiding"
 lang: "nl"

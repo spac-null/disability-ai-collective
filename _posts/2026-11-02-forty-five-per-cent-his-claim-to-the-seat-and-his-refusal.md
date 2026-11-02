@@ -36,7 +36,7 @@ publication_eligible: false
 publication_safety_profile: "CURRENT_ENGINE_V1"
 translation_nl: "/nl/forty-five-per-cent-his-claim-to-the-seat-and-his-refusal/"
 image: /assets/forty-five-per-cent-his-claim-to-the-seat-and-his-refusal_1_conceptual_cover.jpg
-image_alt: "Overhead view of a single creased sheet of official paper on a dark surface. The sheet is printed with a ruled grid of empty cells in pale blue ink, with no words or numbers anywhere. Most cells carry a faint grey tint; at one intersection of a row and a column, a single cell is left conspicuously blank and brighter than the rest."
+image_alt: "A flat teal background with pale paper-like cells in two crossing bands. Where the bands cross, one cell is dark."
 ---
 
 # What the certificate was allowed to decide

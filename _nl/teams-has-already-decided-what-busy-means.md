@@ -1,4 +1,6 @@
 ---
+image: "/assets/teams-has-already-decided-what-busy-means_1_conceptual_cover.jpg"
+image_alt: "Rijen metalen cilinders, van bovenaf gezien. Een paar in het midden hebben een geribbeld bovenvlak, en \u00e9\u00e9n ligt scheef uit de rij."
 source_url: "https://support.microsoft.com/en-us/office/change-your-notifications-style-in-microsoft-teams-0da93820-93d0-4da3-86b6-fc28d19908e3"
 layout: "post"
 title: "Teams heeft al besloten wanneer jij het druk hebt"
