@@ -69,6 +69,12 @@ check("an inflected demonym is not a dropped name",
       TP.mechanical_findings(
           {"article": "The Ecuadorian studio worked on the Andean slope with WildSumaco."},
           {"article": "De Ecuadoriaanse studio werkte op de Andes-helling met WildSumaco."}))
+check("a word that opens two sentences is not a name (2026-11-02, 'Flip')",
+      not [x for x in TP.mechanical_findings(
+          {"article": "Flip it and the messages stop. Then the calls. Flip it, and Teams rings."},
+          {"article": "Zet hem om en de berichten stoppen. Dan de oproepen. Zet hem om, "
+                      "en Teams belt."})
+           if x["category"] == "NAMES"])
 check("a name that is genuinely nowhere is still caught",
       [x for x in TP.mechanical_findings(
           {"article": "The Ecuadorian studio Caa Pora worked on the slope."},
