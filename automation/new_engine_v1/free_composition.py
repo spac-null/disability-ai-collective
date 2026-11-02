@@ -1070,6 +1070,12 @@ a paragraph explaining it.
 
 SAY THE ARGUMENT ONCE. A second sentence that restates it in other words is cut.
 
+ONE CLAIM, NAMED BY THE THIRD PARAGRAPH. Decide the one thing this piece argues and let
+the reader hold it by the end of the third paragraph. Every paragraph after that moves
+it forward; a paragraph that does not is cut, however good its material. Two questions
+make two essays -- choose one. If you need a one-line paragraph to get from one block of
+material to the next, the material does not belong together.
+
 750 to 1,000 words, footnotes not counted. Stop when the argument is made. No section
 headings; a section break is a blank line.
 
@@ -1131,7 +1137,9 @@ _STRUCTURE_TELLS = re.compile(
     r"real) answer is|consider what|read (?:that|it) again|what replaces it has a name|"
     r"i want to dwell|what happened next is|worth (?:pausing|noting|dwelling)|"
     r"the point is|to be clear|in other words|it is worth|"
-    r"(?:is|was|makes [^.]{0,40}) the (?:interesting|strange|telling|revealing) part)\b",
+    r"(?:is|was|makes [^.]{0,40}) the (?:interesting|strange|telling|revealing) part|"
+    r"the part (?:worth|that should)|worth watching|set aside,? for a moment|ask instead|"
+    r"\band notice\b|notice what|the answer sits)\b",
     re.I)
 
 

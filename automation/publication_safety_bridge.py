@@ -77,6 +77,12 @@ _PERSONA_LEAKAGE = (
     r"carer|support worker|nervous system)\b",
     r"\b(?:people|someone|those) like me\b",
     r"\bfor (?:some|many|most) of us\b",
+    # 2026-11-02 blind judge: "Disabled people know this architecture intimately,
+    # because we are usually the ones..." -- the byline claiming disability as "we".
+    r"\b(?:disabled|deaf|blind|autistic|neurodivergent|chronically ill) people\b"
+    r"[^.!?]{0,120}\b(?:we|us|our)\b",
+    r"\bthose of us who\b",
+    r"\bwe (?:disabled|deaf|blind|autistic|neurodivergent) (?:people|folk|readers)\b",
     r"\bI (?:am|was|have been) (?:deaf|blind|disabled|autistic|dyslexic|"
     r"neurodivergent|chronically ill|a wheelchair user)\b",
     r"\bI (?:have|had|live with) (?:a |an )?(?:disability|condition|impairment|"
