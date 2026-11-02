@@ -31,6 +31,7 @@ publication_eligible: false
 publication_safety_profile: "CURRENT_ENGINE_V1"
 image: /assets/seven-minutes-28-degrees-one-phone-call-three-heat-rules_1_conceptual_cover.jpg
 image_alt: "Three unlike measuring objects laid in a row on a plain matte surface, photographed from directly above: a printed paper strip marked with walking times, a round dial thermometer face, and a desk telephone handset lying off its cradle with its cord trailing. Each object sits in its own space with a soft shadow; nothing links them."
+translation_nl: "/nl/seven-minutes-28-degrees-one-phone-call-three-heat-rules/"
 ---
 
 # Seven minutes, 28 degrees, one phone call
