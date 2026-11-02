@@ -1170,12 +1170,32 @@ def revision_brief(draft: str, gate: dict) -> str:
             % (draft.strip(), "\n".join(notes)))
 
 
-def _clean_source_title(raw: str, max_len: int = 100) -> str:
-    """Unescape HTML entities and truncate to a readable link label."""
+def _title_from_url(url: str) -> str:
+    """A readable label from the address when the page gave no title: the last path
+    segment without ids, plus the domain. Never the "(no title established)" placeholder,
+    which shipped as link text on 2026-11-02."""
+    from urllib.parse import urlparse
+    u = urlparse(str(url or ""))
+    host = (u.netloc or "").removeprefix("www.")
+    seg = next((s for s in reversed((u.path or "").split("/")) if s), "")
+    seg = re.sub(r"\.[a-z]{2,5}$", "", seg)
+    words = [w for w in re.split(r"[-_]+", seg)
+             if w and not re.fullmatch(r"[0-9a-f]{4,}|\d+", w, re.I)]
+    label = " ".join(words).strip()
+    if label:
+        label = label[0].upper() + label[1:]
+        return "%s — %s" % (label, host) if host else label
+    return host or "Source"
+
+
+def _clean_source_title(raw: str, max_len: int = 100, url: str = "") -> str:
+    """Unescape HTML entities and truncate to a readable link label. A "|" would be read
+    as a table cell inside a footnote and break the link, so it becomes a dash."""
     t = _html.unescape(str(raw or "")).strip()
+    t = re.sub(r"\s*\|\s*", " — ", t)
     if len(t) > max_len:
         t = t[:max_len].rsplit(" ", 1)[0].rstrip(" —|")
-    return t or "(no title established)"
+    return t or _title_from_url(url)
 
 
 def reader_questions_for_writer() -> str:
@@ -1228,7 +1248,7 @@ def footnote_writer_user(instrument: dict | None, ledger: dict,
             continue
         L.append("  %s  title=%s  publisher=%s  url=%s" % (
             s.get("source_id") or "?",
-            _clean_source_title(s.get("title") or ""),
+            _clean_source_title(s.get("title") or "", url=s.get("url") or ""),
             s.get("publisher") or "(not established)",
             s.get("url") or ""))
 
