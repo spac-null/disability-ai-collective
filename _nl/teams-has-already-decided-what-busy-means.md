@@ -1,11 +1,11 @@
 ---
 layout: "post"
-title: "Teams bepaalt zelf wel wat druk is"
+title: "Teams heeft al besloten wanneer jij het druk hebt"
 lang: "nl"
 date: 2026-11-02
 author: "Crip Minds"
 dek: "De knop heet Mute all notifications (except for calls and meetings). Zet hem om en de berichten stoppen; de oproepen niet. Gloria Mark, die dit al twee decennia onderzoekt, constateert dat herstellen van een onderbreking bijna een halfuur kan kosten."
-excerpt: "In dat hele paneel is de enige bezigheid die Teams uit zichzelf afschermt een oproep of een vergadering. Iets langs lezen, iets moeilijks schrijven, een redenering volgen: het product gaat ervan uit dat die de banner overleven. Gloria Mark constateert dat herstellen van een onderbreking bijna een halfuur kan kosten."
+excerpt: "In dat hele paneel is de enige bezigheid die Teams uit zichzelf afschermt een oproep of een vergadering. Een lange tekst lezen, iets moeilijks schrijven, een redenering volgen: het product gaat ervan uit dat die de banner overleven. Gloria Mark constateert dat herstellen van een onderbreking bijna een halfuur kan kosten."
 meta_description: "De mute-knop van Teams sluit oproepen en vergaderingen bewust uit. Welke taak verdedigt het meldingenpaneel \u2014 en wat neemt het aan dat jij kunt opvangen?"
 social_hook: "De instelling heet \"Mute all notifications (except for calls and meetings)\". Zet hem om en de berichten stoppen. De oproepen niet. Het product heeft al besloten wat druk is, en dat was niet wat jij aan het doen was."
 translation_of: "/2026/11/02/teams-has-already-decided-what-busy-means/"
@@ -18,17 +18,17 @@ Je bent met iets bezig, en dus ga je op zoek naar de instelling die de machine s
 
 De bijbehorende instelling staat een paar regels verderop en kijkt de andere kant op. Show notifications during calls and meetings doet wat er staat: meldingen verschijnen ook terwijl je in een oproep of een vergadering zit.[^F11] Hem uitzetten noemt Microsoft een keuze die je maakt voor minder onderbrekingen.[^F12] Samen doen die twee knoppen één ding. Ze bepalen welke taak verdedigd wordt en wat erdoorheen mag breken.
 
-In dat hele paneel is de enige bezigheid die het product uit zichzelf afschermt een oproep of een vergadering. Al het andere wat je aan die machine zou kunnen doen — iets langs lezen, iets moeilijks schrijven, een redenering volgen die je niet even kunt laten vallen en een seconde later weer oppakken — wordt geacht de onderbreking te overleven.
+In dat hele paneel is de enige bezigheid die het product uit zichzelf afschermt een oproep of een vergadering. Al het andere wat je aan die machine zou kunnen doen — een lange tekst lezen, iets moeilijks schrijven, een redenering volgen die je niet even kunt laten vallen en een seconde later weer oppakken — wordt geacht de onderbreking te overleven.
 
 Meestal overleeft het die niet. Gloria Mark, die dit al twee decennia onderzoekt, constateert dat de meeste mensen zich niet langer dan 47 seconden op één scherm kunnen concentreren, en dat herstellen van een onderbreking bijna een halfuur kan kosten.[^F71] Toen ze begon, ruim twintig jaar geleden, was dat cijfer voor één scherm tweeënhalve minuut.[^F72]
 
  De prijs van het terugkomen is een andere vraag, en die stelt het paneel niet.
 
-Marks eigen verklaring voor waarom mensen het er moeilijk mee hebben, bevat iets waar het paneel geen veld voor heeft: sommige mensen zijn erg goed in zelfregulatie en anderen niet.[^F80] Microsoft kan over ongelijke kosten schrijven wanneer het daarvoor kiest. Op de pagina met sneltoetsen staat het onomwonden: voor mensen met een motorische of visuele beperking kunnen sneltoetsen makkelijker zijn dan een aanraakscherm en zijn ze een essentieel alternatief voor een muis.[^F88] Die zin hangt een prijskaartje aan een handeling naargelang wie hem verricht. Alles in de meldingsinstellingen hangt aan een onderbreking één vast prijskaartje, voor elke lezer van de pagina hetzelfde — kosten die licht genoeg zijn dat het kiezen van de hoek waarin ze landen als afdoende oplossing geldt.
+Marks eigen verklaring voor waarom mensen het er moeilijk mee hebben, bevat iets waar het paneel geen veld voor heeft: sommige mensen zijn erg goed in zelfregulatie en anderen niet.[^F80] Microsoft kan over ongelijke kosten schrijven wanneer het daarvoor kiest. Op de pagina met sneltoetsen staat het onomwonden: voor mensen met een motorische of visuele beperking kunnen sneltoetsen makkelijker zijn dan een aanraakscherm en zijn ze een essentieel alternatief voor een muis.[^F88] Die zin hangt een prijskaartje aan een handeling naargelang wie hem verricht. Alles in de meldingsinstellingen hangt aan een onderbreking één vast tarief, voor elke lezer van de pagina hetzelfde — kosten die licht genoeg zijn dat het kiezen van de hoek waarin ze landen als afdoende oplossing geldt.
 
-Uitgerekend de vergadering is de taak die bescherming krijgt, omdat het het werk is dat het systeem kan zien. Hij staat in de agenda. Teams heeft een schakelaar voor meldingen bij de start van een vergadering,[^F29] en de chat van een vergadering die je hebt geaccepteerd stuurt je standaard een melding.[^F27] Een vergadering is leesbaar voor software zoals niets anders wat je doet dat is. Het laat zich niet bij het product aanmelden, dus laat het zich niet door het product verdedigen, en dus behandelt het product die tijd als vrij.
+Uitgerekend de vergadering is de taak die bescherming krijgt, omdat het het werk is dat het systeem kan zien. Hij staat in de agenda. Teams heeft een schakelaar voor meldingen bij de start van een vergadering,[^F29] en de chat van een vergadering die je hebt geaccepteerd stuurt je standaard een melding.[^F27] Software kan een vergadering lezen; de rest van je werk ziet ze niet. Het laat zich niet bij het product aanmelden, dus laat het zich niet door het product verdedigen, en dus behandelt het product die tijd als vrij.
 
-<aside class="pullquote" aria-hidden="true">Een vergadering is leesbaar voor software zoals niets anders wat je doet dat is.</aside>
+<aside class="pullquote" aria-hidden="true">Software kan een vergadering lezen; de rest van je werk ziet ze niet.</aside>
 
 Dat is een ontwerpbeslissing over wiens aandacht duur is. Voor een werknemer die twee of drie minuten kwijt is aan een banner is de regeling irritant. Voor een werknemer wiens terugkeer het grootste deel van een halfuur kost — de draad weg, het lange document regel voor regel teruggescrold op zoek naar de plek waar de zin afbrak — is diezelfde banner een heffing die meermaals per dag wordt geïnd op werk dat niemand telt. De kosten worden privé betaald. Het dichtst bij een verdediging komt de algemene demping, en die laat oproepen door en bestaat alleen op Windows.[^F05]
 
