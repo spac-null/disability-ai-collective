@@ -39,6 +39,7 @@ publication_safety_profile: "CURRENT_ENGINE_V1"
 publication_safety_version: 1
 image: /assets/teams-has-already-decided-what-busy-means_1_conceptual_cover.jpg
 image_alt: "A flat, matte rendering of a software notification settings list, drawn like printed paper rather than a glossy screen. The largest row reads as a long switch label whose closing parenthesis — an exception for calls and meetings — runs off the right edge of the panel. Smaller rows above and below it all refer to calls, meetings and meeting chat; below them the panel continues as ruled but completely empty rows with no labels. A small notification banner shape pushes in from the bottom corner and overlaps the edge of the list, with nothing blocking it."
+translation_nl: "/nl/teams-has-already-decided-what-busy-means/"
 ---
 
 # Except For Calls And Meetings

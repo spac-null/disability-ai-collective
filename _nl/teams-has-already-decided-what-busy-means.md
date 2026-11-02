@@ -1,0 +1,58 @@
+---
+layout: "post"
+title: "Teams bepaalt zelf wel wat druk is"
+lang: "nl"
+date: 2026-11-02
+author: "Crip Minds"
+image: "/assets/teams-has-already-decided-what-busy-means_1_conceptual_cover.jpg"
+image_alt: "Een vlakke, matte weergave van een lijst met meldingsinstellingen, getekend als bedrukt papier in plaats van een glanzend scherm. De grootste regel leest als een lang knoplabel waarvan het sluithaakje \u2014 een uitzondering voor oproepen en vergaderingen \u2014 rechts buiten het paneel doorloopt. De kleinere regels erboven en eronder gaan allemaal over oproepen, vergaderingen en vergaderchat; daaronder loopt het paneel door als gelinieerde maar volledig lege regels zonder labels. Een kleine meldingsbanner duwt vanuit de onderhoek naar binnen en overlapt de rand van de lijst, zonder dat iets hem tegenhoudt."
+dek: "De knop heet Mute all notifications (except for calls and meetings). Zet hem om en de berichten stoppen; de oproepen niet. Gloria Mark, die dit al twee decennia onderzoekt, constateert dat herstellen van een onderbreking bijna een halfuur kan kosten."
+excerpt: "In dat hele paneel is de enige bezigheid die Teams uit zichzelf afschermt een oproep of een vergadering. Iets langs lezen, iets moeilijks schrijven, een redenering volgen: het product gaat ervan uit dat die de banner overleven. Gloria Mark constateert dat herstellen van een onderbreking bijna een halfuur kan kosten."
+meta_description: "De mute-knop van Teams sluit oproepen en vergaderingen bewust uit. Welke taak verdedigt het meldingenpaneel \u2014 en wat neemt het aan dat jij kunt opvangen?"
+social_hook: "De instelling heet \"Mute all notifications (except for calls and meetings)\". Zet hem om en de berichten stoppen. De oproepen niet. Het product heeft al besloten wat druk is, en dat was niet wat jij aan het doen was."
+translation_of: "/2026/11/02/teams-has-already-decided-what-busy-means/"
+translation_source_bundle_sha256: "dc9f75e697e4aa61c6dd3fabf5f0f1eceb223be204cf187f6b99f35c2e16629b"
+---
+
+# Behalve voor oproepen en vergaderingen
+
+Je bent met iets bezig, en dus ga je op zoek naar de instelling die de machine stil maakt. Microsofts eigen supportpagina voor Teams zegt dat je meldingen moet dempen wanneer je het druk hebt of in een vergadering zit.[^F15] De knop die je daarvoor krijgt, heet Mute all notifications (except for calls and meetings).[^F04] Zet hem om en de berichten stoppen. De oproepen niet — de demping sluit oproepen en vergaderingen bewust uit.[^F06] Waar je ook mee bezig was toen je naar die knop greep, het product heeft al besloten wat druk zijn betekent, en dat is het niet.
+
+De bijbehorende instelling staat een paar regels verderop en kijkt de andere kant op. Show notifications during calls and meetings doet wat er staat: meldingen verschijnen ook terwijl je in een oproep of een vergadering zit.[^F11] Hem uitzetten noemt Microsoft een keuze die je maakt voor minder onderbrekingen.[^F12] Samen doen die twee knoppen één ding. Ze bepalen welke taak verdedigd wordt en wat erdoorheen mag breken.
+
+In dat hele paneel is de enige bezigheid die het product uit zichzelf afschermt een oproep of een vergadering. Al het andere wat je aan die machine zou kunnen doen — iets langs lezen, iets moeilijks schrijven, een redenering volgen die je niet even kunt laten vallen en een seconde later weer oppakken — wordt geacht de onderbreking te overleven.
+
+Meestal overleeft het die niet. Gloria Mark, die dit al twee decennia onderzoekt, constateert dat de meeste mensen zich niet langer dan 47 seconden op één scherm kunnen concentreren, en dat herstellen van een onderbreking bijna een halfuur kan kosten.[^F71] Toen ze begon, ruim twintig jaar geleden, was dat cijfer voor één scherm tweeënhalve minuut.[^F72]
+
+ De prijs van het terugkomen is een andere vraag, en die stelt het paneel niet.
+
+Marks eigen verklaring voor waarom mensen het er moeilijk mee hebben, bevat iets waar het paneel geen veld voor heeft: sommige mensen zijn erg goed in zelfregulatie en anderen niet.[^F80] Microsoft kan over ongelijke kosten schrijven wanneer het daarvoor kiest. Op de pagina met sneltoetsen staat het onomwonden: voor mensen met een motorische of visuele beperking kunnen sneltoetsen makkelijker zijn dan een aanraakscherm en zijn ze een essentieel alternatief voor een muis.[^F88] Die zin hangt een prijskaartje aan een handeling naargelang wie hem verricht. Alles in de meldingsinstellingen hangt aan een onderbreking één vast prijskaartje, voor elke lezer van de pagina hetzelfde — kosten die licht genoeg zijn dat het kiezen van de hoek waarin ze landen als afdoende oplossing geldt.
+
+Uitgerekend de vergadering is de taak die bescherming krijgt, omdat het het werk is dat het systeem kan zien. Hij staat in de agenda. Teams heeft een schakelaar voor meldingen bij de start van een vergadering,[^F29] en de chat van een vergadering die je hebt geaccepteerd stuurt je standaard een melding.[^F27] Een vergadering is leesbaar voor software zoals niets anders wat je doet dat is. Het laat zich niet bij het product aanmelden, dus laat het zich niet door het product verdedigen, en dus behandelt het product die tijd als vrij.
+
+<aside class="pullquote" aria-hidden="true">Een vergadering is leesbaar voor software zoals niets anders wat je doet dat is.</aside>
+
+Dat is een ontwerpbeslissing over wiens aandacht duur is. Voor een werknemer die twee of drie minuten kwijt is aan een banner is de regeling irritant. Voor een werknemer wiens terugkeer het grootste deel van een halfuur kost — de draad weg, het lange document regel voor regel teruggescrold op zoek naar de plek waar de zin afbrak — is diezelfde banner een heffing die meermaals per dag wordt geïnd op werk dat niemand telt. De kosten worden privé betaald. Het dichtst bij een verdediging komt de algemene demping, en die laat oproepen door en bestaat alleen op Windows.[^F05]
+
+Het eerlijke aanbod van dat paneel luidt zo: je mag bijstellen hóe je gestoord wordt, en je mag één soort taak beschermen, de soort die bestaat uit andere mensen die rechtstreeks tegen je praten. Voor elke andere soort is het aangeboden redmiddel dat je het soort mens moet zijn dat het kan opvangen.
+
+Dus grijp je naar die knop, en het stukje tussen haakjes in zijn eigen naam heeft je het antwoord al gegeven. Zet hem om, en de oproep komt nog steeds binnen. Wat Teams betreft gebeurde er niets.
+
+[^F04]: [(geen titel vastgesteld)](https://support.microsoft.com/en-us/office/change-your-notifications-style-in-microsoft-teams-0da93820-93d0-4da3-86b6-fc28d19908e3) — "Mute all notifications (except for calls and meetings): Turn this setting on or off."
+[^F05]: [(geen titel vastgesteld)](https://support.microsoft.com/en-us/office/change-your-notifications-style-in-microsoft-teams-0da93820-93d0-4da3-86b6-fc28d19908e3) — "Mute all notifications (except for calls and meetings): Turn this setting on or off. Available on Windows only."
+[^F06]: [(geen titel vastgesteld)](https://support.microsoft.com/en-us/office/change-your-notifications-style-in-microsoft-teams-0da93820-93d0-4da3-86b6-fc28d19908e3) — "Mute all notifications (except for calls and meetings)"
+[^F11]: [(geen titel vastgesteld)](https://support.microsoft.com/en-us/office/change-your-notifications-style-in-microsoft-teams-0da93820-93d0-4da3-86b6-fc28d19908e3) — "Show notifications during calls and meetings: Notifications will be shown even if you're in a call or meeting."
+[^F12]: [(geen titel vastgesteld)](https://support.microsoft.com/en-us/office/change-your-notifications-style-in-microsoft-teams-0da93820-93d0-4da3-86b6-fc28d19908e3) — "You can also choose to Show notifications during calls and meetings or turn off this setting for fewer interruptions."
+[^F15]: [(geen titel vastgesteld)](https://support.microsoft.com/en-us/office/change-your-notifications-style-in-microsoft-teams-0da93820-93d0-4da3-86b6-fc28d19908e3) — "Mute notifications when you're busy or in a meeting."
+[^F17]: [(geen titel vastgesteld)](https://support.microsoft.com/en-us/office/change-your-notifications-style-in-microsoft-teams-0da93820-93d0-4da3-86b6-fc28d19908e3) — "Choose where you'd like notifications to appear on your screen under Position on the screen. Select Bottom right, Top right, Bottom left or Top left."
+[^F18]: [(geen titel vastgesteld)](https://support.microsoft.com/en-us/office/change-your-notifications-style-in-microsoft-teams-0da93820-93d0-4da3-86b6-fc28d19908e3) — "Change the size of your message and content previews. Choose Comfy or Compact."
+[^F21]: [(geen titel vastgesteld)](https://support.microsoft.com/en-us/office/change-your-notifications-style-in-microsoft-teams-0da93820-93d0-4da3-86b6-fc28d19908e3) — "Customize chat and channel notifications to your personal work style."
+[^F27]: [(geen titel vastgesteld)](https://support.microsoft.com/en-us/office/change-your-notifications-style-in-microsoft-teams-0da93820-93d0-4da3-86b6-fc28d19908e3) — "Select your preference in the Meeting chat notifications for meetings I’ve accepted dropdown menu. This setting is on by default."
+[^F29]: [(geen titel vastgesteld)](https://support.microsoft.com/en-us/office/change-your-notifications-style-in-microsoft-teams-0da93820-93d0-4da3-86b6-fc28d19908e3) — "Meeting start notifications can be turned on or off using the toggle."
+[^F45]: [How Microsoft 365 Copilot and agents help tackle the infinite workday | Microsoft Copilot Blog](https://www.microsoft.com/en-us/copilot/blog/2025/06/26/how-microsoft-365-copilot-and-agents-help-tackle-the-infinite-workday/) — "The average employee receives 100+ emails and 150+ Microsoft Teams messages each day."
+[^F49]: [How Microsoft 365 Copilot and agents help tackle the infinite workday | Microsoft Copilot Blog](https://www.microsoft.com/en-us/copilot/blog/2025/06/26/how-microsoft-365-copilot-and-agents-help-tackle-the-infinite-workday/) — "we saw that nearly one in three employees say it&#8217;s impossible to keep up with today&#8217;s pace of work"
+[^F50]: [How Microsoft 365 Copilot and agents help tackle the infinite workday | Microsoft Copilot Blog](https://www.microsoft.com/en-us/copilot/blog/2025/06/26/how-microsoft-365-copilot-and-agents-help-tackle-the-infinite-workday/) — "AI can be a lifeline—but it’s only part of the solution. Now is the time for leaders to rethink how work and teams are structured or risk accelerating a broken system."
+[^F71]: [How to sharpen your attention and meet your goals in 2024 | University of California](https://www.universityofcalifornia.edu/news/how-sharpen-your-attention-and-meet-your-goals-2024) — "most people today can’t concentrate on a single screen for more than 47 seconds — while recovering from an interruption can take almost half an hour"
+[^F72]: [How to sharpen your attention and meet your goals in 2024 | University of California](https://www.universityofcalifornia.edu/news/how-sharpen-your-attention-and-meet-your-goals-2024) — "Mark first began studying how long people can pay attention to a single screen more than 20 years ago, at the dawn of the digital revolution. Back then, the number was two-and-a-half minutes."
+[^F80]: [How to sharpen your attention and meet your goals in 2024 | University of California](https://www.universityofcalifornia.edu/news/how-sharpen-your-attention-and-meet-your-goals-2024) — "Then there are personality differences. Some people are very good at self-regulation, others aren’t."
+[^F88]: [Keyboard shortcuts for Microsoft Teams | Microsoft Support](https://support.microsoft.com/en-us/office/keyboard-shortcuts-for-microsoft-teams-2e8e2a70-e8d8-4a19-949b-4c36dd5292d2) — "For those who have mobility or vision disabilities, keyboard shortcuts can be easier than a touchscreen and are an essential alternative to a mouse."
