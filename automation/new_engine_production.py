@@ -760,12 +760,20 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     # costs no model or network call after the run is decided.
     try:
         _pack = (out.get("artifacts") or {}).get(C.RESEARCH_PACK)
-        _ledger_art = (out.get("artifacts") or {}).get(C.LEDGER)
+        # The Ledger lives in the composition's own detail, not in the run artifacts
+        # (C.LEDGER never existed, so every list came out empty until 2026-11-02).
+        _ledger = ((_comp.get("detail") or {}).get(CP.LEDGER) or {}).get("ledger")
         _wr = ((_comp.get("detail") or {}).get(CP.WRITER) or {})
+        _claims = _wr.get("claim_map")
+        if _claims is None:
+            # Footnote contract: the [^F..] markers in the published body are the facts
+            # the prose actually cites.
+            _cited = sorted(set(re.findall(r"\[\^(F\d+)\]", (body or "").split("\n[^F", 1)[0])))
+            _claims = [{"fact_ids": _cited}] if _cited else None
         _sources = CAND.public_sources(
             _pack.payload if _pack is not None else {},
-            _ledger_art.payload if _ledger_art is not None else None,
-            {"claim_map": _wr.get("claim_map")} if _wr.get("claim_map") is not None else None)
+            _ledger if _ledger is not None else None,
+            {"claim_map": _claims} if _claims is not None else None)
     except Exception as e:
         orch.logger.warning("CURRENT_ENGINE %s: public source list unavailable "
                             "(ignored): %s: %s", run, type(e).__name__, str(e)[:200])
