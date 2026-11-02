@@ -42,6 +42,8 @@ publication_eligible: true
 publication_safety_profile: "CURRENT_ENGINE_V1"
 publication_safety_version: 1
 translation_nl: "/nl/teams-has-already-decided-what-busy-means/"
+image: /assets/teams-has-already-decided-what-busy-means_1_conceptual_cover.jpg
+image_alt: "A thick slab of grey acoustic felt fills the frame, its surface matte and fibrous, absorbing light. A single narrow channel has been cut cleanly through it, off to one side, with precise machine-cut edges. Light from behind pushes a thin bright wedge through that one gap and spills a little onto the felt's face. The rest of the slab is unbroken and soundless."
 ---
 
 # Except For Calls And Meetings
