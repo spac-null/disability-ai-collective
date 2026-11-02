@@ -226,7 +226,9 @@ def mechanical_findings(en: dict, tr: dict) -> list:
     # where ordinary nouns wear a capital and where the false positives live.
     from new_engine_v1 import story as ST
     counts = {}
-    art = _plain(en.get("article") or "")
+    # Footnote markers sit between a full stop and the next word ("meetings).[^F04] Flip")
+    # and would hide that the word opens a sentence.
+    art = re.sub(r"\[\^[^\]\s]+\]", "", _plain(en.get("article") or ""))
     for m in re.finditer(r"\b[A-Z][A-Za-z’'-]{2,}\b", art):
         # A word that opens a sentence is capitalised by grammar, not because it is a
         # name: "Flip it and the messages stop." held a Dutch edition on 2026-11-02.
@@ -234,7 +236,7 @@ def mechanical_findings(en: dict, tr: dict) -> list:
             continue
         counts[m.group(0)] = counts.get(m.group(0), 0) + 1
     named = {t for t, n in counts.items() if n >= 2}
-    named |= ST._entities(_plain(en.get("article") or ""), skip_sentence_initial=True)
+    named |= ST._entities(art, skip_sentence_initial=True)
     low = _plain(tr_all).lower()
     # IMAGE IDENTITY AND PLACEMENT ARE NOT TRANSLATABLE. Alt text is prose and may be
     # rewritten; the asset a figure points at, and how many figures the body carries, are

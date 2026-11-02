@@ -75,6 +75,11 @@ check("a word that opens two sentences is not a name (2026-11-02, 'Flip')",
           {"article": "Zet hem om en de berichten stoppen. Dan de oproepen. Zet hem om, "
                       "en Teams belt."})
            if x["category"] == "NAMES"])
+check("a footnote marker before a sentence-opening word does not make it a name",
+      not [x for x in TP.mechanical_findings(
+          {"article": "It ends here.[^F04] Flip it and Teams stops. It ends.[^F09] Flip it."},
+          {"article": "Het eindigt hier. Zet hem om en Teams stopt. Het eindigt. Zet hem om."})
+           if x["category"] == "NAMES"])
 check("a name that is genuinely nowhere is still caught",
       [x for x in TP.mechanical_findings(
           {"article": "The Ecuadorian studio Caa Pora worked on the slope."},
