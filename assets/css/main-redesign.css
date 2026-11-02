@@ -3964,8 +3964,9 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
    in its place in the argument. Styled to match the blockquote treatment below it. */
 .prose .pullquote {
   display: block;
-  margin: var(--space-10) calc(-1 * var(--space-6));
-  padding: var(--space-6) var(--space-8);
+  max-width: 66ch;
+  margin: var(--space-10) 0;
+  padding: var(--space-6) 0;
   border-top: 3px solid var(--color-text-primary);
   border-bottom: 1px solid var(--color-border);
   font-family: var(--font-family-serif);
@@ -3976,14 +3977,7 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   color: var(--color-text-primary);
 }
 
-@media (max-width: 640px) {
-  .prose .pullquote {
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: var(--space-4);
-    padding-right: var(--space-4);
-  }
-}
+
 
 /* ── Body images: full-width, proper caption ── */
 .prose img {
@@ -4052,8 +4046,33 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
 }
 
 @media (max-width: 480px) {
+  /* First screen on a phone: the hero is a band, not a page, so the article's first
+     sentence is visible without scrolling. */
   .post-hero-img {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: auto;
+    height: 200px;
+    max-height: 200px;
+  }
+
+  .post-hero {
+    margin-bottom: var(--space-5);
+  }
+
+  .site-header {
+    padding: var(--space-3) 0;
+  }
+
+  .site-tagline {
+    font-size: 0.56rem;
+    letter-spacing: 0.08em;
+  }
+
+  .post-breadcrumb {
+    margin-bottom: var(--space-3);
+  }
+
+  .post-header.mb-10 {
+    margin-bottom: var(--space-6);
   }
 
   .prose blockquote {
@@ -4536,6 +4555,15 @@ article[data-categories].hidden {
 .related-articles__img {
   aspect-ratio: 16/9;
   overflow: hidden;
+  background: var(--color-background-secondary, transparent);
+}
+
+/* Article text never pushes the page sideways: a long URL or unbroken string wraps. */
+.post-content {
+  overflow-wrap: break-word;
+}
+.post-content a {
+  overflow-wrap: anywhere;
 }
 .related-articles__img img {
   width: 100% !important;
@@ -5773,17 +5801,6 @@ sup[id^="fnref:"] a:focus {
   border-top: 1px solid var(--color-border-primary);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-}
-
-.footnotes::before {
-  content: "Sources";
-  display: block;
-  font-size: var(--font-size-xs);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  margin-bottom: 0.75rem;
 }
 
 .footnotes ol {

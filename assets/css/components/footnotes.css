@@ -4,6 +4,12 @@
    Add to assets/css/components/ and @import in main.css.
 ────────────────────────────────────────────────────────────────────────────── */
 
+/* Superscripts never open up the line they sit in. */
+sup,
+sub {
+  line-height: 0;
+}
+
 /* Inline superscript marker */
 sup[id^="fnref:"] a,
 sup[id^="fnref:"] a:visited {
@@ -34,15 +40,47 @@ sup[id^="fnref:"] a:focus {
   color: var(--color-text-secondary);
 }
 
-.footnotes::before {
-  content: "Sources";
+/* The block's heading is a real <h2>, written by _layouts/post.html in the page's
+   language ("Sources" / "Bronnen"), so it is announced and translated. It used to be
+   CSS-generated text, which was English on every page and not a heading. */
+.prose .footnotes .footnotes__heading,
+.footnotes__heading {
   display: block;
-  font-size: var(--font-size-xs);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-xs) !important;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-text-muted);
-  margin-bottom: 0.75rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  border: 0;
+  line-height: 1.4;
+}
+
+/* Long URLs and long source titles wrap instead of pushing the page sideways. */
+.footnotes,
+.footnotes li,
+.footnotes a {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+/* A source title containing "|" is parsed by kramdown as a table row. Lay any such
+   table out as running text so it can never be wider than the column. */
+.footnotes table,
+.footnotes tbody,
+.footnotes tr,
+.footnotes td {
+  display: inline;
+  width: auto;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.footnotes td + td::before {
+  content: " | ";
 }
 
 .footnotes ol {

@@ -54,15 +54,17 @@ class ThemeManager {
     if (theme === 'dark') {
       this.sunIcon.style.display = 'block';
       this.moonIcon.style.display = 'none';
-      if (this.themeLabel) this.themeLabel.textContent = 'Light';
-      this.themeToggle.setAttribute('aria-label', 'Switch to light theme');
-      this.themeToggle.title = 'Switch to light theme';
+      const d = this.themeToggle.dataset;
+      if (this.themeLabel) this.themeLabel.textContent = d.labelLight || 'Light';
+      this.themeToggle.setAttribute('aria-label', d.ariaLight || 'Switch to light theme');
+      this.themeToggle.title = d.ariaLight || 'Switch to light theme';
     } else {
       this.sunIcon.style.display = 'none';
       this.moonIcon.style.display = 'block';
-      if (this.themeLabel) this.themeLabel.textContent = 'Dark';
-      this.themeToggle.setAttribute('aria-label', 'Switch to dark theme');
-      this.themeToggle.title = 'Switch to dark theme';
+      const d = this.themeToggle.dataset;
+      if (this.themeLabel) this.themeLabel.textContent = d.labelDark || 'Dark';
+      this.themeToggle.setAttribute('aria-label', d.ariaDark || 'Switch to dark theme');
+      this.themeToggle.title = d.ariaDark || 'Switch to dark theme';
     }
   }
 
@@ -81,7 +83,9 @@ class ThemeManager {
     announcement.setAttribute('aria-live', 'polite');
     announcement.setAttribute('aria-atomic', 'true');
     announcement.className = 'sr-only';
-    announcement.textContent = `Theme switched to ${newTheme} mode`;
+    announcement.textContent = this.themeToggle.dataset.announce
+      ? this.themeToggle.dataset.announce + ': ' + (newTheme === 'dark' ? this.themeToggle.dataset.labelDark : this.themeToggle.dataset.labelLight).toLowerCase()
+      : `Theme switched to ${newTheme} mode`;
     document.body.appendChild(announcement);
     
     setTimeout(() => {

@@ -120,16 +120,28 @@ layout: default
           </span>
           <span class="post-meta__item">
             <time datetime="{{ page.date | date_to_xmlschema }}">
-              {{ page.date | date: "%B %-d, %Y" }}
+              {%- if _is_nl -%}
+                {%- assign _nl_months = "januari,februari,maart,april,mei,juni,juli,augustus,september,oktober,november,december" | split: "," -%}
+                {%- assign _m = page.date | date: "%-m" | minus: 1 -%}
+                {{ page.date | date: "%-d" }} {{ _nl_months[_m] }} {{ page.date | date: "%Y" }}
+              {%- else -%}
+                {{ page.date | date: "%B %-d, %Y" }}
+              {%- endif -%}
             </time>
           </span>
           <span class="post-meta__item post-meta__reading-time">
-            {{ content | number_of_words | divided_by: 200 | plus: 1 }}&thinsp;min read
+            {{ content | number_of_words | divided_by: 200 | plus: 1 }}&thinsp;{% if _is_nl %}min. leestijd{% else %}min read{% endif %}
           </span>
           {% if page.fact_check_status == "verified" %}
+          {% if _is_nl %}
+          <span class="post-meta__item post-meta__fact-check" title="Citaten en feitelijke beweringen zijn voor publicatie gecontroleerd aan de hand van de bronnen">
+            ✓ Bronnen gecontroleerd
+          </span>
+          {% else %}
           <span class="post-meta__item post-meta__fact-check" title="Quotes and factual claims checked against live sources before publishing">
             ✓ Sources checked
           </span>
+          {% endif %}
           {% endif %}
 
         </div>
@@ -141,8 +153,8 @@ layout: default
            An article with no perspective shows nothing here rather than "unknown". {% endcomment %}
         {% if page.perspective %}
         <p class="post-perspective">
-          <span class="post-perspective__label">Perspective</span>
-          <a class="post-perspective__name" href="{{ '/perspectives/' | relative_url }}#{{ page.perspective | downcase }}">{{ page.perspective }}</a>
+          <span class="post-perspective__label">{% if _is_nl %}Perspectief{% else %}Perspective{% endif %}</span>
+          <a class="post-perspective__name" href="{{ '/perspectives/' | relative_url }}#{{ page.perspective | downcase }}"{% if _is_nl %} hreflang="en"{% endif %}>{{ page.perspective }}</a>
         </p>
         {% endif %}
       </header>
@@ -167,10 +179,67 @@ layout: default
         {% if _lead == '<h1' %}
           {% assign _h1_text = _h1_open | strip_html | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '“', '"' | replace: '”', '"' | replace: '—', '-' | replace: '–', '-' %}
           {% assign _page_title = page.title | strip_html | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '“', '"' | replace: '”', '"' | replace: '—', '-' | replace: '–', '-' %}
-          {% if _h1_text == _page_title %}
+          {% comment %} Near-duplicates go too: an opening heading that is the start of the
+             title ("Seven minutes, 28 degrees, one phone call" under "Seven minutes, 28
+             degrees, one phone call: three heat rules"), or that the title is the start of.
+             The 12-character floor stops a one-word heading being read as a prefix. {% endcomment %}
+          {% assign _h1_drop = false %}
+          {% if _h1_text == _page_title %}{% assign _h1_drop = true %}{% endif %}
+          {% if _h1_text.size >= 12 and _page_title.size >= 12 %}
+            {% assign _t_lead = _page_title | slice: 0, _h1_text.size %}
+            {% assign _h_lead = _h1_text | slice: 0, _page_title.size %}
+            {% if _t_lead == _h1_text or _h_lead == _page_title %}{% assign _h1_drop = true %}{% endif %}
+          {% endif %}
+          {% if _h1_drop %}
             {% assign _body = _body | remove_first: _h1_open | remove_first: '</h1>' | lstrip %}
           {% endif %}
         {% endif %}
+      {% endif %}
+      {% comment %} ONE H1 PER PAGE. The page title above is the page's only h1. Any h1 left
+         in the body -- an opening heading that says something other than the title, or a
+         later one -- is a section heading, and is rendered as one. {% endcomment %}
+      {% if _body contains '</h1>' %}
+        {% assign _body = _body | replace: '<h1 ', '<h2 ' | replace: '<h1>', '<h2>' | replace: '</h1>', '</h2>' %}
+      {% endif %}
+
+      {% comment %} SOURCES (kramdown footnotes). Three render-time repairs, all scoped to the
+         footnote markup kramdown emits, none touching the article text:
+         1. a source link whose text is the engine's "(no title established)" placeholder
+            shows the link's domain instead;
+         2. each inline reference gets an accessible name ("Footnote 3"), and each
+            backlink names the reference it returns to ("Back to reference 3");
+         3. the block gets a real, translated heading instead of CSS-generated text. {% endcomment %}
+      {% if _body contains 'class="footnotes"' %}
+        {% if _is_nl %}
+          {% assign _fn_word = 'Voetnoot' %}{% assign _fn_back = 'Terug naar verwijzing' %}{% assign _fn_heading = 'Bronnen' %}
+        {% else %}
+          {% assign _fn_word = 'Footnote' %}{% assign _fn_back = 'Back to reference' %}{% assign _fn_heading = 'Sources' %}
+        {% endif %}
+
+        {% assign _placeholders = '(no title established)|(geen titel vastgesteld)' | split: '|' %}
+        {% for _ph in _placeholders %}
+          {% assign _ph_end = _ph | append: '</a>' %}
+          {% if _body contains _ph_end %}
+            {% assign _parts = _body | split: _ph_end %}
+            {% capture _rebuilt %}{% for _p in _parts %}{{ _p }}{% unless forloop.last %}{% assign _u = _p | split: 'href="' | last | split: '"' | first %}{% assign _d = _u | split: '//' | last | split: '/' | first | split: '?' | first | remove_first: 'www.' %}{{ _d }}</a>{% endunless %}{% endfor %}{% endcapture %}
+            {% assign _body = _rebuilt %}
+          {% endif %}
+        {% endfor %}
+
+        {% assign _fn_map = '|' %}
+        {% if _body contains '<a href="#fn:' %}
+          {% assign _parts = _body | split: '<a href="#fn:' %}
+          {% capture _rebuilt %}{% for _p in _parts %}{% if forloop.first %}{{ _p }}{% else %}{% assign _id = _p | split: '"' | first %}{% assign _n = _p | split: '</a>' | first | split: '>' | last | strip %}{% assign _fn_map = _fn_map | append: _id | append: '=' | append: _n | append: '|' %}<a aria-label="{{ _fn_word }} {{ _n }}" href="#fn:{{ _p }}{% endif %}{% endfor %}{% endcapture %}
+          {% assign _body = _rebuilt %}
+        {% endif %}
+        {% if _body contains '<a href="#fnref:' %}
+          {% assign _parts = _body | split: '<a href="#fnref:' %}
+          {% capture _rebuilt %}{% for _p in _parts %}{% if forloop.first %}{{ _p }}{% else %}{% assign _id = _p | split: '"' | first | split: ':' | first %}{% capture _key %}|{{ _id }}={% endcapture %}{% if _fn_map contains _key %}{% assign _n = _fn_map | split: _key | last | split: '|' | first %}<a aria-label="{{ _fn_back }} {{ _n }}" href="#fnref:{% else %}<a aria-label="{{ _fn_back }}" href="#fnref:{% endif %}{{ _p }}{% endif %}{% endfor %}{% endcapture %}
+          {% assign _body = _rebuilt %}
+        {% endif %}
+
+        {% capture _fn_open %}role="doc-endnotes" aria-labelledby="footnotes-heading"><h2 class="footnotes__heading" id="footnotes-heading">{{ _fn_heading }}</h2>{% endcapture %}
+        {% assign _body = _body | replace_first: 'role="doc-endnotes">', _fn_open %}
       {% endif %}
       <div class="prose prose--large post-content">
         {{ _body }}
@@ -186,8 +255,8 @@ layout: default
       {% endfor %}
       {% if matched_thread %}
       <div class="post-thread-signal">
-        <span class="post-thread-signal__label">Reading thread</span>
-        <a href="{{ matched_thread.url }}" class="post-thread-signal__link">{{ matched_thread.title }} &rarr;</a>
+        <span class="post-thread-signal__label">{% if _is_nl %}Leesdraad{% else %}Reading thread{% endif %}</span>
+        <a href="{{ matched_thread.url }}" class="post-thread-signal__link"{% if _is_nl %} hreflang="en" lang="en"{% endif %}>{{ matched_thread.title }} &rarr;</a>
       </div>
       {% assign matched_thread = nil %}
       {% endif %}
@@ -229,29 +298,34 @@ layout: default
            biography in a full-width card below said nothing new and cost a screenful on a
            phone. One quiet link to the page that actually holds the biography. {% endcomment %}
         <p class="post-author-line">
-          Crip Minds is created and directed by
-          <a href="{{ '/jascha/' | relative_url }}">{{ site.creator }} &rarr;</a>
+          {% if _is_nl %}Crip Minds wordt gemaakt en geleid door{% else %}Crip Minds is created and directed by{% endif %}
+          <a href="{{ '/jascha/' | relative_url }}"{% if _is_nl %} hreflang="en"{% endif %}>{{ site.creator }} &rarr;</a>
         </p>
 
         {% if page.pipeline_version %}
         <p class="text-small text-muted post-pipeline-version">
-          Written with Crip Minds v{{ page.pipeline_version }}{% if page.pipeline_codename %} · {{ page.pipeline_codename }}{% endif %}
+          {% if _is_nl %}Geschreven met{% else %}Written with{% endif %} Crip Minds v{{ page.pipeline_version }}{% if page.pipeline_codename %} · {{ page.pipeline_codename }}{% endif %}
         </p>
         {% endif %}
 
         <!-- Inline subscribe block -->
-        <div class="post-subscribe" aria-label="Subscribe to Crip Minds">
-          <p class="post-subscribe__eyebrow">New essays, when they publish</p>
-          <p class="post-subscribe__headline">Read this far?<br>Keep going.</p>
+        {% if _is_nl %}
+          {% assign _ps = "Abonneren op Crip Minds|Nieuwe essays (in het Engels), zodra ze verschijnen|Tot hier gelezen?<br>Lees verder.|Je e-mailadres|je@email.nl|Aanmelden|Hoe vaak|Wekelijks overzicht|Elk artikel|Je bent al aangemeld.|Kijk in je inbox om te bevestigen.|Er ging iets mis. Probeer het opnieuw." | split: "|" %}
+        {% else %}
+          {% assign _ps = "Subscribe to Crip Minds|New essays, when they publish|Read this far?<br>Keep going.|Your email address|your@email.com|Subscribe|Delivery frequency|Weekly digest|Each article|You're already subscribed.|Check your inbox to confirm.|Something went wrong. Try again." | split: "|" %}
+        {% endif %}
+        <div class="post-subscribe" role="region" aria-label="{{ _ps[0] }}">
+          <p class="post-subscribe__eyebrow">{{ _ps[1] }}</p>
+          <p class="post-subscribe__headline">{{ _ps[2] }}</p>
           <form class="post-subscribe__form" id="post-subscribe-form" novalidate>
             <div class="post-subscribe__row">
-              <label for="post-sub-email" class="sr-only">Your email address</label>
-              <input type="email" id="post-sub-email" name="email" placeholder="your@email.com" required autocomplete="email">
-              <button type="submit">Subscribe</button>
+              <label for="post-sub-email" class="sr-only">{{ _ps[3] }}</label>
+              <input type="email" id="post-sub-email" name="email" placeholder="{{ _ps[4] }}" required autocomplete="email">
+              <button type="submit">{{ _ps[5] }}</button>
             </div>
-            <div class="post-subscribe__freq" role="group" aria-label="Delivery frequency">
-              <label><input type="radio" name="ps-freq" value="weekly" checked> Weekly digest</label>
-              <label><input type="radio" name="ps-freq" value="daily"> Each article</label>
+            <div class="post-subscribe__freq" role="group" aria-label="{{ _ps[6] }}">
+              <label><input type="radio" name="ps-freq" value="weekly" checked> {{ _ps[7] }}</label>
+              <label><input type="radio" name="ps-freq" value="daily"> {{ _ps[8] }}</label>
             </div>
             <p class="post-subscribe__msg" id="post-subscribe-msg" aria-live="polite"></p>
           </form>
@@ -273,14 +347,14 @@ layout: default
                 body: JSON.stringify({email: email, frequency: freq})
               }).then(function(r){ return r.json(); }).then(function(d){
                 msg.textContent = d.status === 'already_confirmed'
-                  ? "You're already subscribed."
-                  : 'Check your inbox to confirm.';
+                  ? {{ _ps[9] | jsonify }}
+                  : {{ _ps[10] | jsonify }};
                 document.getElementById('post-sub-email').value = '';
                 btn.textContent = '✓';
               }).catch(function(){
-                msg.textContent = 'Something went wrong. Try again.';
+                msg.textContent = {{ _ps[11] | jsonify }};
                 btn.disabled = false;
-                btn.textContent = 'Subscribe';
+                btn.textContent = {{ _ps[5] | jsonify }};
               });
             });
           })();
@@ -310,15 +384,17 @@ layout: default
             {% for item in curated limit: 3 %}
             {% assign item_post = site.posts | where: "url", item.url | first %}
             <a href="{{ item.url | relative_url }}" class="related-articles__card">
-              {% if item_post.image %}
+              {% assign _card_img = nil %}
+              {% if item_post.image %}{% assign _card_img = site.static_files | where: "path", item_post.image | first %}{% endif %}
+              {% if _card_img %}
               <div class="related-articles__img">
-                <img src="{{ item_post.image | relative_url }}" alt="{{ item_post.image_alt | default: item.title }}" width="800" height="450" loading="lazy" decoding="async">
+                <img src="{{ item_post.image | relative_url }}" alt="" width="800" height="450" loading="lazy" decoding="async">
               </div>
               {% endif %}
               <div class="related-articles__body">
                 {% assign item_archived = false %}
                 {% if item_post %}{% capture item_key %}|{{ item_post.slug }}|{% endcapture %}{% unless backlist_active_slugs contains item_key or item_post.withdrawn %}{% assign item_archived = true %}{% endunless %}{% endif %}
-                {% if item.category or item_archived %}<span class="related-articles__cat">{{ item.category }}{% if item_archived %}<span class="related-articles__archived">Archive</span>{% endif %}</span>{% endif %}
+                {% if item.category != blank or item_archived %}<span class="related-articles__cat">{{ item.category }}{% if item_archived %}<span class="related-articles__archived">Archive</span>{% endif %}</span>{% endif %}
                 <h3 class="related-articles__title">{{ item.title | truncate: 80 }}</h3>
                 {% if item_post.excerpt %}<p class="related-articles__excerpt">{{ item_post.excerpt | strip_html | truncatewords: 18 }}</p>{% endif %}
                 <div class="related-articles__author">
@@ -382,13 +458,15 @@ layout: default
           <div class="related-articles__grid">
             {% for post in related_posts limit: 3 %}
             <a href="{{ post.url | relative_url }}" class="related-articles__card">
-              {% if post.image %}
+              {% assign _card_img = nil %}
+              {% if post.image %}{% assign _card_img = site.static_files | where: "path", post.image | first %}{% endif %}
+              {% if _card_img %}
               <div class="related-articles__img">
-                <img src="{{ post.image | relative_url }}" alt="{{ post.image_alt | default: post.title }}" width="800" height="450" loading="lazy" decoding="async">
+                <img src="{{ post.image | relative_url }}" alt="" width="800" height="450" loading="lazy" decoding="async">
               </div>
               {% endif %}
               <div class="related-articles__body">
-                {% if post.categories %}<span class="related-articles__cat">{{ post.categories | first }}</span>{% endif %}
+                {% if post.categories.size > 0 %}<span class="related-articles__cat">{{ post.categories | first }}</span>{% endif %}
                 <h3 class="related-articles__title">{{ post.title | truncate: 80 }}</h3>
                 {% if post.excerpt %}<p class="related-articles__excerpt">{{ post.excerpt | strip_html | truncatewords: 18 }}</p>{% endif %}
                 <div class="related-articles__author">
