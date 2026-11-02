@@ -63,6 +63,3 @@ The old grade said what you were. The new table asks what you need, in 596 point
 
 At a press conference in the 해치마당 plaza in 광화문, disabled people who had been granted the three-year preservation after their cuts put ropes around their necks. They said it was no different from being given a terminal diagnosis. The special provision had worked. That was the point they were making.
 
-<figure class="article-figure">
-<img src="/assets/ninety-four-points-where-a-certain-kind-of-body-cannot-go_2_establish_place.jpg" alt="A wide, overcast view of a large empty civic plaza, paved and sunken below the surrounding street, with anonymous grey city blocks at its edges. In the middle distance stand a bare metal frame and a row of unoccupied folding chairs with a stripped microphone stand, the remains of a press conference. Several lengths of plain rope lie slack on the paving nearby, attached to nothing. No people are present. Flat grey light, matte grain, no text or signage." loading="lazy">
-</figure>

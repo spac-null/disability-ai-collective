@@ -4,8 +4,6 @@ title: "Teams bepaalt zelf wel wat druk is"
 lang: "nl"
 date: 2026-11-02
 author: "Crip Minds"
-image: "/assets/teams-has-already-decided-what-busy-means_1_conceptual_cover.jpg"
-image_alt: "Een vlakke, matte weergave van een lijst met meldingsinstellingen, getekend als bedrukt papier in plaats van een glanzend scherm. De grootste regel leest als een lang knoplabel waarvan het sluithaakje \u2014 een uitzondering voor oproepen en vergaderingen \u2014 rechts buiten het paneel doorloopt. De kleinere regels erboven en eronder gaan allemaal over oproepen, vergaderingen en vergaderchat; daaronder loopt het paneel door als gelinieerde maar volledig lege regels zonder labels. Een kleine meldingsbanner duwt vanuit de onderhoek naar binnen en overlapt de rand van de lijst, zonder dat iets hem tegenhoudt."
 dek: "De knop heet Mute all notifications (except for calls and meetings). Zet hem om en de berichten stoppen; de oproepen niet. Gloria Mark, die dit al twee decennia onderzoekt, constateert dat herstellen van een onderbreking bijna een halfuur kan kosten."
 excerpt: "In dat hele paneel is de enige bezigheid die Teams uit zichzelf afschermt een oproep of een vergadering. Iets langs lezen, iets moeilijks schrijven, een redenering volgen: het product gaat ervan uit dat die de banner overleven. Gloria Mark constateert dat herstellen van een onderbreking bijna een halfuur kan kosten."
 meta_description: "De mute-knop van Teams sluit oproepen en vergaderingen bewust uit. Welke taak verdedigt het meldingenpaneel \u2014 en wat neemt het aan dat jij kunt opvangen?"
