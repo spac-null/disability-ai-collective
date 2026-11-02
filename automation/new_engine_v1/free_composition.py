@@ -1070,8 +1070,15 @@ a paragraph explaining it.
 
 SAY THE ARGUMENT ONCE. A second sentence that restates it in other words is cut.
 
-Under 1,000 words, footnotes not counted. Stop when the argument is made. No section
+750 to 1,000 words, footnotes not counted. Stop when the argument is made. No section
 headings; a section break is a blank line.
+
+LAW, REGULATION AND FOREIGN TERMS. The reader has never seen these words. Every legal
+term, acronym or foreign word gets its plain meaning, as the Ledger describes it, in the
+same sentence where it first appears -- "curatela, help with acting rather than acting
+instead" -- or it is left out. Never copy a statute's sentence shape: a preamble's
+"neither X nor Y, but Z" becomes two short sentences in ordinary order. One provision per
+sentence. Carry the argument through what happens to a person, not through the clauses.
 
 WRITE ABOUT THE WORLD, NOT ABOUT YOUR MATERIAL. Never write "the evidence", "the record",
 "the source", "the Ledger", "documented" or "what is known" -- the footnote is where the
@@ -1123,7 +1130,9 @@ _STRUCTURE_TELLS = re.compile(
     r"detail)\b[^.]*\bturns on|which is why the (?:real )?question|the (?:honest|short|"
     r"real) answer is|consider what|read (?:that|it) again|what replaces it has a name|"
     r"i want to dwell|what happened next is|worth (?:pausing|noting|dwelling)|"
-    r"the point is|to be clear|in other words|it is worth)\b", re.I)
+    r"the point is|to be clear|in other words|it is worth|"
+    r"(?:is|was|makes [^.]{0,40}) the (?:interesting|strange|telling|revealing) part)\b",
+    re.I)
 
 
 def structure_tells(article: str) -> list:
