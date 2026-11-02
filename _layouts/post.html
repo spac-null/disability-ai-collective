@@ -132,6 +132,11 @@ layout: default
           <span class="post-meta__item post-meta__reading-time">
             {{ content | number_of_words | divided_by: 200 | plus: 1 }}&thinsp;{% if _is_nl %}min. leestijd{% else %}min read{% endif %}
           </span>
+          {% if page.reading_level == "B1" %}
+          <span class="post-meta__item post-meta__reading-level" title="{% if _is_nl %}Geschreven op taalniveau B1: korte zinnen, gewone woorden, elk vakwoord uitgelegd{% else %}Written at CEFR level B1: short sentences, everyday words, every technical term explained{% endif %}">
+            {% if _is_nl %}Klare taal · B1{% else %}Plain language · B1{% endif %}
+          </span>
+          {% endif %}
           {% if page.fact_check_status == "verified" %}
           {% if _is_nl %}
           <span class="post-meta__item post-meta__fact-check" title="Citaten en feitelijke beweringen zijn voor publicatie gecontroleerd aan de hand van de bronnen">
@@ -244,6 +249,24 @@ layout: default
       <div class="prose prose--large post-content">
         {{ _body }}
       </div>
+
+      {% comment %} Main source credit and visible corrections (review panel, 2026-11-02):
+      the ethics page promises a correction history on the page, and the reporting an
+      essay rests on is credited by name. {% endcomment %}
+      {% if page.source_url or page.corrections %}
+      <aside class="post-provenance">
+        {% if page.source_url %}
+          {% assign _src_host = page.source_url | split: '//' | last | split: '/' | first | remove_first: 'www.' %}
+          <p class="post-provenance__source">{% if _is_nl %}Gebaseerd op berichtgeving van{% else %}Based on reporting by{% endif %} <a href="{{ page.source_url }}" rel="noopener">{{ page.source_name | default: _src_host }}</a>.</p>
+        {% endif %}
+        {% if page.corrections %}
+          <h2 class="post-provenance__heading">{% if _is_nl %}Correcties{% else %}Corrections{% endif %}</h2>
+          <ul class="post-provenance__list">
+            {% for c in page.corrections %}<li>{{ c }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      </aside>
+      {% endif %}
 
       <!-- Thread signal -->
       {% assign post_slug = page.slug | default: page.url | remove: '/' | split: '/' | last %}

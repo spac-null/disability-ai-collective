@@ -1,4 +1,8 @@
 ---
+source_name: "Microsoft Support"
+corrections:
+  - "2 November 2026: a generated cover illustration with misspelled text, which also misquoted the setting this essay is about, was removed."
+  - "2 November 2026: source titles in the notes were corrected; several had shown a placeholder."
 audit_bundle: "2026-11-02-teams-has-already-decided-what-busy-means"
 audit_bundle_sha256: "b58340d373e10ba41f864189ba1a2b39a4a918f55164eb82f20aabd573c9f1d8"
 published_bundle_sha256: "dc9f75e697e4aa61c6dd3fabf5f0f1eceb223be204cf187f6b99f35c2e16629b"

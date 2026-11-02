@@ -1,4 +1,5 @@
 ---
+source_name: "The Guardian (op-ed by the mayors of Paris, Milan and Phoenix)"
 audit_bundle: "2026-11-02-seven-minutes-28-degrees-one-phone-call-three-heat-rules"
 audit_bundle_sha256: "6d12dc8e98204ce3eb46a1aebc6663ae284aea8de0d87b7abd124b7f49d0598f"
 published_bundle_sha256: "162f4eb363745672a5e19a118d323fe9e6e6bef16e9e7d84a1cb1c9f9615a7f9"

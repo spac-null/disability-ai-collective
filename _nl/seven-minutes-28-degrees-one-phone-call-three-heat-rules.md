@@ -1,4 +1,5 @@
 ---
+source_url: "https://www.theguardian.com/commentisfree/2026/sep/07/heat-climate-crisis-paris-milan-phoenix"
 layout: "post"
 title: "Zeven minuten, 28 graden, \u00e9\u00e9n telefoontje: drie hitteregels"
 lang: "nl"

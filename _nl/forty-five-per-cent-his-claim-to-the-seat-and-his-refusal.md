@@ -1,4 +1,5 @@
 ---
+source_url: "https://www.legalstreet.in/ratio/case/2024-insc-775/"
 layout: "post"
 title: "Wat de verklaring mocht beslissen"
 lang: "nl"

@@ -1,4 +1,5 @@
 ---
+source_url: "https://www.dezeen.com/2026/08/18/jia-curated-pavilions/"
 layout: "post"
 title: "De paviljoens van Jia Curated 2026 die geen foto kan vasthouden"
 lang: "nl"

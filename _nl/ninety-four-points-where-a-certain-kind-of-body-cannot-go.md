@@ -1,4 +1,5 @@
 ---
+source_url: "https://www.beminor.com/news/articleView.html?idxno=14058"
 layout: "post"
 title: "Vierennegentig punten waar niet elk lichaam bij kan"
 lang: "nl"

@@ -141,3 +141,10 @@ sup[id^="fnref:"] a:focus {
     font-size: var(--font-size-xs);
   }
 }
+
+/* Main source credit and corrections (2026-11-02) */
+.post-provenance { margin: 2.5rem 0 1.5rem; padding-top: 1rem; border-top: 1px solid currentColor; font-size: 0.95rem; }
+.post-provenance a { overflow-wrap: anywhere; }
+.post-provenance__heading { font-size: 1rem; margin: 1rem 0 0.4rem; }
+.post-provenance__list { margin: 0; padding-left: 1.2rem; }
+.post-meta__reading-level { font-weight: 600; }

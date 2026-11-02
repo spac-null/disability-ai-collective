@@ -1,4 +1,5 @@
 ---
+source_url: "https://support.microsoft.com/en-us/office/change-your-notifications-style-in-microsoft-teams-0da93820-93d0-4da3-86b6-fc28d19908e3"
 layout: "post"
 title: "Teams heeft al besloten wanneer jij het druk hebt"
 lang: "nl"

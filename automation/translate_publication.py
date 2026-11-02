@@ -56,7 +56,10 @@ LANGUAGES = {
             "Schrijf zoals een goede Nederlandse tijdschriftredacteur schrijft: gewone "
             "woorden, korte hoofdzinnen waar het kan, geen anglicismen, geen "
             "naamwoordstijl, geen 'men'. Vermijd letterlijke vertaling van Engelse "
-            "zinsbouw -- als het Nederlands de zin anders zou ordenen, orden hem anders."),
+            "zinsbouw -- als het Nederlands de zin anders zou ordenen, orden hem anders. "
+            "Taalniveau B1 (Klare taal): voeg nooit korte zinnen samen; gemiddeld zo'n 12 "
+            "tot 15 woorden per zin; leg elk vakwoord meteen uit; vertaal juridische "
+            "termen naar het Nederlands met het Engels eenmaal tussen haakjes."),
     },
 }
 
@@ -67,7 +70,7 @@ REPACKAGEABLE = ("title", "dek", "homepage_excerpt", "meta_description", "social
 # Front matter a translation carries. Deliberately short: the engine's provenance --
 # run ids, hashes, model names, gate stamps -- belongs to the English article that earned
 # it and is not copied onto a derivative. `translation_of` is the link back to it.
-CARRY_FROM_ENGLISH = ("date", "author", "category", "image", "keywords")
+CARRY_FROM_ENGLISH = ("date", "author", "category", "image", "keywords", "source_url")
 
 # `sources` is deliberately NOT in that list, and adding it would be the wrong fix.
 # The Go deeper block ("Verder lezen" in Dutch) is rendered from `sources`, and an
@@ -511,6 +514,10 @@ def write_translation(lang: str, en_path: pathlib.Path, en: dict, tr: dict) -> p
     for k in CARRY_FROM_ENGLISH:
         if fm.get(k):
             lines.append("%s: %s" % (k, _yaml_value(fm[k])))
+    if fm.get("reading_level") == "B1":
+        from new_engine_v1 import free_composition as _FC
+        if _FC.plain_language_metrics(tr.get("article") or "").get("b1_ok"):
+            lines.append('reading_level: "B1"')
     if tr.get("image_alt"):
         lines.append("image_alt: %s" % json.dumps(tr["image_alt"]))
     for field, key in (("dek", "dek"), ("homepage_excerpt", "excerpt"),

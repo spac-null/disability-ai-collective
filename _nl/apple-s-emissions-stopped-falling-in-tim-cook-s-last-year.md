@@ -1,4 +1,5 @@
 ---
+source_url: "https://www.theverge.com/tech/987550/tim-cook-apple-environment-sustainability-legacy"
 layout: "post"
 title: "In Tim Cooks laatste jaar stopte Apples uitstoot met dalen"
 lang: "nl"

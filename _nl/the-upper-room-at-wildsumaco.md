@@ -1,4 +1,5 @@
 ---
+source_url: "https://www.dezeen.com/2026/08/26/wild-sumaco-research-pavilion-ecuador-caa-pora-arquitectura/"
 layout: "post"
 title: "De bovenzaal van WildSumaco"
 lang: "nl"
