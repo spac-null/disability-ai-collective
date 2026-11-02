@@ -69,6 +69,18 @@ _PERSONA_LEAKAGE = (
     r"\bwhen I was (?:a child|young|\d+)\b",
     r"\bI have lived with\b",
     r"\bas a (?:deaf|blind|disabled|autistic) (?:person|woman|man|child)\b, I\b",
+    # 2026-11-02, production-20261102T080422Z-71080bae: "My eyes go up and to the left
+    # when I am retrieving something", "where I live", "for some of us" -- invented
+    # disabled testimony that the list above did not see.
+    r"\bmy (?:eyes|ears|hands|arms|legs|feet|face|voice|speech|brain|mind|memory|"
+    r"limbs?|pain|condition|disability|impairment|symptoms|medication|seizures?|"
+    r"carer|support worker|nervous system)\b",
+    r"\b(?:people|someone|those) like me\b",
+    r"\bfor (?:some|many|most) of us\b",
+    r"\bI (?:am|was|have been) (?:deaf|blind|disabled|autistic|dyslexic|"
+    r"neurodivergent|chronically ill|a wheelchair user)\b",
+    r"\bI (?:have|had|live with) (?:a |an )?(?:disability|condition|impairment|"
+    r"diagnosis|chronic illness|stammer|stutter)\b",
 )
 
 
@@ -150,10 +162,17 @@ class BridgeResult:
                 "failures": [c["check"] for c in self.failures]}
 
 
+_QUOTED = re.compile(r"\"[^\"\n]*\"|“[^”\n]*”|«[^»\n]*»")
+
+
 def check_persona_leakage(article_text: str) -> tuple[bool, str]:
+    # Only the byline's own sentences: a source quoted saying "people like me" is the
+    # voice the publication exists for, and footnote definitions are attribution.
+    m = re.search(r"^\s*\[\^[A-Za-z0-9_-]+\]:", article_text, re.MULTILINE)
+    own = _QUOTED.sub(" ", article_text[:m.start()] if m else article_text)
     hits = []
     for pat in _PERSONA_LEAKAGE:
-        for m in re.finditer(pat, article_text, re.IGNORECASE):
+        for m in re.finditer(pat, own, re.IGNORECASE):
             hits.append(m.group(0))
     if hits:
         return False, "first-person biographical claim(s): %s" % "; ".join(hits[:3])

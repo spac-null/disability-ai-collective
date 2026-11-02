@@ -223,6 +223,16 @@ def test_bridge_fails_closed_per_check():
           BRIDGE.check_persona_leakage("I was born in Sheffield.")[0] is False)
     check("ordinary third-person prose passes",
           BRIDGE.check_persona_leakage("The report records a crossing.")[0] is True)
+    check("invented disabled testimony is a leak (production 2026-11-02)",
+          BRIDGE.check_persona_leakage(
+              "My eyes go up and to the left when I am retrieving something. "
+              "For some of us the second task is harder.")[0] is False)
+    check("an observing 'I' is not a leak",
+          BRIDGE.check_persona_leakage("I read the notice twice.")[0] is True)
+    check("a source quoted in its own words is not a leak",
+          BRIDGE.check_persona_leakage(
+              'A student said: "people like me get flagged when my eyes wander".')[0]
+          is True)
 
 
 def _sa_out(stage_overrides=None, status=CP.PASS,
