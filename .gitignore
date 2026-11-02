@@ -52,6 +52,7 @@ automation/bsky_engage_seen.json
 
 # Orchestrator lock file
 .orchestrator.lock
+.repo-write.lock
 
 # Claude Code worktree/session metadata
 .claude/worktrees/

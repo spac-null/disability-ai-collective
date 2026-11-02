@@ -596,6 +596,12 @@ def _git_takedown(repo: pathlib.Path, rel_paths: list, message: str) -> dict:
     def git(*args):
         return subprocess.run(["git", "-C", str(repo)] + list(args), capture_output=True,
                               text=True, timeout=120)
+    # Refuse rather than risk someone else's work: a rollback below resets hard.
+    git("fetch", "-q", "origin", "main")
+    if git("status", "--porcelain", "--untracked-files=no").stdout.strip():
+        return {"ok": False, "detail": "the live workspace has uncommitted changes; not touched"}
+    if git("rev-parse", "HEAD").stdout.strip() != git("rev-parse", "origin/main").stdout.strip():
+        return {"ok": False, "detail": "the live workspace is not level with origin; not touched"}
     before = git("rev-parse", "HEAD").stdout.strip()
     steps = [("rm", "-q", "--ignore-unmatch", "--") + tuple(rel_paths),
              ("commit", "-q", "-m", message),
@@ -635,7 +641,9 @@ def take_down(*, session_id: str, run_id: str, version_sha: str, user_id, chat_i
                            event_type="TAKEDOWN_REQUESTED", actor=actor_of(user_id),
                            version_sha=version_sha, chat_id=chat_id,
                            metadata={"paths": rel}, root=root)
-        result = (git_fn or _git_takedown)(repo, rel, TAKEDOWN_COMMIT_PREFIX + post.stem)
+        import publish_best as PB
+        with PB.repo_write_lock(repo=repo):
+            result = (git_fn or _git_takedown)(repo, rel, TAKEDOWN_COMMIT_PREFIX + post.stem)
     finally:
         lock.close()
     event = "TAKEN_DOWN" if result.get("ok") else "TAKEDOWN_FAILED"

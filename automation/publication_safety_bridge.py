@@ -87,6 +87,14 @@ _PERSONA_LEAKAGE = (
     r"neurodivergent|chronically ill|a wheelchair user)\b",
     r"\bI (?:have|had|live with) (?:a |an )?(?:disability|condition|impairment|"
     r"diagnosis|chronic illness|stammer|stutter)\b",
+    # Dutch editions are checked with the same rule (2026-11-02).
+    r"\bmijn (?:ogen|oren|handen|armen|benen|voeten|gezicht|stem|spraak|hersenen|lichaam|"
+    r"beperking|handicap|diagnose|aandoening|pijn|medicatie|rolstoel)\b",
+    r"\bmensen (?:zoals|als) ik\b",
+    r"\bvoor (?:sommigen|velen|de meesten) van ons\b",
+    r"\bik ben (?:doof|blind|gehandicapt|autistisch|slechtziend|slechthorend|"
+    r"chronisch ziek|rolstoelgebruiker)\b",
+    r"\bik heb (?:een )?(?:beperking|handicap|aandoening|diagnose)\b",
 )
 
 

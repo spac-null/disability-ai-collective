@@ -802,13 +802,62 @@ def _commit_and_push(mutated, msg_parts):
     staged = stageable_paths(mutated)
     for d in sorted(set(mutated) - set(staged)):
         print("  staging: skipping %s (moved away, never tracked)" % (d,))
-    if staged:
-        subprocess.run(["git", "add", "-A", "--", *staged], cwd=str(REPO), check=True)
-    subprocess.run(["git", "commit", "-m", " | ".join(msg_parts)],
-                   cwd=str(REPO), check=True)
-    subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=str(REPO), check=True)
-    subprocess.run(["git", "push", "origin", "main"], cwd=str(REPO), check=True)
+    # ONE WRITER AT A TIME (2026-11-02). A Dutch push and a manual push raced and left the
+    # workspace ahead/behind origin, which stopped the deploy guard. Every repo writer
+    # takes this lock; it is not the orchestrator's lock, which is held around the whole
+    # run that calls this.
+    with repo_write_lock():
+        if staged:
+            subprocess.run(["git", "add", "-A", "--", *staged], cwd=str(REPO), check=True)
+        subprocess.run(["git", "commit", "-m", " | ".join(msg_parts)],
+                       cwd=str(REPO), check=True)
+        last = None
+        for _attempt in range(3):
+            try:
+                subprocess.run(["git", "pull", "--rebase", "origin", "main"],
+                               cwd=str(REPO), check=True)
+                subprocess.run(["git", "push", "origin", "main"], cwd=str(REPO), check=True)
+                break
+            except subprocess.CalledProcessError as e:
+                last = e
+                subprocess.run(["git", "rebase", "--abort"], cwd=str(REPO))
+        else:
+            raise last
     print("Pushed to GitHub — site building now.")
+
+
+REPO_WRITE_LOCK = ".repo-write.lock"
+
+
+class repo_write_lock:
+    """Blocking exclusive lock for anything that commits or pushes in REPO."""
+
+    def __init__(self, timeout=600, repo=None):
+        self.timeout = timeout
+        self.repo = repo
+        self.fh = None
+
+    def __enter__(self):
+        import fcntl
+        import time
+        self.fh = open(pathlib.Path(self.repo or REPO) / REPO_WRITE_LOCK, "w")
+        deadline = time.time() + self.timeout
+        while True:
+            try:
+                fcntl.flock(self.fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                return self
+            except BlockingIOError:
+                if time.time() > deadline:
+                    self.fh.close()
+                    raise subprocess.CalledProcessError(
+                        1, ["flock", REPO_WRITE_LOCK], "repo write lock busy")
+                time.sleep(2)
+
+    def __exit__(self, *exc):
+        import fcntl
+        fcntl.flock(self.fh, fcntl.LOCK_UN)
+        self.fh.close()
+        return False
 
 
 def _publish_dutch_translation(en_path: pathlib.Path) -> None:
@@ -841,6 +890,12 @@ def _publish_dutch_translation(en_path: pathlib.Path) -> None:
             if fid["verdict"] != "PASS":
                 print("  Dutch translation HELD (English publication unaffected): %s"
                       % fid.get("verdict"))
+                return
+            from publication_safety_bridge import check_persona_leakage
+            persona_ok, persona_why = check_persona_leakage(tr.get("article") or "")
+            if not persona_ok:
+                print("  Dutch translation HELD (English publication unaffected): %s"
+                      % persona_why)
                 return
             nl_path = TP.write_translation("nl", en_path, en, tr)
             TP.link_english(en_path, "nl")
