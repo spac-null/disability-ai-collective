@@ -87,6 +87,9 @@ EVENT_TYPES = (
     "PUBLISHED",
     "PUBLISH_FAILED",
     "PUBLISH_REFUSED",
+    "TAKEDOWN_REQUESTED",
+    "TAKEN_DOWN",
+    "TAKEDOWN_FAILED",
 )
 
 # Reader reactions that arrive as a button press. Kept apart from the lifecycle events

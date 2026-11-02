@@ -571,3 +571,78 @@ def publish(*, session_id: str, run_id: str, run_dir, version_sha: str, user_id,
                           action="PUBLISH_FAILED", actor=actor_of(user_id),
                           detail=detail, root=root)
     return {"ok": False, "detail": detail}
+
+
+# ── TAKE DOWN (owner, 2026-11-02) ─────────────────────────────────────────────────────
+# Articles now publish automatically; the desk reviews after publication. Taking one down
+# removes exactly that article's files and nothing else. The immutable publication audit
+# bundle is kept on purpose: the record of what went out survives its retraction.
+TAKEDOWN_COMMIT_PREFIX = "unpublish: "
+
+
+def takedown_paths(post: pathlib.Path, repo) -> list:
+    """The files one published article consists of: English post, Dutch edition,
+    generated images and pending social file."""
+    repo = pathlib.Path(repo)
+    slug = post.stem[11:]
+    found = [post, repo / "_nl" / ("%s.md" % slug), repo / "_social" / ("%s.json" % slug)]
+    found += sorted((repo / "assets").glob("%s_*" % slug))
+    return [p for p in found if p.exists()]
+
+
+def _git_takedown(repo: pathlib.Path, rel_paths: list, message: str) -> dict:
+    import subprocess
+
+    def git(*args):
+        return subprocess.run(["git", "-C", str(repo)] + list(args), capture_output=True,
+                              text=True, timeout=120)
+    before = git("rev-parse", "HEAD").stdout.strip()
+    steps = [("rm", "-q", "--ignore-unmatch", "--") + tuple(rel_paths),
+             ("commit", "-q", "-m", message),
+             ("pull", "-q", "--rebase", "origin", "main"),
+             ("push", "-q", "origin", "main")]
+    for s in steps:
+        r = git(*s)
+        if r.returncode != 0:
+            # Leave the live workspace exactly as it was, so the deploy guard stays clean.
+            if s[0] == "pull":
+                git("rebase", "--abort")
+            git("reset", "-q", "--hard", before)
+            return {"ok": False, "detail": "git %s failed: %s" % (s[0], (r.stderr or r.stdout)[:200])}
+    return {"ok": True, "commit": git("rev-parse", "HEAD").stdout.strip()}
+
+
+def take_down(*, session_id: str, run_id: str, version_sha: str, user_id, chat_id,
+              repo=None, git_fn=None, env: dict | None = None, root=None) -> dict:
+    """Remove a published article from the site. Allowlisted presser only, under the
+    pipeline's own lock so it never races a publication."""
+    if not authorized(user_id, env):
+        return {"ok": False, "detail": "not authorized"}
+    repo = pathlib.Path(repo or DESK.REPO_ROOT)
+    post = DESK.published_post(run_id, repo)
+    if post is None:
+        return {"ok": False, "detail": "this run is not published"}
+    import fcntl
+    lock = open(repo / ".orchestrator.lock", "w")
+    try:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return {"ok": False, "detail": "the pipeline is running; try again in a few minutes"}
+        paths = takedown_paths(post, repo)
+        rel = [str(p.relative_to(repo)) for p in paths]
+        STORE.record_event(session=session_id, run_id=run_id,
+                           event_type="TAKEDOWN_REQUESTED", actor=actor_of(user_id),
+                           version_sha=version_sha, chat_id=chat_id,
+                           metadata={"paths": rel}, root=root)
+        result = (git_fn or _git_takedown)(repo, rel, TAKEDOWN_COMMIT_PREFIX + post.stem)
+    finally:
+        lock.close()
+    event = "TAKEN_DOWN" if result.get("ok") else "TAKEDOWN_FAILED"
+    STORE.record_event(session=session_id, run_id=run_id, event_type=event,
+                       actor=actor_of(user_id), version_sha=version_sha, chat_id=chat_id,
+                       metadata={"paths": rel, "result": result}, root=root)
+    STORE.record_decision(session=session_id, run_id=run_id, version_sha=version_sha,
+                          action=event, actor=actor_of(user_id),
+                          detail=", ".join(rel), metadata={"result": result}, root=root)
+    return dict(result, removed=rel)

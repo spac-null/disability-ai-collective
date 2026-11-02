@@ -34,6 +34,7 @@ from __future__ import annotations
 import json
 import os
 import pathlib
+import re
 
 EVIDENCE_ROOT = pathlib.Path(os.environ.get("NEW_ENGINE_EVIDENCE_ROOT",
                                             "/srv/data/cripminds-new-engine-v1"))
@@ -46,6 +47,50 @@ UPSTREAM_FAILURE = "UPSTREAM_FAILURE"
 # Action states. Reported, never computed here -- see publish_state().
 PUBLISH_ELIGIBLE = "PUBLISH_ELIGIBLE"
 PUBLISH_BLOCKED = "PUBLISH_BLOCKED"
+# Auto-published by the pipeline (owner, 2026-11-02): the desk now reviews after the fact.
+PUBLISHED = "PUBLISHED"
+REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+
+def published_post(run_id: str, repo=None):
+    """The English post this run became, found by its `engine_run` front matter."""
+    posts = pathlib.Path(repo or REPO_ROOT) / "_posts"
+    pat = re.compile(r"^engine_run:\s*[\"']?%s[\"']?\s*$" % re.escape(run_id), re.M)
+    for p in sorted(posts.glob("*.md"), reverse=True):
+        try:
+            head = p.read_text(encoding="utf-8", errors="ignore")[:4000]
+        except OSError:
+            continue
+        if pat.search(head.split("---", 2)[1] if head.startswith("---") else head):
+            return p
+    return None
+
+
+def _payload(run_dir: pathlib.Path, name: str):
+    try:
+        d = json.loads((run_dir / name).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return d.get("payload", d) if isinstance(d, dict) else d
+
+
+def run_notes(run_dir) -> dict:
+    """What the editor should look at after publication: advisory findings the gates
+    recorded without blocking. Quoted from the run, never formed here."""
+    run_dir = pathlib.Path(run_dir)
+    g = _payload(run_dir, "GROUNDING_FINDINGS.json") or {}
+    sa = _payload(run_dir, "SAFETY_AUDIT.json") or {}
+    rd = _payload(run_dir, "READER_AUDIT.json") or {}
+    return {
+        "unsupported": [str(f.get("quote") or "")[:200]
+                        for f in (g.get("findings") or [])
+                        if str(f.get("classification") or "").startswith("TRUE_UN")][:6],
+        "spelling": ["%s (Ledger: %s)" % (a.get("token"), a.get("ledger_spelling"))
+                     for a in (sa.get("advisories") or [])
+                     if a.get("kind") == "SPELLING_VARIANT"][:6],
+        "reader_disputed": [str(x.get("passage") or "")[:160]
+                            for x in (rd.get("reader_disagreements") or [])][:4],
+    }
 
 # The floor that separates "an article" from "a stub a stage emitted before it gave up".
 # Deliberately far below any real article (the shortest genuine one in the last month was
@@ -314,7 +359,11 @@ def read_run(run_dir) -> dict:
             "publish_state": PUBLISH_BLOCKED,
             "publish_reason": "no article to publish",
         }
-    state, reason = publish_state(run_dir)
+    post = published_post(run_dir.name)
+    if post is not None:
+        state, reason = PUBLISHED, "published as %s" % post.name
+    else:
+        state, reason = publish_state(run_dir)
     return {
         "run_id": run_dir.name,
         "run_dir": str(run_dir),
@@ -326,6 +375,8 @@ def read_run(run_dir) -> dict:
         "reason": "",
         "publish_state": state,
         "publish_reason": reason,
+        "post_path": str(post) if post is not None else "",
+        "notes": run_notes(run_dir),
     }
 
 
@@ -521,6 +572,9 @@ def status_line(run: dict) -> str:
     owner's working interface."""
     if run["state"] == UPSTREAM_FAILURE:
         return "No article: %s" % run["reason"]
+    if run["publish_state"] == PUBLISHED:
+        n = sum(len(v) for v in (run.get("notes") or {}).values())
+        return ("Published. %d note(s) to review." % n) if n else "Published. No notes."
     if run["publish_state"] == PUBLISH_ELIGIBLE:
         return "Ready to publish"
     stage = run["gates"].get("failure_stage") or ""

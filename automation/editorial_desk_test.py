@@ -920,6 +920,71 @@ def test_an_unread_article_is_still_judged_on_its_own_date():
               rows[fresh]["recent"] is True and rows[fresh]["status"] == ACT.UNREAD)
 
 
+def _published_repo(tmp, run_id, slug="the-question-a-camera-can-ask"):
+    repo = pathlib.Path(tmp) / "repo"
+    for sub in ("_posts", "_nl", "_social", "assets"):
+        (repo / sub).mkdir(parents=True, exist_ok=True)
+    post = repo / "_posts" / ("2026-11-02-%s.md" % slug)
+    post.write_text('---\ntitle: "T"\nengine_run: "%s"\nimage: /assets/%s_1.jpg\n---\nBody\n'
+                    % (run_id, slug), encoding="utf-8")
+    (repo / "_nl" / ("%s.md" % slug)).write_text("nl", encoding="utf-8")
+    (repo / "_social" / ("%s.json" % slug)).write_text("{}", encoding="utf-8")
+    (repo / "assets" / ("%s_1.jpg" % slug)).write_text("img", encoding="utf-8")
+    (repo / "assets" / "another-article_1.jpg").write_text("img", encoding="utf-8")
+    return repo, post
+
+
+def test_an_auto_published_run_is_shown_as_published_with_its_notes():
+    """Owner, 2026-11-02: articles publish automatically and the desk reviews after."""
+    with tempfile.TemporaryDirectory() as tmp:
+        run_dir = make_run(tmp, failure_stage=None, blocking=[])
+        (run_dir / "SAFETY_AUDIT.json").write_text(json.dumps({"blocking": [], "advisories": [
+            {"kind": "SPELLING_VARIANT", "token": "Salvador", "ledger_spelling": "Salvator"}]}))
+        (run_dir / "GROUNDING_FINDINGS.json").write_text(json.dumps({"payload": {"findings": [
+            {"classification": "TRUE_UNSUPPORTED", "quote": "The confidence was kept."}]}}))
+        repo, post = _published_repo(tmp, run_dir.name)
+        old = DESK.REPO_ROOT
+        DESK.REPO_ROOT = repo
+        try:
+            run = DESK.read_run(run_dir)
+        finally:
+            DESK.REPO_ROOT = old
+        check("the run is PUBLISHED", run["publish_state"] == DESK.PUBLISHED, run["publish_state"])
+        check("its notes are quoted from the run",
+              run["notes"]["unsupported"] == ["The confidence was kept."]
+              and run["notes"]["spelling"] == ["Salvador (Ledger: Salvator)"], run["notes"])
+        check("the status line says published and counts notes",
+              DESK.status_line(run) == "Published. 2 note(s) to review.", DESK.status_line(run))
+
+
+def test_take_down_removes_only_that_articles_files():
+    with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as sroot:
+        run_id = "production-20261102T080422Z-71080bae"
+        repo, post = _published_repo(tmp, run_id)
+        calls = []
+        r = ACT.take_down(session_id="s1", run_id=run_id, version_sha="v1", user_id=4242,
+                          chat_id=7, repo=repo, env=ENV_OK, root=sroot,
+                          git_fn=lambda repo_, rel, msg: calls.append((rel, msg)) or {"ok": True})
+        rel = calls[0][0] if calls else []
+        check("take-down succeeds for the owner", r.get("ok") is True, r)
+        check("it removes the post, Dutch edition, social file and its own images",
+              sorted(rel) == sorted(["_posts/2026-11-02-the-question-a-camera-can-ask.md",
+                                     "_nl/the-question-a-camera-can-ask.md",
+                                     "_social/the-question-a-camera-can-ask.json",
+                                     "assets/the-question-a-camera-can-ask_1.jpg"]), rel)
+        check("another article's images are untouched",
+              not any("another-article" in p for p in rel), rel)
+        check("the commit says unpublish", calls and calls[0][1].startswith("unpublish: "), calls)
+        r2 = ACT.take_down(session_id="s1", run_id=run_id, version_sha="v1", user_id=9,
+                           chat_id=7, repo=repo, env=ENV_OK, root=sroot,
+                           git_fn=lambda *a: {"ok": True})
+        check("someone not on the allowlist cannot take down", r2.get("ok") is False, r2)
+        r3 = ACT.take_down(session_id="s1", run_id="production-unknown", version_sha="v1",
+                           user_id=4242, chat_id=7, repo=repo, env=ENV_OK, root=sroot,
+                           git_fn=lambda *a: {"ok": True})
+        check("an unpublished run cannot be taken down", r3.get("ok") is False, r3)
+
+
 def main():
     for fn in sorted((f for n, f in globals().items() if n.startswith("test_")),
                      key=lambda f: f.__code__.co_firstlineno):

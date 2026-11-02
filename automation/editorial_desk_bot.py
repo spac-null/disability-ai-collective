@@ -373,9 +373,21 @@ def offer(run: dict, chat=None, heading="New Crip Minds draft"):
         lines.append("What the checks flagged:")
         for b in run["gates"]["safety_blocking"][:3]:
             lines.append("  - " + str(b)[:180])
-    mid = send("\n".join(lines), chat=chat,
-               buttons=[[("READ", "read:%s" % d["session_id"]),
-                         ("HOLD", "hold:%s" % d["session_id"])]])
+    published = run["publish_state"] == DESK.PUBLISHED
+    if published:
+        notes = run.get("notes") or {}
+        for label, key in (("Claims the sources may not support", "unsupported"),
+                           ("Spelling differs from the Ledger", "spelling"),
+                           ("Only one Reader read flagged", "reader_disputed")):
+            if notes.get(key):
+                lines.append("")
+                lines.append(label + ":")
+                lines.extend("  - " + str(x)[:180] for x in notes[key][:3])
+    buttons = ([[("READ", "read:%s" % d["session_id"]),
+                 ("TAKE DOWN", "takedown:%s" % d["session_id"])]] if published else
+               [[("READ", "read:%s" % d["session_id"]),
+                 ("HOLD", "hold:%s" % d["session_id"])]])
+    mid = send("\n".join(lines), chat=chat, buttons=buttons)
     # Which Telegram message this card became. Recorded so a click can be audited back
     # to the card the owner was actually looking at -- the fact the 2026-09-26 incident
     # investigation could not establish from the log alone.
@@ -766,6 +778,18 @@ def handle_callback(cb):
         return
     if kind == "publish":
         cmd_publish(chat, user_id, s)
+        return
+    if kind == "takedown":
+        send("Take this article off the site? This removes the post, its Dutch edition "
+             "and its images. Social posts already sent cannot be recalled.", chat=chat,
+             buttons=[[("YES, TAKE DOWN", "takedown_yes:%s" % sid),
+                       ("KEEP IT", "read:%s" % sid)]])
+        return
+    if kind == "takedown_yes":
+        r = ACT.take_down(session_id=sid, run_id=s["run_id"], version_sha=sha,
+                          user_id=user_id, chat_id=chat)
+        send(("Taken down: %s" % ", ".join(r.get("removed") or [])) if r.get("ok")
+             else "Not taken down: %s" % r.get("detail"), chat=chat)
         return
     if kind in ("almost", "notgood"):
         STORE.record_event(session=sid, run_id=s["run_id"],
