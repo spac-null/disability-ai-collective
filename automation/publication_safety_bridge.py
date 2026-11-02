@@ -917,8 +917,15 @@ def _evaluate_new_engine_v1(out: dict, *, fact_check_fn=None,
           % (comp.get("status"), comp.get("failure_stage")))
     r.add("safety_pass", stages.get(CP.SAFETY) == CP.PASS,
           "SAFETY=%r" % stages.get(CP.SAFETY))
+    # Footnote contract: Grounding is advisory (every claim carries its source), so its
+    # verdict is recorded but does not stop publication. Safety's hard blocks still do.
+    advisory_grounding = (comp.get("writer_contract") == "footnote"
+                          and stages.get(CP.GROUNDING) == CP.HOLD)
     r.add("grounding_pass", stages.get(CP.GROUNDING) == CP.PASS,
-          "GROUNDING=%r" % stages.get(CP.GROUNDING))
+          "GROUNDING=%r%s" % (stages.get(CP.GROUNDING),
+                              " (advisory on the footnote contract)"
+                              if advisory_grounding else ""),
+          blocking=not advisory_grounding)
     article = comp.get("article_text") or ""
     fact_check_evidence = _check_fact_check_adjudication(
         raw_fact_check_status=stages.get(CP.FACT_CHECK), article=article, run_dir=run_dir)

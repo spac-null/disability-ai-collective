@@ -1070,8 +1070,8 @@ a paragraph explaining it.
 
 SAY THE ARGUMENT ONCE. A second sentence that restates it in other words is cut.
 
-800 to 1,100 words. Stop when the argument is made. No section headings; a section break
-is a blank line.
+Under 1,000 words, footnotes not counted. Stop when the argument is made. No section
+headings; a section break is a blank line.
 
 WRITE ABOUT THE WORLD, NOT ABOUT YOUR MATERIAL. Never write "the evidence", "the record",
 "the source", "the Ledger", "documented" or "what is known" -- the footnote is where the

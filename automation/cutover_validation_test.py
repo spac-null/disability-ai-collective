@@ -289,6 +289,20 @@ def test_new_engine_v1_bridge_contract():
               check_name in [c["check"] for c in r.failures],
               [c["check"] for c in r.failures])
 
+    # 7b. footnote contract: Grounding is advisory, so its HOLD alone does not block;
+    # a Safety HOLD on the same contract still does (owner, 2026-11-02).
+    fn = _sa_out({CP.GROUNDING: CP.HOLD})
+    fn["composition"]["writer_contract"] = "footnote"
+    rfn = BRIDGE.evaluate(fn, fact_check_fn=CLEAN_FACT_CHECK)
+    check("footnote contract, GROUNDING HOLD alone -> eligible", rfn.eligible is True,
+          [c["check"] for c in rfn.failures])
+    check("...and the Grounding verdict is still recorded",
+          any(c["check"] == "grounding_pass" and not c["ok"] for c in rfn.checks))
+    fs = _sa_out({CP.GROUNDING: CP.HOLD, CP.SAFETY: CP.HOLD})
+    fs["composition"]["writer_contract"] = "footnote"
+    check("footnote contract, SAFETY HOLD -> still ineligible",
+          BRIDGE.evaluate(fs, fact_check_fn=CLEAN_FACT_CHECK).eligible is False)
+
     # 8. missing required final artifact -> ineligible, even if every stage says PASS
     # (a stage can pass and still leave no publishable bytes, e.g. an empty package).
     no_article = _sa_out(article="", ready=False)
