@@ -282,6 +282,10 @@ def test_full_date_day_and_lowercase_word_variants():
     r3 = ST.factual_surface_audit("# T\n\n«Incapacitado» was a place you were put.\n", pk, led)
     check("'Incapacitado' against 'incapacitados' is a variant, not a hold",
           "Incapacitado" not in r3["unapproved_entities"], r3["unapproved_entities"])
+    led_ord = _ledger("A certificate dated 9th December, 2023 recorded it.")
+    r5 = ST.factual_surface_audit("# T\n\nIts certificate of 9 December 2023 said so.\n", pk, led_ord)
+    check("'9 December 2023' for the Ledger's '9th December, 2023' licenses the day",
+          "9" not in r5["unapproved_numbers"], r5["unapproved_numbers"])
     r4 = ST.factual_surface_audit("# T\n\nThe Columbia team arrived.\n", pk, led)
     check("an unrelated new name still holds", "Columbia" in r4["unapproved_entities"],
           r4["unapproved_entities"])

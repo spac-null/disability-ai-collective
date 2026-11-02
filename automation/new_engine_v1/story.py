@@ -2211,8 +2211,10 @@ _MONTH_NUMBER = {
 # ISO (packet form), "23 February 2024" / "23 Feb 2024", "February 23, 2024".
 _DATE_PATTERNS = (
     re.compile(r"\b(?P<y>\d{4})-(?P<mo>\d{2})-(?P<d>\d{2})\b"),
-    re.compile(r"\b(?P<d>\d{1,2})\s+(?P<mname>[A-Za-z]{3,9})\s+(?P<y>\d{4})\b"),
-    re.compile(r"\b(?P<mname>[A-Za-z]{3,9})\s+(?P<d>\d{1,2}),?\s+(?P<y>\d{4})\b"),
+    re.compile(r"\b(?P<d>\d{1,2})(?:st|nd|rd|th)?\s+(?P<mname>[A-Za-z]{3,9}),?\s+"
+               r"(?P<y>\d{4})\b"),
+    re.compile(r"\b(?P<mname>[A-Za-z]{3,9})\s+(?P<d>\d{1,2})(?:st|nd|rd|th)?,?\s+"
+               r"(?P<y>\d{4})\b"),
     re.compile(r"\b(?P<d>\d{1,2})\.(?P<mo>\d{1,2})\.(?P<y>\d{4})\b"),
 )
 _MONTH_YEAR = re.compile(r"\b(?P<mname>[A-Za-z]{3,9})\s+(?P<y>\d{4})\b")
