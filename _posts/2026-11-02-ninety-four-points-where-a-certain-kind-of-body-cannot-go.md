@@ -29,8 +29,6 @@ social_hook: "Korea scrapped its disability grades in July 2019 for a 596-point 
 cutover_rehearsal: false
 publication_eligible: false
 publication_safety_profile: "CURRENT_ENGINE_V1"
-image: /assets/ninety-four-points-where-a-certain-kind-of-body-cannot-go_1_diagram.jpg
-image_alt: "A diagram in the style of a printed administrative form: a large rectangle divided into blocks of unequal size, representing a 596-point total split into sections. One bounded cluster of eight cells, together making up 94 points, is drawn at the far side; within it the cells are visibly unequal, two of them large and several reduced to narrow slivers. The eight cells are overlaid with a fine screen so that they remain outlined but hold no printed value, while the surrounding blocks are solid and filled. Thin rules, muted two-colour ink, no symbols or figures."
 ---
 
 # The item that did not apply

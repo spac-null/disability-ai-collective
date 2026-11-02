@@ -4,8 +4,6 @@ title: "Wat de verklaring mocht beslissen"
 lang: "nl"
 date: 2026-11-02
 author: "Crip Minds"
-image: "/assets/forty-five-per-cent-his-claim-to-the-seat-and-his-refusal_1_conceptual_cover.jpg"
-image_alt: "Bovenaanzicht van een versleten officieel formulier op een egale ondergrond. De meeste gedrukte tekst is te klein om te lezen, maar een gestempeld getal 45 springt eruit, vlak bij het midden, net als een klein tabelletje van vier vakjes. In drie vakjes staan tekens; het vierde, waar rij en kolom elkaar kruisen, is leeg gelaten. Een vage tweede regel tekst doet vermoeden dat de titel van het formulier is gewijzigd."
 dek: "Op Omkar Gonds verklaring stond 45 procent. Dat getal gaf hem aanspraak op een gereserveerde plaats in de geneeskundeopleiding, en het was de reden dat hem te horen werd gegeven dat hij die niet mocht innemen. Het Supreme Court noemde de situatie absurd."
 excerpt: "Een beperking van niet minder dan veertig procent maakt je een person with benchmark disability, en instellingen voor hoger onderwijs van de overheid en met overheidssteun moeten plaatsen voor hen reserveren. Een wijziging van de MBBS-regels uit 2019 maakte mensen met veertig procent beperking of meer niet-toelaatbaar voor de geneeskundeopleiding. De kolom voor kandidaten die allebei zijn, is leeg."
 meta_description: "Op Omkar Gonds verklaring stond 45 procent beperking: genoeg voor een gereserveerde plaats in de geneeskundeopleiding, en onder de MBBS-regels van 2019 te veel om toelaatbaar te zijn."
