@@ -32,6 +32,7 @@ publication_eligible: false
 publication_safety_profile: "CURRENT_ENGINE_V1"
 image: /assets/forty-five-per-cent-his-claim-to-the-seat-and-his-refusal_1_conceptual_cover.jpg
 image_alt: "Overhead view of a worn official form on a plain surface. Most of its printed text is too small to read, but a stamped figure reading 45 stands out near the centre, as does a small four-cell table. Three cells carry marks; the fourth, where the row and column meet, has been left blank. A faint second line of type suggests the form's title was changed."
+translation_nl: "/nl/forty-five-per-cent-his-claim-to-the-seat-and-his-refusal/"
 ---
 
 # What the certificate was allowed to decide
