@@ -239,6 +239,10 @@ def mechanical_findings(en: dict, tr: dict) -> list:
         counts[m.group(0)] = counts.get(m.group(0), 0) + 1
     named = {t for t, n in counts.items() if n >= 2}
     named |= ST._entities(art, skip_sentence_initial=True)
+    # Month and weekday names are translated, not carried: "July" is "juli" (2026-11-02).
+    named -= {"January", "February", "March", "April", "May", "June", "July", "August",
+              "September", "October", "November", "December", "Monday", "Tuesday",
+              "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}
     low = _plain(tr_all).lower()
     # IMAGE IDENTITY AND PLACEMENT ARE NOT TRANSLATABLE. Alt text is prose and may be
     # rewritten; the asset a figure points at, and how many figures the body carries, are

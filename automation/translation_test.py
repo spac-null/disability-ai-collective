@@ -84,6 +84,11 @@ check("a changed number is still caught after the unit fix",
       [x for x in TP.mechanical_findings({"article": "It stays at 28C."},
                                          {"article": "Het blijft 29 °C."})
        if x["category"] == "NUMBERS"])
+check("a month name is translated, not a dropped name ('July' / 'juli')",
+      not [x for x in TP.mechanical_findings(
+          {"article": "In July 2019 the grades went, and in July the table arrived."},
+          {"article": "In juli 2019 verdwenen de graden, en in juli kwam de tabel."})
+           if x["category"] == "NAMES"])
 check("a footnote marker before a sentence-opening word does not make it a name",
       not [x for x in TP.mechanical_findings(
           {"article": "It ends here.[^F04] Flip it and Teams stops. It ends.[^F09] Flip it."},
