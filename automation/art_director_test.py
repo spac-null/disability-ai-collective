@@ -245,7 +245,13 @@ def test_recraft_receives_text_only():
     check("clean visual anchor carried", "corrugated metal roof" in p)
     check("a violating visual anchor is stripped even here", "3 metres" not in p)
     check("must_not_invent carried", "signage" in p)
-    check("no lettering instruction", "No lettering" in p)
+    check("no lettering instruction", "Absolutely no text of any kind" in p)
+    t = AD.build_image_prompt({"register": "MATERIAL_EDITORIAL", "editorial_purpose": "x",
+                               "factual_anchors": ["a switch label reading 'Mute all'",
+                                                   "a banner pushing in from a corner"],
+                               "visual_anchors": ["a column headed eligible, left blank"]})
+    check("anchors that need readable text are dropped (2026-11-02 garbled covers)",
+          "Mute all" not in t and "column headed" not in t and "banner pushing" in t, t)
     check("no named-artist imitation", "No named artist" in p)
     check("no base64 or path leaked", "data:" not in p and ".jpg" not in p)
     check("ratio follows function, not a fixed slot",

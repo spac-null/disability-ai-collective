@@ -378,6 +378,12 @@ ART_DIRECTOR_SYSTEM = (
     "exists, or what a person can or cannot do. If you catch yourself writing any of those, "
     "it is not an anchor.\n"
     "\n"
+    "NO IMAGE MAY DEPEND ON READABLE TEXT. Image models garble letters: three covers on "
+    "2026-11-02 shipped invented words ('Meeting shat notfications', a fake form, a "
+    "misspelled diagram). Never commission a form, settings screen, table, chart, label, "
+    "sign, certificate, document page or diagram whose meaning needs words or numbers. "
+    "Show the idea through objects, space, scale, light and contrast instead.\n"
+    "\n"
     "PEOPLE: NONE by default. Include a person only when the article itself carries a "
     "supported human subject and the image genuinely needs them.\n"
     "\n"
@@ -652,19 +658,31 @@ _REGISTER_DIRECTION = {
 }
 
 
+_TEXT_REQUEST = re.compile(
+    r"[\"“”‘’'][^\"“”‘’']{3,}[\"“”‘’']|\b(?:reads?|reading|labell?ed|labels?|lettering|"
+    r"caption|headline|wording|written|printed (?:text|words)|says|spelled|column headed|"
+    r"titled)\b", re.I)
+
+
+def _asks_for_text(s: str) -> bool:
+    """An anchor that needs readable words in the picture -- which models garble."""
+    return bool(_TEXT_REQUEST.search(s or ""))
+
+
 def build_image_prompt(image: dict, persona: str = "") -> str:
     """The text brief Recraft receives. Text only, always -- no image is ever sent."""
     p = [_REGISTER_DIRECTION.get(image.get("register"), _REGISTER_DIRECTION["MATERIAL_EDITORIAL"])]
     p.append("This image exists to %s." % str(image.get("editorial_purpose") or "").rstrip("."))
-    anchors = [str(a) for a in (image.get("factual_anchors") or [])][:6]
+    anchors = [str(a) for a in (image.get("factual_anchors") or [])
+               if not _asks_for_text(str(a))][:6]
     if anchors:
         p.append("Show, concretely: " + "; ".join(anchors) + ".")
     van = [str(a) for a in (image.get("visual_anchors") or [])
-           if not visual_anchor_violation(str(a))][:6]
+           if not visual_anchor_violation(str(a)) and not _asks_for_text(str(a))][:6]
     if van:
         p.append("Material and spatial character: " + "; ".join(van) + ".")
     note = str(image.get("composition_note") or "").strip()
-    if note:
+    if note and not _asks_for_text(note):
         p.append("Composition: " + note.rstrip(".") + ".")
     people = str(image.get("people") or "NONE").strip().upper()
     p.append("No people in frame." if people in ("", "NONE") else "People: " + str(image.get("people")))
@@ -672,7 +690,8 @@ def build_image_prompt(image: dict, persona: str = "") -> str:
     if mni:
         p.append("Do not include or imply: " + "; ".join(mni) + ".")
     p.append("Tactile rather than glossy. Strong simple composition, limited clutter. "
-             "No lettering, captions or watermarks anywhere in the image. "
+             "Absolutely no text of any kind: no words, letters, numbers, labels, captions, "
+             "interface text, signage or watermarks anywhere in the image. "
              "No named artist's style.")
     if persona:
         p.append("Editorial tone (not a medium or palette): %s." % persona)
