@@ -75,6 +75,15 @@ check("a word that opens two sentences is not a name (2026-11-02, 'Flip')",
           {"article": "Zet hem om en de berichten stoppen. Dan de oproepen. Zet hem om, "
                       "en Teams belt."})
            if x["category"] == "NAMES"])
+check("a unit glued to a number is the same number in Dutch ('82F' / '82 °F')",
+      not [x for x in TP.mechanical_findings(
+          {"article": "Indoors must stay at 28C, or 82F, and warming under 2C by 2050."},
+          {"article": "Binnen moet het 28 °C blijven, of 82 °F, en opwarming onder 2 °C in 2050."})
+           if x["category"] == "NUMBERS"])
+check("a changed number is still caught after the unit fix",
+      [x for x in TP.mechanical_findings({"article": "It stays at 28C."},
+                                         {"article": "Het blijft 29 °C."})
+       if x["category"] == "NUMBERS"])
 check("a footnote marker before a sentence-opening word does not make it a name",
       not [x for x in TP.mechanical_findings(
           {"article": "It ends here.[^F04] Flip it and Teams stops. It ends.[^F09] Flip it."},

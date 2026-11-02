@@ -174,7 +174,9 @@ FIDELITY_SCHEMA = (
 
 # ── the cheap pass: what arithmetic can see ───────────────────────────────────
 _FIG = re.compile(r"<figure.*?</figure>", re.S)
-_NUM = re.compile(r"\b\d[\d.,]*\b")
+# A unit glued to the number ("82F", "2C") still yields the number, on both sides, so
+# the English "28C, or 82F" and the Dutch "28 °C, of 82 °F" agree (2026-11-02).
+_NUM = re.compile(r"(?<![\w])\d[\d.,]*(?!\d)")
 _YEAR = re.compile(r"\b(?:1[6-9]|20)\d{2}\b")
 _ASSET = re.compile(r'(?:src=|!\[[^\]]*\]\()\s*"?\{?\{?[^"\')>]*?/assets/([^"\')\s>]+)')
 
