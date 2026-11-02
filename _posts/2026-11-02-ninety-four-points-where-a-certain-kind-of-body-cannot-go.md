@@ -29,6 +29,7 @@ social_hook: "Korea scrapped its disability grades in July 2019 for a 596-point 
 cutover_rehearsal: false
 publication_eligible: false
 publication_safety_profile: "CURRENT_ENGINE_V1"
+translation_nl: "/nl/ninety-four-points-where-a-certain-kind-of-body-cannot-go/"
 ---
 
 # The item that did not apply
